@@ -1,0 +1,14 @@
+{
+  "name": "fanta-zdb",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n WEB,API -c green,blue \"npm run dev:web\" \"npm run dev:api\"",
+
+    "dev:web": "npm run dev --prefix apps/web",
+
+    "dev:api": "dotnet watch run --project apps/api/Fantazdb.Api.csproj"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
