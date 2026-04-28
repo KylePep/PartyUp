@@ -9,7 +9,12 @@ function App() {
       .then(setMessage);
   }, []);
 
-  return <div>{message}</div>;
+  return (
+    <section>
+      <h1>Party Up</h1>
+      <div>{message}</div>
+    </section>
+  );
 }
 
 export default App;
