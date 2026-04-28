@@ -1,6 +1,0 @@
-@FantaZDB.Api_HostAddress = http://localhost:5288
-
-GET {{FantaZDB.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

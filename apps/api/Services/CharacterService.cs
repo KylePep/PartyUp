@@ -1,6 +1,6 @@
-using FantaZDB.Api.Domain.Models;
+using PartyUp.Api.Domain.Models;
 
-namespace FantaZDB.Api.Services;
+namespace PartyUp.Api.Services;
 
 public class CharacterService
 {

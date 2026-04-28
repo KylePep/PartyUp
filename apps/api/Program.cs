@@ -1,4 +1,4 @@
-using FantaZDB.Api.Services;
+using PartyUp.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FantaZDB.Api", "apps\api\FantaZDB.Api.csproj", "{25339EB2-D3CF-CA5F-1B68-52C6FBBEE8AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartyUp.Api", "apps\api\PartyUp.Api.csproj", "{25339EB2-D3CF-CA5F-1B68-52C6FBBEE8AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -6,7 +6,7 @@
 
     "dev:web": "npm run dev --prefix apps/web",
 
-    "dev:api": "dotnet watch run --project apps/api/Fantazdb.Api.csproj"
+    "dev:api": "dotnet watch run --project apps/api/Partyup.Api.csproj"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"

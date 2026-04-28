@@ -1,4 +1,4 @@
-namespace FantaZDB.Api.Domain.Models;
+namespace PartyUp.Api.Domain.Models;
 
 public class Character
 {

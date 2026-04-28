@@ -1,3 +1,3 @@
-namespace FantaZDB.Api.Contracts;
+namespace PartyUp.Api.Contracts;
 
 public record CharacterDto(Guid Id, string Name);
