@@ -1,8 +1,14 @@
+using Microsoft.EntityFrameworkCore;
+using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<CharacterService>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddCors(options =>
 {

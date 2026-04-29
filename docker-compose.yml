@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  partyup-db:
+    image: postgres:15
+    container_name: partyup-db
+    restart: always
+    environment:
+      POSTGRES_USER: partyup
+      POSTGRES_PASSWORD: partyup
+      POSTGRES_DB: partyup
+    ports:
+      - "5432:5432"
+    volumes:
+      - partyup-data:/var/lib/postgresql/data
+
+volumes:
+  partyup-data:
