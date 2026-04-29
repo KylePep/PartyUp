@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PartyUp.Api.Data;
+using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);

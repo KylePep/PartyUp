@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Domain.Models;
 
-namespace PartyUp.Api.Data
+namespace PartyUp.Api.Infrastructure.Data
 {
   public class AppDbContext : DbContext
   {
