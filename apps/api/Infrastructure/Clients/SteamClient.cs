@@ -35,3 +35,5 @@ public class SteamClient
     return result;
   }
 }
+
+// Steam response: {"response":{"game_count":2,"games":[{"appid":219640,"name":"Chivalry: Medieval Warfare","playtime_forever":208,"img_icon_url":"d4628be29b7e97d93a3404870dfe79642b90b907","has_community_visible_stats":true,"playtime_windows_forever":0,"playtime_mac_forever":0,"playtime_linux_forever":0,"playtime_deck_forever":0,"rtime_last_played":1397926125,"content_descriptorids":[2,5],"playtime_disconnected":0},{"appid":335240,"name":"Transformice","playtime_2weeks":7,"playtime_forever":7,"img_icon_url":"f1227d595d6bb3d9624ebdf7228ae68fd0c7dc29","has_community_visible_stats":true,"playtime_windows_forever":7,"playtime_mac_forever":0,"playtime_linux_forever":0,"playtime_deck_forever":0,"rtime_last_played":1777432141,"playtime_disconnected":0}]}}
