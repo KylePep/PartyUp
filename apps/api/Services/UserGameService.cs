@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PartyUp.Api.Domain.Models;
+using PartyUp.Api.Models;
 using PartyUp.Api.Infrastructure.Data;
 
 public class UserGameService : IUserGameService

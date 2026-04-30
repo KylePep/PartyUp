@@ -1,4 +1,4 @@
-using PartyUp.Api.Domain.Models;
+using PartyUp.Api.Models;
 
 public interface IUserGameService
 {

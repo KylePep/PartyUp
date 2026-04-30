@@ -1,5 +1,4 @@
-using PartyUp.Api.Contracts.Rawg;
-using PartyUp.Api.Domain.Contracts.Rawg;
+using PartyUp.Api.Models.DTOs.Rawg;
 using System.Web;
 
 namespace PartyUp.Api.Infrastructure.Clients;

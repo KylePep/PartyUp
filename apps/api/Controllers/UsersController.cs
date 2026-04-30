@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using PartyUp.Api.Domain.Models;
+using PartyUp.Api.Models;
 
 
 [ApiController]

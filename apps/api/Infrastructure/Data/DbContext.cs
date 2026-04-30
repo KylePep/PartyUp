@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PartyUp.Api.Domain.Models;
+using PartyUp.Api.Models;
 
 namespace PartyUp.Api.Infrastructure.Data
 {

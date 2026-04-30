@@ -1,4 +1,4 @@
-namespace PartyUp.Api.Domain.Models;
+namespace PartyUp.Api.Models;
 
 public class UserGame
 {

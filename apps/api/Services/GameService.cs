@@ -1,5 +1,4 @@
-using PartyUp.Api.Domain.Models;
-using PartyUp.Api.Domain.Contracts.Rawg;
+using PartyUp.Api.Models;
 using PartyUp.Api.Infrastructure.Clients;
 
 namespace PartyUp.Api.Services;

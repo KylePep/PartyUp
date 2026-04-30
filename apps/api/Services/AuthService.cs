@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PartyUp.Api.Domain.Models;
+using PartyUp.Api.Models;
 using PartyUp.Api.Infrastructure.Data;
 
 public class AuthService
