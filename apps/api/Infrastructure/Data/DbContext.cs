@@ -10,7 +10,7 @@ namespace PartyUp.Api.Infrastructure.Data
     {
     }
 
-    // Example table
     public DbSet<User> Users { get; set; }
+    public DbSet<UserGame> UserGames { get; set; }
   }
 }

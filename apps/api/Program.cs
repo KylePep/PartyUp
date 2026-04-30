@@ -12,14 +12,19 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 #region Services
+builder.Services.AddControllers();
 
 builder.Services.AddSingleton<CharacterService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpClient<SteamClient>();
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<SteamSyncService>();
+builder.Services.AddScoped<SteamClient>();
 
 #endregion
 
@@ -83,8 +88,8 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
 
@@ -104,21 +109,8 @@ app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 #endregion
 
-#region Routes
-
-app.MapGet("/api/characters", (CharacterService service) =>
-{
-    return service.GetAll();
-});
-
-app.MapGet("/api/secure", [Authorize] () =>
-{
-    return "You are authenticated";
-});
-
-#endregion
+app.MapControllers();
 
 app.Run();

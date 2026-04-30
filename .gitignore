@@ -44,3 +44,4 @@ build/
 # Vite / frontend cache
 # =========================
 .vite/
+apps/api/appsettings.Development.json
