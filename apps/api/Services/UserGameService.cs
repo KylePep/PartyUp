@@ -11,7 +11,7 @@ public class UserGameService : IUserGameService
     _db = db;
   }
 
-  public async Task AddGameToUser(string userId, Game game)
+  public async Task AddGameToUser(Guid userId, Game game)
   {
     var existingGame = await _db.Games
     .FirstOrDefaultAsync(g => g.ExternalId == game.ExternalId);
@@ -33,7 +33,7 @@ public class UserGameService : IUserGameService
     await _db.SaveChangesAsync();
   }
 
-  public async Task<List<Game>> GetUserGames(string userId)
+  public async Task<List<Game>> GetUserGames(Guid userId)
   {
     return await _db.UserGames
       .Where(ug => ug.UserId == userId)

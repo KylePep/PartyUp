@@ -15,7 +15,7 @@ public class UserGamesController : ControllerBase
   [HttpPost]
   public async Task<IActionResult> AddGame([FromBody] Game game)
   {
-    var userId = "test-user";
+    var userId = new Guid();
 
     await _service.AddGameToUser(userId, game);
 
@@ -25,7 +25,7 @@ public class UserGamesController : ControllerBase
   [HttpGet]
   public async Task<IActionResult> GetUserGames()
   {
-    var userId = "test-user";
+    var userId = new Guid();
     var games = await _service.GetUserGames(userId);
 
     return Ok(games);
