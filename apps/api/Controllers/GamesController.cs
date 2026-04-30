@@ -17,4 +17,14 @@ public class GamesController : ControllerBase
     var games = await _service.SearchGames(q);
     return Ok(games);
   }
+
+  [HttpGet("{id}")]
+  public async Task<IActionResult> GetById(int id)
+  {
+    var game = await _service.GetGameById(id);
+    if (game == null)
+      return NotFound();
+
+    return Ok(game);
+  }
 }

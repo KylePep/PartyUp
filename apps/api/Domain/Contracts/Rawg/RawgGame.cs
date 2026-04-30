@@ -1,4 +1,4 @@
-namespace PartyUp.Api.Domain.Models.Rawg;
+namespace PartyUp.Api.Domain.Contracts.Rawg;
 
 public class RawgGame
 {
