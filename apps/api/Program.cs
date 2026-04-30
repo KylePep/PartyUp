@@ -22,7 +22,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddHttpClient<RawgClient>();
-builder.Services.AddScoped<GameService>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IUserGameService, UserGameService>();
 
 #endregion
 
@@ -96,11 +97,6 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
-
-app.MapGet("/api/games", async (string q, GameService service) =>
-{
-    return await service.SearchGames(q);
-});
 
 #region Middleware
 

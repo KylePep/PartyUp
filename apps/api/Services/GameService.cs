@@ -1,9 +1,10 @@
+using PartyUp.Api.Domain.Models;
 using PartyUp.Api.Domain.Models.Rawg;
 using PartyUp.Api.Infrastructure.Clients;
 
 namespace PartyUp.Api.Services;
 
-public class GameService
+public class GameService : IGameService
 {
   private readonly RawgClient _rawg;
 
@@ -12,8 +13,15 @@ public class GameService
     _rawg = rawg;
   }
 
-  public async Task<List<RawgGame>> SearchGames(string query)
+  public async Task<List<Game>> SearchGames(string query)
   {
-    return await _rawg.GetGames(query);
+    var rawgGames = await _rawg.GetGames(query);
+
+    return rawgGames.Select(g => new Game
+    {
+      ExternalId = g.Id,
+      Name = g.Name,
+      ImageUrl = g.Background_Image
+    }).ToList();
   }
 }
