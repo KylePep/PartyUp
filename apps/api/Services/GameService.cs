@@ -13,9 +13,9 @@ public class GameService : IGameService
     _rawg = rawg;
   }
 
-  public async Task<List<Game>> SearchGames(string query)
+  public async Task<List<Game>> SearchGames(string q, int page, List<int>? genres, List<string>? tags)
   {
-    var rawgGames = await _rawg.GetGames(query);
+    var rawgGames = await _rawg.GetGames(q, page, genres, tags);
 
     return rawgGames.Select(g => new Game
     {
