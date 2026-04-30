@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using Microsoft.OpenApi.Models;
 using System.Text;
+using PartyUp.Api.Infrastructure.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddHttpClient<RawgClient>();
+builder.Services.AddScoped<GameService>();
 
 #endregion
 
@@ -90,7 +93,14 @@ builder.Services.AddCors(options =>
 
 #endregion
 
+
+
 var app = builder.Build();
+
+app.MapGet("/api/games", async (string q, GameService service) =>
+{
+    return await service.SearchGames(q);
+});
 
 #region Middleware
 
