@@ -3,7 +3,6 @@ using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
 using Microsoft.OpenApi.Models;
@@ -12,6 +11,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 #region Services
+builder.Services.AddControllers();
 
 builder.Services.AddSingleton<CharacterService>();
 
@@ -83,8 +83,8 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
 
@@ -104,21 +104,8 @@ app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
 #endregion
 
-#region Routes
-
-app.MapGet("/api/characters", (CharacterService service) =>
-{
-    return service.GetAll();
-});
-
-app.MapGet("/api/secure", [Authorize] () =>
-{
-    return "You are authenticated";
-});
-
-#endregion
+app.MapControllers();
 
 app.Run();
