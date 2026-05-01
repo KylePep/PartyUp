@@ -1,19 +1,39 @@
 import { useEffect, useState } from "react";
+import { getGames, type Game } from "./api/endpoints/games";
+import { GameGrid } from "./components/GameGrid";
+import './App.css'
 
 function App() {
-  // const [message, setMessage] = useState("");
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   fetch("https://dragonball-api.com/api/characters/1")
-  //     .then(res => res.text())
-  //     .then(setMessage);
-  // }, []);
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        const data = await getGames();
+        setGames(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadGames();
+  }, []);
 
   return (
-    <section>
+    <main>
       <h1>Party Up</h1>
+
       <div>Let's party</div>
-    </section>
+
+      {loading ? (
+        <div>Loading games...</div>
+      ) : (
+        <GameGrid games={games} />
+      )}
+    </main>
   );
 }
 
