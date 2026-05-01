@@ -73,4 +73,53 @@ public class CharacterService : ICharacterService
     .ToListAsync();
   }
 
+  public async Task<bool> UpdateCharacterAsync(
+    Guid userId,
+    Guid userGameId,
+    Guid characterId,
+    UpdateCharacterRequest request)
+  {
+    var character = await _db.Characters
+        .Include(c => c.UserGame)
+        .FirstOrDefaultAsync(c =>
+            c.Id == characterId &&
+            c.UserGameId == userGameId &&
+            c.UserGame.UserId == userId);
+
+    if (character == null)
+      return false;
+
+    character.Name = request.Name;
+    character.Nickname = request.Nickname;
+    character.Description = request.Description;
+    character.PlayStyle = request.PlayStyle;
+
+    await _db.SaveChangesAsync();
+
+    return true;
+  }
+
+  public async Task<bool> DeleteCharacterAsync(
+      Guid userId,
+      Guid userGameId,
+      Guid characterId)
+  {
+    var character = await _db.Characters
+        .Include(c => c.UserGame)
+        .FirstOrDefaultAsync(c =>
+            c.Id == characterId &&
+            c.UserGameId == userGameId &&
+            c.UserGame.UserId == userId);
+
+    if (character == null)
+      return false;
+
+    _db.Characters.Remove(character);
+
+    await _db.SaveChangesAsync();
+
+    return true;
+  }
+
+
 }
