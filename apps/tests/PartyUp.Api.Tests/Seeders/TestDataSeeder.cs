@@ -1,4 +1,7 @@
 using PartyUp.Api.Infrastructure.Data;
+using PartyUp.Api.Tests.Factories;
+
+namespace PartyUp.Api.Tests.Seeders;
 
 public class TestDataSeeder
 {

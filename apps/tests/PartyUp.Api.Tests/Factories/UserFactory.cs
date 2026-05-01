@@ -1,18 +1,16 @@
 using PartyUp.Api.Models;
 
+namespace PartyUp.Api.Tests.Factories;
+
 public static class UserFactory
 {
-  private static int _counter = 1;
-
-  public static User Create()
+  public static User Create(
+    string username = "testuser")
   {
-    var id = _counter++;
-
     return new User
     {
-      Id = Guid.NewGuid(),
-      PasswordHash = $"user{id}password",
-      Username = $"user{id}"
+      Username = username,
+      PasswordHash = "hash"
     };
   }
 }

@@ -1,5 +1,7 @@
 using PartyUp.Api.Models;
 
+namespace PartyUp.Api.Tests.Factories;
+
 public static class CharacterFactory
 {
   public static Character Create(UserGame userGame, string name = null)

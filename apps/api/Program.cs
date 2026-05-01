@@ -114,7 +114,6 @@ app.MapGet("/api/health", () =>
     });
 });
 
-
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();

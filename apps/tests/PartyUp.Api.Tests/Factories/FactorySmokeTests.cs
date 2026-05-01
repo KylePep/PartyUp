@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PartyUp.Api.Infrastructure.Data;
-using PartyUp.Api.Tests.Factories;
+
+namespace PartyUp.Api.Tests.Factories;
 
 public class FactorySmokeTests : IClassFixture<ApiFactory>
 {

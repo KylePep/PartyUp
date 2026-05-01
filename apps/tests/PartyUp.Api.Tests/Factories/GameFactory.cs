@@ -1,5 +1,7 @@
 using PartyUp.Api.Models;
 
+namespace PartyUp.Api.Tests.Factories;
+
 public static class GameFactory
 {
   private static int _counter = 1000;

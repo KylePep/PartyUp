@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using PartyUp.Api.Infrastructure.Data;
 
+namespace PartyUp.Api.Tests.Factories;
+
 public class TestDbFactory
 {
   private readonly IServiceScopeFactory _scopeFactory;
