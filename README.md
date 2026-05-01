@@ -23,7 +23,7 @@ If two players express interest in each other, they match and can connect to pla
 - **Backend:** ASP.NET Core Web API
 - **ORM:** Entity Framework Core
 - **Database:** SQL Server (or PostgreSQL)
-- **Frontend (planned):** React + TypeScript
+- **Frontend:** React + TypeScript
 - **External APIs:** Steam Web API (optional)
 
 ---

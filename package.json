@@ -6,7 +6,9 @@
 
     "dev:web": "npm run dev --prefix apps/web",
 
-    "dev:api": "dotnet watch run --project apps/api/Partyup.Api.csproj"
+    "dev:api": "dotnet watch run --project apps/api/Partyup.Api.csproj",
+
+    "dev:seed": "dotnet run --project apps/tools/PartyUp.SeedRunner -- A"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"
