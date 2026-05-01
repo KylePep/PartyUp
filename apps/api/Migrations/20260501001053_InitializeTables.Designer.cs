@@ -12,8 +12,8 @@ using PartyUp.Api.Infrastructure.Data;
 namespace PartyUp.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260430195007_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260501001053_InitializeTables")]
+    partial class InitializeTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,13 +25,43 @@ namespace PartyUp.Api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("PartyUp.Api.Domain.Models.Game", b =>
+            modelBuilder.Entity("PartyUp.Api.Models.Character", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nickname")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PlayStyle")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserGameId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserGameId");
+
+                    b.ToTable("Characters");
+                });
+
+            modelBuilder.Entity("PartyUp.Api.Models.Game", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<int>("ExternalId")
                         .HasColumnType("integer");
@@ -48,7 +78,7 @@ namespace PartyUp.Api.Migrations
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("PartyUp.Api.Domain.Models.User", b =>
+            modelBuilder.Entity("PartyUp.Api.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,20 +97,17 @@ namespace PartyUp.Api.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PartyUp.Api.Domain.Models.UserGame", b =>
+            modelBuilder.Entity("PartyUp.Api.Models.UserGame", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("GameId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -89,9 +116,20 @@ namespace PartyUp.Api.Migrations
                     b.ToTable("UserGames");
                 });
 
-            modelBuilder.Entity("PartyUp.Api.Domain.Models.UserGame", b =>
+            modelBuilder.Entity("PartyUp.Api.Models.Character", b =>
                 {
-                    b.HasOne("PartyUp.Api.Domain.Models.Game", "Game")
+                    b.HasOne("PartyUp.Api.Models.UserGame", "UserGame")
+                        .WithMany()
+                        .HasForeignKey("UserGameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserGame");
+                });
+
+            modelBuilder.Entity("PartyUp.Api.Models.UserGame", b =>
+                {
+                    b.HasOne("PartyUp.Api.Models.Game", "Game")
                         .WithMany()
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)

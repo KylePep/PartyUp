@@ -3,6 +3,8 @@ using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.Character;
 
+namespace PartyUp.Api.Services;
+
 public class CharacterService : ICharacterService
 {
   private readonly AppDbContext _db;
