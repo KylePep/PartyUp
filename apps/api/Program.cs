@@ -106,6 +106,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapGet("/api/health", () =>
+{
+    return Results.Ok(new
+    {
+        status = "healthy"
+    });
+});
+
+
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
@@ -115,3 +124,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
