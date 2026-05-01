@@ -41,4 +41,23 @@ public class UserGameService : IUserGameService
       .Select(ug => ug.Game)
       .ToListAsync();
   }
+
+  public async Task<bool> DeleteUserGame(
+    Guid id,
+    Guid userId
+  )
+  {
+    var userGame = await _db.UserGames
+      .FirstOrDefaultAsync(ug =>
+        ug.Id == id &&
+        ug.UserId == userId
+      );
+
+    if (userGame == null)
+      return false;
+
+    _db.UserGames.Remove(userGame);
+
+    return true;
+  }
 }
