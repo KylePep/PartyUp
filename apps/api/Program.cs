@@ -14,16 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 #region Services
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<CharacterService>();
-
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddHttpClient<RawgClient>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
+builder.Services.AddScoped<ICharacterService, CharacterService>();
+
 
 #endregion
 

@@ -7,6 +7,8 @@ export type Game = {
   imageUrl: string;
 };
 
-export function getGames() {
-  return apiGet<Game[]>("/games");
+export function getGames(genres?: string) {
+  const query = genres ? `?${genres}` : "";
+
+  return apiGet<Game[]>(`/games${query}`);
 }

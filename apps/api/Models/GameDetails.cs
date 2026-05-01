@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace PartyUp.Api.Domain.Models;
+namespace PartyUp.Api.Models;
 
 public class GameDetails
 {

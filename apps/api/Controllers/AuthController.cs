@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PartyUp.Api.Models.DTOs.Auth;
 
 [ApiController]
 [Route("api/auth")]

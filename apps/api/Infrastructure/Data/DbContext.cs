@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PartyUp.Api.Domain.Models;
+using PartyUp.Api.Models;
 
 namespace PartyUp.Api.Infrastructure.Data
 {
@@ -14,5 +14,6 @@ namespace PartyUp.Api.Infrastructure.Data
     public DbSet<User> Users { get; set; }
     public DbSet<Game> Games { get; set; }
     public DbSet<UserGame> UserGames { get; set; }
+    public DbSet<Character> Characters { get; set; }
   }
 }
