@@ -23,6 +23,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
+builder.Services.AddScoped<ICharacterMatchService, CharacterMatchService>();
+
 
 
 #endregion
