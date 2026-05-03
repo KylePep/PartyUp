@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyUp.Api.Models.DTOs.Auth;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/auth")]
@@ -32,5 +34,18 @@ public class AuthController : ControllerBase
       return Unauthorized();
 
     return Ok(new { token });
+  }
+
+  [Authorize]
+  [HttpGet("me")]
+  public IActionResult Me()
+  {
+    var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var username = User.FindFirstValue(ClaimTypes.Name);
+
+    if (id == null || username == null)
+      return Unauthorized();
+
+    return Ok(new { id, username });
   }
 }

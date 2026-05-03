@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import { getGames, type PagedGames } from "../api/endpoints/games";
 import { GameGrid } from "../components/GameGrid";
 
@@ -7,26 +8,34 @@ const MMO_GENRE_ID = 59;
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const username = localStorage.getItem("username") ?? "Adventurer";
+  const auth = useAuth();
 
   const [query, setQuery] = useState("");
   const [mmoOnly, setMmoOnly] = useState(true);
   const [page, setPage] = useState(1);
-
   const [result, setResult] = useState<PagedGames | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [gamesLoading, setGamesLoading] = useState(false);
+  const [gamesError, setGamesError] = useState<string | null>(null);
 
-  // Debounce search query — resets page to 1 on change
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
+  // Games only fetch once the token has been confirmed valid
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      navigate("/");
-      return;
-    }
-  }, [navigate]);
+    if (auth.status !== "authenticated") return;
+
+    setGamesLoading(true);
+    setGamesError(null);
+
+    getGames({
+      q: debouncedQuery || undefined,
+      page,
+      genres: mmoOnly ? [MMO_GENRE_ID] : undefined,
+    })
+      .then(setResult)
+      .catch(() => setGamesError("Could not load games. Is the API running?"))
+      .finally(() => setGamesLoading(false));
+  }, [debouncedQuery, page, mmoOnly, auth.status]);
 
   function handleQueryChange(value: string) {
     setQuery(value);
@@ -40,27 +49,57 @@ export default function HomePage() {
     setPage(1);
   }
 
-  // Fetch whenever search params change
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-
-    getGames({
-      q: debouncedQuery || undefined,
-      page,
-      genres: mmoOnly ? [MMO_GENRE_ID] : undefined,
-    })
-      .then(setResult)
-      .catch(() => setError("Could not load games. Is the API running?"))
-      .finally(() => setLoading(false));
-  }, [debouncedQuery, page, mmoOnly]);
-
   function signOut() {
     localStorage.removeItem("token");
     localStorage.removeItem("username");
     navigate("/");
   }
 
+  // ── Auth loading — validating token against the backend ──
+  if (auth.status === "loading") {
+    return (
+      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+        <p className="font-display text-brand-muted text-sm tracking-[0.3em] uppercase">
+          Verifying your session...
+        </p>
+      </div>
+    );
+  }
+
+  // ── API unreachable — token exists but backend is down ──
+  if (auth.status === "unreachable") {
+    return (
+      <div className="min-h-screen bg-brand-bg flex items-center justify-center px-6">
+        <div className="text-center max-w-sm">
+          <div className="h-px w-16 bg-brand-gold/40 mx-auto mb-8" />
+          <p className="font-display text-brand-gold text-lg tracking-wide mb-3">
+            Server Unreachable
+          </p>
+          <p className="text-brand-muted text-sm leading-relaxed mb-8">
+            The API could not be reached. Check that the backend is running, then try again.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => window.location.reload()}
+              className="border border-brand-border text-brand-muted text-sm px-6 py-2.5 hover:border-brand-gold/60 hover:text-brand-gold transition-colors duration-200 font-display tracking-wider"
+            >
+              Retry
+            </button>
+            <button
+              onClick={signOut}
+              className="border border-brand-border text-brand-muted text-sm px-6 py-2.5 hover:border-brand-gold/60 hover:text-brand-gold transition-colors duration-200 font-display tracking-wider"
+            >
+              Sign Out
+            </button>
+          </div>
+          <div className="h-px w-16 bg-brand-gold/40 mx-auto mt-8" />
+        </div>
+      </div>
+    );
+  }
+
+  // ── Authenticated ──
+  const { username } = auth.user;
   const totalPages = result?.totalPages ?? 1;
 
   return (
@@ -105,7 +144,6 @@ export default function HomePage() {
 
         {/* ── Search & Filter bar ── */}
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
-          {/* Search input */}
           <div className="relative flex-1">
             <svg
               className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-muted pointer-events-none"
@@ -133,7 +171,6 @@ export default function HomePage() {
             />
           </div>
 
-          {/* MMO toggle */}
           <button
             onClick={handleMmoToggle}
             aria-pressed={mmoOnly}
@@ -143,7 +180,6 @@ export default function HomePage() {
                 : "bg-transparent border-brand-border text-brand-muted hover:border-brand-gold/60 hover:text-brand-gold"
             }`}
           >
-            {/* Indicator dot */}
             <span
               className={`w-2 h-2 rotate-45 inline-block transition-colors duration-200 ${
                 mmoOnly ? "bg-brand-gold" : "bg-brand-border"
@@ -154,7 +190,7 @@ export default function HomePage() {
         </div>
 
         {/* Result count */}
-        {!loading && !error && result && (
+        {!gamesLoading && !gamesError && result && (
           <p className="text-brand-muted text-xs mb-6 font-display tracking-wide">
             {result.totalCount.toLocaleString()} game
             {result.totalCount !== 1 ? "s" : ""} found
@@ -163,20 +199,20 @@ export default function HomePage() {
         )}
 
         {/* Game list */}
-        {loading && (
+        {gamesLoading && (
           <p className="text-brand-muted text-sm py-12 text-center">
             Searching the realms...
           </p>
         )}
-        {error && (
+        {gamesError && (
           <p className="text-brand-crimson text-sm border border-brand-crimson/30 bg-brand-crimson/10 px-4 py-3 inline-block">
-            {error}
+            {gamesError}
           </p>
         )}
-        {!loading && !error && <GameGrid games={result?.games ?? []} />}
+        {!gamesLoading && !gamesError && <GameGrid games={result?.games ?? []} />}
 
         {/* ── Pagination ── */}
-        {!loading && !error && totalPages > 1 && (
+        {!gamesLoading && !gamesError && totalPages > 1 && (
           <div className="flex items-center justify-center gap-6 mt-12">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -184,18 +220,7 @@ export default function HomePage() {
               aria-label="Previous page"
               className="flex items-center gap-2 px-5 py-2.5 border border-brand-border text-brand-muted text-sm font-display tracking-wider hover:border-brand-gold/60 hover:text-brand-gold transition-colors duration-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-brand-border disabled:hover:text-brand-muted"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
               Prev
@@ -214,18 +239,7 @@ export default function HomePage() {
               className="flex items-center gap-2 px-5 py-2.5 border border-brand-border text-brand-muted text-sm font-display tracking-wider hover:border-brand-gold/60 hover:text-brand-gold transition-colors duration-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-brand-border disabled:hover:text-brand-muted"
             >
               Next
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
             </button>
