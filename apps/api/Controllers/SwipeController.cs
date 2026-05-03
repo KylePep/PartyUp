@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/character-matches")]
-public class CharacterMatchController : ControllerBase
+[Route("api/swipes")]
+public class SwipeController : ControllerBase
 {
   private readonly ICharacterMatchService _service;
 
-  public CharacterMatchController(ICharacterMatchService service)
+  public SwipeController(ICharacterMatchService service)
   {
     _service = service;
   }
 
-  [HttpPost("swipe")]
+  [HttpPost]
   public async Task<ActionResult<MatchResponse>> Swipe(SwipeRequest request)
   {
     var result = await _service.SwipeAsync(request);
