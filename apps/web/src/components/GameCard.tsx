@@ -1,4 +1,5 @@
 import type { Game } from "../api/endpoints/games";
+import { CornerAccents } from "./CornerAccents";
 
 type Props = {
   game: Game;
@@ -7,9 +8,7 @@ type Props = {
 export function GameCard({ game }: Props) {
   return (
     <article className="bg-brand-surface border border-brand-border group hover:border-brand-gold/40 transition-colors duration-300 relative overflow-hidden flex flex-col">
-      {/* Corner accents */}
-      <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-brand-gold/40 z-10" />
-      <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-brand-gold/40 z-10" />
+      <CornerAccents />
 
       {game.imageUrl && (
         <div className="overflow-hidden">
@@ -21,7 +20,6 @@ export function GameCard({ game }: Props) {
         </div>
       )}
 
-      {/* Bottom gradient overlay on image */}
       <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-t from-brand-surface via-transparent to-transparent pointer-events-none" />
 
       <div className="p-5 flex flex-col gap-2 relative z-10">
