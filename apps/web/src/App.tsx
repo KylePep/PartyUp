@@ -1,64 +1,15 @@
-import { useEffect, useState } from "react";
-import { getGames, type Game } from "./api/endpoints/games";
-import { GameGrid } from "./components/GameGrid";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+import HomePage from "./pages/HomePage";
 import "./App.css";
 
-const MMO_GENRE_ID = 59;
-
-function App() {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // MMO starts enabled
-  const [mmoEnabled, setMmoEnabled] = useState(true);
-
-  useEffect(() => {
-    async function loadGames() {
-      setLoading(true);
-
-      try {
-        const genreQuery = mmoEnabled
-          ? `genres=${MMO_GENRE_ID}`
-          : "";
-
-        const data = await getGames(genreQuery);
-
-        setGames(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadGames();
-  }, [mmoEnabled]);
-
+export default function App() {
   return (
-    <main>
-      <h1>Party Up</h1>
-
-      <div>Let's party</div>
-
-      <section className="filters">
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={mmoEnabled}
-            onChange={() => setMmoEnabled((prev) => !prev)}
-          />
-
-          MMO Only
-        </label>
-      </section>
-
-      {loading ? (
-        <div>Loading games...</div>
-      ) : (
-        <GameGrid games={games} />
-      )}
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/home" element={<HomePage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

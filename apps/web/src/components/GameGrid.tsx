@@ -7,14 +7,18 @@ type Props = {
 
 export function GameGrid({ games }: Props) {
   if (!games.length) {
-    return <div>No games found.</div>;
+    return (
+      <p className="text-brand-muted text-sm text-center py-12">
+        No games found.
+      </p>
+    );
   }
 
   return (
-    <section className="game-grid">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
       {games.map((game) => (
         <GameCard key={game.id} game={game} />
       ))}
-    </section>
+    </div>
   );
 }
