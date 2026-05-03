@@ -15,5 +15,7 @@ namespace PartyUp.Api.Infrastructure.Data
     public DbSet<Game> Games { get; set; }
     public DbSet<UserGame> UserGames { get; set; }
     public DbSet<Character> Characters { get; set; }
+    public DbSet<CharacterInteraction> CharacterInteractions { get; set; }
+    public DbSet<CharacterMatch> CharacterMatches { get; set; }
   }
 }
