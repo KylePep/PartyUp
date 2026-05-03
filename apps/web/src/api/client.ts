@@ -7,6 +7,15 @@ export class UnauthorizedError extends Error {
   }
 }
 
+export class HttpError extends Error {
+  readonly status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
 function authHeaders(): Record<string, string> {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -28,7 +37,7 @@ export async function apiGet<T>(url: string): Promise<T> {
   }
 
   if (!res.ok) {
-    throw new Error(`API error: ${res.status}`);
+    throw new HttpError(res.status, `API error: ${res.status}`);
   }
 
   return res.json();
@@ -48,7 +57,7 @@ export async function apiPost<T>(url: string, body: unknown): Promise<T> {
 
   if (!res.ok) {
     const message = await res.text().catch(() => `API error: ${res.status}`);
-    throw new Error(message || `API error: ${res.status}`);
+    throw new HttpError(res.status, message || `API error: ${res.status}`);
   }
 
   return res.json();

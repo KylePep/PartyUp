@@ -3,11 +3,15 @@ import { CornerAccents } from "./CornerAccents";
 
 type Props = {
   game: Game;
+  onSelect?: (game: Game) => void;
 };
 
-export function GameCard({ game }: Props) {
+export function GameCard({ game, onSelect }: Props) {
   return (
-    <article className="bg-brand-surface border border-brand-border group hover:border-brand-gold/40 transition-colors duration-300 relative overflow-hidden flex flex-col">
+    <article
+      onClick={() => onSelect?.(game)}
+      className={`bg-brand-surface border border-brand-border group hover:border-brand-gold/40 transition-colors duration-300 relative overflow-hidden flex flex-col${onSelect ? " cursor-pointer" : ""}`}
+    >
       <CornerAccents />
 
       {game.imageUrl && (

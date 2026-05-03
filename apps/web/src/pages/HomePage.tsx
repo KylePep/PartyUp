@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { getGames, type PagedGames } from "../api/endpoints/games";
+import { getGames, type Game, type PagedGames } from "../api/endpoints/games";
+import { addUserGame } from "../api/endpoints/userGames";
+import { HttpError } from "../api/client";
 import { NavBar } from "../components/NavBar";
 import { SectionHeader } from "../components/SectionHeader";
 import { Footer } from "../components/Footer";
@@ -9,6 +11,7 @@ import { GameGrid } from "../components/GameGrid";
 import { GameSearchControls } from "../components/GameSearchControls";
 import { Pagination } from "../components/Pagination";
 import { FullScreenStatus } from "../components/FullScreenStatus";
+import { GameSelectModal, type AddState } from "../components/GameSelectModal";
 
 const MMO_GENRE_ID = 59;
 
@@ -26,8 +29,9 @@ export default function HomePage() {
   const [page, setPage] = useState(1);
   const [gamesState, setGamesState] = useState<GamesState>({ status: "loading" });
 
-  // Track whether the text query changed so we can debounce only typing,
-  // not page/toggle changes which should fetch immediately.
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [addState, setAddState] = useState<AddState>("idle");
+
   const prevQueryRef = useRef(query);
 
   useEffect(() => {
@@ -73,6 +77,35 @@ export default function HomePage() {
   function handleMmoToggle() {
     setMmoOnly((prev) => !prev);
     setPage(1);
+  }
+
+  function handleGameSelect(game: Game) {
+    setSelectedGame(game);
+    setAddState("idle");
+  }
+
+  function handleModalClose() {
+    setSelectedGame(null);
+    setAddState("idle");
+  }
+
+  async function handleAddConfirm() {
+    if (!selectedGame) return;
+    setAddState("loading");
+    try {
+      await addUserGame({
+        externalId: selectedGame.externalId,
+        name: selectedGame.name,
+        imageUrl: selectedGame.imageUrl ?? null,
+      });
+      setAddState("success");
+    } catch (err: unknown) {
+      if (err instanceof HttpError && err.status === 409) {
+        setAddState("conflict");
+      } else {
+        setAddState("error");
+      }
+    }
   }
 
   function signOut() {
@@ -153,7 +186,9 @@ export default function HomePage() {
               {gamesState.message}
             </p>
           )}
-          {successData && <GameGrid games={successData.games} />}
+          {successData && (
+            <GameGrid games={successData.games} onSelect={handleGameSelect} />
+          )}
         </div>
 
         {successData && (
@@ -167,6 +202,15 @@ export default function HomePage() {
       </main>
 
       <Footer />
+
+      {selectedGame && (
+        <GameSelectModal
+          game={selectedGame}
+          addState={addState}
+          onConfirm={handleAddConfirm}
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 }
