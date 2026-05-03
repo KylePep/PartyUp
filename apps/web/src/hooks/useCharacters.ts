@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCharacters, Character } from "../api/endpoints/characters";
+import { getCharacters, type Character } from "../api/endpoints/characters";
 
 export function useCharacters() {
   const [data, setData] = useState<Character[]>([]);
