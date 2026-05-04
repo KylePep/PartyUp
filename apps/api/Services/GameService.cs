@@ -19,6 +19,7 @@ public class GameService : IGameService
 
     var games = response.Results.Select(g => new Game
     {
+      Id = Guid.NewGuid(),
       ExternalId = g.Id,
       Name = g.Name,
       ImageUrl = g.Background_Image

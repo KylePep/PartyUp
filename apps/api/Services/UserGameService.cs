@@ -44,12 +44,11 @@ public class UserGameService : IUserGameService
     return true;
   }
 
-  public async Task<List<Game>> GetUserGames(Guid userId)
+  public async Task<List<UserGame>> GetUserGames(Guid userId)
   {
     return await _db.UserGames
       .Where(ug => ug.UserId == userId)
       .Include(ug => ug.Game)
-      .Select(ug => ug.Game)
       .ToListAsync();
   }
 

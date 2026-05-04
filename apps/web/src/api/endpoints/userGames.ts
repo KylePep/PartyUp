@@ -1,4 +1,4 @@
-import { apiGet, apiPost } from "../client";
+import { apiDelete, apiGet, apiPost } from "../client";
 import type { Game } from "./games";
 
 export type AddUserGamePayload = {
@@ -7,10 +7,21 @@ export type AddUserGamePayload = {
   imageUrl: string | null;
 };
 
-export function addUserGame(payload: AddUserGamePayload): Promise<object> {
-  return apiPost<object>("/user-games", payload);
+export type UserGame = {
+  id: string;
+  userId: string;
+  gameId: string;
+  game: Game;
 }
 
-export function getUserGames(): Promise<Game[]> {
-  return apiGet<Game[]>("/user-games");
+export function addUserGame(payload: AddUserGamePayload): Promise<UserGame> {
+  return apiPost<UserGame>("/user-games", payload);
+}
+
+export function getUserGames(): Promise<UserGame[]> {
+  return apiGet<UserGame[]>("/user-games");
+}
+
+export function deleteUserGame(id: string): Promise<void>{
+  return apiDelete<void>(`/user-games/${id}`)
 }

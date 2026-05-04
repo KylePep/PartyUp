@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { getGames, type Game, type PagedGames } from "../api/endpoints/games";
-import { addUserGame } from "../api/endpoints/userGames";
+import { addUserGame, deleteUserGame, type UserGame } from "../api/endpoints/userGames";
 import { HttpError } from "../api/client";
 import { NavBar } from "../components/NavBar";
 import { SectionHeader } from "../components/SectionHeader";
@@ -12,6 +12,8 @@ import { GameSearchControls } from "../components/GameSearchControls";
 import { Pagination } from "../components/Pagination";
 import { FullScreenStatus } from "../components/FullScreenStatus";
 import { GameSelectModal, type AddState } from "../components/GameSelectModal";
+import { useUserGames } from "../hooks/useUserGame";
+import { UserGameSelectModal } from "../components/UserGameSelectModal";
 
 const MMO_GENRE_ID = 59;
 
@@ -23,14 +25,19 @@ type GamesState =
 export default function HomePage() {
   const navigate = useNavigate();
   const auth = useAuth();
+  const userGames = useUserGames()
+  const userGamesData = userGames.status === "success" ? userGames.games : [];
 
   const [query, setQuery] = useState("");
   const [mmoOnly, setMmoOnly] = useState(true);
   const [page, setPage] = useState(1);
   const [gamesState, setGamesState] = useState<GamesState>({ status: "loading" });
 
+
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [selectedUserGame, setSelectedUserGame] = useState<UserGame | null>(null);
   const [addState, setAddState] = useState<AddState>("idle");
+  const [deleteState, setDeleteState] = useState<AddState>("idle");
 
   const prevQueryRef = useRef(query);
 
@@ -84,8 +91,14 @@ export default function HomePage() {
     setAddState("idle");
   }
 
+  function handleUserGameSelect(userGame: UserGame) {
+    setSelectedUserGame(userGame);
+    setAddState("idle");
+  }
+
   function handleModalClose() {
     setSelectedGame(null);
+    setSelectedUserGame(null);
     setAddState("idle");
   }
 
@@ -93,11 +106,12 @@ export default function HomePage() {
     if (!selectedGame) return;
     setAddState("loading");
     try {
-      await addUserGame({
+      const userGame = await addUserGame({
         externalId: selectedGame.externalId,
         name: selectedGame.name,
         imageUrl: selectedGame.imageUrl ?? null,
       });
+      userGames.addUserGame(userGame);
       setAddState("success");
     } catch (err: unknown) {
       if (err instanceof HttpError && err.status === 409) {
@@ -106,6 +120,27 @@ export default function HomePage() {
         setAddState("error");
       }
     }
+  }
+
+  async function handleDelete() {
+    if (!selectedUserGame) return;
+    setDeleteState("loading");
+    try {
+      await deleteUserGame(selectedUserGame.id);
+
+      userGames.removeGame(selectedUserGame);
+      setDeleteState("success");
+    } catch (err: unknown) {
+      if (err instanceof HttpError && err.status === 409) {
+        setDeleteState("conflict");
+      } else {
+        setDeleteState("error");
+      }
+    }
+  }
+
+  async function handleUserGameActivate(gameId: string) {
+    navigate(`/realm/${gameId}`);
   }
 
   function signOut() {
@@ -153,9 +188,26 @@ export default function HomePage() {
       />
 
       <main className="flex-1 px-8 py-12 max-w-7xl mx-auto w-full">
+
         <SectionHeader
           overline="Choose Your Realm"
           heading="Your Games"
+          as="h1"
+          className="mb-10"
+        />
+        <div className="mb-10">
+          {userGamesData.length > 0 ? (
+            <GameGrid items={userGamesData} getGame={(ug) => ug.game} onSelect={handleUserGameSelect} />
+          ) : (
+            <p>No games added yet.</p>
+          )}
+        </div>
+
+
+
+        <SectionHeader
+          overline="Find A Realm"
+          heading="Choose A Game"
           as="h1"
           className="mb-10"
         />
@@ -187,7 +239,7 @@ export default function HomePage() {
             </p>
           )}
           {successData && (
-            <GameGrid games={successData.games} onSelect={handleGameSelect} />
+            <GameGrid items={successData.games} getGame={(g) => g} onSelect={handleGameSelect} />
           )}
         </div>
 
@@ -208,6 +260,16 @@ export default function HomePage() {
           game={selectedGame}
           addState={addState}
           onConfirm={handleAddConfirm}
+          onClose={handleModalClose}
+        />
+      )}
+
+      {selectedUserGame && (
+        <UserGameSelectModal
+          userGame={selectedUserGame}
+          deleteState={deleteState}
+          onConfirm={() => handleUserGameActivate(selectedUserGame.gameId)}
+          onDelete={handleDelete}
           onClose={handleModalClose}
         />
       )}
