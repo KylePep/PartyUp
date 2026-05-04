@@ -1,9 +1,11 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs.UserGame;
 
 [ApiController]
 [Route("api/user-games")]
+[Authorize]
 public class UserGamesController : ControllerBase
 {
   private readonly IUserGameService _service;
@@ -14,19 +16,22 @@ public class UserGamesController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<IActionResult> AddGame([FromBody] Game game)
+  public async Task<IActionResult> AddGame([FromBody] AddUserGameRequest request)
   {
-    var userId = new Guid();
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    await _service.AddGameToUser(userId, game);
+    var added = await _service.AddGameToUser(userId, request);
 
-    return Ok();
+    if (!added)
+      return Conflict(new { message = "Game already in your collection." });
+
+    return Ok(new { });
   }
 
   [HttpGet]
   public async Task<IActionResult> GetUserGames()
   {
-    var userId = new Guid();
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     var games = await _service.GetUserGames(userId);
 
     return Ok(games);
@@ -37,10 +42,7 @@ public class UserGamesController : ControllerBase
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    var deleted = await _service.DeleteUserGame(
-      id,
-      userId
-    );
+    var deleted = await _service.DeleteUserGame(id, userId);
 
     if (!deleted)
       return NotFound();
