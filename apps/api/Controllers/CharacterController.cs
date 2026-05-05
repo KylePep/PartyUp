@@ -7,11 +7,11 @@ using PartyUp.Api.Models.DTOs.Character;
 [ApiController]
 [Route("api/usergames/{userGameId:guid}/characters")]
 [Authorize]
-public class CharactersController : ControllerBase
+public class UserGameCharactersController : ControllerBase
 {
   private readonly ICharacterService _characterService;
 
-  public CharactersController(ICharacterService characterService)
+  public UserGameCharactersController(ICharacterService characterService)
   {
     _characterService = characterService;
   }

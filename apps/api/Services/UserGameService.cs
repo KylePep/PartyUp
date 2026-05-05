@@ -12,7 +12,7 @@ public class UserGameService : IUserGameService
     _db = db;
   }
 
-  public async Task<bool> AddGameToUser(Guid userId, AddUserGameRequest request)
+  public async Task<UserGame> AddGameToUser(Guid userId, AddUserGameRequest request)
   {
     var existingGame = await _db.Games
       .FirstOrDefaultAsync(g => g.ExternalId == request.ExternalId);
@@ -33,15 +33,19 @@ public class UserGameService : IUserGameService
       .AnyAsync(ug => ug.UserId == userId && ug.GameId == existingGame.Id);
 
     if (alreadyAdded)
-      return false;
+      throw new InvalidOperationException("Game already added.");
 
-    _db.UserGames.Add(new UserGame
+    var userGame = new UserGame
     {
       UserId = userId,
-      GameId = existingGame.Id
-    });
+      GameId = existingGame.Id,
+      Game = existingGame
+    };
+
+    _db.UserGames.Add(userGame);
     await _db.SaveChangesAsync();
-    return true;
+
+    return userGame;
   }
 
   public async Task<List<UserGame>> GetUserGames(Guid userId)

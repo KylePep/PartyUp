@@ -20,12 +20,9 @@ public class UserGamesController : ControllerBase
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    var added = await _service.AddGameToUser(userId, request);
+    var userGame = await _service.AddGameToUser(userId, request);
 
-    if (!added)
-      return Conflict(new { message = "Game already in your collection." });
-
-    return Ok(new { });
+    return Ok(userGame);
   }
 
   [HttpGet]
