@@ -1,12 +1,13 @@
 namespace PartyUp.Api.Models.DTOs.Character;
 
-public class CreateCharacterRequest
+public class DiscoverCharacterResponse
 {
+  public Guid Id { get; set; }
   public string Name { get; set; } = default!;
-  public string? Nickname { get; set; }
   public string? Bio { get; set; }
   public string? Playstyle { get; set; }
   public string? Rank { get; set; }
   public string? Region { get; set; }
-  public Guid UserGameId { get; set; }
+  public string? GameName { get; set; }
+  public string? GameImageUrl { get; set; }
 }
