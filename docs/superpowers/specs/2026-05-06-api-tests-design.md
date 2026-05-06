@@ -78,9 +78,13 @@ All test classes inherit `TestBase` and declare `IClassFixture<ApiFactory>`.
 
 ## Test Data Strategy
 
-- **Games**: seeded directly into the DB via `GameFactory` + `IServiceScopeFactory` (no RAWG API call needed)
+- **Games**: not pre-seeded. `AddUserGameRequest` accepts `ExternalId/Name/ImageUrl` directly — `UserGameService` creates the game record internally. Character and interaction tests that need a UserGame ID should POST to `/api/user-games` first.
 - **Users**: created via HTTP (`POST /api/auth/register`) so they have valid password hashes and JWT tokens
-- **UserGames, Characters, Interactions**: created via HTTP where possible (tests the endpoints); seeded directly via factories only when needed as preconditions for other tests (e.g. setting up the "other user's" character for a discover test)
+- **UserGames, Characters, Interactions**: created via HTTP wherever possible; seeded directly via factories only when needed as preconditions (e.g. setting up the "other user's" character for a discover or ownership test)
+
+## Known Issues to Fix During Implementation
+
+- **`AuthTests.cs` field name bug**: the existing test sends `passwordHash` but `RegisterRequest` uses `Password`. The test currently sends null for the password field. Fix field name to `password` when extending the test class.
 
 ## Total Test Count
 
