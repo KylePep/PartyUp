@@ -1,4 +1,4 @@
-public class SwipeRequest
+public class CharacterInteractionRequest
 {
   public Guid FromCharacterId { get; set; }
   public Guid ToCharacterId { get; set; }
