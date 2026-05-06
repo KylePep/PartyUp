@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { FullScreenStatus } from "../components/FullScreenStatus";
-import { NavBar } from "../components/NavBar";
-import { Footer } from "../components/Footer";
-import { SwipeCard } from "../components/SwipeCard";
-import { useAuth } from "../hooks/useAuth";
+import { useSignedInLayout } from "../components/layout/SignedInLayout";
 import { useUserGames } from "../hooks/useUserGame";
 import {
   getCharacters,
@@ -13,14 +9,13 @@ import {
   type Character,
   type DiscoverCharacter,
 } from "../api/endpoints/characters";
-import { GameBanner } from "../components/GameBanner";
-import { MatchBanner } from "../components/MatchBanner";
-import { SignOutButton } from "../components/SignOutButton";
+import { GameBanner } from "../components/ui/GameBanner";
+import { MatchBanner } from "../components/ui/MatchBanner";
+import { SwipeCard } from "../components/cards/SwipeCard";
 
 export default function RealmPage() {
-
   const { gameId } = useParams<{ gameId: string }>();
-  const auth = useAuth();
+  const { setNavExtra } = useSignedInLayout();
   const userGamesHook = useUserGames();
 
   const [myCharacter, setMyCharacter] = useState<Character | null | "loading">("loading");
@@ -33,9 +28,19 @@ export default function RealmPage() {
       ? userGamesHook.games.find((g) => g.gameId === gameId) ?? null
       : null;
 
-  // Load user's character for this realm
   useEffect(() => {
-    if (auth.status !== "authenticated") return;
+    setNavExtra(
+      <Link
+        to="/home"
+        className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
+      >
+        ← Hub
+      </Link>
+    );
+    return () => setNavExtra(null);
+  }, [setNavExtra]);
+
+  useEffect(() => {
     if (!userGame) return;
 
     getCharacters()
@@ -44,11 +49,9 @@ export default function RealmPage() {
         setMyCharacter(mine);
       })
       .catch(() => setMyCharacter(null));
-  }, [auth.status, userGame?.id]);
+  }, [userGame?.id]);
 
-  // Load characters to discover
   useEffect(() => {
-    if (auth.status !== "authenticated") return;
     if (!gameId) return;
 
     discoverCharacters(gameId)
@@ -59,7 +62,7 @@ export default function RealmPage() {
       .catch(() => {
         setDiscoverStatus("unavailable");
       });
-  }, [auth.status, gameId]);
+  }, [gameId]);
 
   async function handleLike() {
     const current = discoverQueue[0];
@@ -89,40 +92,10 @@ export default function RealmPage() {
     if (discoverQueue.length <= 1) setDiscoverStatus("empty");
   }
 
-  if (auth.status === "loading") return <FullScreenStatus type="loading" />;
-  if (auth.status === "unreachable") {
-    return (
-      <FullScreenStatus type="unreachable" onRetry={() => window.location.reload()} />
-    );
-  }
-
-  const { username } = auth.user;
-
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col" style={{ fontFamily: "Inter, sans-serif" }}>
-      <NavBar
-        rightSlot={
-          <>
-            <Link
-              to="/home"
-              className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
-            >
-              ← Hub
-            </Link>
-            <span className="font-mono text-[11px] text-brand-muted tracking-widest uppercase hidden sm:block">
-              {username}
-            </span>
-            <SignOutButton />
-          </>
-        }
-      />
+    <>
+      {matchBanner && <MatchBanner />}
 
-      {/* Match banner */}
-      {matchBanner && (
-        <MatchBanner />
-      )}
-
-      {/* Game banner */}
       <GameBanner game={userGame} />
 
       <main className="flex-1 px-6 md:px-10 py-10 max-w-7xl mx-auto w-full">
@@ -277,8 +250,6 @@ export default function RealmPage() {
           </section>
         </div>
       </main>
-
-      <Footer />
-    </div>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { NavBar } from "../components/NavBar";
-import { Footer } from "../components/Footer";
-import AuthModal from "../components/AuthModal";
+import { NavBar } from "../components/layout/NavBar";
+import { Footer } from "../components/layout/Footer";
+import AuthModal from "../components/modals/AuthModal";
 
 type ModalMode = "sign-in" | "sign-up";
 

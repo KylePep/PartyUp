@@ -1,19 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 import { getGames, type Game, type PagedGames } from "../api/endpoints/games";
 import { addUserGame, deleteUserGame, type UserGame } from "../api/endpoints/userGames";
 import { HttpError } from "../api/client";
-import { NavBar } from "../components/NavBar";
-import { Footer } from "../components/Footer";
-import { GameGrid } from "../components/GameGrid";
-import { GameSearchControls } from "../components/GameSearchControls";
-import { Pagination } from "../components/Pagination";
-import { FullScreenStatus } from "../components/FullScreenStatus";
-import { GameSelectModal, type AddState } from "../components/GameSelectModal";
+import { GameGrid } from "../components/ui/GameGrid";
+import { GameSearchControls } from "../components/forms/GameSearchControls";
+import { Pagination } from "../components/ui/Pagination";
+import { GameSelectModal, type AddState } from "../components/modals/GameSelectModal";
 import { useUserGames } from "../hooks/useUserGame";
-import { UserGameSelectModal } from "../components/UserGameSelectModal";
-import { RealmCard } from "../components/RealmCard";
+import { UserGameSelectModal } from "../components/modals/UserGameSelectModal";
+import { RealmCard } from "../components/cards/RealmCard";
 
 const MMO_GENRE_ID = 59;
 
@@ -42,7 +39,6 @@ export default function HomePage() {
   const prevQueryRef = useRef(query);
 
   useEffect(() => {
-    if (auth.status !== "authenticated") return;
     if (!showSearch) return;
 
     const queryChanged = prevQueryRef.current !== query;
@@ -66,7 +62,7 @@ export default function HomePage() {
     );
 
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [query, page, mmoOnly, auth.status, showSearch]);
+  }, [query, page, mmoOnly, showSearch]);
 
   function handleQueryChange(value: string) { setQuery(value); setPage(1); }
   function handleMmoToggle() { setMmoOnly((p) => !p); setPage(1); }
@@ -105,40 +101,11 @@ export default function HomePage() {
     }
   }
 
-  function signOut() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    navigate("/");
-  }
-
-  if (auth.status === "loading") return <FullScreenStatus type="loading" />;
-  if (auth.status === "unreachable") {
-    return (
-      <FullScreenStatus type="unreachable" onRetry={() => window.location.reload()} onSignOut={signOut} />
-    );
-  }
-
-  const { username } = auth.user;
+  const username = auth.status === "authenticated" ? auth.user.username : "";
   const successData = gamesState.status === "success" ? gamesState.data : null;
 
   return (
-    <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col" style={{ fontFamily: "Inter, sans-serif" }}>
-      <NavBar
-        rightSlot={
-          <>
-            <span className="font-mono text-[11px] text-brand-muted tracking-widest uppercase hidden sm:block">
-              {username}
-            </span>
-            <button
-              onClick={signOut}
-              className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
-            >
-              Sign Out
-            </button>
-          </>
-        }
-      />
-
+    <>
       <main className="flex-1 px-6 md:px-10 py-12 max-w-7xl mx-auto w-full">
 
         {/* Header */}
@@ -264,8 +231,6 @@ export default function HomePage() {
         )}
       </main>
 
-      <Footer />
-
       {selectedGame && (
         <GameSelectModal
           game={selectedGame}
@@ -284,6 +249,6 @@ export default function HomePage() {
           onClose={handleModalClose}
         />
       )}
-    </div>
+    </>
   );
 }
