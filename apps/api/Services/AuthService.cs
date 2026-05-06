@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using PartyUp.Api.Models;
 using PartyUp.Api.Infrastructure.Data;
 
-public class AuthService
+public class AuthService : IAuthService
 {
   private readonly AppDbContext _context;
 

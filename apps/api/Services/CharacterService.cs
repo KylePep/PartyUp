@@ -31,8 +31,8 @@ public class CharacterService : ICharacterService
       UserGameId = userGameId,
       Name = request.Name,
       Nickname = request.Nickname,
-      Description = request.Bio,
-      PlayStyle = request.Playstyle,
+      Bio = request.Bio,
+      Playstyle = request.Playstyle,
       Rank = request.Rank,
       Region = request.Region,
     };
@@ -100,8 +100,8 @@ public class CharacterService : ICharacterService
       {
         Id = c.Id,
         Name = c.Name,
-        Bio = c.Description,
-        Playstyle = c.PlayStyle,
+        Bio = c.Bio,
+        Playstyle = c.Playstyle,
         Rank = c.Rank,
         Region = c.Region,
         GameName = c.UserGame.Game.Name,
@@ -128,8 +128,8 @@ public class CharacterService : ICharacterService
 
     character.Name = request.Name;
     character.Nickname = request.Nickname;
-    character.Description = request.Bio;
-    character.PlayStyle = request.Playstyle;
+    character.Bio = request.Bio;
+    character.Playstyle = request.Playstyle;
     character.Rank = request.Rank;
     character.Region = request.Region;
 
@@ -163,10 +163,10 @@ public class CharacterService : ICharacterService
     UserGameId = c.UserGameId,
     Name = c.Name,
     Nickname = c.Nickname,
-    Bio = c.Description,
-    Playstyle = c.PlayStyle,
+    Bio = c.Bio,
+    Playstyle = c.Playstyle,
     Rank = c.Rank,
     Region = c.Region,
-    CreatedAt = c.CreateAt,
+    CreatedAt = c.CreatedAt,
   };
 }

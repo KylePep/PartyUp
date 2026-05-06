@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.UserGame;
 
 [ApiController]
@@ -19,10 +20,8 @@ public class UserGamesController : ControllerBase
   public async Task<IActionResult> AddGame([FromBody] AddUserGameRequest request)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
     var userGame = await _service.AddGameToUser(userId, request);
-
-    return Ok(userGame);
+    return Ok(ToResponse(userGame));
   }
 
   [HttpGet]
@@ -30,20 +29,25 @@ public class UserGamesController : ControllerBase
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     var games = await _service.GetUserGames(userId);
-
-    return Ok(games);
+    return Ok(games.Select(ToResponse));
   }
 
   [HttpDelete("{id}")]
   public async Task<IActionResult> DeleteUserGame(Guid id)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
     var deleted = await _service.DeleteUserGame(id, userId);
-
     if (!deleted)
       return NotFound();
-
     return NoContent();
   }
+
+  private static UserGameResponse ToResponse(UserGame ug) => new()
+  {
+    Id = ug.Id,
+    UserId = ug.UserId,
+    GameId = ug.GameId,
+    GameName = ug.Game.Name,
+    GameImageUrl = ug.Game.ImageUrl
+  };
 }

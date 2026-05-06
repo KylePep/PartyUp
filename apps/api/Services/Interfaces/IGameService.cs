@@ -1,4 +1,4 @@
-using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs.Game;
 
 public interface IGameService
 {

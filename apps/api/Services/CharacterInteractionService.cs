@@ -2,16 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 
-public class CharacterMatchService : ICharacterMatchService
+public class CharacterInteractionService : ICharacterInteractionService
 {
   private readonly AppDbContext _db;
 
-  public CharacterMatchService(AppDbContext db)
+  public CharacterInteractionService(AppDbContext db)
   {
     _db = db;
   }
 
-  public async Task<MatchResponse> SwipeAsync(SwipeRequest request)
+  public async Task<MatchResponse> RecordInteractionAsync(CharacterInteractionRequest request)
   {
     if (request.FromCharacterId == request.ToCharacterId)
       throw new InvalidOperationException("Cannot interact with self");
@@ -29,33 +29,23 @@ public class CharacterMatchService : ICharacterMatchService
     await _db.SaveChangesAsync();
 
     if (!request.IsLike)
-    {
-      return new MatchResponse
-      {
-        IsMatch = false
-      };
-    }
+      return new MatchResponse { IsMatch = false };
 
     var reverseLikeExists = await _db.CharacterInteractions
-    .AnyAsync(x =>
-      x.FromCharacterId == request.ToCharacterId &&
-      x.ToCharacterId == request.FromCharacterId &&
-      x.Type == InteractionType.Like);
+      .AnyAsync(x =>
+        x.FromCharacterId == request.ToCharacterId &&
+        x.ToCharacterId == request.FromCharacterId &&
+        x.Type == InteractionType.Like);
 
     if (!reverseLikeExists)
-    {
-      return new MatchResponse
-      {
-        IsMatch = false
-      };
-    }
+      return new MatchResponse { IsMatch = false };
 
     var (aId, bId) = Order(request.FromCharacterId, request.ToCharacterId);
 
     var existingMatch = await _db.CharacterMatches
-        .FirstOrDefaultAsync(m =>
-            m.CharacterAId == aId &&
-            m.CharacterBId == bId);
+      .FirstOrDefaultAsync(m =>
+        m.CharacterAId == aId &&
+        m.CharacterBId == bId);
 
     if (existingMatch != null)
     {
@@ -88,8 +78,8 @@ public class CharacterMatchService : ICharacterMatchService
       CharacterBId = bId,
       MatchedAt = match.MatchedAt
     };
-
   }
+
   private static (Guid, Guid) Order(Guid a, Guid b)
-  => a.CompareTo(b) < 0 ? (a, b) : (b, a);
+    => a.CompareTo(b) < 0 ? (a, b) : (b, a);
 }
