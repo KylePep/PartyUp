@@ -38,8 +38,8 @@ export function discoverCharacters(gameId: string) {
   return apiGet<DiscoverCharacter[]>(`/characters/discover?gameId=${gameId}`);
 }
 
-export function interactWithCharacter(characterId: string, type: InteractionType) {
-  return apiPost<void>("/character-interactions", { characterId, type });
+export function interactWithCharacter(fromCharacterId: string, toCharacterId: string, type: InteractionType) {
+  return apiPost<void>("/character-interactions", {fromCharacterId, toCharacterId, type });
 }
 
 export function getMatches() {

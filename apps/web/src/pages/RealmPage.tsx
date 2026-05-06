@@ -67,8 +67,9 @@ export default function RealmPage() {
   async function handleLike() {
     const current = discoverQueue[0];
     if (!current) return;
+    if (myCharacter === "loading" || myCharacter === null) return;
     try {
-      await interactWithCharacter(current.id, "Like");
+      await interactWithCharacter(myCharacter.id, current.id, "Like");
       setMatchBanner(true);
       setTimeout(() => setMatchBanner(false), 2500);
     } catch {
@@ -78,7 +79,17 @@ export default function RealmPage() {
     if (discoverQueue.length <= 1) setDiscoverStatus("empty");
   }
 
-  function handleDislike() {
+  async function handleDislike() {
+    const current = discoverQueue[0];
+    if (!current) return;
+    if (myCharacter === "loading" || myCharacter === null) return;
+    try {
+      await interactWithCharacter(myCharacter.id, current.id, "Dislike");
+      setMatchBanner(true);
+      setTimeout(() => setMatchBanner(false), 2500);
+    } catch {
+      // interaction may fail gracefully
+    }
     setDiscoverQueue((q) => q.slice(1));
     if (discoverQueue.length <= 1) setDiscoverStatus("empty");
   }
@@ -91,7 +102,7 @@ export default function RealmPage() {
   }
 
   const { username } = auth.user;
-  const game = userGame?.game ?? null;
+  const game = userGame ?? null;
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col" style={{ fontFamily: "Inter, sans-serif" }}>
@@ -132,8 +143,8 @@ export default function RealmPage() {
 
       {/* Game banner */}
       <div className="relative h-48 overflow-hidden shrink-0">
-        {game?.imageUrl ? (
-          <img src={game.imageUrl} alt={game.name} className="w-full h-full object-cover opacity-30" />
+        {game?.gameImageUrl ? (
+          <img src={game.gameImageUrl} alt={game.gameName} className="w-full h-full object-cover opacity-30" />
         ) : (
           <div className="w-full h-full" style={{ background: "linear-gradient(135deg, rgba(0,229,255,0.08), rgba(255,0,128,0.08))" }} />
         )}
@@ -146,7 +157,7 @@ export default function RealmPage() {
             <span className="font-mono text-brand-neon text-xs tracking-[0.4em] uppercase">Realm</span>
           </div>
           <h1 className="font-display font-black text-3xl md:text-4xl text-brand-text uppercase tracking-wide">
-            {game?.name ?? "Loading..."}
+            {game?.gameName ?? "Loading..."}
           </h1>
         </div>
       </div>

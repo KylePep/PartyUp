@@ -14,7 +14,7 @@ public class CharacterInteractionController : ControllerBase
   }
 
   [HttpPost]
-  public async Task<ActionResult<MatchResponse>> RecordInteraction(CharacterInteractionRequest request)
+  public async Task<ActionResult<MatchResponse>> RecordInteraction([FromBody] CharacterInteractionRequest request)
   {
     var result = await _service.RecordInteractionAsync(request);
     return Ok(result);

@@ -23,7 +23,7 @@ export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete
   }, [onClose]);
 
   const done = deleteState === "success" || deleteState === "conflict";
-  const game = userGame.game
+  const game = userGame
 
   function handleDeleteClick() {
     const confirmed = window.confirm(
@@ -46,11 +46,11 @@ export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete
       <div className="bg-brand-surface border border-brand-border w-full overflow-hidden">
         <CornerAccents />
 
-        {game.imageUrl && (
+        {game.gameImageUrl && (
           <div className="relative overflow-hidden">
             <img
-              src={game.imageUrl}
-              alt={game.name}
+              src={game.gameImageUrl}
+              alt={game.gameName}
               className="w-full h-44 object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-brand-surface via-transparent to-transparent" />
@@ -60,7 +60,7 @@ export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete
         <div className="p-6 flex flex-col gap-4">
           <div>
             <h2 className="font-display text-brand-text text-base leading-snug">
-              {game.name}
+              {game.gameName}
             </h2>
             <p className="text-brand-muted text-xs mt-1 font-display tracking-wide">
               Proceed with this realm?
