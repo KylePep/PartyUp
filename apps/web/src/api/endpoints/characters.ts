@@ -24,6 +24,15 @@ export type DiscoverCharacter = Character & {
   gameImageUrl?: string;
 };
 
+export type MatchResponse = {
+  
+characterAId : string;
+characterBId : string;
+isMatch : false;
+matchId : string;
+matchedAt : Date;
+}
+
 export type InteractionType = "Like" | "Dislike";
 
 export function getCharacters() {
@@ -39,7 +48,7 @@ export function discoverCharacters(gameId: string) {
 }
 
 export function interactWithCharacter(fromCharacterId: string, toCharacterId: string, type: InteractionType) {
-  return apiPost<void>("/character-interactions", {fromCharacterId, toCharacterId, type });
+  return apiPost<MatchResponse>("/character-interactions", {fromCharacterId, toCharacterId, type });
 }
 
 export function getMatches() {

@@ -69,8 +69,8 @@ export default function RealmPage() {
     if (!current) return;
     if (myCharacter === "loading" || myCharacter === null) return;
     try {
-      await interactWithCharacter(myCharacter.id, current.id, "Like");
-      setMatchBanner(true);
+      const matchResponse = await interactWithCharacter(myCharacter.id, current.id, "Like");
+      setMatchBanner(matchResponse.isMatch);
       setTimeout(() => setMatchBanner(false), 2500);
     } catch {
       // interaction may fail gracefully
@@ -85,8 +85,6 @@ export default function RealmPage() {
     if (myCharacter === "loading" || myCharacter === null) return;
     try {
       await interactWithCharacter(myCharacter.id, current.id, "Dislike");
-      setMatchBanner(true);
-      setTimeout(() => setMatchBanner(false), 2500);
     } catch {
       // interaction may fail gracefully
     }

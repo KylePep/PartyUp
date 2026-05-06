@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
@@ -6,23 +5,14 @@ using PartyUp.Api.Models;
 public class CharacterInteractionService : ICharacterInteractionService
 {
   private readonly AppDbContext _db;
-  private readonly ILogger<CharacterInteractionService> _logger;
 
-  public CharacterInteractionService(AppDbContext db, ILogger<CharacterInteractionService> logger)
+  public CharacterInteractionService(AppDbContext db)
   {
     _db = db;
-    _logger = logger;
   }
 
   public async Task<MatchResponse> RecordInteractionAsync(CharacterInteractionRequest request)
   {
-    _logger.LogInformation("Request Banana: {@Request}", request);
-    _logger.LogInformation(
-        "RecordInteractionAsync Banana request: From={FromCharacterId}, To={ToCharacterId}, Type={Type}",
-        request.FromCharacterId,
-        request.ToCharacterId,
-        request.Type
-    );
     if (request.FromCharacterId == request.ToCharacterId)
       throw new InvalidOperationException("Cannot interact with self");
 
