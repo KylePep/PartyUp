@@ -71,7 +71,7 @@ export default function HomePage() {
   function handleQueryChange(value: string) { setQuery(value); setPage(1); }
   function handleMmoToggle() { setMmoOnly((p) => !p); setPage(1); }
   function handleGameSelect(game: Game) { setSelectedGame(game); setAddState("idle"); }
-  function handleUserGameSelect(userGame: UserGame) { setSelectedUserGame(userGame); setAddState("idle"); }
+  function handleUserGameSelect(userGame: UserGame) { setSelectedUserGame(userGame); setDeleteState("idle"); }
   function handleModalClose() { setSelectedGame(null); setSelectedUserGame(null); setAddState("idle"); }
 
   async function handleAddConfirm() {
