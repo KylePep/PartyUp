@@ -1,4 +1,5 @@
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs.Game;
 using PartyUp.Api.Infrastructure.Clients;
 
 namespace PartyUp.Api.Services;
@@ -37,7 +38,6 @@ public class GameService : IGameService
   public async Task<GameDetails?> GetGameById(int id)
   {
     var rawgGame = await _rawg.GetGameById(id);
-
     if (rawgGame == null)
       return null;
 
