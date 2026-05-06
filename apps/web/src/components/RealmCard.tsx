@@ -6,7 +6,6 @@ interface Props {
 }
 
 export function RealmCard({ userGame, onClick }: Props) {
-  const { game } = userGame;
 
   return (
     <button
@@ -16,10 +15,10 @@ export function RealmCard({ userGame, onClick }: Props) {
     >
       {/* Game art */}
       <div className="relative h-40 overflow-hidden">
-        {game.imageUrl ? (
+        {userGame.gameImageUrl ? (
           <img
-            src={game.imageUrl}
-            alt={game.name}
+            src={userGame.gameImageUrl}
+            alt={userGame.gameName}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         ) : (
@@ -40,7 +39,7 @@ export function RealmCard({ userGame, onClick }: Props) {
           Realm
         </div>
         <h3 className="font-display font-bold text-brand-text text-sm uppercase tracking-wide truncate">
-          {game.name}
+          {userGame.gameName}
         </h3>
       </div>
 

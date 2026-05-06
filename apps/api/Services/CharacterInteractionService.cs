@@ -21,14 +21,14 @@ public class CharacterInteractionService : ICharacterInteractionService
       Id = Guid.NewGuid(),
       FromCharacterId = request.FromCharacterId,
       ToCharacterId = request.ToCharacterId,
-      Type = request.IsLike ? InteractionType.Like : InteractionType.Dislike,
+      Type = request.Type,
       CreatedAt = DateTime.UtcNow
     };
 
     _db.CharacterInteractions.Add(interaction);
     await _db.SaveChangesAsync();
 
-    if (!request.IsLike)
+    if (request.Type == InteractionType.Dislike)
       return new MatchResponse { IsMatch = false };
 
     var reverseLikeExists = await _db.CharacterInteractions

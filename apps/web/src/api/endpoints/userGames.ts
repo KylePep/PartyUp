@@ -1,5 +1,4 @@
 import { apiDelete, apiGet, apiPost } from "../client";
-import type { Game } from "./games";
 
 export type AddUserGamePayload = {
   externalId: number;
@@ -11,7 +10,8 @@ export type UserGame = {
   id: string;
   userId: string;
   gameId: string;
-  game: Game;
+  gameName: string;
+  gameImageUrl: string;
 }
 
 export function addUserGame(payload: AddUserGamePayload): Promise<UserGame> {
