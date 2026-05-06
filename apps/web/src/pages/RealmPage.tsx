@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { FullScreenStatus } from "../components/FullScreenStatus";
 import { NavBar } from "../components/NavBar";
 import { Footer } from "../components/Footer";
@@ -13,9 +13,12 @@ import {
   type Character,
   type DiscoverCharacter,
 } from "../api/endpoints/characters";
+import { GameBanner } from "../components/GameBanner";
+import { MatchBanner } from "../components/MatchBanner";
+import { SignOutButton } from "../components/SignOutButton";
 
 export default function RealmPage() {
-  const navigate = useNavigate();
+
   const { gameId } = useParams<{ gameId: string }>();
   const auth = useAuth();
   const userGamesHook = useUserGames();
@@ -58,12 +61,6 @@ export default function RealmPage() {
       });
   }, [auth.status, gameId]);
 
-  function signOut() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    navigate("/");
-  }
-
   async function handleLike() {
     const current = discoverQueue[0];
     if (!current) return;
@@ -95,12 +92,11 @@ export default function RealmPage() {
   if (auth.status === "loading") return <FullScreenStatus type="loading" />;
   if (auth.status === "unreachable") {
     return (
-      <FullScreenStatus type="unreachable" onRetry={() => window.location.reload()} onSignOut={signOut} />
+      <FullScreenStatus type="unreachable" onRetry={() => window.location.reload()} />
     );
   }
 
   const { username } = auth.user;
-  const game = userGame ?? null;
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text flex flex-col" style={{ fontFamily: "Inter, sans-serif" }}>
@@ -116,49 +112,18 @@ export default function RealmPage() {
             <span className="font-mono text-[11px] text-brand-muted tracking-widest uppercase hidden sm:block">
               {username}
             </span>
-            <button
-              onClick={signOut}
-              className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
-            >
-              Sign Out
-            </button>
+            <SignOutButton />
           </>
         }
       />
 
       {/* Match banner */}
       {matchBanner && (
-        <div
-          className="fixed top-0 left-0 right-0 z-50 py-4 text-center font-display font-black text-xl uppercase tracking-widest"
-          style={{
-            background: "linear-gradient(135deg, #ff0080, #7c3aed)",
-            boxShadow: "0 0 40px rgba(255,0,128,0.5)",
-          }}
-        >
-          ♡ It's a Match!
-        </div>
+        <MatchBanner />
       )}
 
       {/* Game banner */}
-      <div className="relative h-48 overflow-hidden shrink-0">
-        {game?.gameImageUrl ? (
-          <img src={game.gameImageUrl} alt={game.gameName} className="w-full h-full object-cover opacity-30" />
-        ) : (
-          <div className="w-full h-full" style={{ background: "linear-gradient(135deg, rgba(0,229,255,0.08), rgba(255,0,128,0.08))" }} />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-brand-bg" />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-bg/60 to-transparent" />
-
-        <div className="absolute bottom-6 left-6 md:left-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-px w-6 bg-brand-neon" />
-            <span className="font-mono text-brand-neon text-xs tracking-[0.4em] uppercase">Realm</span>
-          </div>
-          <h1 className="font-display font-black text-3xl md:text-4xl text-brand-text uppercase tracking-wide">
-            {game?.gameName ?? "Loading..."}
-          </h1>
-        </div>
-      </div>
+      <GameBanner game={userGame} />
 
       <main className="flex-1 px-6 md:px-10 py-10 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">

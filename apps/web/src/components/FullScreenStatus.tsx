@@ -1,8 +1,17 @@
+import { useNavigate } from "react-router-dom";
+
 type Props =
   | { type: "loading" }
-  | { type: "unreachable"; onRetry: () => void; onSignOut: () => void };
+  | { type: "unreachable"; onRetry: () => void; };
 
 export function FullScreenStatus(props: Props) {
+  const navigate = useNavigate();
+
+  function signOut() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    navigate("/");
+  }
   return (
     <div className="min-h-screen bg-brand-bg flex items-center justify-center px-6">
       {props.type === "loading" ? (
@@ -26,7 +35,7 @@ export function FullScreenStatus(props: Props) {
               Retry
             </button>
             <button
-              onClick={props.onSignOut}
+              onClick={signOut}
               className="border border-brand-border text-brand-muted text-sm px-6 py-2.5 hover:border-brand-gold/60 hover:text-brand-gold transition-colors duration-200 font-display tracking-wider"
             >
               Sign Out

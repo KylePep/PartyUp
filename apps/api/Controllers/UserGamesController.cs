@@ -20,8 +20,15 @@ public class UserGamesController : ControllerBase
   public async Task<IActionResult> AddGame([FromBody] AddUserGameRequest request)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    var userGame = await _service.AddGameToUser(userId, request);
-    return Ok(ToResponse(userGame));
+    try
+    {
+      var userGame = await _service.AddGameToUser(userId, request);
+      return Ok(ToResponse(userGame));
+    }
+    catch (InvalidOperationException ex)
+    {
+      return Conflict(new { message = ex.Message });
+    }
   }
 
   [HttpGet]
