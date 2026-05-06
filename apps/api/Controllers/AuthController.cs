@@ -15,25 +15,24 @@ public class AuthController : ControllerBase
   }
 
   [HttpPost("register")]
-  public async Task<IActionResult> Register(RegisterRequest request)
+  public async Task<IActionResult> Register(RegisterRequest request, IConfiguration config)
   {
     var user = await _auth.Register(request.Username, request.Password);
-
     if (user == null)
       return BadRequest("Username already exists");
 
-    return Ok(user);
+    var token = await _auth.Login(request.Username, request.Password, config);
+    return Ok(new AuthResponse { Token = token!, Username = user.Username });
   }
 
   [HttpPost("login")]
   public async Task<IActionResult> Login(LoginRequest request, IConfiguration config)
   {
     var token = await _auth.Login(request.Username, request.Password, config);
-
     if (token == null)
       return Unauthorized();
 
-    return Ok(new { token });
+    return Ok(new AuthResponse { Token = token, Username = request.Username });
   }
 
   [Authorize]
