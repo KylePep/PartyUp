@@ -1,32 +1,28 @@
 using System.Data.Common;
-using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Respawn;
+using TestFactories = PartyUp.Api.Tests.Factories;
 
 namespace PartyUp.Api.Tests.Infrastructure;
 
 public static class DatabaseReset
 {
-  private static Respawner? _respawner;
-  private static DbConnection? _connection;
+    private static Respawner? _respawner;
+    private static DbConnection? _connection;
 
-  public static async Task ResetAsync(IServiceProvider services)
-  {
-    if (_connection == null)
+    public static async Task ResetAsync()
     {
-      var connectionString =
-        "Host=localhost;Port=5432;Database=partyup_test;Username=postgres;Password=postgres";
+        if (_connection == null)
+        {
+            _connection = new NpgsqlConnection(TestFactories.ApiFactory.TestConnectionString);
+            await _connection.OpenAsync();
 
-      _connection = new NpgsqlConnection(connectionString);
+            _respawner = await Respawner.CreateAsync(_connection, new RespawnerOptions
+            {
+                DbAdapter = DbAdapter.Postgres
+            });
+        }
 
-      await _connection.OpenAsync();
-
-      _respawner = await Respawner.CreateAsync(_connection, new RespawnerOptions
-      {
-        DbAdapter = DbAdapter.Postgres
-      });
+        await _respawner!.ResetAsync(_connection);
     }
-
-    await _respawner!.ResetAsync(_connection);
-  }
 }
