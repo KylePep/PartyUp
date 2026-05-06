@@ -1,34 +1,71 @@
+using System.Net;
 using System.Net.Http.Json;
+using FluentAssertions;
 using PartyUp.Api.Tests.Factories;
+using PartyUp.Api.Tests.Infrastructure;
 
-public class AuthTests : IClassFixture<ApiFactory>
+namespace PartyUp.Api.Tests.Features.Auth;
+
+public class AuthTests : TestBase, IClassFixture<ApiFactory>
 {
-  private readonly HttpClient _client;
+    public AuthTests(ApiFactory factory) : base(factory) { }
 
-  public AuthTests(ApiFactory factory)
-  {
-    _client = factory.CreateClient();
-  }
-
-  [Fact]
-  public async Task Register_then_login_should_return_success()
-  {
-    var register = new
+    [Fact]
+    public async Task Register_ReturnsToken()
     {
-      username = "testuser",
-      passwordHash = "Password123!"
-    };
+        var response = await Client.PostAsJsonAsync("/api/auth/register", new
+        {
+            username = "testuser",
+            password = "Password123!"
+        });
 
-    var regResponse = await _client.PostAsJsonAsync("/api/auth/register", register);
-    regResponse.EnsureSuccessStatusCode();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var auth = await response.Content.ReadFromJsonAsync<AuthResult>();
+        auth!.Token.Should().NotBeNullOrEmpty();
+    }
 
-    var login = new
+    [Fact]
+    public async Task Login_WithWrongPassword_Returns401()
     {
-      username = "testuser",
-      passwordHash = "Password123!"
-    };
+        await Client.PostAsJsonAsync("/api/auth/register", new
+        {
+            username = "testuser",
+            password = "Password123!"
+        });
 
-    var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", login);
-    loginResponse.EnsureSuccessStatusCode();
-  }
+        var response = await Client.PostAsJsonAsync("/api/auth/login", new
+        {
+            username = "testuser",
+            password = "WrongPassword!"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Register_WithDuplicateUsername_ReturnsBadRequest()
+    {
+        await Client.PostAsJsonAsync("/api/auth/register", new
+        {
+            username = "dupeuser",
+            password = "Password123!"
+        });
+
+        var response = await Client.PostAsJsonAsync("/api/auth/register", new
+        {
+            username = "dupeuser",
+            password = "Password123!"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Me_WithoutAuth_Returns401()
+    {
+        var response = await Client.GetAsync("/api/auth/me");
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    private record AuthResult(string Token, string Username);
 }
