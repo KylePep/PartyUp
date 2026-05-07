@@ -8,16 +8,21 @@ type AuthState =
   | { status: "unreachable" }
   | { status: "unauthenticated" };
 
-const AuthContext = createContext<AuthState | null>(null);
+type AuthContextValue = {
+  state: AuthState;
+  login: (username: string, token: string) => Promise<void>;
+  logout: () => void;
+};
+
+const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({ status: "loading" });
+  const [state, setState] = useState<AuthState>(() =>
+    localStorage.getItem("token") ? { status: "loading" } : { status: "unauthenticated" }
+  );
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      setState({ status: "unauthenticated" });
-      return;
-    }
+    if (!localStorage.getItem("token")) return;
     getMe()
       .then((user) => setState({ status: "authenticated", user }))
       .catch((err) => {
@@ -29,10 +34,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  return <AuthContext.Provider value={state}>{children}</AuthContext.Provider>;
+  async function login(username: string, token: string) {
+    localStorage.setItem("username", username);
+    localStorage.setItem("token", token);
+    try {
+      const user = await getMe();
+      setState({ status: "authenticated", user });
+    } catch (err) {
+      localStorage.removeItem("username");
+      localStorage.removeItem("token");
+      throw err;
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    setState({ status: "unauthenticated" });
+  }
+
+  return (
+    <AuthContext.Provider value={{ state, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
-export function useAuth(): AuthState {
+export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;

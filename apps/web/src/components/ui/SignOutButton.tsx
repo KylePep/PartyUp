@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export function SignOutButton() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   function signOut() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
+    logout();
     navigate("/");
   }
 

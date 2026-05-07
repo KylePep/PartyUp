@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, register } from "../../api/endpoints/auth";
+import { useAuth } from "../../context/AuthContext";
 import { Modal } from "./Modal";
 
 type Mode = "sign-in" | "sign-up";
@@ -19,6 +20,7 @@ export default function AuthModal({ initialMode, onClose }: Props) {
   const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
+  const { login: loginToContext } = useAuth();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,17 +31,12 @@ export default function AuthModal({ initialMode, onClose }: Props) {
     try {
       if (mode === "sign-up") {
         await register(username, password);
-
         const token = await login(username, password);
-
-        localStorage.setItem("token", token);
+        await loginToContext(username, token);
       } else {
         const token = await login(username, password);
-
-        localStorage.setItem("token", token);
+        await loginToContext(username, token);
       }
-
-      localStorage.setItem("username", username);
 
       setSuccess(true);
 
@@ -105,8 +102,8 @@ export default function AuthModal({ initialMode, onClose }: Props) {
                   type="button"
                   onClick={() => switchMode(m)}
                   className={`flex-1 pb-3 text-sm font-body transition-colors ${mode === m
-                      ? "border-b-2 border-brand-gold text-brand-gold -mb-px"
-                      : "text-brand-muted hover:text-brand-text"
+                    ? "border-b-2 border-brand-gold text-brand-gold -mb-px"
+                    : "text-brand-muted hover:text-brand-text"
                     }`}
                 >
                   {m === "sign-in" ? "Sign In" : "Sign Up"}
