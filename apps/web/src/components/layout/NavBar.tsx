@@ -1,9 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 interface Props {
   variant?: "overlay" | "solid";
   rightSlot?: React.ReactNode;
 }
 
 export function NavBar({ variant = "solid", rightSlot }: Props) {
+  const navigate = useNavigate();
   const base = "flex items-center justify-between px-6 md:px-10 z-20";
 
   const variantClass =
@@ -13,7 +16,7 @@ export function NavBar({ variant = "solid", rightSlot }: Props) {
 
   return (
     <nav className={`${base} ${variantClass}`}>
-      <div className="flex items-center gap-2">
+      <button onClick={() => navigate('/home')} className="flex items-center gap-2">
         <span
           className="font-display font-black text-xl tracking-widest uppercase"
           style={{ color: "#00e5ff", textShadow: "0 0 20px rgba(0,229,255,0.5)" }}
@@ -25,7 +28,7 @@ export function NavBar({ variant = "solid", rightSlot }: Props) {
         >
           Up
         </span>
-      </div>
+      </button>
 
       {rightSlot && (
         <div className="flex items-center gap-4">{rightSlot}</div>

@@ -11,7 +11,7 @@ export type SignedInLayoutContext = {
 };
 
 export default function SignedInLayout() {
-  const auth = useAuth();
+  const { state: auth } = useAuth();
   const [navExtra, setNavExtra] = useState<ReactNode>(null);
 
   if (auth.status === "loading") return <FullScreenStatus type="loading" />;

@@ -12,7 +12,7 @@ import { GameSearchSection } from "../components/forms/GameSearchSection";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const auth = useAuth();
+  const { state: auth } = useAuth();
   const userGames = useUserGames();
   const userGamesData = userGames.status === "success" ? userGames.games : [];
 
@@ -56,7 +56,8 @@ export default function HomePage() {
     }
   }
 
-  const username = auth.status === "authenticated" ? auth.user.username : "";
+  if (auth.status !== "authenticated") return null;
+  const { username } = auth.user;
 
   return (
     <>
