@@ -30,6 +30,7 @@ builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<ICharacterInteractionService, CharacterInteractionService>();
+builder.Services.AddScoped<ICharacterMatchService, CharacterMatchService>();
 
 
 

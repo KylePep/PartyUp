@@ -1,42 +1,52 @@
 import { CharacterCard } from "../components/cards/CharacterCard";
 import { useCharacters } from "../hooks/useCharacters";
 import { useUserGames } from "../hooks/useUserGame";
+import { FullScreenStatus } from "../components/layout/FullScreenStatus";
 
 export default function CharactersPage() {
   const { data, loading } = useCharacters();
   const userGamesHook = useUserGames();
 
   const userGames =
-    userGamesHook.status === "success"
-      ? userGamesHook.games
-      : [];
+    userGamesHook.status === "success" ? userGamesHook.games : [];
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <FullScreenStatus type="loading" />;
 
-  // Group characters by userGameId
   const groupedCharacters = data.reduce((groups, character) => {
     const key = character.userGameId ?? "unknown";
-
-    if (!groups[key]) {
-      groups[key] = [];
-    }
-
+    if (!groups[key]) groups[key] = [];
     groups[key].push(character);
-
     return groups;
   }, {} as Record<string, typeof data>);
 
+  const isEmpty = Object.keys(groupedCharacters).length === 0;
+
   return (
-    <div>
+    <div className="px-6 md:px-10 py-10 max-w-7xl mx-auto w-full">
+      <h1
+        className="font-display font-black text-3xl uppercase tracking-widest text-brand-text mb-10"
+        style={{ textShadow: "0 0 30px rgba(0,229,255,0.3)" }}
+      >
+        Characters
+      </h1>
+
+      {isEmpty && (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <p className="font-mono text-brand-muted tracking-widest uppercase text-sm">
+            No characters yet — visit a Realm to create one.
+          </p>
+        </div>
+      )}
+
       {Object.entries(groupedCharacters).map(([userGameId, characters]) => {
         const userGame = userGames.find((ug) => ug.id === userGameId);
-
         return (
-          <div key={userGameId} className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">
-              {userGame?.gameName ?? "Unknown Game"}
-            </h2>
-
+          <div key={userGameId} className="mb-12">
+            <div className="border-b border-brand-border pb-3 mb-6">
+              <h2 className="font-display font-black text-2xl uppercase tracking-wide text-brand-text">
+                {userGame?.gameName ?? "Unknown Game"}
+              </h2>
+            </div>
             <div className="flex flex-wrap gap-4">
               {characters.map((character) => (
                 <CharacterCard

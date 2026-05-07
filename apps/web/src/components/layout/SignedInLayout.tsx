@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Outlet, Navigate, useOutletContext } from "react-router-dom";
+import { Outlet, Navigate, useOutletContext, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { NavBar } from "./NavBar";
 import { Footer } from "./Footer";
@@ -29,6 +29,18 @@ export default function SignedInLayout() {
       <NavBar
         rightSlot={
           <>
+            <Link
+              to="/characters"
+              className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
+            >
+              Characters
+            </Link>
+            <Link
+              to="/matches"
+              className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
+            >
+              Matches
+            </Link>
             {navExtra}
             <span className="font-mono text-[11px] text-brand-muted tracking-widest uppercase hidden sm:block">
               {username}
