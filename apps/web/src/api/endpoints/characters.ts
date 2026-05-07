@@ -51,6 +51,3 @@ export function interactWithCharacter(fromCharacterId: string, toCharacterId: st
   return apiPost<MatchResponse>("/character-interactions", {fromCharacterId, toCharacterId, type });
 }
 
-export function getMatches() {
-  return apiGet<Character[]>("/character-matches");
-}
