@@ -7,6 +7,7 @@ import RealmPage from "./pages/RealmPage";
 import CreateCharacterPage from "./pages/CreateCharacterPage";
 import "./App.css";
 import CharactersPage from "./pages/CharacterPage";
+import MatchesPage from "./pages/MatchesPage";
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
             <Route path="/realm/:gameId" element={<RealmPage />} />
             <Route path="/realm/:gameId/create-character" element={<CreateCharacterPage />} />
             <Route path="/characters" element={<CharactersPage />} />
+            <Route path="/matches" element={<MatchesPage />} />
           </Route>
         </Routes>
       </AuthProvider>
