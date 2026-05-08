@@ -6,10 +6,12 @@ using PartyUp.Api.Infrastructure.Data;
 public class UserGameService : IUserGameService
 {
   private readonly AppDbContext _db;
+  private readonly IGameService _gameService;
 
-  public UserGameService(AppDbContext db)
+  public UserGameService(AppDbContext db, IGameService gameService)
   {
     _db = db;
+    _gameService = gameService;
   }
 
   public async Task<UserGame> AddGameToUser(Guid userId, AddUserGameRequest request)
@@ -27,6 +29,12 @@ public class UserGameService : IUserGameService
       };
       _db.Games.Add(existingGame);
       await _db.SaveChangesAsync();
+    }
+
+    if (existingGame.Description == null)
+    {
+      try { await _gameService.GetAndPersistGameDetails(existingGame); }
+      catch { /* enrichment is best-effort; continue without details */ }
     }
 
     var alreadyAdded = await _db.UserGames
