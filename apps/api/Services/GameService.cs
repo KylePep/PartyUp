@@ -1,17 +1,21 @@
+using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.Game;
 using PartyUp.Api.Infrastructure.Clients;
+using PartyUp.Api.Infrastructure.Data;
 
 namespace PartyUp.Api.Services;
 
 public class GameService : IGameService
 {
   private readonly RawgClient _rawg;
+  private readonly AppDbContext _db;
   private const int PageSize = 20;
 
-  public GameService(RawgClient rawg)
+  public GameService(RawgClient rawg, AppDbContext db)
   {
     _rawg = rawg;
+    _db = db;
   }
 
   public async Task<PagedGamesResult> SearchGames(string q, int page, List<int>? genres, List<string>? tags)
@@ -37,6 +41,11 @@ public class GameService : IGameService
 
   public async Task<GameDetails?> GetGameById(int id)
   {
+    var dbGame = await _db.Games
+      .FirstOrDefaultAsync(g => g.ExternalId == id && g.Description != null);
+    if (dbGame != null)
+      return MapToDetails(dbGame);
+
     var rawgGame = await _rawg.GetGameById(id);
     if (rawgGame == null)
       return null;
@@ -52,4 +61,36 @@ public class GameService : IGameService
       Platforms = rawgGame.Platforms.Select(p => p.Platform.Name).ToList()
     };
   }
+
+  public async Task<GameDetails?> GetGameByDbId(Guid id)
+  {
+    var game = await _db.Games.FindAsync(id);
+    return game == null ? null : MapToDetails(game);
+  }
+
+  public async Task<GameDetails?> GetAndPersistGameDetails(Game game)
+  {
+    var rawgGame = await _rawg.GetGameById(game.ExternalId);
+    if (rawgGame == null)
+      return null;
+
+    game.Description = rawgGame.Description;
+    game.Website = rawgGame.Website;
+    game.Rating = rawgGame.Rating;
+    game.Platforms = rawgGame.Platforms.Select(p => p.Platform.Name).ToList();
+
+    await _db.SaveChangesAsync();
+    return MapToDetails(game);
+  }
+
+  private static GameDetails MapToDetails(Game g) => new()
+  {
+    ExternalId = g.ExternalId,
+    Name = g.Name,
+    Description = g.Description ?? string.Empty,
+    ImageUrl = g.ImageUrl,
+    Website = g.Website,
+    Rating = g.Rating,
+    Platforms = g.Platforms
+  };
 }
