@@ -2,21 +2,41 @@ import { apiGet, apiPost } from "../client";
 
 export type Character = {
   id: string;
+  userGameId?: string;
+  platform: string;
+  platformHandle: string;
   name: string;
+  imageUrl?: string;
   bio?: string;
+  mainRole?: string;
+  secondaryRole?: string;
+  preferredModes: string[];
+  timeZone?: string;
+  activeTimes?: string[];
+  usesVoiceChat?: boolean;
+  languages?: string[];
   playstyle?: string;
   rank?: string;
   region?: string;
-  userGameId?: string;
 };
 
 export type CharacterCreate = {
+  userGameId: string;
+  platform: string;
+  platformHandle: string;
   name: string;
+  imageUrl?: string;
   bio?: string;
+  mainRole?: string;
+  secondaryRole?: string;
+  preferredModes: string[];
+  timeZone?: string;
+  activeTimes?: string[];
+  usesVoiceChat?: boolean;
+  languages?: string[];
   playstyle?: string;
   rank?: string;
   region?: string;
-  userGameId: string;
 };
 
 export type DiscoverCharacter = Character & {
