@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CornerAccents } from "../ui/CornerAccents";
 import { Modal } from "./Modal";
-import type { UserGame } from "../../api/endpoints/userGames";
+import type { UserGame, UserGameDetail } from "../../api/endpoints/userGames";
+import { getUserGameByGameId } from "../../api/endpoints/userGames";
 
 export type DeleteState = "idle" | "loading" | "success" | "conflict" | "error";
 
@@ -14,6 +15,12 @@ type Props = {
 };
 
 export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete, onClose }: Props) {
+  const [details, setDetails] = useState<UserGameDetail | null>(null);
+
+  useEffect(() => {
+    getUserGameByGameId(userGame.gameId).then(setDetails).catch(() => {});
+  }, [userGame.gameId]);
+
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -23,34 +30,23 @@ export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete
   }, [onClose]);
 
   const done = deleteState === "success" || deleteState === "conflict";
-  const game = userGame
 
   function handleDeleteClick() {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this realm?"
-    );
-
+    const confirmed = window.confirm("Are you sure you want to delete this realm?");
     if (!confirmed) return;
-
     onDelete();
   }
 
-
   return (
-    <Modal
-      isOpen
-      onClose={onClose}
-      titleId="select-game-modal-title"
-    >
-
+    <Modal isOpen onClose={onClose} titleId="select-game-modal-title">
       <div className="bg-brand-surface border border-brand-border w-full overflow-hidden">
         <CornerAccents />
 
-        {game.gameImageUrl && (
+        {userGame.gameImageUrl && (
           <div className="relative overflow-hidden">
             <img
-              src={game.gameImageUrl}
-              alt={game.gameName}
+              src={userGame.gameImageUrl}
+              alt={userGame.gameName}
               className="w-full h-44 object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-brand-surface via-transparent to-transparent" />
@@ -60,12 +56,49 @@ export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete
         <div className="p-6 flex flex-col gap-4">
           <div>
             <h2 className="font-display text-brand-text text-base leading-snug">
-              {game.gameName}
+              {userGame.gameName}
             </h2>
             <p className="text-brand-muted text-xs mt-1 font-display tracking-wide">
               Proceed with this realm?
             </p>
           </div>
+
+          {details && (
+            <div className="flex flex-col gap-2">
+              {details.description && (
+                <p className="text-brand-muted text-xs font-display leading-relaxed line-clamp-3">
+                  {details.description}
+                </p>
+              )}
+              {details.rating > 0 && (
+                <p className="text-brand-neon text-xs font-mono tracking-widest">
+                  Rating: {details.rating.toFixed(1)}
+                </p>
+              )}
+              {details.platforms.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {details.platforms.map((p) => (
+                    <span
+                      key={p}
+                      className="text-brand-muted text-xs font-mono border border-brand-border px-2 py-0.5"
+                    >
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {details.website && (
+                <a
+                  href={details.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-neon text-xs font-mono tracking-wide hover:underline"
+                >
+                  {details.website}
+                </a>
+              )}
+            </div>
+          )}
 
           {deleteState === "success" && (
             <p className="text-brand-gold text-xs font-display tracking-wide border border-brand-gold/30 bg-brand-gold/10 px-3 py-2">
