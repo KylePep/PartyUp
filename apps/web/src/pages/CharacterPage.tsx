@@ -2,13 +2,29 @@ import { CharacterCard } from "../components/cards/CharacterCard";
 import { useCharacters } from "../hooks/useCharacters";
 import { useUserGames } from "../hooks/useUserGame";
 import { FullScreenStatus } from "../components/layout/FullScreenStatus";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useSignedInLayout } from "../components/layout/SignedInLayout";
 
 export default function CharactersPage() {
   const { data, loading } = useCharacters();
+  const { setNavExtra } = useSignedInLayout();
   const userGamesHook = useUserGames();
 
   const userGames =
     userGamesHook.status === "success" ? userGamesHook.games : [];
+
+  useEffect(() => {
+    setNavExtra(
+      <Link
+        to="/home"
+        className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
+      >
+        ← Hub
+      </Link>
+    );
+    return () => setNavExtra(null);
+  }, [setNavExtra]);
 
   if (loading) return <FullScreenStatus type="loading" />;
 

@@ -1,13 +1,28 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useMatches } from "../hooks/useMatches";
 import { CharacterCard } from "../components/cards/CharacterCard";
 import { MatchCard } from "../components/cards/MatchCard";
 import { FullScreenStatus } from "../components/layout/FullScreenStatus";
 import type { CharacterSummary } from "../api/endpoints/matches";
 import type { Character } from "../api/endpoints/characters";
+import { useSignedInLayout } from "../components/layout/SignedInLayout";
+import { Link } from "react-router-dom";
 
 export default function MatchesPage() {
   const { data, loading } = useMatches();
+  const { setNavExtra } = useSignedInLayout();
+
+  useEffect(() => {
+    setNavExtra(
+      <Link
+        to="/home"
+        className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
+      >
+        ← Hub
+      </Link>
+    );
+    return () => setNavExtra(null);
+  }, [setNavExtra]);
 
   const grouped = useMemo(() => {
     type GameGroup = {
