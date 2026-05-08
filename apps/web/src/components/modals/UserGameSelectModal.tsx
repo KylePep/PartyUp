@@ -18,7 +18,7 @@ export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete
   const [details, setDetails] = useState<UserGameDetail | null>(null);
 
   useEffect(() => {
-    getUserGameByGameId(userGame.gameId).then(setDetails).catch(() => {});
+    getUserGameByGameId(userGame.gameId).then(setDetails).catch(() => { });
   }, [userGame.gameId]);
 
   useEffect(() => {
@@ -66,9 +66,8 @@ export function UserGameSelectModal({ userGame, deleteState, onConfirm, onDelete
           {details && (
             <div className="flex flex-col gap-2">
               {details.description && (
-                <p className="text-brand-muted text-xs font-display leading-relaxed line-clamp-3">
-                  {details.description}
-                </p>
+                <div className="text-brand-muted text-xs font-display leading-relaxed line-clamp-3"
+                  dangerouslySetInnerHTML={{ __html: details.description }} />
               )}
               {details.rating > 0 && (
                 <p className="text-brand-neon text-xs font-mono tracking-widest">

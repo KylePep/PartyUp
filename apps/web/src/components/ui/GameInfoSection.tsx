@@ -17,9 +17,10 @@ export function GameInfoSection({ userGameDetail }: Props) {
           </span>
         </div>
 
-        <p className="text-brand-muted text-sm font-display leading-relaxed">
-          {userGameDetail.description}
-        </p>
+        <div
+          className="text-brand-muted text-sm font-display leading-relaxed space-y-4"
+          dangerouslySetInnerHTML={{ __html: userGameDetail.description }}
+        />
 
         <div className="flex flex-wrap items-center gap-4">
           {userGameDetail.rating > 0 && (
