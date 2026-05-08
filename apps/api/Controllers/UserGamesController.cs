@@ -44,7 +44,9 @@ public class UserGamesController : ControllerBase
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     var userGame = await _service.GetUserGameByGameId(userId, gameId);
-    return Ok(ToResponse(userGame));
+    if (userGame == null)
+      return NotFound();
+    return Ok(ToDetailResponse(userGame));
   }
 
   [HttpDelete("{id}")]
@@ -64,5 +66,18 @@ public class UserGamesController : ControllerBase
     GameId = ug.GameId,
     GameName = ug.Game.Name,
     GameImageUrl = ug.Game.ImageUrl
+  };
+
+  private static UserGameDetailResponse ToDetailResponse(UserGame ug) => new()
+  {
+    Id = ug.Id,
+    UserId = ug.UserId,
+    GameId = ug.GameId,
+    GameName = ug.Game.Name,
+    GameImageUrl = ug.Game.ImageUrl,
+    Description = ug.Game.Description,
+    Website = ug.Game.Website,
+    Rating = ug.Game.Rating,
+    Platforms = ug.Game.Platforms
   };
 }
