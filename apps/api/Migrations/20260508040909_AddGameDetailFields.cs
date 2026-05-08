@@ -21,7 +21,7 @@ namespace PartyUp.Api.Migrations
                 table: "Games",
                 type: "jsonb",
                 nullable: false,
-                defaultValue: "");
+                defaultValue: "[]");
 
             migrationBuilder.AddColumn<double>(
                 name: "Rating",
