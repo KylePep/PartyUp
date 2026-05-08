@@ -59,6 +59,10 @@ export function getCharacters() {
   return apiGet<Character[]>("/characters");
 }
 
+export function getUserGameCharacters(userGameId: string){
+  return apiGet<Character[]>(`/characters/${userGameId}/userGame`);
+}
+
 export function createCharacter(data: CharacterCreate) {
   return apiPost<Character>("/characters", data);
 }
