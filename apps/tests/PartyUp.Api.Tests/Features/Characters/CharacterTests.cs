@@ -21,6 +21,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.PostAsJsonAsync("/api/characters", new
         {
             name = "Test Character",
+            platform = "PC",
+            platformHandle = "TestHandle",
             userGameId = userGame.Id
         });
 
@@ -36,6 +38,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         await client.PostAsJsonAsync("/api/characters", new
         {
             name = "My Character",
+            platform = "PC",
+            platformHandle = "TestHandle",
             userGameId = userGame.Id
         });
 
@@ -60,12 +64,16 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         await clientA.PostAsJsonAsync("/api/characters", new
         {
             name = "User A Character",
+            platform = "PC",
+            platformHandle = "TestHandleA",
             userGameId = userGameA.Id
         });
 
         await clientB.PostAsJsonAsync("/api/characters", new
         {
             name = "User B Character",
+            platform = "PC",
+            platformHandle = "TestHandleB",
             userGameId = userGameB.Id
         });
 
@@ -107,6 +115,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientA.PostAsJsonAsync("/api/characters", new
         {
             name = "Sneaky Character",
+            platform = "PC",
+            platformHandle = "TestHandle",
             userGameId = userGameB.Id
         });
 

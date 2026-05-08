@@ -108,6 +108,8 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.PostAsJsonAsync("/api/characters", new
         {
             name = "Character",
+            platform = "PC",
+            platformHandle = "TestHandle",
             userGameId
         });
         response.EnsureSuccessStatusCode();
