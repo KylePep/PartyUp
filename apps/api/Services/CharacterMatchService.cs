@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
+using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.CharacterMatch;
 
 namespace PartyUp.Api.Services;
@@ -47,7 +48,7 @@ public class CharacterMatchService : ICharacterMatchService
         }).ToList();
     }
 
-    private static CharacterSummaryDto ToSummary(PartyUp.Api.Models.Character c) => new()
+    private static CharacterSummaryDto ToSummary(Character c) => new()
     {
         Id = c.Id,
         Name = c.Name,
