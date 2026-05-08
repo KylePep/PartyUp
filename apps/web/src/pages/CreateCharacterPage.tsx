@@ -4,9 +4,14 @@ import { useSignedInLayout } from "../components/layout/SignedInLayout";
 import { useUserGames } from "../hooks/useUserGame";
 import { createCharacter } from "../api/endpoints/characters";
 
+const PLATFORMS = ["PC", "PlayStation", "Xbox", "Nintendo Switch", "Mobile"];
+const ROLES = ["Tank", "DPS", "Support", "Healer", "Assassin", "Marksman", "Flex"];
+const PREFERRED_MODES = ["Ranked", "Casual", "Co-op", "Story", "PvP", "PvE", "Battle Royale"];
 const PLAYSTYLES = ["Casual", "Competitive", "Hybrid", "Hardcore", "Story-focused"];
-const REGIONS = ["NA East", "NA West", "EU", "Asia", "OCE", "SA", "Global"];
 const RANKS = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master", "Grandmaster", "Legend", "Mythic"];
+const REGIONS = ["NA East", "NA West", "EU", "Asia", "OCE", "SA", "Global"];
+const ACTIVE_TIMES = ["Morning", "Afternoon", "Evening", "Late Night"];
+const LANGUAGES = ["English", "Spanish", "French", "German", "Portuguese", "Japanese", "Korean", "Chinese", "Arabic", "Russian"];
 
 export default function CreateCharacterPage() {
   const navigate = useNavigate();
@@ -14,11 +19,21 @@ export default function CreateCharacterPage() {
   const { setNavExtra } = useSignedInLayout();
   const userGamesHook = useUserGames();
 
+  const [platform, setPlatform] = useState("");
+  const [platformHandle, setPlatformHandle] = useState("");
   const [name, setName] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [bio, setBio] = useState("");
+  const [mainRole, setMainRole] = useState("");
+  const [secondaryRole, setSecondaryRole] = useState("");
+  const [preferredModes, setPreferredModes] = useState<string[]>([]);
   const [playstyle, setPlaystyle] = useState("");
   const [rank, setRank] = useState("");
   const [region, setRegion] = useState("");
+  const [timeZone, setTimeZone] = useState("");
+  const [activeTimes, setActiveTimes] = useState<string[]>([]);
+  const [usesVoiceChat, setUsesVoiceChat] = useState<boolean | undefined>(undefined);
+  const [languages, setLanguages] = useState<string[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -41,18 +56,28 @@ export default function CreateCharacterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim() || !platform || !platformHandle.trim()) return;
     if (!userGame) { setErrorMsg("Realm not found."); setStatus("error"); return; }
     setStatus("loading");
     setErrorMsg("");
     try {
       await createCharacter({
+        userGameId: userGame.id,
+        platform,
+        platformHandle: platformHandle.trim(),
         name: name.trim(),
+        imageUrl: imageUrl.trim() || undefined,
         bio: bio.trim() || undefined,
+        mainRole: mainRole || undefined,
+        secondaryRole: secondaryRole || undefined,
+        preferredModes,
         playstyle: playstyle || undefined,
         rank: rank || undefined,
         region: region || undefined,
-        userGameId: userGame.id,
+        timeZone: timeZone.trim() || undefined,
+        activeTimes: activeTimes.length > 0 ? activeTimes : undefined,
+        usesVoiceChat,
+        languages: languages.length > 0 ? languages : undefined,
       });
       navigate(`/realm/${gameId}`);
     } catch {
