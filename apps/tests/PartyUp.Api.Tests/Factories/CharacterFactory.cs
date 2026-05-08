@@ -9,6 +9,8 @@ public static class CharacterFactory
     return new Character
     {
       Id = Guid.NewGuid(),
+      Platform = "PC",
+      PlatformHandle = "TestHandle",
       Name = name ?? "Default Character",
       UserGameId = userGame.Id
     };

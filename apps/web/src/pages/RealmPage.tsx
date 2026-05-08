@@ -4,11 +4,11 @@ import { useSignedInLayout } from "../components/layout/SignedInLayout";
 import { useUserGames } from "../hooks/useUserGame";
 import { useMatches } from "../hooks/useMatches";
 import {
-  getCharacters,
   discoverCharacters,
   interactWithCharacter,
   type Character,
   type DiscoverCharacter,
+  getUserGameCharacters,
 } from "../api/endpoints/characters";
 import { GameBanner } from "../components/ui/GameBanner";
 import { MatchBanner } from "../components/ui/MatchBanner";
@@ -51,7 +51,7 @@ export default function RealmPage() {
 
   useEffect(() => {
     if (!userGame) return;
-    getCharacters()
+    getUserGameCharacters(userGame.id)
       .then((chars) => {
         const mine = chars.find((c) => c.userGameId === userGame.id) ?? null;
         setMyCharacter(mine);
@@ -123,21 +123,19 @@ export default function RealmPage() {
         <div className="flex gap-0 border-b border-brand-border mt-6">
           <button
             onClick={() => setTab("discover")}
-            className={`font-mono text-xs tracking-widest uppercase px-6 py-3 transition-all duration-200 ${
-              tab === "discover"
-                ? "text-brand-neon border-b-2 border-brand-neon -mb-px"
-                : "text-brand-muted hover:text-brand-text"
-            }`}
+            className={`font-mono text-xs tracking-widest uppercase px-6 py-3 transition-all duration-200 ${tab === "discover"
+              ? "text-brand-neon border-b-2 border-brand-neon -mb-px"
+              : "text-brand-muted hover:text-brand-text"
+              }`}
           >
             Discover
           </button>
           <button
             onClick={() => setTab("matches")}
-            className={`font-mono text-xs tracking-widest uppercase px-6 py-3 transition-all duration-200 ${
-              tab === "matches"
-                ? "text-brand-neon border-b-2 border-brand-neon -mb-px"
-                : "text-brand-muted hover:text-brand-text"
-            }`}
+            className={`font-mono text-xs tracking-widest uppercase px-6 py-3 transition-all duration-200 ${tab === "matches"
+              ? "text-brand-neon border-b-2 border-brand-neon -mb-px"
+              : "text-brand-muted hover:text-brand-text"
+              }`}
           >
             Matches
           </button>

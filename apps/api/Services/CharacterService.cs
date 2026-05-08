@@ -29,9 +29,18 @@ public class CharacterService : ICharacterService
     {
       Id = Guid.NewGuid(),
       UserGameId = userGameId,
+      Platform = request.Platform,
+      PlatformHandle = request.PlatformHandle,
       Name = request.Name,
-      Nickname = request.Nickname,
+      ImageUrl = request.ImageUrl,
       Bio = request.Bio,
+      MainRole = request.MainRole,
+      SecondaryRole = request.SecondaryRole,
+      PreferredModes = request.PreferredModes,
+      TimeZone = request.TimeZone,
+      ActiveTimes = request.ActiveTimes,
+      UsesVoiceChat = request.UsesVoiceChat,
+      Languages = request.Languages,
       Playstyle = request.Playstyle,
       Rank = request.Rank,
       Region = request.Region,
@@ -100,7 +109,13 @@ public class CharacterService : ICharacterService
       {
         Id = c.Id,
         Name = c.Name,
+        ImageUrl = c.ImageUrl,
         Bio = c.Bio,
+        MainRole = c.MainRole,
+        SecondaryRole = c.SecondaryRole,
+        PreferredModes = c.PreferredModes,
+        UsesVoiceChat = c.UsesVoiceChat,
+        Languages = c.Languages,
         Playstyle = c.Playstyle,
         Rank = c.Rank,
         Region = c.Region,
@@ -126,9 +141,18 @@ public class CharacterService : ICharacterService
     if (character == null)
       return false;
 
+    if (request.Platform != null) character.Platform = request.Platform;
+    if (request.PlatformHandle != null) character.PlatformHandle = request.PlatformHandle;
     character.Name = request.Name;
-    character.Nickname = request.Nickname;
+    character.ImageUrl = request.ImageUrl;
     character.Bio = request.Bio;
+    character.MainRole = request.MainRole;
+    character.SecondaryRole = request.SecondaryRole;
+    if (request.PreferredModes != null) character.PreferredModes = request.PreferredModes;
+    character.TimeZone = request.TimeZone;
+    character.ActiveTimes = request.ActiveTimes;
+    character.UsesVoiceChat = request.UsesVoiceChat;
+    character.Languages = request.Languages;
     character.Playstyle = request.Playstyle;
     character.Rank = request.Rank;
     character.Region = request.Region;
@@ -161,9 +185,18 @@ public class CharacterService : ICharacterService
   {
     Id = c.Id,
     UserGameId = c.UserGameId,
+    Platform = c.Platform,
+    PlatformHandle = c.PlatformHandle,
     Name = c.Name,
-    Nickname = c.Nickname,
+    ImageUrl = c.ImageUrl,
     Bio = c.Bio,
+    MainRole = c.MainRole,
+    SecondaryRole = c.SecondaryRole,
+    PreferredModes = c.PreferredModes,
+    TimeZone = c.TimeZone,
+    ActiveTimes = c.ActiveTimes,
+    UsesVoiceChat = c.UsesVoiceChat,
+    Languages = c.Languages,
     Playstyle = c.Playstyle,
     Rank = c.Rank,
     Region = c.Region,
