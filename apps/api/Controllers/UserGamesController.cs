@@ -39,6 +39,14 @@ public class UserGamesController : ControllerBase
     return Ok(games.Select(ToResponse));
   }
 
+  [HttpGet("{gameId}/game")]
+  public async Task<IActionResult> GetUserGameByGameId(Guid gameId)
+  {
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var userGame = await _service.GetUserGameByGameId(userId, gameId);
+    return Ok(ToResponse(userGame));
+  }
+
   [HttpDelete("{id}")]
   public async Task<IActionResult> DeleteUserGame(Guid id)
   {

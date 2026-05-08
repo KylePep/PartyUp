@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useSignedInLayout } from "../components/layout/SignedInLayout";
-import { useUserGames } from "../hooks/useUserGame";
+// import { useUserGames } from "../hooks/useUserGame";
 import { useMatches } from "../hooks/useMatches";
 import {
   discoverCharacters,
@@ -17,25 +17,32 @@ import { DiscoveryPanel } from "../components/ui/DiscoveryPanel";
 import { CharacterCard } from "../components/cards/CharacterCard";
 import { MatchCard } from "../components/cards/MatchCard";
 import type { CharacterSummary } from "../api/endpoints/matches";
+import { getUserGameByGameId, type UserGame } from "../api/endpoints/userGames";
 
 type Tab = "discover" | "matches";
 
 export default function RealmPage() {
   const { gameId } = useParams<{ gameId: string }>();
   const { setNavExtra } = useSignedInLayout();
-  const userGamesHook = useUserGames();
+  // const userGamesHook = useUserGames();
   const { data: matchData, loading: matchesLoading } = useMatches(gameId);
 
+  const [userGame, setUserGame] = useState<UserGame | null>(null);
+  const [userGameStatus, setUserGameStatus] = useState<boolean>(true);
   const [tab, setTab] = useState<Tab>("discover");
   const [myCharacter, setMyCharacter] = useState<Character | null | "loading">("loading");
   const [discoverQueue, setDiscoverQueue] = useState<DiscoverCharacter[]>([]);
   const [discoverStatus, setDiscoverStatus] = useState<"loading" | "ready" | "empty" | "unavailable">("loading");
   const [matchBanner, setMatchBanner] = useState(false);
 
-  const userGame =
-    userGamesHook.status === "success"
-      ? userGamesHook.games.find((g) => g.gameId === gameId) ?? null
-      : null;
+  useEffect(() => {
+    if (!gameId) return;
+    getUserGameByGameId(gameId)
+      .then((ug) => {
+        setUserGameStatus(false);
+        setUserGame(ug);
+      });
+  }, [gameId])
 
   useEffect(() => {
     setNavExtra(
@@ -149,7 +156,7 @@ export default function RealmPage() {
               gameId={gameId}
               myCharacter={myCharacter}
               userGame={userGame}
-              userGamesLoading={userGamesHook.status === "loading"}
+              userGamesLoading={userGameStatus}
             />
             <DiscoveryPanel
               myCharacter={myCharacter}

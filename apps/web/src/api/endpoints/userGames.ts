@@ -22,6 +22,10 @@ export function getUserGames(): Promise<UserGame[]> {
   return apiGet<UserGame[]>("/user-games");
 }
 
+export function getUserGameByGameId(gameId: string): Promise<UserGame>{
+  return apiGet<UserGame>(`/user-games/${gameId}/game`)
+}
+
 export function deleteUserGame(id: string): Promise<void>{
   return apiDelete<void>(`/user-games/${id}`)
 }

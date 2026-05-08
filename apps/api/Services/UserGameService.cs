@@ -56,6 +56,13 @@ public class UserGameService : IUserGameService
       .ToListAsync();
   }
 
+  public async Task<UserGame?> GetUserGameByGameId(Guid userId, Guid gameId)
+  {
+    return await _db.UserGames
+      .Include(ug => ug.Game)
+      .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
+  }
+
   public async Task<bool> DeleteUserGame(Guid id, Guid userId)
   {
     var userGame = await _db.UserGames
