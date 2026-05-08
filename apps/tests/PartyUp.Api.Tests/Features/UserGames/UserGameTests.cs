@@ -121,5 +121,39 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
         games.Should().ContainSingle();
     }
 
-    private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
+  [Fact]
+  public async Task GetUserGameByGameId_ReturnsDetailResponse()
+  {
+    var client = await CreateAuthenticatedClientAsync();
+    var id = Interlocked.Increment(ref _gameCounter);
+
+    var addResponse = await client.PostAsJsonAsync("/api/user-games", new
+    {
+      externalId = id,
+      name = $"Game {id}",
+      imageUrl = (string?)null
+    });
+    addResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+    var userGame = await addResponse.Content.ReadFromJsonAsync<UserGameDto>();
+
+    var detailResponse = await client.GetAsync($"/api/user-games/{userGame!.GameId}/game");
+
+    detailResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+    var detail = await detailResponse.Content.ReadFromJsonAsync<UserGameDetailDto>();
+    detail!.GameName.Should().Be($"Game {id}");
+    detail.Platforms.Should().NotBeNull();
+  }
+
+  private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
+
+  private record UserGameDetailDto(
+    Guid Id,
+    Guid UserId,
+    Guid GameId,
+    string GameName,
+    string? GameImageUrl,
+    string? Description,
+    string? Website,
+    double Rating,
+    List<string> Platforms);
 }
