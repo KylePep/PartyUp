@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Npgsql;
 using Respawn;
+using Respawn.Graph;
 using TestFactories = PartyUp.Api.Tests.Factories;
 
 namespace PartyUp.Api.Tests.Infrastructure;
@@ -23,7 +24,8 @@ public static class DatabaseReset
 
                 _respawner = await Respawner.CreateAsync(_connection, new RespawnerOptions
                 {
-                    DbAdapter = DbAdapter.Postgres
+                    DbAdapter = DbAdapter.Postgres,
+                    TablesToIgnore = [new Table("__EFMigrationsHistory")]
                 });
             }
 

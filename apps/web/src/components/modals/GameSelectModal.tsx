@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import type { Game } from "../../api/endpoints/games";
+import { useEffect, useState } from "react";
+import type { Game, GameDetails } from "../../api/endpoints/games";
+import { getGameDetails } from "../../api/endpoints/games";
 import { CornerAccents } from "../ui/CornerAccents";
 import { Modal } from "./Modal";
 
@@ -13,6 +14,12 @@ type Props = {
 };
 
 export function GameSelectModal({ game, addState, onConfirm, onClose }: Props) {
+  const [details, setDetails] = useState<GameDetails | null>(null);
+
+  useEffect(() => {
+    getGameDetails(game.externalId).then(setDetails).catch(() => { });
+  }, [game.externalId]);
+
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
@@ -24,12 +31,7 @@ export function GameSelectModal({ game, addState, onConfirm, onClose }: Props) {
   const done = addState === "success" || addState === "conflict";
 
   return (
-    <Modal
-      isOpen
-      onClose={onClose}
-      titleId="select-game-modal-title"
-    >
-
+    <Modal isOpen onClose={onClose} titleId="select-game-modal-title">
       <div className="bg-brand-surface border border-brand-border w-full overflow-hidden">
         <CornerAccents />
 
@@ -53,6 +55,42 @@ export function GameSelectModal({ game, addState, onConfirm, onClose }: Props) {
               Add this game to your collection?
             </p>
           </div>
+
+          {details && (
+            <div className="flex flex-col gap-2">
+              {details.description && (
+                <div className="text-brand-muted text-xs font-display leading-relaxed line-clamp-3"
+                  dangerouslySetInnerHTML={{ __html: details.description }} />
+              )}
+              {details.rating > 0 && (
+                <p className="text-brand-neon text-xs font-mono tracking-widest">
+                  Rating: {details.rating.toFixed(1)}
+                </p>
+              )}
+              {details.platforms.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {details.platforms.map((p) => (
+                    <span
+                      key={p}
+                      className="text-brand-muted text-xs font-mono border border-brand-border px-2 py-0.5"
+                    >
+                      {p}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {details.website && (
+                <a
+                  href={details.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-neon text-xs font-mono tracking-wide hover:underline"
+                >
+                  {details.website}
+                </a>
+              )}
+            </div>
+          )}
 
           {addState === "success" && (
             <p className="text-brand-gold text-xs font-display tracking-wide border border-brand-gold/30 bg-brand-gold/10 px-3 py-2">

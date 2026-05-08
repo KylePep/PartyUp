@@ -36,7 +36,7 @@ public class RawgClient
     if (genres?.Any() == true)
       qs["genres"] = string.Join(",", genres);
 
-    var url = $"https://api.rawg.io/api/games?{qs}";
+    var url = $"https://api.rawg.io/api/games?{qs}&exclude_additions=true";
 
     return await _http.GetFromJsonAsync<RawgResponse>(url) ?? new RawgResponse();
   }

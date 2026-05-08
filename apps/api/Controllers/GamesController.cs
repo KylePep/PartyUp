@@ -22,13 +22,21 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
-  [HttpGet("{id}")]
+  [HttpGet("{id:int}")]
   public async Task<IActionResult> GetById(int id)
   {
     var game = await _service.GetGameById(id);
     if (game == null)
       return NotFound();
+    return Ok(game);
+  }
 
+  [HttpGet("{id:guid}")]
+  public async Task<IActionResult> GetByDbId(Guid id)
+  {
+    var game = await _service.GetGameByDbId(id);
+    if (game == null)
+      return NotFound();
     return Ok(game);
   }
 }

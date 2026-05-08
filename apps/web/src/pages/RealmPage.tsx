@@ -11,13 +11,14 @@ import {
   getUserGameCharacters,
 } from "../api/endpoints/characters";
 import { GameBanner } from "../components/ui/GameBanner";
+import { GameInfoSection } from "../components/ui/GameInfoSection";
 import { MatchBanner } from "../components/ui/MatchBanner";
 import { CharacterPanel } from "../components/ui/CharacterPanel";
 import { DiscoveryPanel } from "../components/ui/DiscoveryPanel";
 import { CharacterCard } from "../components/cards/CharacterCard";
 import { MatchCard } from "../components/cards/MatchCard";
 import type { CharacterSummary } from "../api/endpoints/matches";
-import { getUserGameByGameId, type UserGame } from "../api/endpoints/userGames";
+import { getUserGameByGameId, type UserGameDetail } from "../api/endpoints/userGames";
 
 type Tab = "discover" | "matches";
 
@@ -27,7 +28,7 @@ export default function RealmPage() {
   // const userGamesHook = useUserGames();
   const { data: matchData, loading: matchesLoading } = useMatches(gameId);
 
-  const [userGame, setUserGame] = useState<UserGame | null>(null);
+  const [userGame, setUserGame] = useState<UserGameDetail | null>(null);
   const [userGameStatus, setUserGameStatus] = useState<boolean>(true);
   const [tab, setTab] = useState<Tab>("discover");
   const [myCharacter, setMyCharacter] = useState<Character | null | "loading">("loading");
@@ -125,6 +126,7 @@ export default function RealmPage() {
     <>
       {matchBanner && <MatchBanner />}
       <GameBanner game={userGame} />
+      <GameInfoSection userGameDetail={userGame} />
 
       <div className="px-6 md:px-10 max-w-7xl mx-auto w-full">
         <div className="flex gap-0 border-b border-brand-border mt-6">
