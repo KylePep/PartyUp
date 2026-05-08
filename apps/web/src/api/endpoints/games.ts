@@ -7,6 +7,16 @@ export type Game = {
   imageUrl: string;
 };
 
+export type GameDetails = {
+  externalId: number;
+  name: string;
+  description: string;
+  imageUrl: string | null;
+  website: string | null;
+  rating: number;
+  platforms: string[];
+};
+
 export type PagedGames = {
   games: Game[];
   totalCount: number;
@@ -29,4 +39,12 @@ export function getGames(params: GamesParams = {}): Promise<PagedGames> {
 
   const query = qs.toString();
   return apiGet<PagedGames>(`/games${query ? `?${query}` : ""}`);
+}
+
+export function getGameDetails(externalId: number): Promise<GameDetails> {
+  return apiGet<GameDetails>(`/games/${externalId}`);
+}
+
+export function getGameDetailsByDbId(gameId: string): Promise<GameDetails> {
+  return apiGet<GameDetails>(`/games/${gameId}`);
 }
