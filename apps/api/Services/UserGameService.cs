@@ -16,26 +16,10 @@ public class UserGameService : IUserGameService
 
   public async Task<UserGame> AddGameToUser(Guid userId, AddUserGameRequest request)
   {
-    var existingGame = await _db.Games
-      .FirstOrDefaultAsync(g => g.ExternalId == request.ExternalId);
+    var existingGame = await _gameService.getGameByExternalId(request.ExternalId);
 
     if (existingGame == null)
-    {
-      existingGame = new Game
-      {
-        ExternalId = request.ExternalId,
-        Name = request.Name,
-        ImageUrl = request.ImageUrl
-      };
-      _db.Games.Add(existingGame);
-      await _db.SaveChangesAsync();
-    }
-
-    if (existingGame.Description == null)
-    {
-      try { await _gameService.GetAndPersistGameDetails(existingGame); }
-      catch { /* enrichment is best-effort; continue without details */ }
-    }
+      existingGame = await _gameService.GetAndPersistGameDetails(request.ExternalId);
 
     var alreadyAdded = await _db.UserGames
       .AnyAsync(ug => ug.UserId == userId && ug.GameId == existingGame.Id);

@@ -4,7 +4,8 @@ using PartyUp.Api.Models.DTOs.Game;
 public interface IGameService
 {
   Task<PagedGamesResult> SearchGames(string q, int page, List<int>? genres, List<string>? tags);
-  Task<GameDetails?> GetGameById(int id);
-  Task<GameDetails?> GetGameByDbId(Guid id);
-  Task<GameDetails?> GetAndPersistGameDetails(Game game);
+  Task<Game?> GetGameById(int id);
+  Task<Game?> GetGameByDbId(Guid id);
+  Task<Game?> getGameByExternalId(int id);
+  Task<Game?> GetAndPersistGameDetails(int id);
 }
