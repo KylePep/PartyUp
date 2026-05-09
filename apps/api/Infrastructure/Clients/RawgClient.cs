@@ -17,7 +17,7 @@ public class RawgClient
   }
 
   public async Task<RawgResponse> GetGames(
-      string q, int page, List<int>? genres, List<string>? tags)
+      string q, int page, List<int>? genres, bool? exclude_additions, List<string>? tags)
   {
     var key = _config["Rawg:ApiKey"];
 
@@ -36,7 +36,10 @@ public class RawgClient
     if (genres?.Any() == true)
       qs["genres"] = string.Join(",", genres);
 
-    var url = $"https://api.rawg.io/api/games?{qs}&exclude_additions=true";
+    if (exclude_additions == true)
+      qs["exclude_additions"] = string.Join(",", exclude_additions);
+
+    var url = $"https://api.rawg.io/api/games?{qs}";
 
     return await _http.GetFromJsonAsync<RawgResponse>(url) ?? new RawgResponse();
   }

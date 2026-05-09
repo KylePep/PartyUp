@@ -18,6 +18,7 @@ type Props = {
 export function GameSearchSection({ onGameSelect }: Props) {
   const [query, setQuery] = useState("");
   const [mmoOnly, setMmoOnly] = useState(true);
+  const [excludeAdditions, setExcludeAdditions] = useState(true);
   const [page, setPage] = useState(1);
   const [gamesState, setGamesState] = useState<GamesState>({ status: "loading" });
   const prevQueryRef = useRef(query);
@@ -33,6 +34,7 @@ export function GameSearchSection({ onGameSelect }: Props) {
           q: query || undefined,
           page,
           genres: mmoOnly ? [MMO_GENRE_ID] : undefined,
+          exclude_additions: excludeAdditions,
         })
           .then((data) => { if (!cancelled) setGamesState({ status: "success", data }); })
           .catch(() => {
@@ -44,10 +46,11 @@ export function GameSearchSection({ onGameSelect }: Props) {
     );
 
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [query, page, mmoOnly]);
+  }, [query, page, mmoOnly, excludeAdditions]);
 
   function handleQueryChange(value: string) { setQuery(value); setPage(1); }
   function handleMmoToggle() { setMmoOnly((p) => !p); setPage(1); }
+  function handleExcludeAdditionsToggle() { setExcludeAdditions((p) => !p); setPage(1); }
 
   const successData = gamesState.status === "success" ? gamesState.data : null;
 
@@ -69,7 +72,9 @@ export function GameSearchSection({ onGameSelect }: Props) {
         query={query}
         onQueryChange={handleQueryChange}
         mmoOnly={mmoOnly}
+        excludeAdditions={excludeAdditions}
         onMmoToggle={handleMmoToggle}
+        onExcludeAdditionsToggle={handleExcludeAdditionsToggle}
       />
 
       {successData && (

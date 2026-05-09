@@ -18,9 +18,9 @@ public class GameService : IGameService
     _db = db;
   }
 
-  public async Task<PagedGamesResult> SearchGames(string q, int page, List<int>? genres, List<string>? tags)
+  public async Task<PagedGamesResult> SearchGames(string q, int page, List<int>? genres, bool? exclude_additions, List<string>? tags)
   {
-    var response = await _rawg.GetGames(q, page, genres, tags);
+    var response = await _rawg.GetGames(q, page, genres, exclude_additions, tags);
 
     var games = response.Results.Select(g => new GameSimple
     {
