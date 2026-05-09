@@ -16,9 +16,10 @@ public class GamesController : ControllerBase
       [FromQuery] string q = "",
       [FromQuery] int page = 1,
       [FromQuery] List<int>? genres = null,
+      [FromQuery] bool? exclude_additions = null,
       [FromQuery] List<string>? tags = null)
   {
-    var result = await _service.SearchGames(q, page, genres, tags);
+    var result = await _service.SearchGames(q, page, genres, exclude_additions, tags);
     return Ok(result);
   }
 

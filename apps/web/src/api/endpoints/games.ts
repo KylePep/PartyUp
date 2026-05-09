@@ -28,6 +28,7 @@ export type GamesParams = {
   q?: string;
   page?: number;
   genres?: number[];
+  exclude_additions?: boolean;
 };
 
 export function getGames(params: GamesParams = {}): Promise<PagedGames> {
@@ -36,6 +37,7 @@ export function getGames(params: GamesParams = {}): Promise<PagedGames> {
   if (params.q) qs.set("q", params.q);
   if (params.page && params.page > 1) qs.set("page", params.page.toString());
   params.genres?.forEach((g) => qs.append("genres", g.toString()));
+  if (params.exclude_additions) qs.append("exclude_additions", params.exclude_additions ? "true" : "false");
 
   const query = qs.toString();
   return apiGet<PagedGames>(`/games${query ? `?${query}` : ""}`);

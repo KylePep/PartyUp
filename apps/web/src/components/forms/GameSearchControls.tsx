@@ -2,14 +2,18 @@ interface Props {
   query: string;
   onQueryChange: (value: string) => void;
   mmoOnly: boolean;
+  excludeAdditions: boolean;
   onMmoToggle: () => void;
+  onExcludeAdditionsToggle: () => void;
 }
 
 export function GameSearchControls({
   query,
   onQueryChange,
   mmoOnly,
+  excludeAdditions,
   onMmoToggle,
+  onExcludeAdditionsToggle,
 }: Props) {
   return (
     <div className="flex flex-col sm:flex-row gap-3">
@@ -45,18 +49,32 @@ export function GameSearchControls({
       <button
         onClick={onMmoToggle}
         aria-pressed={mmoOnly}
-        className={`flex items-center gap-2.5 px-5 py-3 border text-sm font-display tracking-wider transition-colors duration-200 whitespace-nowrap ${
-          mmoOnly
-            ? "bg-brand-gold/10 border-brand-gold text-brand-gold"
-            : "bg-transparent border-brand-border text-brand-muted hover:border-brand-gold/60 hover:text-brand-gold"
-        }`}
+        className={`flex items-center gap-2.5 px-5 py-3 border text-sm font-display tracking-wider transition-colors duration-200 whitespace-nowrap ${mmoOnly
+          ? "bg-brand-gold/10 border-brand-gold text-brand-gold"
+          : "bg-transparent border-brand-border text-brand-muted hover:border-brand-gold/60 hover:text-brand-gold"
+          }`}
       >
         <span
-          className={`w-2 h-2 rotate-45 inline-block transition-colors duration-200 ${
-            mmoOnly ? "bg-brand-gold" : "bg-brand-border"
-          }`}
+          className={`w-2 h-2 rotate-45 inline-block transition-colors duration-200 ${mmoOnly ? "bg-brand-gold" : "bg-brand-border"
+            }`}
         />
         MMO Only
+      </button>
+
+      {/* Exclude Additions toggle */}
+      <button
+        onClick={onExcludeAdditionsToggle}
+        aria-pressed={excludeAdditions}
+        className={`flex items-center gap-2.5 px-5 py-3 border text-sm font-display tracking-wider transition-colors duration-200 whitespace-nowrap ${excludeAdditions
+          ? "bg-brand-gold/10 border-brand-gold text-brand-gold"
+          : "bg-transparent border-brand-border text-brand-muted hover:border-brand-gold/60 hover:text-brand-gold"
+          }`}
+      >
+        <span
+          className={`w-2 h-2 rotate-45 inline-block transition-colors duration-200 ${excludeAdditions ? "bg-brand-gold" : "bg-brand-border"
+            }`}
+        />
+        Exclude Additions
       </button>
     </div>
   );
