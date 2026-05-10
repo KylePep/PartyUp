@@ -7,6 +7,9 @@ export type CharacterSummary = {
   playstyle?: string;
   rank?: string;
   region?: string;
+  mainRole?: string;
+  secondaryRole?: string;
+  imageUrl?: string;
 };
 
 export type CharacterMatchDto = {

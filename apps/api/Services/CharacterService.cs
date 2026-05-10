@@ -109,6 +109,7 @@ public class CharacterService : ICharacterService
       {
         Id = c.Id,
         Name = c.Name,
+        Platform = c.Platform,
         ImageUrl = c.ImageUrl,
         Bio = c.Bio,
         MainRole = c.MainRole,
