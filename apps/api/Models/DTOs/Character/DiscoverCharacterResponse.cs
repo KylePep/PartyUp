@@ -4,6 +4,7 @@ public class DiscoverCharacterResponse
 {
   public Guid Id { get; set; }
   public string Name { get; set; } = default!;
+  public string Platform { get; set; }
   public string? ImageUrl { get; set; }
   public string? Bio { get; set; }
   public string? MainRole { get; set; }

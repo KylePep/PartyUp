@@ -54,6 +54,22 @@ export function MatchCard({ character, matchedAt }: MatchCardProps) {
             {character.region}
           </span>
         )}
+        {character.mainRole && (
+          <span
+            className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
+            style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
+          >
+            {character.mainRole}
+          </span>
+        )}
+        {character.secondaryRole && (
+          <span
+            className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
+            style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.25)", color: "#a78bfa" }}
+          >
+            {character.secondaryRole}
+          </span>
+        )}
       </div>
 
       {character.bio && (
