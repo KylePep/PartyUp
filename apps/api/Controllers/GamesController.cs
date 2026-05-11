@@ -23,7 +23,7 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
-  [HttpGet("{id:int}")]
+  [HttpGet("{id:int}/rawg")]
   public async Task<IActionResult> GetById(int id)
   {
     var game = await _service.GetGameById(id);

@@ -44,7 +44,7 @@ export function getGames(params: GamesParams = {}): Promise<PagedGames> {
 }
 
 export function getGameDetails(externalId: number): Promise<GameDetails> {
-  return apiGet<GameDetails>(`/games/${externalId}`);
+  return apiGet<GameDetails>(`/games/${externalId}/rawg`);
 }
 
 export function getGameDetailsByDbId(gameId: string): Promise<GameDetails> {
