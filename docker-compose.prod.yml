@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: partyup-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /etc/ssl/partyup:/etc/ssl/partyup:ro
+    depends_on:
+      - partyup-api
+
+  partyup-api:
+    image: ghcr.io/kylepep/partyup:latest
+    container_name: partyup-api
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - partyup-db
+
+  partyup-db:
+    image: postgres:15
+    container_name: partyup-db
+    restart: always
+    environment:
+      POSTGRES_USER: partyup
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: partyup
+    volumes:
+      - partyup-data:/var/lib/postgresql/data
+
+volumes:
+  partyup-data:
