@@ -1,0 +1,5 @@
+**/bin
+**/obj
+**/.git
+apps/web/node_modules
+apps/web/dist
