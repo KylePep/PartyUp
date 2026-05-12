@@ -30,6 +30,8 @@ jobs:
         run: dotnet restore
       - name: Test
         run: dotnet test apps/tests/PartyUp.Api.Tests --no-restore
+        env:
+          Jwt__Key: "ci-test-jwt-key-not-for-production-use-minimum-32c"
 
   deploy:
     needs: test
