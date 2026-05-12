@@ -117,5 +117,7 @@ jobs:
               echo "ASPNETCORE_ENVIRONMENT=Production"
             } > .env
             docker compose -f docker-compose.prod.yml down || true
+            sudo fuser -k 80/tcp || true
+            sudo fuser -k 443/tcp || true
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
