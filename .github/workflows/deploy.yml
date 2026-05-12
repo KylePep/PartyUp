@@ -28,6 +28,13 @@ jobs:
           dotnet-version: "8.0.x"
       - name: Restore
         run: dotnet restore
+      - name: Install EF tools
+        run: dotnet tool install --global dotnet-ef
+      - name: Migrate test database
+        run: dotnet ef database update --project apps/api
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=partyup_test;Username=partyup;Password=partyup"
+          Jwt__Key: "ci-test-jwt-key-not-for-production-use-minimum-32c"
       - name: Test
         run: dotnet test apps/tests/PartyUp.Api.Tests --no-restore
         env:
