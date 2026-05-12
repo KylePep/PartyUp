@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet test *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(npm run *)",
+      "Bash(git rm *)",
+      "Bash(git checkout *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\source\\\\applications\\\\PartyUp\\\\apps\\\\web\" -Recurse -Name)"
+    ]
+  }
+}

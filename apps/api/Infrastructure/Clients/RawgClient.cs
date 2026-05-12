@@ -1,5 +1,4 @@
-using PartyUp.Api.Contracts.Rawg;
-using PartyUp.Api.Domain.Contracts.Rawg;
+using PartyUp.Api.Models.DTOs.Rawg;
 using System.Web;
 
 namespace PartyUp.Api.Infrastructure.Clients;
@@ -9,15 +8,16 @@ public class RawgClient
   private readonly HttpClient _http;
   private readonly IConfiguration _config;
 
+  private const int PageSize = 20;
+
   public RawgClient(HttpClient http, IConfiguration config)
   {
     _http = http;
     _config = config;
   }
 
-
-  public async Task<List<RawgGame>> GetGames(
-      string q, int page, List<int>? genres, List<string>? tags)
+  public async Task<RawgResponse> GetGames(
+      string q, int page, List<int>? genres, bool? exclude_additions, List<string>? tags)
   {
     var key = _config["Rawg:ApiKey"];
 
@@ -25,7 +25,7 @@ public class RawgClient
 
     qs["key"] = key;
     qs["page"] = page.ToString();
-    qs["page_size"] = "20";
+    qs["page_size"] = PageSize.ToString();
 
     if (!string.IsNullOrWhiteSpace(q))
       qs["search"] = q;
@@ -35,15 +35,14 @@ public class RawgClient
 
     if (genres?.Any() == true)
       qs["genres"] = string.Join(",", genres);
-    //MMO - 59
+
+    if (exclude_additions == true)
+      qs["exclude_additions"] = string.Join(",", exclude_additions);
 
     var url = $"https://api.rawg.io/api/games?{qs}";
 
-    var response = await _http.GetFromJsonAsync<RawgResponse>(url);
-
-    return response?.Results ?? new List<RawgGame>();
+    return await _http.GetFromJsonAsync<RawgResponse>(url) ?? new RawgResponse();
   }
-
 
   public async Task<RawgGameDetailed?> GetGameById(int id)
   {
@@ -53,8 +52,6 @@ public class RawgClient
 
     var url = $"https://api.rawg.io/api/games/{id}?key={key}";
 
-    var response = await _http.GetFromJsonAsync<RawgGameDetailed>(url);
-
-    return response;
+    return await _http.GetFromJsonAsync<RawgGameDetailed>(url);
   }
 }

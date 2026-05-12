@@ -1,0 +1,18 @@
+using PartyUp.Api.Models;
+
+namespace PartyUp.Api.Tests.Factories;
+
+public static class CharacterFactory
+{
+  public static Character Create(UserGame userGame, string name = null)
+  {
+    return new Character
+    {
+      Id = Guid.NewGuid(),
+      Platform = "PC",
+      PlatformHandle = "TestHandle",
+      Name = name ?? "Default Character",
+      UserGameId = userGame.Id
+    };
+  }
+}
