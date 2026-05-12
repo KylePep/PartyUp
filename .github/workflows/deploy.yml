@@ -116,5 +116,6 @@ jobs:
               echo "Rawg__ApiKey=$RAWG_API_KEY"
               echo "ASPNETCORE_ENVIRONMENT=Production"
             } > .env
+            docker compose -f docker-compose.prod.yml down || true
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
