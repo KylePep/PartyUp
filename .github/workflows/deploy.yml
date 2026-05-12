@@ -86,6 +86,7 @@ jobs:
           envs: DB_PASSWORD,JWT_KEY,RAWG_API_KEY,GHCR_TOKEN,GHCR_USER
           script: |
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            rm -rf /opt/partyup/nginx/nginx.conf
             mkdir -p /opt/partyup/nginx
             cat > /opt/partyup/nginx/nginx.conf <<'NGINXEOF'
             server {
