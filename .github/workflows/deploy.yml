@@ -77,12 +77,15 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
           RAWG_API_KEY: ${{ secrets.RAWG_API_KEY }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_PASSWORD,JWT_KEY,RAWG_API_KEY
+          envs: DB_PASSWORD,JWT_KEY,RAWG_API_KEY,GHCR_TOKEN,GHCR_USER
           script: |
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             cd /opt/partyup
             {
               echo "DB_PASSWORD=$DB_PASSWORD"
