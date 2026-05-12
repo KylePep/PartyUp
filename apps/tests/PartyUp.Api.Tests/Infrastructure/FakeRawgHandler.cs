@@ -13,7 +13,7 @@ internal sealed class FakeRawgHandler : HttpMessageHandler
 
         if (int.TryParse(segments[^1], out var id))
         {
-            json = $$"""{"id":{{id}},"name":"Test Game {{id}}","description":"","background_image":null,"website":null,"rating":4.0,"platforms":[]}""";
+            json = $$"""{"id":{{id}},"name":"Game {{id}}","description":"","background_image":null,"website":null,"rating":4.0,"platforms":[]}""";
         }
         else
         {
