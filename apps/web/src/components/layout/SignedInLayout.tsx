@@ -1,60 +1,29 @@
-import { useState, type ReactNode } from "react";
-import { Outlet, Navigate, useOutletContext, Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { NavBar } from "./NavBar";
-import { Footer } from "./Footer";
-import { FullScreenStatus } from "./FullScreenStatus";
-import { SignOutButton } from "../ui/SignOutButton";
-
-export type SignedInLayoutContext = {
-  setNavExtra: (node: ReactNode) => void;
-};
+import { Outlet, Navigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
+import { NavBar } from './NavBar'
+import { BottomTray } from './BottomTray'
+import { Spinner } from '../ui'
 
 export default function SignedInLayout() {
-  const { state: auth } = useAuth();
-  const [navExtra, setNavExtra] = useState<ReactNode>(null);
+  const { state } = useAuth()
 
-  if (auth.status === "loading") return <FullScreenStatus type="loading" />;
-  if (auth.status === "unauthenticated") return <Navigate to="/" replace />;
-  if (auth.status === "unreachable")
-    return <FullScreenStatus type="unreachable" onRetry={() => window.location.reload()} />;
+  if (state.status === 'loading') {
+    return (
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <Spinner label="Loading..." />
+      </div>
+    )
+  }
 
-  const { username } = auth.user;
+  if (state.status === 'unauthenticated' || state.status === 'unreachable') {
+    return <Navigate to="/" replace />
+  }
 
   return (
-    <div
-      className="min-h-screen bg-brand-bg text-brand-text flex flex-col"
-      style={{ fontFamily: "Inter, sans-serif" }}
-    >
-      <NavBar
-        rightSlot={
-          <>
-            <Link
-              to="/characters"
-              className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
-            >
-              Characters
-            </Link>
-            <Link
-              to="/matches"
-              className="font-mono text-xs tracking-widest uppercase px-4 py-2 text-brand-muted border border-brand-border hover:border-brand-muted hover:text-brand-text transition-all duration-200"
-            >
-              Matches
-            </Link>
-            {navExtra}
-            <span className="font-mono text-[11px] text-brand-muted tracking-widest uppercase hidden sm:block">
-              {username}
-            </span>
-            <SignOutButton />
-          </>
-        }
-      />
-      <Outlet context={{ setNavExtra } satisfies SignedInLayoutContext} />
-      <Footer />
+    <div className="min-h-screen bg-bg flex flex-col pb-16 md:pb-0">
+      <NavBar variant="app" />
+      <Outlet />
+      <BottomTray />
     </div>
-  );
-}
-
-export function useSignedInLayout() {
-  return useOutletContext<SignedInLayoutContext>();
+  )
 }

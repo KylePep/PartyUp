@@ -1,36 +1,32 @@
-import type { Game } from "../../api/endpoints/games";
-import { CornerAccents } from "../ui/CornerAccents";
+import { type Game } from '../../api/endpoints/games'
 
-type Props = {
-  game: Game;
-  onSelect?: (game: Game) => void;
-};
+interface GameCardProps {
+  game: Game
+  onSelect: (game: Game) => void
+}
 
-export function GameCard({ game, onSelect }: Props) {
+export function GameCard({ game, onSelect }: GameCardProps) {
   return (
-    <article
-      onClick={() => onSelect?.(game)}
-      className={`bg-brand-surface border border-brand-border group hover:border-brand-gold/40 transition-colors duration-300 relative overflow-hidden flex flex-col${onSelect ? " cursor-pointer" : ""}`}
+    <button
+      onClick={() => onSelect(game)}
+      className="group w-full text-left bg-surface border border-border rounded-lg overflow-hidden hover:border-accent transition-colors"
     >
-      <CornerAccents />
-
-      {game.imageUrl && (
-        <div className="overflow-hidden">
+      {game.imageUrl ? (
+        <div className="aspect-video w-full overflow-hidden">
           <img
             src={game.imageUrl}
             alt={game.name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
+      ) : (
+        <div className="aspect-video w-full bg-surface-raised flex items-center justify-center">
+          <span className="text-muted text-xs font-mono uppercase">No image</span>
+        </div>
       )}
-
-      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-t from-brand-surface via-transparent to-transparent pointer-events-none" />
-
-      <div className="p-5 flex flex-col gap-2 relative z-10">
-        <h3 className="font-display text-brand-text text-sm leading-snug group-hover:text-brand-gold transition-colors duration-200">
-          {game.name}
-        </h3>
+      <div className="p-3">
+        <p className="text-sm font-mono text-text truncate">{game.name}</p>
       </div>
-    </article>
-  );
+    </button>
+  )
 }

@@ -1,233 +1,89 @@
-import { useState } from "react";
-import type { DiscoverCharacter } from "../../api/endpoints/characters";
+import { useState } from 'react'
+import { Badge, Button, Card } from '../ui'
+import { type DiscoverCharacter } from '../../api/endpoints/characters'
 
-interface Props {
-  character: DiscoverCharacter;
-  onLike: () => void;
-  onDislike: () => void;
-  isTop: boolean;
+type ExitDirection = 'left' | 'right' | null
+
+interface SwipeCardProps {
+  character: DiscoverCharacter
+  onLike: () => void
+  onDislike: () => void
+  isTop: boolean
 }
 
-export function SwipeCard({ character, onLike, onDislike, isTop }: Props) {
-  const [exiting, setExiting] = useState<"left" | "right" | null>(null);
+export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProps) {
+  const [exiting, setExiting] = useState<ExitDirection>(null)
 
-  function handleLike() {
-    setExiting("right");
-    setTimeout(onLike, 380);
+  function handle(dir: ExitDirection, action: () => void) {
+    setExiting(dir)
+    setTimeout(action, 380)
   }
 
-  function handleDislike() {
-    setExiting("left");
-    setTimeout(onDislike, 380);
-  }
-
-  if (!isTop) {
-    return (
-      <div
-        className="absolute inset-0 rounded-2xl"
-        style={{
-          background: "rgba(13,13,30,0.7)",
-          border: "1px solid rgba(0,229,255,0.1)",
-          transform: "scale(0.95) translateY(16px)",
-          zIndex: 0,
-        }}
-      />
-    );
-  }
+  const animClass = isTop
+    ? exiting === 'right'
+      ? '[animation:slide-out-right_0.38s_ease_forwards]'
+      : exiting === 'left'
+      ? '[animation:slide-out-left_0.38s_ease_forwards]'
+      : '[animation:slide-in-left_0.35s_ease_forwards]'
+    : '[animation:card-enter_0.35s_ease_forwards]'
 
   return (
     <div
-      className={`absolute inset-0 rounded-2xl overflow-hidden flex flex-col ${exiting === "right"
-        ? "animate-slide-out-right"
-        : exiting === "left"
-          ? "animate-slide-out-left"
-          : "animate-card-enter"
-        }`}
+      className={`absolute inset-0 ${animClass}`}
       style={{
-        background: "rgba(13,13,30,0.95)",
-        border: "1px solid rgba(0,229,255,0.2)",
-        boxShadow: "0 0 40px rgba(0,229,255,0.08)",
-        zIndex: 1,
+        zIndex: isTop ? 2 : 1,
+        transform: isTop ? undefined : 'scale(0.97) translateY(8px)',
       }}
     >
-      {/* Top: background art / placeholder */}
-      <div
-        className="relative flex-none  flex items-center justify-center overflow-hidden"
-        style={{ background: "linear-gradient(135deg, rgba(0,229,255,0.08), rgba(255,0,128,0.08))" }}
-      >
-
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d1e] via-transparent to-transparent" />
-
-      </div>
-
-      {/* Character info */}
-      <div className="flex-1 p-6 flex flex-col">
-        <h3 className="font-display font-black text-3xl text-brand-text uppercase tracking-wide mb-3">
-          {character.name}
-        </h3>
-        {character.imageUrl ? (
-          <img
-            src={character.imageUrl}
-            alt={character.gameName}
-            className="w-1/2 object-cover opacity-40 mb-4"
-          />
-        ) : (
-          <span className="text-7xl text-brand-neon/20" style={{ fontFamily: "monospace" }}>◈</span>
-        )}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {character.platform && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
-            >
-              {character.platform}
-            </span>
-          )}
-          {character.languages && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
-            >
-              {character.languages}
-            </span>
-          )}
-          {character.usesVoiceChat && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
-            >
-              Voice Chat: {character.usesVoiceChat ? "True" : "false"}
-            </span>
-          )}
-          {character.region && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
-            >
-              {character.region}
-            </span>
-          )}
+      <Card padding="lg" className="h-full flex flex-col gap-4">
+        <div className="flex items-start gap-4">
+          <div className="w-16 h-16 rounded-full bg-surface-raised flex-shrink-0 overflow-hidden">
+            {character.imageUrl ? (
+              <img src={character.imageUrl} alt={character.name} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-muted font-mono text-lg">
+                {character.name.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="font-display font-bold text-text text-lg">{character.name}</p>
+            <p className="text-sm text-muted font-mono">{character.platformHandle}</p>
+            {character.gameName && <p className="text-xs text-muted mt-0.5">{character.gameName}</p>}
+          </div>
         </div>
-        <hr className="mb-4" />
 
-        <div className="flex flex-wrap gap-2 mb-4">
-
-          {character.playstyle && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(0,229,255,0.1)",
-                border: "1px solid rgba(0,229,255,0.25)",
-                color: "#00e5ff",
-              }}
-            >
-              {character.playstyle}
-            </span>
-          )}
-          {character.rank && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(255,215,0,0.1)",
-                border: "1px solid rgba(255,215,0,0.25)",
-                color: "#ffd700",
-              }}
-            >
-              {character.rank}
-            </span>
-          )}
-
-
-          {character.mainRole && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
-            >
-              {character.mainRole}
-            </span>
-          )}
-          {character.secondaryRole && (
-            <span
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
-            >
-              {character.secondaryRole}
-            </span>
-          )}
-
-          {character.preferredModes?.map((pm) => (
-            <span
-              key={pm}
-              className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
-              style={{
-                background: "rgba(124,58,237,0.1)",
-                border: "1px solid rgba(124,58,237,0.25)",
-                color: "#a78bfa",
-              }}
-            >
-              {pm}
-            </span>
-          ))}
-
+        <div className="flex flex-wrap gap-1.5">
+          {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
+          {character.rank && <Badge variant="rank">{character.rank}</Badge>}
+          {character.region && <Badge variant="region">{character.region}</Badge>}
+          {character.playstyle && <Badge>{character.playstyle}</Badge>}
         </div>
 
         {character.bio && (
-          <p className="text-brand-muted text-sm leading-relaxed flex-1 line-clamp-3">
-            {character.bio}
-          </p>
+          <p className="text-sm text-muted flex-1 overflow-y-auto">{character.bio}</p>
         )}
-      </div>
 
-      {/* Action buttons */}
-      <div className="flex gap-4 p-6 pt-2">
-        <button
-          onClick={handleDislike}
-          className="flex-1 py-4 font-display font-bold text-sm tracking-widest uppercase transition-all duration-200 hover:scale-105 rounded-lg"
-          style={{
-            background: "rgba(239,68,68,0.1)",
-            border: "1px solid rgba(239,68,68,0.3)",
-            color: "#ef4444",
-          }}
-        >
-          ✕ Pass
-        </button>
-        <button
-          onClick={handleLike}
-          className="flex-1 py-4 font-display font-bold text-sm tracking-widest uppercase transition-all duration-200 hover:scale-105 rounded-lg"
-          style={{
-            background: "rgba(0,229,255,0.1)",
-            border: "1px solid rgba(0,229,255,0.4)",
-            color: "#00e5ff",
-            boxShadow: "0 0 20px rgba(0,229,255,0.1)",
-          }}
-        >
-          ♡ Like
-        </button>
-      </div>
+        {isTop && (
+          <div className="flex gap-3 mt-auto">
+            <Button
+              variant="secondary"
+              className="flex-1 border-danger/50 text-danger hover:bg-danger hover:text-white hover:border-danger"
+              onClick={() => handle('left', onDislike)}
+              disabled={!!exiting}
+            >
+              Pass
+            </Button>
+            <Button
+              className="flex-1"
+              onClick={() => handle('right', onLike)}
+              disabled={!!exiting}
+            >
+              Like
+            </Button>
+          </div>
+        )}
+      </Card>
     </div>
-  );
+  )
 }
