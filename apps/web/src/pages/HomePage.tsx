@@ -17,7 +17,7 @@ export default function HomePage() {
     <PageLayout>
       <div className="mb-10">
         <p className="text-xs font-mono text-muted uppercase tracking-widest mb-1">Welcome back</p>
-        <h1 className="font-display font-bold text-3xl md:text-4xl text-text">{username}</h1>
+        <h1 className="font-display font-bold text-xl md:text-4xl text-text">{username.split('@')[0]}</h1>
       </div>
 
       {userGames.status === 'loading' ? (

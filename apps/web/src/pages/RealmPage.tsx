@@ -63,18 +63,20 @@ export default function RealmPage() {
               className="w-16 h-16 object-cover rounded"
             />
           )}
+
         </div>
+
+        <div className='px-4 md:px-8 pb-6' dangerouslySetInnerHTML={{ __html: userGame?.description }} />
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex gap-0">
           {(['discover', 'matches'] as Tab[]).map(t => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`font-mono text-xs uppercase tracking-widest px-6 py-3 border-b-2 transition-colors ${
-                tab === t
-                  ? 'border-accent text-accent'
-                  : 'border-transparent text-muted hover:text-text'
-              }`}
+              className={`font-mono text-xs uppercase tracking-widest px-6 py-3 border-b-2 transition-colors ${tab === t
+                ? 'border-accent text-accent'
+                : 'border-transparent text-muted hover:text-text'
+                }`}
             >
               {t}
             </button>

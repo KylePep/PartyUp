@@ -36,13 +36,12 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
 
   return (
     <nav
-      className={`z-40 w-full flex items-center justify-between px-6 h-14 ${
-        variant === 'landing'
+      className={`z-40 w-full flex items-center justify-between px-6 h-14 ${variant === 'landing'
           ? 'absolute top-0 left-0 bg-transparent'
           : 'sticky top-0 bg-surface/80 backdrop-blur-sm border-b border-border'
-      }`}
+        }`}
     >
-      <Link to="/" className="font-display font-bold text-text text-lg tracking-wide">
+      <Link to="/home" className="font-display font-bold text-text text-lg tracking-wide">
         PartyUp
       </Link>
 
@@ -53,8 +52,7 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `text-xs font-mono uppercase tracking-widest transition-colors ${
-                  isActive ? 'text-accent' : 'text-muted hover:text-text'
+                `text-xs font-mono uppercase tracking-widest transition-colors ${isActive ? 'text-accent' : 'text-muted hover:text-text'
                 }`
               }
             >
