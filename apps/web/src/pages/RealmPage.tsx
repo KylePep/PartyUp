@@ -20,7 +20,7 @@ export default function RealmPage() {
 
   useEffect(() => {
     if (!gameId) return
-    setLoading(true)
+
     getUserGameByGameId(gameId)
       .then(ug => {
         setUserGame(ug)
