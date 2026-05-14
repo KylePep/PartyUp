@@ -65,8 +65,12 @@ export default function RealmPage() {
           )}
 
         </div>
-
-        <div className='px-4 md:px-8 pb-6' dangerouslySetInnerHTML={{ __html: userGame?.description }} />
+        {userGame?.description != null && (
+          <div
+            className="px-4 md:px-8 pb-6"
+            dangerouslySetInnerHTML={{ __html: userGame.description }}
+          />
+        )}
 
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex gap-0">
           {(['discover', 'matches'] as Tab[]).map(t => (
