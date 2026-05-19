@@ -1,20 +1,29 @@
 import { useState } from 'react'
-import { createCharacter } from '../../api/endpoints/characters'
+import { createCharacter, uploadCharacterImage } from '../../api/endpoints/characters'
+import { useFieldDefinitions } from '../../hooks/useFieldDefinitions'
 import { Button } from '../ui'
 import { IdentityStep } from './IdentityStep'
 import { GameplayStep } from './GameplayStep'
+import { DynamicGameplayStep } from './DynamicGameplayStep'
 import { AvailabilityStep } from './AvailabilityStep'
 import { AboutStep } from './AboutStep'
 import { defaultFormData, type CharacterFormData } from './types'
 
-const STEPS = ['Identity', 'Gameplay', 'Availability', 'About'] as const
-
 interface CreateCharacterWizardProps {
   userGameId: string
+  gameId: string
   onSuccess: () => void
 }
 
-export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacterWizardProps) {
+export function CreateCharacterWizard({ userGameId, gameId, onSuccess }: CreateCharacterWizardProps) {
+  const { data: fieldDefs, loading: loadingFields } = useFieldDefinitions(gameId)
+  const hasDynamicFields =
+    fieldDefs?.schemaStatus === 'Generated' && fieldDefs.fields.length > 0
+
+  const STEPS = hasDynamicFields
+    ? (['Identity', 'Game Fields', 'Gameplay', 'Availability', 'About'] as const)
+    : (['Identity', 'Gameplay', 'Availability', 'About'] as const)
+
   const [step, setStep] = useState(0)
   const [data, setData] = useState<CharacterFormData>(defaultFormData)
   const [submitting, setSubmitting] = useState(false)
@@ -24,8 +33,16 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
     setData(prev => ({ ...prev, ...update }))
   }
 
+  function setGameField(fieldId: string, value: string) {
+    setData(prev => ({
+      ...prev,
+      gameFields: { ...prev.gameFields, [fieldId]: value },
+    }))
+  }
+
   function canAdvance() {
-    if (step === 0) return data.platform.trim() !== '' && data.platformHandle.trim() !== '' && data.name.trim() !== ''
+    if (step === 0)
+      return data.platform.trim() !== '' && data.platformHandle.trim() !== '' && data.name.trim() !== ''
     return true
   }
 
@@ -37,12 +54,25 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
     setSubmitting(true)
     setError('')
     try {
+      let imageUrl = data.imageUrl.trim() || undefined
+
+      if (data.imageFile) {
+        const uploaded = await uploadCharacterImage(data.imageFile)
+        imageUrl = uploaded.url
+      }
+
+      const gameFields = hasDynamicFields
+        ? Object.entries(data.gameFields)
+            .filter(([, v]) => v !== '')
+            .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+        : undefined
+
       await createCharacter({
         userGameId,
         platform: data.platform,
         platformHandle: data.platformHandle.trim(),
         name: data.name.trim(),
-        imageUrl: data.imageUrl.trim() || undefined,
+        imageUrl,
         bio: data.bio.trim() || undefined,
         mainRole: data.mainRole || undefined,
         secondaryRole: data.secondaryRole || undefined,
@@ -54,6 +84,7 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
         activeTimes: data.activeTimes.length > 0 ? data.activeTimes : undefined,
         usesVoiceChat: data.usesVoiceChat,
         languages: data.languages.length > 0 ? data.languages : undefined,
+        gameFields,
       })
       onSuccess()
     } catch {
@@ -64,8 +95,30 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
 
   const isLast = step === STEPS.length - 1
 
+  function renderStep() {
+    const label = STEPS[step]
+    if (label === 'Identity') return <IdentityStep data={data} onChange={patch} />
+    if (label === 'Game Fields')
+      return (
+        <DynamicGameplayStep
+          fields={fieldDefs?.fields ?? []}
+          values={data.gameFields}
+          onChange={setGameField}
+        />
+      )
+    if (label === 'Gameplay') return <GameplayStep data={data} onChange={patch} />
+    if (label === 'Availability') return <AvailabilityStep data={data} onChange={patch} />
+    if (label === 'About') return <AboutStep data={data} onChange={patch} />
+  }
+
   return (
     <div className="flex flex-col gap-8">
+      {loadingFields && (
+        <p className="text-xs font-mono text-muted text-center animate-pulse">
+          Loading game fields...
+        </p>
+      )}
+
       {/* Progress indicator */}
       <div className="flex items-center gap-2">
         {STEPS.map((label, i) => (
@@ -92,12 +145,7 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
       </div>
 
       {/* Step content */}
-      <div>
-        {step === 0 && <IdentityStep data={data} onChange={patch} />}
-        {step === 1 && <GameplayStep data={data} onChange={patch} />}
-        {step === 2 && <AvailabilityStep data={data} onChange={patch} />}
-        {step === 3 && <AboutStep data={data} onChange={patch} />}
-      </div>
+      <div>{renderStep()}</div>
 
       {error && (
         <p className="text-xs font-mono text-danger border border-danger/30 bg-danger/10 px-4 py-3">

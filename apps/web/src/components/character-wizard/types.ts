@@ -12,6 +12,7 @@ export interface CharacterFormData {
   platformHandle: string
   name: string
   imageUrl: string
+  imageFile: File | null
   bio: string
   mainRole: string
   secondaryRole: string
@@ -23,6 +24,7 @@ export interface CharacterFormData {
   activeTimes: string[]
   usesVoiceChat: boolean | undefined
   languages: string[]
+  gameFields: Record<string, string>
 }
 
 export const defaultFormData: CharacterFormData = {
@@ -30,6 +32,7 @@ export const defaultFormData: CharacterFormData = {
   platformHandle: '',
   name: '',
   imageUrl: '',
+  imageFile: null,
   bio: '',
   mainRole: '',
   secondaryRole: '',
@@ -41,4 +44,5 @@ export const defaultFormData: CharacterFormData = {
   activeTimes: [],
   usesVoiceChat: undefined,
   languages: [],
+  gameFields: {},
 }

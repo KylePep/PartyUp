@@ -59,6 +59,7 @@ public class GamesController : ControllerBase
       SchemaStatus = game.SchemaStatus.ToString(),
       Fields = definitions.Select(d => new GameFieldDefinitionDto
       {
+        Id = d.Id,
         Key = d.Key,
         Label = d.Label,
         Type = d.Type.ToString(),

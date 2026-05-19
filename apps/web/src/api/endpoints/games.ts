@@ -1,6 +1,7 @@
 import { apiGet } from "../client";
 
 export type GameFieldDefinition = {
+  id: string;
   key: string;
   label: string;
   type: "Select" | "MultiSelect" | "Text";
