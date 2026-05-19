@@ -47,6 +47,17 @@ public class CharacterService : ICharacterService
     };
 
     _db.Characters.Add(character);
+
+    foreach (var field in request.GameFields)
+    {
+      _db.CharacterFieldValues.Add(new CharacterFieldValue
+      {
+        CharacterId = character.Id,
+        FieldDefinitionId = field.FieldDefinitionId,
+        Value = field.Value
+      });
+    }
+
     await _db.SaveChangesAsync();
 
     return ToResponse(character);
