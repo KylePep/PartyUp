@@ -70,7 +70,7 @@ The `POST /api/user-games` response returns immediately with the created `UserGa
 ### Background Task
 
 1. Set `Game.SchemaStatus = Generating`
-2. Call Claude API (`claude-haiku-4-5` by default; `claude-sonnet-4-6` for higher quality) with the game's `Name`, `Description`, `Genres`, `Tags`, and `Platforms` already stored on the `Game` row — no additional RAWG call needed
+2. Call Claude API (`claude-haiku-4-5`) with the game's `Name`, `Description`, `Genres`, `Tags`, and `Platforms` already stored on the `Game` row — no additional RAWG call needed
 3. Parse the structured JSON response
 4. Validate each field definition (key is non-empty, options list is non-empty for Select/MultiSelect types)
 5. Insert `GameFieldDefinitions` rows
