@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyUp.Api.Models.DTOs.Character;
+using PartyUp.Api.Services.Interfaces;
 
 [ApiController]
 [Route("api/characters")]
@@ -9,10 +10,12 @@ using PartyUp.Api.Models.DTOs.Character;
 public class CharactersController : ControllerBase
 {
   private readonly ICharacterService _characterService;
+  private readonly IGcsStorageService _gcs;
 
-  public CharactersController(ICharacterService characterService)
+  public CharactersController(ICharacterService characterService, IGcsStorageService gcs)
   {
     _characterService = characterService;
+    _gcs = gcs;
   }
 
   [HttpGet]
@@ -41,6 +44,18 @@ public class CharactersController : ControllerBase
       return NotFound("UserGame not found or does not belong to you.");
 
     return CreatedAtAction(nameof(GetMyCharacters), result);
+  }
+
+  [HttpPost("image")]
+  public async Task<IActionResult> UploadImage(IFormFile file)
+  {
+    if (file == null || file.Length == 0)
+      return BadRequest("No file provided.");
+
+    var objectName = $"characters/{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+    using var stream = file.OpenReadStream();
+    var url = await _gcs.UploadAsync(stream, file.ContentType, objectName);
+    return Ok(new UploadImageResponse { Url = url });
   }
 
   [HttpGet("discover")]
