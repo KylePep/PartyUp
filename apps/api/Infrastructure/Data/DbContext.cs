@@ -20,6 +20,7 @@ namespace PartyUp.Api.Infrastructure.Data
         public DbSet<CharacterInteraction> CharacterInteractions { get; set; }
         public DbSet<CharacterMatch> CharacterMatches { get; set; }
         public DbSet<GameFieldDefinition> GameFieldDefinitions { get; set; }
+        public DbSet<CharacterFieldValue> CharacterFieldValues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,6 +54,19 @@ namespace PartyUp.Api.Infrastructure.Data
                 e.HasOne<Game>()
                     .WithMany(g => g.FieldDefinitions)
                     .HasForeignKey(x => x.GameId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<CharacterFieldValue>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.HasOne(x => x.FieldDefinition)
+                    .WithMany()
+                    .HasForeignKey(x => x.FieldDefinitionId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne<Character>()
+                    .WithMany(c => c.FieldValues)
+                    .HasForeignKey(x => x.CharacterId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
