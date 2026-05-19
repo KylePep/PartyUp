@@ -88,7 +88,7 @@ public class CharacterService : ICharacterService
       .ToListAsync();
   }
 
-  public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId)
+  public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null)
   {
     var myUserGame = await _db.UserGames
       .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
@@ -109,13 +109,35 @@ public class CharacterService : ICharacterService
       .Select(i => i.ToCharacterId)
       .ToListAsync();
 
-    return await _db.Characters
+    var query = _db.Characters
       .Include(c => c.UserGame)
         .ThenInclude(ug => ug.Game)
       .Where(c =>
         c.UserGame.GameId == gameId &&
         c.UserGame.UserId != userId &&
-        !alreadySeenIds.Contains(c.Id))
+        !alreadySeenIds.Contains(c.Id));
+
+    if (filters != null && filters.Count > 0)
+    {
+      var filterableKeys = (await _db.GameFieldDefinitions
+        .Where(d => d.GameId == gameId && d.IsFilterable && d.Type == PartyUp.Api.Models.Enums.FieldType.Select)
+        .Select(d => d.Key)
+        .ToListAsync())
+        .ToHashSet();
+
+      foreach (var (key, value) in filters)
+      {
+        if (!filterableKeys.Contains(key))
+          continue;
+        var k = key;
+        var v = value;
+        query = query.Where(c => c.FieldValues.Any(fv =>
+          fv.FieldDefinition.Key == k &&
+          fv.Value == v));
+      }
+    }
+
+    return await query
       .Select(c => new DiscoverCharacterResponse
       {
         Id = c.Id,

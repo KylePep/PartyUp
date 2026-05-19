@@ -47,7 +47,10 @@ public class CharactersController : ControllerBase
   public async Task<IActionResult> Discover([FromQuery] Guid gameId)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    var result = await _characterService.DiscoverCharactersAsync(userId, gameId);
+    var filters = Request.Query
+      .Where(kv => kv.Key != "gameId")
+      .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
+    var result = await _characterService.DiscoverCharactersAsync(userId, gameId, filters);
     return Ok(result);
   }
 }
