@@ -1,5 +1,20 @@
 import { apiGet } from "../client";
 
+export type GameFieldDefinition = {
+  key: string;
+  label: string;
+  type: "Select" | "MultiSelect" | "Text";
+  options: string[];
+  isFilterable: boolean;
+  isRequired: boolean;
+  sortOrder: number;
+};
+
+export type FieldDefinitionsResponse = {
+  schemaStatus: "Pending" | "Generating" | "Generated" | "Failed";
+  fields: GameFieldDefinition[];
+};
+
 export type Game = {
   id: string;
   externalId: number;
@@ -49,4 +64,8 @@ export function getGameDetails(externalId: number): Promise<GameDetails> {
 
 export function getGameDetailsByDbId(gameId: string): Promise<GameDetails> {
   return apiGet<GameDetails>(`/games/${gameId}`);
+}
+
+export function getFieldDefinitions(gameId: string): Promise<FieldDefinitionsResponse> {
+  return apiGet<FieldDefinitionsResponse>(`/games/${gameId}/field-definitions`);
 }

@@ -96,3 +96,13 @@ export async function apiDelete<T>(url: string): Promise<T> {
   return handleResponse<T>(res);
 }
 
+export async function apiPostForm<T>(url: string, form: FormData): Promise<T> {
+  const res = await fetch(`${API_BASE}${url}`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: form,
+  });
+
+  return handleResponse<T>(res);
+}
+
