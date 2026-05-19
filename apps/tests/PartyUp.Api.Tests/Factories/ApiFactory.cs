@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PartyUp.Api.Infrastructure.Clients;
 using PartyUp.Api.Infrastructure.Data;
+using PartyUp.Api.Services.Interfaces;
 using PartyUp.Api.Tests.Infrastructure;
 
 namespace PartyUp.Api.Tests.Factories;
@@ -20,7 +21,9 @@ public class ApiFactory : WebApplicationFactory<Program>
         {
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
-                ["Rawg:ApiKey"] = "ci-test-fake-rawg-key"
+                ["Rawg:ApiKey"] = "ci-test-fake-rawg-key",
+                ["Anthropic:ApiKey"] = "ci-test-fake-anthropic-key",
+                ["GoogleCloudStorage:BucketName"] = "test-bucket"
             });
         });
 
@@ -36,6 +39,15 @@ public class ApiFactory : WebApplicationFactory<Program>
 
             services.AddHttpClient<RawgClient>()
                 .ConfigurePrimaryHttpMessageHandler(() => new FakeRawgHandler());
+
+            services.AddHttpClient("anthropic")
+                .ConfigurePrimaryHttpMessageHandler(() => new FakeAnthropicHandler());
+
+            var gcsDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IGcsStorageService));
+            if (gcsDescriptor != null)
+                services.Remove(gcsDescriptor);
+            services.AddScoped<IGcsStorageService, FakeGcsService>();
         });
     }
 }

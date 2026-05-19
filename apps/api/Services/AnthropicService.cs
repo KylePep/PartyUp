@@ -33,8 +33,10 @@ public class AnthropicService : IAnthropicService
             Description: {game.Description ?? "N/A"}
             Platforms: {string.Join(", ", game.Platforms)}
 
-            Return a JSON array with this exact shape:
-            [{{"key":"...","label":"...","type":"Select|MultiSelect|Text","options":[...],"isFilterable":true,"isRequired":true,"sortOrder":1}}]
+            Return a JSON array where each element has these fields:
+            key (string, camelCase identifier), label (string, display name),
+            type (one of: Select, MultiSelect, Text), options (array of strings, empty for Text),
+            isFilterable (bool), isRequired (bool), sortOrder (int starting at 1).
             """;
 
         var body = new

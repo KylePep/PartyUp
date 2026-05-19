@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services;
+using PartyUp.Api.Services.Interfaces;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -26,11 +27,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpClient<RawgClient>();
+builder.Services.AddHttpClient("anthropic");
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<ICharacterInteractionService, CharacterInteractionService>();
 builder.Services.AddScoped<ICharacterMatchService, CharacterMatchService>();
+builder.Services.AddScoped<IAnthropicService, AnthropicService>();
+builder.Services.AddScoped<IGameFieldDefinitionService, GameFieldDefinitionService>();
+builder.Services.AddScoped<IGameSchemaGenerationService, GameSchemaGenerationService>();
+builder.Services.AddScoped<IGcsStorageService, GcsStorageService>();
 
 
 
