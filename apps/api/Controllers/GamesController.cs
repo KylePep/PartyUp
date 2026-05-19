@@ -1,14 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using PartyUp.Api.Models.DTOs.Game;
+using PartyUp.Api.Services.Interfaces;
 
 [ApiController]
 [Route("api/games")]
 public class GamesController : ControllerBase
 {
   private readonly IGameService _service;
+  private readonly IGameFieldDefinitionService _fieldDefinitionService;
 
-  public GamesController(IGameService service)
+  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService)
   {
     _service = service;
+    _fieldDefinitionService = fieldDefinitionService;
   }
 
   [HttpGet]
@@ -39,5 +43,32 @@ public class GamesController : ControllerBase
     if (game == null)
       return NotFound();
     return Ok(game);
+  }
+
+  [HttpGet("{id:guid}/field-definitions")]
+  public async Task<IActionResult> GetFieldDefinitions(Guid id)
+  {
+    var game = await _service.GetGameByDbId(id);
+    if (game == null)
+      return NotFound();
+
+    var definitions = await _fieldDefinitionService.GetDefinitionsAsync(id);
+
+    var response = new FieldDefinitionsResponse
+    {
+      SchemaStatus = game.SchemaStatus.ToString(),
+      Fields = definitions.Select(d => new GameFieldDefinitionDto
+      {
+        Key = d.Key,
+        Label = d.Label,
+        Type = d.Type.ToString(),
+        Options = d.Options,
+        IsFilterable = d.IsFilterable,
+        IsRequired = d.IsRequired,
+        SortOrder = d.SortOrder
+      }).ToList()
+    };
+
+    return Ok(response);
   }
 }
