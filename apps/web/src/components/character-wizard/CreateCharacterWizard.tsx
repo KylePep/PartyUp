@@ -21,7 +21,7 @@ export function CreateCharacterWizard({ userGameId, gameId, onSuccess }: CreateC
     fieldDefs?.schemaStatus === 'Generated' && fieldDefs.fields.length > 0
 
   const STEPS = hasDynamicFields
-    ? (['Identity', 'Game Fields', 'Gameplay', 'Availability', 'About'] as const)
+    ? (['Identity', 'Game Fields', 'Availability', 'About'] as const)
     : (['Identity', 'Gameplay', 'Availability', 'About'] as const)
 
   const [step, setStep] = useState(0)
