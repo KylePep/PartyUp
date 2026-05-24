@@ -43,6 +43,7 @@ export default function CreateCharacterPage() {
         <CreateCharacterWizard
           userGameId={userGame.id}
           gameId={userGame.gameId}
+          platforms={userGame.platforms}
           onSuccess={() => navigate(`/realm/${gameId}`)}
         />
       </div>

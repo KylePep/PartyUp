@@ -12,10 +12,11 @@ import { defaultFormData, type CharacterFormData } from './types'
 interface CreateCharacterWizardProps {
   userGameId: string
   gameId: string
+  platforms?: string[]
   onSuccess: () => void
 }
 
-export function CreateCharacterWizard({ userGameId, gameId, onSuccess }: CreateCharacterWizardProps) {
+export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess }: CreateCharacterWizardProps) {
   const { data: fieldDefs, loading: loadingFields } = useFieldDefinitions(gameId)
   const hasDynamicFields =
     fieldDefs?.schemaStatus === 'Generated' && fieldDefs.fields.length > 0
@@ -97,7 +98,7 @@ export function CreateCharacterWizard({ userGameId, gameId, onSuccess }: CreateC
 
   function renderStep() {
     const label = STEPS[step]
-    if (label === 'Identity') return <IdentityStep data={data} onChange={patch} />
+    if (label === 'Identity') return <IdentityStep data={data} onChange={patch} platforms={platforms} />
     if (label === 'Game Fields')
       return (
         <DynamicGameplayStep

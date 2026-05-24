@@ -6,11 +6,13 @@ import { type CharacterFormData, PLATFORMS } from './types'
 interface IdentityStepProps {
   data: CharacterFormData
   onChange: (patch: Partial<CharacterFormData>) => void
+  platforms?: string[]
 }
 
 const toOptions = (arr: string[]) => arr.map(v => ({ value: v, label: v }))
 
-export function IdentityStep({ data, onChange }: IdentityStepProps) {
+export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
+  const platformOptions = platforms && platforms.length > 0 ? platforms : PLATFORMS
   const fileRef = useRef<HTMLInputElement>(null)
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -27,7 +29,7 @@ export function IdentityStep({ data, onChange }: IdentityStepProps) {
       <div>
         <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Platform *</p>
         <ToggleButtonGroup
-          options={toOptions(PLATFORMS)}
+          options={toOptions(platformOptions)}
           value={data.platform ? [data.platform] : []}
           multiple={false}
           onChange={vals => onChange({ platform: vals[0] ?? '' })}
