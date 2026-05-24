@@ -29,6 +29,8 @@ public class AnthropicService : IAnthropicService
             "IMPORTANT: Do NOT include fields for platform, language, time zone, voice chat, " +
             "or active/play times — those are already collected elsewhere in the app. " +
             "Focus only on game-specific attributes (class, weapon, faction, rank, server, etc.). " +
+            "For Select and MultiSelect fields, list ALL currently available options exhaustively — " +
+            "do not truncate or summarize. Players need complete option lists to accurately represent their character. " +
             "Return only valid JSON — no explanation, no markdown.";
 
         var userPrompt = $"""

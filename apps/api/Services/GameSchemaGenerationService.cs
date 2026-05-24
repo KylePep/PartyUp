@@ -30,6 +30,8 @@ public class GameSchemaGenerationService : IGameSchemaGenerationService
         if (game == null) return;
 
         game.SchemaStatus = SchemaStatus.Generating;
+        var stale = _db.GameFieldDefinitions.Where(d => d.GameId == gameId);
+        _db.GameFieldDefinitions.RemoveRange(stale);
         await _db.SaveChangesAsync();
 
         try

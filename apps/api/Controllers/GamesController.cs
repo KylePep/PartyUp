@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyUp.Api.Models.DTOs.Game;
 using PartyUp.Api.Services.Interfaces;
@@ -8,11 +9,13 @@ public class GamesController : ControllerBase
 {
   private readonly IGameService _service;
   private readonly IGameFieldDefinitionService _fieldDefinitionService;
+  private readonly IServiceScopeFactory _scopeFactory;
 
-  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService)
+  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService, IServiceScopeFactory scopeFactory)
   {
     _service = service;
     _fieldDefinitionService = fieldDefinitionService;
+    _scopeFactory = scopeFactory;
   }
 
   [HttpGet]
@@ -71,5 +74,23 @@ public class GamesController : ControllerBase
     };
 
     return Ok(response);
+  }
+
+  [Authorize]
+  [HttpPost("{id:guid}/regenerate-schema")]
+  public async Task<IActionResult> RegenerateSchema(Guid id)
+  {
+    var game = await _service.GetGameByDbId(id);
+    if (game == null)
+      return NotFound();
+
+    _ = Task.Run(async () =>
+    {
+      await using var scope = _scopeFactory.CreateAsyncScope();
+      var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
+      await generator.GenerateForGameAsync(id);
+    });
+
+    return Accepted();
   }
 }

@@ -1,4 +1,4 @@
-import { apiGet } from "../client";
+import { apiGet, apiPostEmpty } from "../client";
 
 export type GameFieldDefinition = {
   id: string;
@@ -69,4 +69,8 @@ export function getGameDetailsByDbId(gameId: string): Promise<GameDetails> {
 
 export function getFieldDefinitions(gameId: string): Promise<FieldDefinitionsResponse> {
   return apiGet<FieldDefinitionsResponse>(`/games/${gameId}/field-definitions`);
+}
+
+export function regenerateSchema(gameId: string): Promise<void> {
+  return apiPostEmpty(`/games/${gameId}/regenerate-schema`);
 }

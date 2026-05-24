@@ -74,6 +74,14 @@ export async function apiPost<T>(url: string, body: unknown): Promise<T> {
   return handleResponse<T>(res);
 }
 
+export async function apiPostEmpty(url: string): Promise<void> {
+  const res = await fetch(`${API_BASE}${url}`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+}
+
 export async function apiPut<T>(url: string, body: unknown): Promise<T> {
   const res = await fetch(`${API_BASE}${url}`, {
     method: "PUT",
