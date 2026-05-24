@@ -26,6 +26,9 @@ public class AnthropicService : IAnthropicService
             "Given a game's details, return a JSON array of character field definitions " +
             "that players would use to find compatible teammates. Prioritize fields with " +
             "enumerable options (server region, class, role, faction) over free-text fields. " +
+            "IMPORTANT: Do NOT include fields for platform, language, time zone, voice chat, " +
+            "or active/play times — those are already collected elsewhere in the app. " +
+            "Focus only on game-specific attributes (class, weapon, faction, rank, server, etc.). " +
             "Return only valid JSON — no explanation, no markdown.";
 
         var userPrompt = $"""

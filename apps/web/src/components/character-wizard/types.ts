@@ -4,6 +4,7 @@ export const PREFERRED_MODES = ['Ranked', 'Casual', 'Co-op', 'Story', 'PvP', 'Pv
 export const PLAYSTYLES = ['Casual', 'Competitive', 'Hybrid', 'Hardcore', 'Story-focused']
 export const RANKS = ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Grandmaster', 'Legend', 'Mythic']
 export const REGIONS = ['NA East', 'NA West', 'EU', 'Asia', 'OCE', 'SA', 'Global']
+export const TIME_ZONES = ['NA East', 'NA Central', 'NA West', 'EU West', 'EU East', 'Brazil', 'Asia Pacific', 'Japan / Korea', 'Oceania']
 export const ACTIVE_TIMES = ['Morning', 'Afternoon', 'Evening', 'Late Night']
 export const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Portuguese', 'Japanese', 'Korean', 'Chinese', 'Arabic', 'Russian']
 
