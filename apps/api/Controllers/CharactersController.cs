@@ -46,13 +46,24 @@ public class CharactersController : ControllerBase
     return CreatedAtAction(nameof(GetMyCharacters), result);
   }
 
+  private static readonly Dictionary<string, string> AllowedImageTypes = new()
+  {
+      ["image/jpeg"] = ".jpg",
+      ["image/png"] = ".png",
+      ["image/webp"] = ".webp"
+  };
+
   [HttpPost("image")]
+  [RequestSizeLimit(5_242_880)] // 5 MB
   public async Task<IActionResult> UploadImage(IFormFile file)
   {
     if (file == null || file.Length == 0)
       return BadRequest("No file provided.");
 
-    var objectName = $"characters/{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+    if (!AllowedImageTypes.TryGetValue(file.ContentType, out var extension))
+      return BadRequest("Only JPEG, PNG, and WebP images are allowed.");
+
+    var objectName = $"characters/{Guid.NewGuid()}{extension}";
     using var stream = file.OpenReadStream();
     var url = await _gcs.UploadAsync(stream, file.ContentType, objectName);
     return Ok(new UploadImageResponse { Url = url });

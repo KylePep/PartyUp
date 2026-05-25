@@ -39,5 +39,19 @@ public class ImageUploadTests : TestBase, IClassFixture<ApiFactory>
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
+    [Fact]
+    public async Task UploadImage_WithNonImageMimeType_ReturnsBadRequest()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        using var content = new MultipartFormDataContent();
+        var fileContent = new ByteArrayContent([0x00, 0x01, 0x02]);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+        content.Add(fileContent, "file", "evil.pdf");
+
+        var response = await client.PostAsync("/api/characters/image", content);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
     private record UploadResponseDto(string Url);
 }
