@@ -21,17 +21,26 @@ public class AnthropicService : IAnthropicService
 
     public async Task<List<GameFieldDefinitionDto>> GenerateFieldDefinitionsAsync(Game game)
     {
-        const string systemPrompt =
-            "You are a gaming expert helping build a multiplayer matchmaking platform. " +
-            "Given a game's details, return a JSON array of character field definitions " +
-            "that players would use to find compatible teammates. Prioritize fields with " +
-            "enumerable options (server region, class, role, faction) over free-text fields. " +
-            "IMPORTANT: Do NOT include fields for platform, language, time zone, voice chat, " +
-            "or active/play times — those are already collected elsewhere in the app. " +
-            "Focus only on game-specific attributes (class, weapon, faction, rank, server, etc.). " +
-            "For Select and MultiSelect fields, list ALL currently available options exhaustively — " +
-            "do not truncate or summarize. Players need complete option lists to accurately represent their character. " +
-            "Return only valid JSON — no explanation, no markdown.";
+        const string systemPrompt = """
+            You are an expert multiplayer matchmaking designer specializing in online games, MMORPGs, competitive games, and co-op games.
+            Your task is to generate structured player profile fields used to match compatible teammates.
+
+            Rules:
+            - Return ONLY a valid JSON array. No markdown. No explanation.
+            - Prioritize fields that meaningfully affect matchmaking compatibility.
+            - Prefer structured enumerable fields over free text.
+            - For Select and MultiSelect fields, list ALL available options exhaustively — do not truncate or summarize.
+            - Use only officially recognized in-game terminology. Do not invent fake game systems or fake terms.
+
+            Exclude these fields — they are already collected elsewhere in the app:
+            - Platform, Language, Time zone, Voice chat, Play schedule / active times
+
+            Allowed field types: Select, MultiSelect, Text
+
+            For MMORPGs, consider: server/region, faction/alliance, class/job, role, PvE vs PvP preference, guild focus, experience level, build/playstyle, raid or trial participation.
+            For competitive games, consider: rank, main role, preferred mode, agent or character pool.
+            For co-op games, consider: difficulty preference, build archetype, playstyle, experience level.
+            """;
 
         var userPrompt = $"""
             Game: {game.Name}
