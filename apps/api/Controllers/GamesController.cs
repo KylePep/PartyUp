@@ -17,6 +17,7 @@ public class GamesController : ControllerBase
     _fieldDefinitionService = fieldDefinitionService;
   }
 
+  [Authorize]
   [EnableRateLimiting("game-search")]
   [HttpGet]
   public async Task<IActionResult> Search(
@@ -30,6 +31,7 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
+  [Authorize]
   [EnableRateLimiting("game-search")]
   [HttpGet("{id:int}/rawg")]
   public async Task<IActionResult> GetById(int id)
@@ -40,6 +42,7 @@ public class GamesController : ControllerBase
     return Ok(game);
   }
 
+  [Authorize]
   [EnableRateLimiting("game-search")]
   [HttpGet("{id:guid}")]
   public async Task<IActionResult> GetByDbId(Guid id)
@@ -50,6 +53,7 @@ public class GamesController : ControllerBase
     return Ok(game);
   }
 
+  [Authorize]
   [EnableRateLimiting("game-search")]
   [HttpGet("{id:guid}/field-definitions")]
   public async Task<IActionResult> GetFieldDefinitions(Guid id)

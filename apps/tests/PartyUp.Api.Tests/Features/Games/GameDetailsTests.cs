@@ -35,7 +35,8 @@ public class GameDetailsTests : TestBase, IClassFixture<ApiFactory>
       await db.SaveChangesAsync();
     }
 
-    var response = await Client.GetAsync($"/api/games/{game.Id}");
+    var authClient = await CreateAuthenticatedClientAsync();
+    var response = await authClient.GetAsync($"/api/games/{game.Id}");
 
     response.StatusCode.Should().Be(HttpStatusCode.OK);
     var details = await response.Content.ReadFromJsonAsync<GameDetailsDto>();
@@ -48,7 +49,8 @@ public class GameDetailsTests : TestBase, IClassFixture<ApiFactory>
   [Fact]
   public async Task GetByDbId_Returns404_WhenGameDoesNotExist()
   {
-    var response = await Client.GetAsync($"/api/games/{Guid.NewGuid()}");
+    var authClient = await CreateAuthenticatedClientAsync();
+    var response = await authClient.GetAsync($"/api/games/{Guid.NewGuid()}");
     response.StatusCode.Should().Be(HttpStatusCode.NotFound);
   }
 
