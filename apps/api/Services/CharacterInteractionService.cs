@@ -11,10 +11,17 @@ public class CharacterInteractionService : ICharacterInteractionService
     _db = db;
   }
 
-  public async Task<MatchResponse> RecordInteractionAsync(CharacterInteractionRequest request)
+  public async Task<MatchResponse> RecordInteractionAsync(CharacterInteractionRequest request, Guid userId)
   {
     if (request.FromCharacterId == request.ToCharacterId)
       throw new InvalidOperationException("Cannot interact with self");
+
+    var ownsFromCharacter = await _db.Characters
+        .Include(c => c.UserGame)
+        .AnyAsync(c => c.Id == request.FromCharacterId && c.UserGame.UserId == userId);
+
+    if (!ownsFromCharacter)
+      throw new UnauthorizedAccessException("Character does not belong to the authenticated user");
 
     var interaction = new CharacterInteraction
     {

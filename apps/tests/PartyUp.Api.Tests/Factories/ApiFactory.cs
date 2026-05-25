@@ -23,7 +23,10 @@ public class ApiFactory : WebApplicationFactory<Program>
             {
                 ["Rawg:ApiKey"] = "ci-test-fake-rawg-key",
                 ["Anthropic:ApiKey"] = "ci-test-fake-anthropic-key",
-                ["GoogleCloudStorage:BucketName"] = "test-bucket"
+                ["GoogleCloudStorage:BucketName"] = "test-bucket",
+                ["Jwt:Issuer"] = "partyup-api",
+                ["Jwt:Audience"] = "partyup-client",
+                ["RateLimit:AuthPermitLimit"] = "1000"
             });
         });
 

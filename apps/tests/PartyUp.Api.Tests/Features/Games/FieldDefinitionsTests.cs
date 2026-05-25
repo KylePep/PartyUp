@@ -17,7 +17,8 @@ public class FieldDefinitionsTests : TestBase, IClassFixture<ApiFactory>
     [Fact]
     public async Task GetFieldDefinitions_Returns404_WhenGameDoesNotExist()
     {
-        var response = await Client.GetAsync($"/api/games/{Guid.NewGuid()}/field-definitions");
+        var authClient = await CreateAuthenticatedClientAsync();
+        var response = await authClient.GetAsync($"/api/games/{Guid.NewGuid()}/field-definitions");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
@@ -64,7 +65,8 @@ public class FieldDefinitionsTests : TestBase, IClassFixture<ApiFactory>
             await db.SaveChangesAsync();
         }
 
-        var response = await Client.GetAsync($"/api/games/{game.Id}/field-definitions");
+        var authClient = await CreateAuthenticatedClientAsync();
+        var response = await authClient.GetAsync($"/api/games/{game.Id}/field-definitions");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var body = await response.Content.ReadFromJsonAsync<FieldDefinitionsResponse>();
@@ -92,7 +94,8 @@ public class FieldDefinitionsTests : TestBase, IClassFixture<ApiFactory>
             await db.SaveChangesAsync();
         }
 
-        var response = await Client.GetAsync($"/api/games/{game.Id}/field-definitions");
+        var authClient = await CreateAuthenticatedClientAsync();
+        var response = await authClient.GetAsync($"/api/games/{game.Id}/field-definitions");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var body = await response.Content.ReadFromJsonAsync<FieldDefinitionsResponse>();

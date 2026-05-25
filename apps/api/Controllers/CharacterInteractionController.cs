@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,17 +7,25 @@ using Microsoft.AspNetCore.Mvc;
 [Authorize]
 public class CharacterInteractionController : ControllerBase
 {
-  private readonly ICharacterInteractionService _service;
+    private readonly ICharacterInteractionService _service;
 
-  public CharacterInteractionController(ICharacterInteractionService service)
-  {
-    _service = service;
-  }
+    public CharacterInteractionController(ICharacterInteractionService service)
+    {
+        _service = service;
+    }
 
-  [HttpPost]
-  public async Task<ActionResult<MatchResponse>> RecordInteraction([FromBody] CharacterInteractionRequest request)
-  {
-    var result = await _service.RecordInteractionAsync(request);
-    return Ok(result);
-  }
+    [HttpPost]
+    public async Task<ActionResult<MatchResponse>> RecordInteraction([FromBody] CharacterInteractionRequest request)
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        try
+        {
+            var result = await _service.RecordInteractionAsync(request, userId);
+            return Ok(result);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
 }

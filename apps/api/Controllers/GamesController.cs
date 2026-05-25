@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PartyUp.Api.Models.DTOs.Game;
 using PartyUp.Api.Services.Interfaces;
 
@@ -16,6 +17,8 @@ public class GamesController : ControllerBase
     _fieldDefinitionService = fieldDefinitionService;
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
   [HttpGet]
   public async Task<IActionResult> Search(
       [FromQuery] string q = "",
@@ -28,6 +31,8 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
   [HttpGet("{id:int}/rawg")]
   public async Task<IActionResult> GetById(int id)
   {
@@ -37,6 +42,8 @@ public class GamesController : ControllerBase
     return Ok(game);
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
   [HttpGet("{id:guid}")]
   public async Task<IActionResult> GetByDbId(Guid id)
   {
@@ -46,6 +53,8 @@ public class GamesController : ControllerBase
     return Ok(game);
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
   [HttpGet("{id:guid}/field-definitions")]
   public async Task<IActionResult> GetFieldDefinitions(Guid id)
   {
@@ -74,6 +83,7 @@ public class GamesController : ControllerBase
     return Ok(response);
   }
 
+  [EnableRateLimiting("ai-schema")]
   [Authorize]
   [HttpPost("{id:guid}/regenerate-schema")]
   public async Task<IActionResult> RegenerateSchema(Guid id, [FromServices] IServiceScopeFactory scopeFactory)
