@@ -53,4 +53,5 @@ public class Character
   public string? Region { get; set; }
 
   public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+  public List<CharacterFieldValue> FieldValues { get; set; } = [];
 }

@@ -1,16 +1,24 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using PartyUp.Api.Models.DTOs.Game;
+using PartyUp.Api.Services.Interfaces;
 
 [ApiController]
 [Route("api/games")]
 public class GamesController : ControllerBase
 {
   private readonly IGameService _service;
+  private readonly IGameFieldDefinitionService _fieldDefinitionService;
 
-  public GamesController(IGameService service)
+  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService)
   {
     _service = service;
+    _fieldDefinitionService = fieldDefinitionService;
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
   [HttpGet]
   public async Task<IActionResult> Search(
       [FromQuery] string q = "",
@@ -23,6 +31,8 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
   [HttpGet("{id:int}/rawg")]
   public async Task<IActionResult> GetById(int id)
   {
@@ -32,6 +42,8 @@ public class GamesController : ControllerBase
     return Ok(game);
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
   [HttpGet("{id:guid}")]
   public async Task<IActionResult> GetByDbId(Guid id)
   {
@@ -39,5 +51,54 @@ public class GamesController : ControllerBase
     if (game == null)
       return NotFound();
     return Ok(game);
+  }
+
+  [Authorize]
+  [EnableRateLimiting("game-search")]
+  [HttpGet("{id:guid}/field-definitions")]
+  public async Task<IActionResult> GetFieldDefinitions(Guid id)
+  {
+    var game = await _service.GetGameByDbId(id);
+    if (game == null)
+      return NotFound();
+
+    var definitions = await _fieldDefinitionService.GetDefinitionsAsync(id);
+
+    var response = new FieldDefinitionsResponse
+    {
+      SchemaStatus = game.SchemaStatus.ToString(),
+      Fields = definitions.Select(d => new GameFieldDefinitionDto
+      {
+        Id = d.Id,
+        Key = d.Key,
+        Label = d.Label,
+        Type = d.Type.ToString(),
+        Options = d.Options,
+        IsFilterable = d.IsFilterable,
+        IsRequired = d.IsRequired,
+        SortOrder = d.SortOrder
+      }).ToList()
+    };
+
+    return Ok(response);
+  }
+
+  [EnableRateLimiting("ai-schema")]
+  [Authorize]
+  [HttpPost("{id:guid}/regenerate-schema")]
+  public async Task<IActionResult> RegenerateSchema(Guid id, [FromServices] IServiceScopeFactory scopeFactory)
+  {
+    var game = await _service.GetGameByDbId(id);
+    if (game == null)
+      return NotFound();
+
+    _ = Task.Run(async () =>
+    {
+      await using var scope = scopeFactory.CreateAsyncScope();
+      var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
+      await generator.GenerateForGameAsync(id);
+    });
+
+    return Accepted();
   }
 }

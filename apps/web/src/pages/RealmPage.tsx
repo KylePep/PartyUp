@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import DOMPurify from 'dompurify'
 import { getUserGameByGameId, type UserGameDetail } from '../api/endpoints/userGames'
 import { getUserGameCharacters, type Character } from '../api/endpoints/characters'
 import { CharacterPanel } from '../components/CharacterPanel'
@@ -68,7 +69,7 @@ export default function RealmPage() {
         {userGame?.description != null && (
           <div
             className="px-4 md:px-8 pb-6"
-            dangerouslySetInnerHTML={{ __html: userGame.description }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userGame.description) }}
           />
         )}
 

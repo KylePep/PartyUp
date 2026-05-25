@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyUp.Api.Models.DTOs.Character;
+using PartyUp.Api.Services.Interfaces;
 
 [ApiController]
 [Route("api/characters")]
@@ -9,10 +10,12 @@ using PartyUp.Api.Models.DTOs.Character;
 public class CharactersController : ControllerBase
 {
   private readonly ICharacterService _characterService;
+  private readonly IGcsStorageService _gcs;
 
-  public CharactersController(ICharacterService characterService)
+  public CharactersController(ICharacterService characterService, IGcsStorageService gcs)
   {
     _characterService = characterService;
+    _gcs = gcs;
   }
 
   [HttpGet]
@@ -43,11 +46,37 @@ public class CharactersController : ControllerBase
     return CreatedAtAction(nameof(GetMyCharacters), result);
   }
 
+  private static readonly Dictionary<string, string> AllowedImageTypes = new()
+  {
+      ["image/jpeg"] = ".jpg",
+      ["image/png"] = ".png",
+      ["image/webp"] = ".webp"
+  };
+
+  [HttpPost("image")]
+  [RequestSizeLimit(5_242_880)] // 5 MB
+  public async Task<IActionResult> UploadImage(IFormFile file)
+  {
+    if (file == null || file.Length == 0)
+      return BadRequest("No file provided.");
+
+    if (!AllowedImageTypes.TryGetValue(file.ContentType, out var extension))
+      return BadRequest("Only JPEG, PNG, and WebP images are allowed.");
+
+    var objectName = $"characters/{Guid.NewGuid()}{extension}";
+    using var stream = file.OpenReadStream();
+    var url = await _gcs.UploadAsync(stream, file.ContentType, objectName);
+    return Ok(new UploadImageResponse { Url = url });
+  }
+
   [HttpGet("discover")]
   public async Task<IActionResult> Discover([FromQuery] Guid gameId)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    var result = await _characterService.DiscoverCharactersAsync(userId, gameId);
+    var filters = Request.Query
+      .Where(kv => kv.Key != "gameId")
+      .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
+    var result = await _characterService.DiscoverCharactersAsync(userId, gameId, filters);
     return Ok(result);
   }
 }

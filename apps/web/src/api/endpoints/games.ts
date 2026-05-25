@@ -1,4 +1,20 @@
-import { apiGet } from "../client";
+import { apiGet, apiPostEmpty } from "../client";
+
+export type GameFieldDefinition = {
+  id: string;
+  key: string;
+  label: string;
+  type: "Select" | "MultiSelect" | "Text";
+  options: string[];
+  isFilterable: boolean;
+  isRequired: boolean;
+  sortOrder: number;
+};
+
+export type FieldDefinitionsResponse = {
+  schemaStatus: "Pending" | "Generating" | "Generated" | "Failed";
+  fields: GameFieldDefinition[];
+};
 
 export type Game = {
   id: string;
@@ -49,4 +65,12 @@ export function getGameDetails(externalId: number): Promise<GameDetails> {
 
 export function getGameDetailsByDbId(gameId: string): Promise<GameDetails> {
   return apiGet<GameDetails>(`/games/${gameId}`);
+}
+
+export function getFieldDefinitions(gameId: string): Promise<FieldDefinitionsResponse> {
+  return apiGet<FieldDefinitionsResponse>(`/games/${gameId}/field-definitions`);
+}
+
+export function regenerateSchema(gameId: string): Promise<void> {
+  return apiPostEmpty(`/games/${gameId}/regenerate-schema`);
 }
