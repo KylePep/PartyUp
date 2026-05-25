@@ -43,20 +43,28 @@ public class AnthropicService : IAnthropicService
             """;
 
         var userPrompt = $"""
+            Generate matchmaking character fields for this game.
+
             Game: {game.Name}
             Description: {game.Description ?? "N/A"}
             Platforms: {string.Join(", ", game.Platforms)}
 
-            Return a JSON array where each element has these fields:
-            key (string, camelCase identifier), label (string, display name),
-            type (one of: Select, MultiSelect, Text), options (array of strings, empty for Text),
+            Guidance:
+            - Prefer fields players commonly ask each other when forming a group.
+            - Use current live-service terminology (patch-accurate class names, rank tiers, etc.).
+            - Include exhaustive option lists — do not truncate.
+            - Sort fields by matchmaking importance.
+
+            Return a JSON array where each element has:
+            key (string, camelCase), label (string, display name),
+            type (one of: Select, MultiSelect, Text), options (string array, empty for Text),
             isFilterable (bool), isRequired (bool), sortOrder (int starting at 1).
             """;
 
         var body = new
         {
             model = "claude-haiku-4-5-20251001",
-            max_tokens = 1024,
+            max_tokens = 4096,
             system = systemPrompt,
             messages = new[] { new { role = "user", content = userPrompt } }
         };
