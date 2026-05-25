@@ -9,13 +9,11 @@ public class GamesController : ControllerBase
 {
   private readonly IGameService _service;
   private readonly IGameFieldDefinitionService _fieldDefinitionService;
-  private readonly IServiceScopeFactory _scopeFactory;
 
-  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService, IServiceScopeFactory scopeFactory)
+  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService)
   {
     _service = service;
     _fieldDefinitionService = fieldDefinitionService;
-    _scopeFactory = scopeFactory;
   }
 
   [HttpGet]
@@ -78,7 +76,7 @@ public class GamesController : ControllerBase
 
   [Authorize]
   [HttpPost("{id:guid}/regenerate-schema")]
-  public async Task<IActionResult> RegenerateSchema(Guid id)
+  public async Task<IActionResult> RegenerateSchema(Guid id, [FromServices] IServiceScopeFactory scopeFactory)
   {
     var game = await _service.GetGameByDbId(id);
     if (game == null)
@@ -86,7 +84,7 @@ public class GamesController : ControllerBase
 
     _ = Task.Run(async () =>
     {
-      await using var scope = _scopeFactory.CreateAsyncScope();
+      await using var scope = scopeFactory.CreateAsyncScope();
       var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
       await generator.GenerateForGameAsync(id);
     });
