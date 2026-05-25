@@ -7,7 +7,17 @@
       "Bash(npm run *)",
       "Bash(git rm *)",
       "Bash(git checkout *)",
-      "Bash(Get-ChildItem -Path \"c:\\\\source\\\\applications\\\\PartyUp\\\\apps\\\\web\" -Recurse -Name)"
+      "Bash(Get-ChildItem -Path \"c:\\\\source\\\\applications\\\\PartyUp\\\\apps\\\\web\" -Recurse -Name)",
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:brainstorming:*)",
+      "Bash(Get-ChildItem -Path 'c:\\\\source\\\\applications\\\\PartyUp' -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Skill(superpowers:executing-plans)",
+      "Skill(superpowers:executing-plans:*)",
+      "Bash(dotnet add *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet clean *)",
+      "Bash(dotnet ef *)"
     ]
   }
 }

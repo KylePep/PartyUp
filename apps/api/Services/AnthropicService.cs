@@ -33,7 +33,7 @@ public class AnthropicService : IAnthropicService
             - Use only officially recognized in-game terminology. Do not invent fake game systems or fake terms.
 
             Exclude these fields — they are already collected elsewhere in the app:
-            - Platform, Language, Time zone, Voice chat, Play schedule / active times
+            - Platform, Character Name, Language, Time zone, Voice chat, Play schedule / active times
 
             Allowed field types: Select, MultiSelect, Text
 
