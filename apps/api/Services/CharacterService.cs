@@ -164,6 +164,13 @@ public class CharacterService : ICharacterService
         Region = c.Region,
         GameName = c.UserGame.Game.Name,
         GameImageUrl = c.UserGame.Game.ImageUrl,
+        GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+        {
+          Key = fv.FieldDefinition.Key,
+          Label = fv.FieldDefinition.Label,
+          Value = fv.Value,
+          Type = fv.FieldDefinition.Type.ToString()
+        }).ToList(),
       })
       .ToListAsync();
   }
