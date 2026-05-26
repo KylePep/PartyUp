@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services;
+using PartyUp.Api.Services.Interfaces;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using PartyUp.Api.Infrastructure.Clients;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,13 +29,67 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpClient<RawgClient>();
+builder.Services.AddHttpClient("anthropic");
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserGameService, UserGameService>();
 builder.Services.AddScoped<ICharacterService, CharacterService>();
 builder.Services.AddScoped<ICharacterInteractionService, CharacterInteractionService>();
 builder.Services.AddScoped<ICharacterMatchService, CharacterMatchService>();
+builder.Services.AddScoped<IAnthropicService, AnthropicService>();
+builder.Services.AddScoped<IGameFieldDefinitionService, GameFieldDefinitionService>();
+builder.Services.AddScoped<IGameSchemaGenerationService, GameSchemaGenerationService>();
+builder.Services.AddScoped<IGcsStorageService, GcsStorageService>();
 
+builder.Services.AddRateLimiter(options =>
+{
+    var authLimit = builder.Configuration.GetValue<int>("RateLimit:AuthPermitLimit", 5);
 
+    // Auth endpoints: 5 attempts per minute per IP (brute-force guard)
+    options.AddPolicy("auth", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = authLimit,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+
+    // Game search: 60 requests per minute per authenticated user (RAWG quota protection)
+    options.AddPolicy("game-search", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                          ?? context.Connection.RemoteIpAddress?.ToString()
+                          ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 60,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+
+    // Anthropic schema regeneration: 2 per 5 minutes per user (cost control)
+    options.AddPolicy("ai-schema", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.User.FindFirstValue(ClaimTypes.NameIdentifier)
+                          ?? context.Connection.RemoteIpAddress?.ToString()
+                          ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 2,
+                Window = TimeSpan.FromMinutes(5),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsync("Rate limit exceeded. Please try again later.", token);
+    };
+});
 
 #endregion
 
@@ -43,8 +100,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
@@ -133,7 +192,7 @@ app.MapGet("/api/health", () =>
 });
 
 app.UseCors("AllowFrontend");
-
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 #endregion

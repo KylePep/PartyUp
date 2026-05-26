@@ -1,22 +1,35 @@
 import { useState } from 'react'
-import { createCharacter } from '../../api/endpoints/characters'
+import { createCharacter, updateCharacter, uploadCharacterImage } from '../../api/endpoints/characters'
+import { useFieldDefinitions } from '../../hooks/useFieldDefinitions'
 import { Button } from '../ui'
 import { IdentityStep } from './IdentityStep'
 import { GameplayStep } from './GameplayStep'
+import { DynamicGameplayStep } from './DynamicGameplayStep'
 import { AvailabilityStep } from './AvailabilityStep'
 import { AboutStep } from './AboutStep'
 import { defaultFormData, type CharacterFormData } from './types'
 
-const STEPS = ['Identity', 'Gameplay', 'Availability', 'About'] as const
-
 interface CreateCharacterWizardProps {
   userGameId: string
+  gameId: string
+  platforms?: string[]
   onSuccess: () => void
+  mode?: 'create' | 'edit'
+  characterId?: string
+  initialData?: Partial<CharacterFormData>
 }
 
-export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacterWizardProps) {
+export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess, mode = 'create', characterId, initialData }: CreateCharacterWizardProps) {
+  const { data: fieldDefs, loading: loadingFields } = useFieldDefinitions(gameId)
+  const hasDynamicFields =
+    fieldDefs?.schemaStatus === 'Generated' && fieldDefs.fields.length > 0
+
+  const STEPS = hasDynamicFields
+    ? (['Identity', 'Game Fields', 'Availability', 'About'] as const)
+    : (['Identity', 'Gameplay', 'Availability', 'About'] as const)
+
   const [step, setStep] = useState(0)
-  const [data, setData] = useState<CharacterFormData>(defaultFormData)
+  const [data, setData] = useState<CharacterFormData>({ ...defaultFormData, ...initialData })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -24,8 +37,16 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
     setData(prev => ({ ...prev, ...update }))
   }
 
+  function setGameField(fieldId: string, value: string) {
+    setData(prev => ({
+      ...prev,
+      gameFields: { ...prev.gameFields, [fieldId]: value },
+    }))
+  }
+
   function canAdvance() {
-    if (step === 0) return data.platform.trim() !== '' && data.platformHandle.trim() !== '' && data.name.trim() !== ''
+    if (step === 0)
+      return data.platform.trim() !== '' && data.platformHandle.trim() !== '' && data.name.trim() !== ''
     return true
   }
 
@@ -37,12 +58,18 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
     setSubmitting(true)
     setError('')
     try {
-      await createCharacter({
-        userGameId,
+      let imageUrl = data.imageUrl.trim() || undefined
+
+      if (data.imageFile) {
+        const uploaded = await uploadCharacterImage(data.imageFile)
+        imageUrl = uploaded.url
+      }
+
+      const payload = {
         platform: data.platform,
         platformHandle: data.platformHandle.trim(),
         name: data.name.trim(),
-        imageUrl: data.imageUrl.trim() || undefined,
+        imageUrl,
         bio: data.bio.trim() || undefined,
         mainRole: data.mainRole || undefined,
         secondaryRole: data.secondaryRole || undefined,
@@ -54,18 +81,57 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
         activeTimes: data.activeTimes.length > 0 ? data.activeTimes : undefined,
         usesVoiceChat: data.usesVoiceChat,
         languages: data.languages.length > 0 ? data.languages : undefined,
-      })
+      }
+
+      if (mode === 'edit' && characterId) {
+        const validIds = new Set(fieldDefs?.fields.map(f => f.id) ?? [])
+        const gameFields = hasDynamicFields
+          ? Object.entries(data.gameFields)
+              .filter(([id, v]) => v !== '' && validIds.has(id))
+              .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+          : undefined
+        await updateCharacter(userGameId, characterId, { ...payload, gameFields })
+      } else {
+        const gameFields = hasDynamicFields
+          ? Object.entries(data.gameFields)
+              .filter(([, v]) => v !== '')
+              .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+          : undefined
+        await createCharacter({ userGameId, ...payload, gameFields })
+      }
       onSuccess()
     } catch {
-      setError('Failed to create character. Please try again.')
+      setError(`Failed to ${mode === 'edit' ? 'update' : 'create'} character. Please try again.`)
       setSubmitting(false)
     }
   }
 
   const isLast = step === STEPS.length - 1
 
+  function renderStep() {
+    const label = STEPS[step]
+    if (label === 'Identity') return <IdentityStep data={data} onChange={patch} platforms={platforms} />
+    if (label === 'Game Fields')
+      return (
+        <DynamicGameplayStep
+          fields={fieldDefs?.fields ?? []}
+          values={data.gameFields}
+          onChange={setGameField}
+        />
+      )
+    if (label === 'Gameplay') return <GameplayStep data={data} onChange={patch} />
+    if (label === 'Availability') return <AvailabilityStep data={data} onChange={patch} />
+    if (label === 'About') return <AboutStep data={data} onChange={patch} />
+  }
+
   return (
     <div className="flex flex-col gap-8">
+      {loadingFields && (
+        <p className="text-xs font-mono text-muted text-center animate-pulse">
+          Loading game fields...
+        </p>
+      )}
+
       {/* Progress indicator */}
       <div className="flex items-center gap-2">
         {STEPS.map((label, i) => (
@@ -92,12 +158,7 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
       </div>
 
       {/* Step content */}
-      <div>
-        {step === 0 && <IdentityStep data={data} onChange={patch} />}
-        {step === 1 && <GameplayStep data={data} onChange={patch} />}
-        {step === 2 && <AvailabilityStep data={data} onChange={patch} />}
-        {step === 3 && <AboutStep data={data} onChange={patch} />}
-      </div>
+      <div>{renderStep()}</div>
 
       {error && (
         <p className="text-xs font-mono text-danger border border-danger/30 bg-danger/10 px-4 py-3">
@@ -118,7 +179,11 @@ export function CreateCharacterWizard({ userGameId, onSuccess }: CreateCharacter
           onClick={handleNext}
           disabled={!canAdvance() || submitting}
         >
-          {submitting ? 'Creating...' : isLast ? 'Create Character' : 'Next'}
+          {submitting
+            ? (mode === 'edit' ? 'Saving...' : 'Creating...')
+            : isLast
+            ? (mode === 'edit' ? 'Save Changes' : 'Create Character')
+            : 'Next'}
         </Button>
       </div>
     </div>

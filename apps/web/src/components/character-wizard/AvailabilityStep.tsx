@@ -1,6 +1,5 @@
-import { Input } from '../ui'
 import { ToggleButtonGroup } from '../forms/ToggleButtonGroup'
-import { type CharacterFormData, ACTIVE_TIMES, LANGUAGES } from './types'
+import { type CharacterFormData, TIME_ZONES, ACTIVE_TIMES, LANGUAGES } from './types'
 
 interface AvailabilityStepProps {
   data: CharacterFormData
@@ -14,12 +13,15 @@ export function AvailabilityStep({ data, onChange }: AvailabilityStepProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      <Input
-        label="Time Zone"
-        placeholder="e.g. EST, UTC+9, PST..."
-        value={data.timeZone}
-        onChange={e => onChange({ timeZone: e.target.value })}
-      />
+      <div>
+        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Time Zone</p>
+        <ToggleButtonGroup
+          options={toOptions(TIME_ZONES)}
+          value={data.timeZone ? [data.timeZone] : []}
+          multiple={false}
+          onChange={vals => onChange({ timeZone: vals[0] ?? '' })}
+        />
+      </div>
 
       <div>
         <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Active Times</p>

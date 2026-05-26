@@ -48,16 +48,20 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
           </div>
           <div className="min-w-0">
             <p className="font-display font-bold text-text text-lg">{character.name}</p>
-            <p className="text-sm text-muted font-mono">{character.platformHandle}</p>
             {character.gameName && <p className="text-xs text-muted mt-0.5">{character.gameName}</p>}
           </div>
         </div>
 
         <div className="flex flex-wrap gap-1.5">
           {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
+          {character.secondaryRole && <Badge variant="role">{character.secondaryRole}</Badge>}
           {character.rank && <Badge variant="rank">{character.rank}</Badge>}
           {character.region && <Badge variant="region">{character.region}</Badge>}
           {character.playstyle && <Badge>{character.playstyle}</Badge>}
+          {character.usesVoiceChat === true && <Badge>Voice Chat</Badge>}
+          {character.preferredModes.map(mode => <Badge key={mode}>{mode}</Badge>)}
+          {character.languages?.map(lang => <Badge key={lang}>{lang}</Badge>)}
+          {character.gameFields.map(f => <Badge key={f.key}>{f.label}: {f.value}</Badge>)}
         </div>
 
         {character.bio && (

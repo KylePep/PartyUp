@@ -39,6 +39,7 @@ export function MatchGallery({ gameId }: MatchGalleryProps) {
         <MatchCard
           key={m.matchId}
           character={m.theirCharacter}
+          gameName={m.gameName}
           matchedAt={m.matchedAt}
         />
       ))}

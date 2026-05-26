@@ -23,11 +23,20 @@ Console.WriteLine("Seeding started...");
 
 var mode = args.FirstOrDefault() ?? "A";
 
-var seeder = new TestDataSeeder();
+Console.WriteLine($"Mode: {mode}");
 
-if (mode == "A")
-  await seeder.SeedSetA(db);
+if (mode == "S")
+{
+  var count = args.Length > 1 && int.TryParse(args[1], out var n) ? n : 50;
+  await new ScaleSeeder().SeedEso(db, count);
+}
 else
-  await seeder.SeedSetB(db);
+{
+  var seeder = new TestDataSeeder();
+  if (mode == "A")
+    await seeder.SeedSetA(db);
+  else
+    await seeder.SeedSetB(db);
+}
 
 Console.WriteLine("Seeding completed.");

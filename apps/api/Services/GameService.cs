@@ -79,6 +79,7 @@ public class GameService : IGameService
     var rawgGame = await _rawg.GetGameById(externalId);
     if (rawgGame == null)
       return null;
+
     var game = new Game
     {
       Name = rawgGame.Name,
@@ -87,9 +88,11 @@ public class GameService : IGameService
       Description = rawgGame.Description,
       Website = rawgGame.Website,
       Rating = rawgGame.Rating,
-      Platforms = rawgGame.Platforms.Select(p => p.Platform.Name).ToList()
+      Platforms = rawgGame.Platforms.Select(p => p.Platform.Name).ToList(),
+      SchemaStatus = PartyUp.Api.Models.Enums.SchemaStatus.Pending
     };
 
+    _db.Games.Add(game);
     await _db.SaveChangesAsync();
     return game;
   }

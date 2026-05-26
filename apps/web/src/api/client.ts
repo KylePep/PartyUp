@@ -74,6 +74,14 @@ export async function apiPost<T>(url: string, body: unknown): Promise<T> {
   return handleResponse<T>(res);
 }
 
+export async function apiPostEmpty(url: string): Promise<void> {
+  const res = await fetch(`${API_BASE}${url}`, {
+    method: "POST",
+    headers: authHeaders(),
+  });
+  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+}
+
 export async function apiPut<T>(url: string, body: unknown): Promise<T> {
   const res = await fetch(`${API_BASE}${url}`, {
     method: "PUT",
@@ -91,6 +99,16 @@ export async function apiDelete<T>(url: string): Promise<T> {
   const res = await fetch(`${API_BASE}${url}`, {
     method: "DELETE",
     headers: authHeaders(),
+  });
+
+  return handleResponse<T>(res);
+}
+
+export async function apiPostForm<T>(url: string, form: FormData): Promise<T> {
+  const res = await fetch(`${API_BASE}${url}`, {
+    method: "POST",
+    headers: authHeaders(),
+    body: form,
   });
 
   return handleResponse<T>(res);

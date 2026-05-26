@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { discoverCharacters, interactWithCharacter, type Character, type DiscoverCharacter } from '../api/endpoints/characters'
+import { useFieldDefinitions } from '../hooks/useFieldDefinitions'
 import { SwipeCard } from './cards/SwipeCard'
+import { DiscoveryFilters } from './DiscoveryFilters'
 import { Spinner, EmptyState } from './ui'
 
 type DiscoverStatus = 'loading' | 'ready' | 'empty' | 'error'
@@ -14,16 +16,33 @@ interface DiscoveryPanelProps {
 export function DiscoveryPanel({ gameId, myCharacter, onMatch }: DiscoveryPanelProps) {
   const [queue, setQueue] = useState<DiscoverCharacter[]>([])
   const [status, setStatus] = useState<DiscoverStatus>('loading')
+  const [filters, setFilters] = useState<Record<string, string>>({})
+  const { data: fieldDefs } = useFieldDefinitions(gameId)
+
+  function handleFilterChange(key: string, value: string) {
+    setFilters(prev => {
+      const next = { ...prev }
+      if (value === '') {
+        delete next[key]
+      } else {
+        next[key] = value
+      }
+      return next
+    })
+  }
 
   useEffect(() => {
     setStatus('loading')
-    discoverCharacters(gameId)
+    const activeFilters = Object.fromEntries(
+      Object.entries(filters).filter(([, v]) => v !== '')
+    )
+    discoverCharacters(gameId, activeFilters)
       .then(chars => {
         setQueue(chars)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
       })
       .catch(() => setStatus('error'))
-  }, [gameId])
+  }, [gameId, filters])
 
   async function handleInteract(type: 'Like' | 'Dislike') {
     const current = queue[0]
@@ -43,29 +62,43 @@ export function DiscoveryPanel({ gameId, myCharacter, onMatch }: DiscoveryPanelP
     return <EmptyState message="Create a character to start matching" />
   }
 
-  if (status === 'loading') {
-    return <div className="flex justify-center py-10"><Spinner label="Scanning the realm..." /></div>
-  }
-
-  if (status === 'empty' || status === 'error') {
-    return (
-      <EmptyState
-        message={status === 'empty' ? 'All caught up — check back later.' : 'Could not load players.'}
-      />
-    )
-  }
+  const filterableFields = fieldDefs?.schemaStatus === 'Generated'
+    ? fieldDefs.fields.filter(f => f.isFilterable && f.type === 'Select')
+    : []
 
   return (
-    <div className="relative" style={{ height: '520px' }}>
-      {queue.slice(0, 2).map((char, i) => (
-        <SwipeCard
-          key={char.id}
-          character={char}
-          onLike={() => handleInteract('Like')}
-          onDislike={() => handleInteract('Dislike')}
-          isTop={i === 0}
+    <div className="flex flex-col gap-4">
+      {filterableFields.length > 0 && (
+        <DiscoveryFilters
+          fields={filterableFields}
+          activeFilters={filters}
+          onChange={handleFilterChange}
         />
-      ))}
+      )}
+
+      {status === 'loading' && (
+        <div className="flex justify-center py-10"><Spinner label="Scanning the realm..." /></div>
+      )}
+
+      {(status === 'empty' || status === 'error') && (
+        <EmptyState
+          message={status === 'empty' ? 'All caught up — check back later.' : 'Could not load players.'}
+        />
+      )}
+
+      {status === 'ready' && (
+        <div className="relative" style={{ height: '520px' }}>
+          {queue.slice(0, 2).map((char, i) => (
+            <SwipeCard
+              key={char.id}
+              character={char}
+              onLike={() => handleInteract('Like')}
+              onDislike={() => handleInteract('Dislike')}
+              isTop={i === 0}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

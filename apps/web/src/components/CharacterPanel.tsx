@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { getUserGameCharacters, type Character } from '../api/endpoints/characters'
+import { Link, useNavigate } from 'react-router-dom'
+import { deleteCharacter, getUserGameCharacters, type Character } from '../api/endpoints/characters'
 import { type UserGameDetail } from '../api/endpoints/userGames'
 import { CharacterCard } from './cards/CharacterCard'
 import { Button, EmptyState, Spinner } from './ui'
@@ -13,6 +13,7 @@ interface CharacterPanelProps {
 export function CharacterPanel({ gameId, userGame }: CharacterPanelProps) {
   const [character, setCharacter] = useState<Character | null>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty'>('loading')
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!userGame) return
@@ -24,6 +25,17 @@ export function CharacterPanel({ gameId, userGame }: CharacterPanelProps) {
       })
       .catch(() => setStatus('empty'))
   }, [userGame?.id])
+
+  async function handleDelete(c: Character) {
+    if (!c.userGameId) return
+    await deleteCharacter(c.userGameId, c.id)
+    setCharacter(null)
+    setStatus('empty')
+  }
+
+  function handleEdit(c: Character) {
+    navigate(`/realm/${gameId}/edit-character/${c.id}`)
+  }
 
   if (!userGame || status === 'loading') {
     return <div className="flex justify-center py-10"><Spinner /></div>
@@ -40,7 +52,7 @@ export function CharacterPanel({ gameId, userGame }: CharacterPanelProps) {
           </Link>
         </div>
       ) : (
-        <CharacterCard character={character} />
+        <CharacterCard character={character} onEdit={handleEdit} onDelete={handleDelete} />
       )}
     </section>
   )

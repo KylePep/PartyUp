@@ -1,99 +1,192 @@
 # PartyUp
 
-PartyUp is a matchmaking platform for multiplayer gamers. Instead of traditional LFG tools, PartyUp uses swipe-based matching to connect players based on their in-game characters, roles, and playstyle preferences.
-
-If two players express interest in each other, they match and can connect to play together.
+PartyUp is a swipe-based matchmaking platform for multiplayer gamers. Players build character profiles for each game they play and swipe on other characters — mutual likes create a match, connecting players who want to team up.
 
 ---
 
 ## Features
 
-- Swipe-based discovery (like / pass)
-- Game-specific matchmaking (e.g. WoW, ESO, etc.)
-- Character-based profiles (class, role, stats)
-- Mutual match system
-- Player preferences (skill level, playstyle, roles)
-- Game filtering (only see players in shared games)
-- Optional Steam integration for profile + owned games
+- **Swipe-based discovery** — Like or pass on character cards to find compatible teammates
+- **Game-specific profiles** — Characters are tied to individual games with game-appropriate attributes
+- **AI-generated character fields** — Claude (Anthropic) generates game-specific profile fields (class, role, rank, playstyle, etc.) per game automatically
+- **Mutual match system** — A match is created only when both players like each other
+- **Character image uploads** — Avatar storage via Google Cloud Storage
+- **Game catalog** — Backed by the RAWG.io API for game search and metadata
+- **JWT authentication** — Stateless auth with BCrypt password hashing
 
 ---
 
 ## Tech Stack
 
-- **Backend:** ASP.NET Core Web API
-- **ORM:** Entity Framework Core
-- **Database:** SQL Server (or PostgreSQL)
-- **Frontend:** React + TypeScript
-- **External APIs:** Steam Web API (optional)
+| Layer | Technology |
+|---|---|
+| Backend | ASP.NET Core 8 Web API |
+| ORM | Entity Framework Core |
+| Database | PostgreSQL 15 |
+| Frontend | React + TypeScript + Vite |
+| AI | Anthropic Claude (Haiku) |
+| File Storage | Google Cloud Storage |
+| Game Data | RAWG.io API |
+| Auth | JWT Bearer Tokens |
+| Testing | xUnit + WebApplicationFactory |
 
 ---
 
-## Core Concepts
+## Architecture
 
-### Users
-Represents a player account.
+This is a monorepo with the following layout:
 
-### Games
-List of supported multiplayer games.
+```
+apps/
+  api/          # ASP.NET Core 8 backend
+  web/          # React + TypeScript + Vite frontend
+  tests/        # xUnit integration tests
+  tools/        # CLI seed runner
+```
 
-### UserGames
-Join table linking users to games they actively play.
+### Backend (`apps/api`)
 
-### Characters
-Optional per-game characters tied to a user.
+**Pattern:** Controllers → Services → EF Core DbContext → PostgreSQL
 
-### Swipes
-Tracks like/pass decisions between users.
+- Controllers are thin — all business logic lives in services
+- Each service has a corresponding interface for testability
+- JWT auth middleware protects all routes except login/register
 
-### Matches
-Created when two users like each other.
+**Domain model:**
 
----
+```
+User
+ └── UserGame (join)
+      └── Game  (sourced from RAWG.io)
+           └── GameFieldDefinition  (AI-generated per-game schema)
+      └── Character
+           └── CharacterFieldValue  (EAV values for game-specific fields)
+           └── CharacterInteraction  (Like/Dislike swipes)
+                └── CharacterMatch  (created on mutual like)
+```
 
-## Example Flow
+### Frontend (`apps/web`)
 
-1. User selects games they play
-2. User creates a character profile (optional)
-3. User is shown other players within the same game
-4. User swipes:
-   - Like → interested in playing
-   - Pass → skip
-5. If both users like each other → Match is created
-6. Users can connect and play together
-
----
-
-## Learning Goals
-
-This project is designed to strengthen:
-
-- Relational database design
-- Many-to-many relationships
-- Query optimization
-- State-driven backend logic
-- API design in .NET
+- `src/api/` — typed fetch client and per-resource endpoint modules
+- `src/hooks/` — data-fetching hooks
+- `src/pages/` — page-level components (Home, Discover, Matches, Character management)
+- `src/components/` — shared UI (cards, panels, modals, forms)
 
 ---
 
-## Future Enhancements
+## Getting Started
 
-- Real-time chat (SignalR)
-- Party/session creation
-- Ranking / reputation system
-- Advanced filtering (role, skill, intent)
-- Match recommendations
-- Cross-platform integrations
+### Prerequisites
 
----
+- [.NET 8 SDK](https://dotnet.microsoft.com/download)
+- [Node.js 20+](https://nodejs.org/)
+- [Docker](https://www.docker.com/) (for the local PostgreSQL database)
 
-## Getting Started (Planned)
+### 1. Start the database
 
 ```bash
-# Clone repo
-git clone https://github.com/yourusername/partyup
+docker compose up -d
+```
 
-# Navigate to API
-cd PartyUp.Api
+This starts a PostgreSQL 15 container on port `5432` with user/password/database all set to `partyup`.
 
-# Run project
-dotnet run
+### 2. Configure secrets
+
+Create `apps/api/appsettings.Development.json` (git-ignored):
+
+```json
+{
+  "Jwt": {
+    "Key": "your-development-jwt-secret-key"
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Database=partyup;Username=partyup;Password=partyup"
+  },
+  "Rawg": {
+    "ApiKey": "your-rawg-api-key"
+  },
+  "Anthropic": {
+    "ApiKey": "your-anthropic-api-key"
+  },
+  "GoogleCloudStorage": {
+    "BucketName": "your-gcs-bucket-name"
+  }
+}
+```
+
+- RAWG API key: [rawg.io/apidocs](https://rawg.io/apidocs)
+- Anthropic API key: [console.anthropic.com](https://console.anthropic.com)
+- GCS: requires a service account with `roles/storage.objectAdmin` on the bucket
+
+### 3. Apply migrations
+
+```bash
+dotnet ef database update --project apps/api
+```
+
+### 4. (Optional) Seed the database
+
+```bash
+npm run dev:seed
+```
+
+### 5. Run the app
+
+```bash
+npm run dev
+```
+
+This starts the API (port `5288`) and the Vite dev server (port `5173`) concurrently.
+
+---
+
+## Development Commands
+
+### Root
+
+```bash
+npm run dev          # Start API + frontend concurrently
+npm run dev:seed     # Seed database with sample data
+```
+
+### Backend (`apps/api`)
+
+```bash
+dotnet watch run --project apps/api/PartyUp.Api.csproj   # API with hot reload
+dotnet ef migrations add <Name> --project apps/api        # Add EF migration
+dotnet ef database update --project apps/api              # Apply migrations
+```
+
+### Frontend (`apps/web`)
+
+```bash
+npm run dev --prefix apps/web    # Vite dev server
+npm run build --prefix apps/web  # Production build
+```
+
+### Tests
+
+```bash
+dotnet test                                              # All tests
+dotnet test apps/tests/PartyUp.Api.Tests                # Integration tests only
+dotnet test --filter "FullyQualifiedName~CharacterTests" # Single test class
+```
+
+Integration tests use `WebApplicationFactory<Program>` and hit a real database — no mocks.
+
+---
+
+## How It Works
+
+1. A user registers and selects games they play
+2. For each game, the user creates a character profile
+3. Game-specific profile fields (class, role, rank, etc.) are generated automatically by Claude based on the game's metadata
+4. Users discover other characters in shared games via a swipe interface
+5. Liking a character sends a `CharacterInteraction`; when both sides like each other, a `CharacterMatch` is created
+6. Matched players can coordinate to play together
+
+---
+
+## Contributing
+
+Pull requests are welcome. Please open an issue first for significant changes.

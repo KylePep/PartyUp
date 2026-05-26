@@ -67,5 +67,29 @@ public class AuthTests : TestBase, IClassFixture<ApiFactory>
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
+    [Fact]
+    public async Task Register_WithShortPassword_ReturnsBadRequest()
+    {
+        var response = await Client.PostAsJsonAsync("/api/auth/register", new
+        {
+            username = "validuser",
+            password = "abc"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Register_WithEmptyUsername_ReturnsBadRequest()
+    {
+        var response = await Client.PostAsJsonAsync("/api/auth/register", new
+        {
+            username = "",
+            password = "ValidPass1!"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
     private record AuthResult(string Token, string Username);
 }

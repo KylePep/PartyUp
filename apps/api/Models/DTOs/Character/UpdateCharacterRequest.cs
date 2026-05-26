@@ -17,4 +17,5 @@ public class UpdateCharacterRequest
   public string? Playstyle { get; set; }
   public string? Rank { get; set; }
   public string? Region { get; set; }
+  public List<CharacterFieldValueRequest>? GameFields { get; set; }
 }

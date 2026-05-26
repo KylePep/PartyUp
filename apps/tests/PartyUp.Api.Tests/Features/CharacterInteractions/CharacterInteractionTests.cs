@@ -85,6 +85,23 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
+    [Fact]
+    public async Task RecordInteraction_WithOtherUsersFromCharacter_ReturnsForbidden()
+    {
+        // charA belongs to clientA, charB belongs to clientB
+        var (charA, charB, _, clientB) = await SetupTwoUsersWithCharactersAsync();
+
+        // clientB tries to submit an interaction as if they were clientA
+        var response = await clientB.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charA,
+            toCharacterId = charB,
+            type = InteractionType.Like
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<(Guid CharA, Guid CharB, HttpClient ClientA, HttpClient ClientB)>

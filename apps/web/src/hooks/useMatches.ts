@@ -6,7 +6,6 @@ export function useMatches(gameId?: string) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
     getMatches(gameId)
       .then(setData)
       .finally(() => setLoading(false));

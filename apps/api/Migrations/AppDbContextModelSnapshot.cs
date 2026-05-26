@@ -101,6 +101,31 @@ namespace PartyUp.Api.Migrations
                     b.ToTable("Characters");
                 });
 
+            modelBuilder.Entity("PartyUp.Api.Models.CharacterFieldValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CharacterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FieldDefinitionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("FieldDefinitionId");
+
+                    b.ToTable("CharacterFieldValues");
+                });
+
             modelBuilder.Entity("PartyUp.Api.Models.CharacterInteraction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -178,12 +203,57 @@ namespace PartyUp.Api.Migrations
                     b.Property<double>("Rating")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("SchemaStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Website")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("PartyUp.Api.Models.GameFieldDefinition", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsFilterable")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsRequired")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Options")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("GameFieldDefinitions");
                 });
 
             modelBuilder.Entity("PartyUp.Api.Models.User", b =>
@@ -235,6 +305,23 @@ namespace PartyUp.Api.Migrations
                     b.Navigation("UserGame");
                 });
 
+            modelBuilder.Entity("PartyUp.Api.Models.CharacterFieldValue", b =>
+                {
+                    b.HasOne("PartyUp.Api.Models.Character", null)
+                        .WithMany("FieldValues")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PartyUp.Api.Models.GameFieldDefinition", "FieldDefinition")
+                        .WithMany()
+                        .HasForeignKey("FieldDefinitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FieldDefinition");
+                });
+
             modelBuilder.Entity("PartyUp.Api.Models.CharacterInteraction", b =>
                 {
                     b.HasOne("PartyUp.Api.Models.Character", "FromCharacter")
@@ -273,6 +360,15 @@ namespace PartyUp.Api.Migrations
                     b.Navigation("CharacterB");
                 });
 
+            modelBuilder.Entity("PartyUp.Api.Models.GameFieldDefinition", b =>
+                {
+                    b.HasOne("PartyUp.Api.Models.Game", null)
+                        .WithMany("FieldDefinitions")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("PartyUp.Api.Models.UserGame", b =>
                 {
                     b.HasOne("PartyUp.Api.Models.Game", "Game")
@@ -282,6 +378,16 @@ namespace PartyUp.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("PartyUp.Api.Models.Character", b =>
+                {
+                    b.Navigation("FieldValues");
+                });
+
+            modelBuilder.Entity("PartyUp.Api.Models.Game", b =>
+                {
+                    b.Navigation("FieldDefinitions");
                 });
 #pragma warning restore 612, 618
         }
