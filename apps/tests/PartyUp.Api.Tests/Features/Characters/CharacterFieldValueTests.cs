@@ -165,11 +165,14 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
 
         var characters = await response.Content.ReadFromJsonAsync<List<CharacterWithFieldsDto>>();
         var target = characters!.Single(c => c.Name == "Field Test Character");
-        target.GameFields.Should().ContainSingle(f => f.Key == "class" && f.Value == "Mage");
+        var field = target.GameFields.Should().ContainSingle().Subject;
+        field.Key.Should().Be("class");
+        field.Value.Should().Be("Mage");
+        field.FieldDefinitionId.Should().Be(classFieldId);
     }
 
     private record UserGameDto(Guid Id, Guid GameId);
     private record CharacterResponseDto(Guid Id, string Name);
-    private record GameFieldDto(string Key, string Label, string Value, string Type);
+    private record GameFieldDto(Guid FieldDefinitionId, string Key, string Label, string Value, string Type);
     private record CharacterWithFieldsDto(Guid Id, string Name, List<GameFieldDto> GameFields);
 }

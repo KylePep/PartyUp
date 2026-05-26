@@ -60,12 +60,10 @@ public class CharacterService : ICharacterService
 
     await _db.SaveChangesAsync();
 
-    var saved = await _db.Characters
-      .Include(c => c.FieldValues)
-        .ThenInclude(fv => fv.FieldDefinition)
-      .FirstAsync(c => c.Id == character.Id);
-
-    return ToResponse(saved);
+    return await _db.Characters
+      .Where(c => c.Id == character.Id)
+      .Select(ToProjection())
+      .FirstAsync();
   }
 
   public async Task<List<CharacterResponse>> GetCharactersForUserGameAsync(
@@ -78,25 +76,18 @@ public class CharacterService : ICharacterService
     if (!userGameExists)
       return [];
 
-    var chars = await _db.Characters
-      .Include(c => c.FieldValues)
-        .ThenInclude(fv => fv.FieldDefinition)
+    return await _db.Characters
       .Where(x => x.UserGameId == userGameId)
+      .Select(ToProjection())
       .ToListAsync();
-
-    return chars.Select(ToResponse).ToList();
   }
 
   public async Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId)
   {
-    var chars = await _db.Characters
-      .Include(c => c.UserGame)
-      .Include(c => c.FieldValues)
-        .ThenInclude(fv => fv.FieldDefinition)
+    return await _db.Characters
       .Where(c => c.UserGame.UserId == userId)
+      .Select(ToProjection())
       .ToListAsync();
-
-    return chars.Select(ToResponse).ToList();
   }
 
   public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null)
@@ -168,7 +159,7 @@ public class CharacterService : ICharacterService
         GameImageUrl = c.UserGame.Game.ImageUrl,
         GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
         {
-          FieldDefinitionId = fv.FieldDefinition.Id,
+          FieldDefinitionId = fv.FieldDefinitionId,
           Key = fv.FieldDefinition.Key,
           Label = fv.FieldDefinition.Label,
           Value = fv.Value,
@@ -247,32 +238,34 @@ public class CharacterService : ICharacterService
     return true;
   }
 
-  private static CharacterResponse ToResponse(Character c) => new()
-  {
-    Id = c.Id,
-    UserGameId = c.UserGameId,
-    Platform = c.Platform,
-    PlatformHandle = c.PlatformHandle,
-    Name = c.Name,
-    ImageUrl = c.ImageUrl,
-    Bio = c.Bio,
-    MainRole = c.MainRole,
-    SecondaryRole = c.SecondaryRole,
-    PreferredModes = c.PreferredModes,
-    TimeZone = c.TimeZone,
-    ActiveTimes = c.ActiveTimes,
-    UsesVoiceChat = c.UsesVoiceChat,
-    Languages = c.Languages,
-    Playstyle = c.Playstyle,
-    Rank = c.Rank,
-    Region = c.Region,
-    CreatedAt = c.CreatedAt,
-    GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+  private static System.Linq.Expressions.Expression<Func<Character, CharacterResponse>> ToProjection() =>
+    c => new CharacterResponse
     {
-      Key = fv.FieldDefinition.Key,
-      Label = fv.FieldDefinition.Label,
-      Value = fv.Value,
-      Type = fv.FieldDefinition.Type.ToString()
-    }).ToList(),
-  };
+      Id = c.Id,
+      UserGameId = c.UserGameId,
+      Platform = c.Platform,
+      PlatformHandle = c.PlatformHandle,
+      Name = c.Name,
+      ImageUrl = c.ImageUrl,
+      Bio = c.Bio,
+      MainRole = c.MainRole,
+      SecondaryRole = c.SecondaryRole,
+      PreferredModes = c.PreferredModes,
+      TimeZone = c.TimeZone,
+      ActiveTimes = c.ActiveTimes,
+      UsesVoiceChat = c.UsesVoiceChat,
+      Languages = c.Languages,
+      Playstyle = c.Playstyle,
+      Rank = c.Rank,
+      Region = c.Region,
+      CreatedAt = c.CreatedAt,
+      GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+      {
+        FieldDefinitionId = fv.FieldDefinitionId,
+        Key = fv.FieldDefinition.Key,
+        Label = fv.FieldDefinition.Label,
+        Value = fv.Value,
+        Type = fv.FieldDefinition.Type.ToString()
+      }).ToList(),
+    };
 }
