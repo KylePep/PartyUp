@@ -84,9 +84,12 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
       }
 
       if (mode === 'edit' && characterId) {
-        const gameFields = Object.entries(data.gameFields)
-          .filter(([, v]) => v !== '')
-          .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+        const validIds = new Set(fieldDefs?.fields.map(f => f.id) ?? [])
+        const gameFields = hasDynamicFields
+          ? Object.entries(data.gameFields)
+              .filter(([id, v]) => v !== '' && validIds.has(id))
+              .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+          : undefined
         await updateCharacter(userGameId, characterId, { ...payload, gameFields })
       } else {
         const gameFields = hasDynamicFields
