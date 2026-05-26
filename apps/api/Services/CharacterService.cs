@@ -60,7 +60,12 @@ public class CharacterService : ICharacterService
 
     await _db.SaveChangesAsync();
 
-    return ToResponse(character);
+    var saved = await _db.Characters
+      .Include(c => c.FieldValues)
+        .ThenInclude(fv => fv.FieldDefinition)
+      .FirstAsync(c => c.Id == character.Id);
+
+    return ToResponse(saved);
   }
 
   public async Task<List<CharacterResponse>> GetCharactersForUserGameAsync(
@@ -74,6 +79,8 @@ public class CharacterService : ICharacterService
       return [];
 
     return await _db.Characters
+      .Include(c => c.FieldValues)
+        .ThenInclude(fv => fv.FieldDefinition)
       .Where(x => x.UserGameId == userGameId)
       .Select(x => ToResponse(x))
       .ToListAsync();
@@ -83,6 +90,8 @@ public class CharacterService : ICharacterService
   {
     return await _db.Characters
       .Include(c => c.UserGame)
+      .Include(c => c.FieldValues)
+        .ThenInclude(fv => fv.FieldDefinition)
       .Where(c => c.UserGame.UserId == userId)
       .Select(c => ToResponse(c))
       .ToListAsync();
@@ -235,5 +244,12 @@ public class CharacterService : ICharacterService
     Rank = c.Rank,
     Region = c.Region,
     CreatedAt = c.CreatedAt,
+    GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+    {
+      Key = fv.FieldDefinition.Key,
+      Label = fv.FieldDefinition.Label,
+      Value = fv.Value,
+      Type = fv.FieldDefinition.Type.ToString()
+    }).ToList(),
   };
 }
