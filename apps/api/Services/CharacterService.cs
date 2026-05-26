@@ -60,7 +60,10 @@ public class CharacterService : ICharacterService
 
     await _db.SaveChangesAsync();
 
-    return ToResponse(character);
+    return await _db.Characters
+      .Where(c => c.Id == character.Id)
+      .Select(ToProjection())
+      .FirstAsync();
   }
 
   public async Task<List<CharacterResponse>> GetCharactersForUserGameAsync(
@@ -75,16 +78,15 @@ public class CharacterService : ICharacterService
 
     return await _db.Characters
       .Where(x => x.UserGameId == userGameId)
-      .Select(x => ToResponse(x))
+      .Select(ToProjection())
       .ToListAsync();
   }
 
   public async Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId)
   {
     return await _db.Characters
-      .Include(c => c.UserGame)
       .Where(c => c.UserGame.UserId == userId)
-      .Select(c => ToResponse(c))
+      .Select(ToProjection())
       .ToListAsync();
   }
 
@@ -155,6 +157,14 @@ public class CharacterService : ICharacterService
         Region = c.Region,
         GameName = c.UserGame.Game.Name,
         GameImageUrl = c.UserGame.Game.ImageUrl,
+        GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+        {
+          FieldDefinitionId = fv.FieldDefinitionId,
+          Key = fv.FieldDefinition.Key,
+          Label = fv.FieldDefinition.Label,
+          Value = fv.Value,
+          Type = fv.FieldDefinition.Type.ToString()
+        }).ToList(),
       })
       .ToListAsync();
   }
@@ -167,6 +177,7 @@ public class CharacterService : ICharacterService
   {
     var character = await _db.Characters
       .Include(c => c.UserGame)
+      .Include(c => c.FieldValues)
       .FirstOrDefaultAsync(c =>
         c.Id == characterId &&
         c.UserGameId == userGameId &&
@@ -190,6 +201,18 @@ public class CharacterService : ICharacterService
     character.Playstyle = request.Playstyle;
     character.Rank = request.Rank;
     character.Region = request.Region;
+
+    if (request.GameFields != null)
+    {
+      _db.CharacterFieldValues.RemoveRange(character.FieldValues);
+      foreach (var field in request.GameFields)
+        _db.CharacterFieldValues.Add(new CharacterFieldValue
+        {
+          CharacterId = character.Id,
+          FieldDefinitionId = field.FieldDefinitionId,
+          Value = field.Value
+        });
+    }
 
     await _db.SaveChangesAsync();
     return true;
@@ -215,25 +238,34 @@ public class CharacterService : ICharacterService
     return true;
   }
 
-  private static CharacterResponse ToResponse(Character c) => new()
-  {
-    Id = c.Id,
-    UserGameId = c.UserGameId,
-    Platform = c.Platform,
-    PlatformHandle = c.PlatformHandle,
-    Name = c.Name,
-    ImageUrl = c.ImageUrl,
-    Bio = c.Bio,
-    MainRole = c.MainRole,
-    SecondaryRole = c.SecondaryRole,
-    PreferredModes = c.PreferredModes,
-    TimeZone = c.TimeZone,
-    ActiveTimes = c.ActiveTimes,
-    UsesVoiceChat = c.UsesVoiceChat,
-    Languages = c.Languages,
-    Playstyle = c.Playstyle,
-    Rank = c.Rank,
-    Region = c.Region,
-    CreatedAt = c.CreatedAt,
-  };
+  private static System.Linq.Expressions.Expression<Func<Character, CharacterResponse>> ToProjection() =>
+    c => new CharacterResponse
+    {
+      Id = c.Id,
+      UserGameId = c.UserGameId,
+      Platform = c.Platform,
+      PlatformHandle = c.PlatformHandle,
+      Name = c.Name,
+      ImageUrl = c.ImageUrl,
+      Bio = c.Bio,
+      MainRole = c.MainRole,
+      SecondaryRole = c.SecondaryRole,
+      PreferredModes = c.PreferredModes,
+      TimeZone = c.TimeZone,
+      ActiveTimes = c.ActiveTimes,
+      UsesVoiceChat = c.UsesVoiceChat,
+      Languages = c.Languages,
+      Playstyle = c.Playstyle,
+      Rank = c.Rank,
+      Region = c.Region,
+      CreatedAt = c.CreatedAt,
+      GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+      {
+        FieldDefinitionId = fv.FieldDefinitionId,
+        Key = fv.FieldDefinition.Key,
+        Label = fv.FieldDefinition.Label,
+        Value = fv.Value,
+        Type = fv.FieldDefinition.Type.ToString()
+      }).ToList(),
+    };
 }

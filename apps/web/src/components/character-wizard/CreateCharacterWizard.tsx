@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createCharacter, uploadCharacterImage } from '../../api/endpoints/characters'
+import { createCharacter, updateCharacter, uploadCharacterImage } from '../../api/endpoints/characters'
 import { useFieldDefinitions } from '../../hooks/useFieldDefinitions'
 import { Button } from '../ui'
 import { IdentityStep } from './IdentityStep'
@@ -14,9 +14,12 @@ interface CreateCharacterWizardProps {
   gameId: string
   platforms?: string[]
   onSuccess: () => void
+  mode?: 'create' | 'edit'
+  characterId?: string
+  initialData?: Partial<CharacterFormData>
 }
 
-export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess }: CreateCharacterWizardProps) {
+export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess, mode = 'create', characterId, initialData }: CreateCharacterWizardProps) {
   const { data: fieldDefs, loading: loadingFields } = useFieldDefinitions(gameId)
   const hasDynamicFields =
     fieldDefs?.schemaStatus === 'Generated' && fieldDefs.fields.length > 0
@@ -26,7 +29,7 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
     : (['Identity', 'Gameplay', 'Availability', 'About'] as const)
 
   const [step, setStep] = useState(0)
-  const [data, setData] = useState<CharacterFormData>(defaultFormData)
+  const [data, setData] = useState<CharacterFormData>({ ...defaultFormData, ...initialData })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
@@ -62,14 +65,7 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
         imageUrl = uploaded.url
       }
 
-      const gameFields = hasDynamicFields
-        ? Object.entries(data.gameFields)
-            .filter(([, v]) => v !== '')
-            .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
-        : undefined
-
-      await createCharacter({
-        userGameId,
+      const payload = {
         platform: data.platform,
         platformHandle: data.platformHandle.trim(),
         name: data.name.trim(),
@@ -85,11 +81,27 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
         activeTimes: data.activeTimes.length > 0 ? data.activeTimes : undefined,
         usesVoiceChat: data.usesVoiceChat,
         languages: data.languages.length > 0 ? data.languages : undefined,
-        gameFields,
-      })
+      }
+
+      if (mode === 'edit' && characterId) {
+        const validIds = new Set(fieldDefs?.fields.map(f => f.id) ?? [])
+        const gameFields = hasDynamicFields
+          ? Object.entries(data.gameFields)
+              .filter(([id, v]) => v !== '' && validIds.has(id))
+              .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+          : undefined
+        await updateCharacter(userGameId, characterId, { ...payload, gameFields })
+      } else {
+        const gameFields = hasDynamicFields
+          ? Object.entries(data.gameFields)
+              .filter(([, v]) => v !== '')
+              .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+          : undefined
+        await createCharacter({ userGameId, ...payload, gameFields })
+      }
       onSuccess()
     } catch {
-      setError('Failed to create character. Please try again.')
+      setError(`Failed to ${mode === 'edit' ? 'update' : 'create'} character. Please try again.`)
       setSubmitting(false)
     }
   }
@@ -167,7 +179,11 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
           onClick={handleNext}
           disabled={!canAdvance() || submitting}
         >
-          {submitting ? 'Creating...' : isLast ? 'Create Character' : 'Next'}
+          {submitting
+            ? (mode === 'edit' ? 'Saving...' : 'Creating...')
+            : isLast
+            ? (mode === 'edit' ? 'Save Changes' : 'Create Character')
+            : 'Next'}
         </Button>
       </div>
     </div>

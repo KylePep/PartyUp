@@ -17,4 +17,5 @@ public class DiscoverCharacterResponse
   public string? Region { get; set; }
   public string? GameName { get; set; }
   public string? GameImageUrl { get; set; }
+  public List<CharacterFieldValueDto> GameFields { get; set; } = [];
 }

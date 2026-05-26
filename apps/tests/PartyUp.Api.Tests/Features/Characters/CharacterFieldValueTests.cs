@@ -109,6 +109,70 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
         response.StatusCode.Should().Be(HttpStatusCode.Created);
     }
 
+    [Fact]
+    public async Task GetMyCharacters_ReturnsGameFields_WhenFieldDefinitionsExist()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var externalId = Interlocked.Increment(ref _externalIdCounter);
+
+        var addGameResponse = await client.PostAsJsonAsync("/api/user-games", new
+        {
+            externalId,
+            name = $"Game {externalId}",
+            imageUrl = (string?)null
+        });
+        addGameResponse.EnsureSuccessStatusCode();
+        var userGame = await addGameResponse.Content.ReadFromJsonAsync<UserGameDto>();
+
+        Guid classFieldId;
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var game = await db.Games.FindAsync(userGame!.GameId);
+            game!.SchemaStatus = SchemaStatus.Generated;
+
+            var field = new GameFieldDefinition
+            {
+                Id = Guid.NewGuid(),
+                GameId = userGame.GameId,
+                Key = "class",
+                Label = "Class",
+                Type = FieldType.Select,
+                Options = ["Warrior", "Mage", "Rogue"],
+                IsFilterable = true,
+                IsRequired = false,
+                SortOrder = 1
+            };
+            classFieldId = field.Id;
+            db.GameFieldDefinitions.Add(field);
+            await db.SaveChangesAsync();
+        }
+
+        await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Field Test Character",
+            platform = "PC",
+            platformHandle = "FieldPlayer",
+            userGameId = userGame!.Id,
+            gameFields = new[]
+            {
+                new { fieldDefinitionId = classFieldId, value = "Mage" }
+            }
+        });
+
+        var response = await client.GetAsync("/api/characters");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var characters = await response.Content.ReadFromJsonAsync<List<CharacterWithFieldsDto>>();
+        var target = characters!.Single(c => c.Name == "Field Test Character");
+        var field = target.GameFields.Should().ContainSingle().Subject;
+        field.Key.Should().Be("class");
+        field.Value.Should().Be("Mage");
+        field.FieldDefinitionId.Should().Be(classFieldId);
+    }
+
     private record UserGameDto(Guid Id, Guid GameId);
     private record CharacterResponseDto(Guid Id, string Name);
+    private record GameFieldDto(Guid FieldDefinitionId, string Key, string Label, string Value, string Type);
+    private record CharacterWithFieldsDto(Guid Id, string Name, List<GameFieldDto> GameFields);
 }

@@ -22,4 +22,5 @@ public class CharacterResponse
   public string? Region { get; set; }
 
   public DateTime CreatedAt { get; set; }
+  public List<CharacterFieldValueDto> GameFields { get; set; } = [];
 }

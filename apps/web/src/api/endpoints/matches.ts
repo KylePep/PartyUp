@@ -1,15 +1,18 @@
 import { apiGet } from "../client";
+import type { CharacterGameField } from "./characters";
 
 export type CharacterSummary = {
   id: string;
   name: string;
+  imageUrl?: string;
   bio?: string;
+  mainRole?: string;
+  secondaryRole?: string;
   playstyle?: string;
   rank?: string;
   region?: string;
-  mainRole?: string;
-  secondaryRole?: string;
-  imageUrl?: string;
+  platformHandle: string;
+  gameFields: CharacterGameField[];
 };
 
 export type CharacterMatchDto = {
