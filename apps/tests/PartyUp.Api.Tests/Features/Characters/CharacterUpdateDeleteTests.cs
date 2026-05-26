@@ -108,7 +108,7 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
             imageUrl = (string?)null
         });
         response.EnsureSuccessStatusCode();
-        return (await response.Content.ReadFromJsonAsync<UserGameDto>())!;
+        return (await response.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
     }
 
     private async Task<CharacterDto> CreateCharacterAsync(HttpClient client, Guid userGameId)
@@ -125,5 +125,6 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
     }
 
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
+    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
 }

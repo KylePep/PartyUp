@@ -17,19 +17,52 @@ public class UserGameService : IUserGameService
         _scopeFactory = scopeFactory;
     }
 
-    public async Task<UserGame> AddGameToUser(Guid userId, AddUserGameRequest request)
+    public async Task<AddGameResult> AddGameToUser(Guid userId, AddUserGameRequest request)
     {
-        var existingGame = await _gameService.getGameByExternalId(request.ExternalId);
-        var isNewGame = existingGame == null;
+        var existingSelected = await _gameService.getGameByExternalId(request.ExternalId);
+        var isSelectedNew = existingSelected == null;
+        var selectedGame = existingSelected ?? await _gameService.GetAndPersistGameDetails(request.ExternalId);
 
-        if (isNewGame)
-            existingGame = await _gameService.GetAndPersistGameDetails(request.ExternalId);
-
-        if (existingGame == null)
+        if (selectedGame == null)
             throw new InvalidOperationException("Game not found.");
 
+        Game canonicalGame;
+        bool redirected = false;
+        string? message = null;
+        bool triggerSchemaGen;
+        Guid schemaGenGameId;
+
+        if (selectedGame.ParentExternalId.HasValue)
+        {
+            var existingParent = await _gameService.getGameByExternalId(selectedGame.ParentExternalId.Value);
+            var isParentNew = existingParent == null;
+            var parent = existingParent ?? await _gameService.GetAndPersistGameDetails(selectedGame.ParentExternalId.Value);
+
+            // Fall back to selected game if RAWG is unreachable
+            canonicalGame = parent ?? selectedGame;
+            redirected = parent != null;
+
+            if (redirected)
+            {
+                message = $"{selectedGame.Name} is an expansion — we've added you to {canonicalGame.Name} instead.";
+                triggerSchemaGen = isParentNew;
+                schemaGenGameId = canonicalGame.Id;
+            }
+            else
+            {
+                triggerSchemaGen = isSelectedNew;
+                schemaGenGameId = selectedGame.Id;
+            }
+        }
+        else
+        {
+            canonicalGame = selectedGame;
+            triggerSchemaGen = isSelectedNew;
+            schemaGenGameId = selectedGame.Id;
+        }
+
         var alreadyAdded = await _db.UserGames
-            .AnyAsync(ug => ug.UserId == userId && ug.GameId == existingGame.Id);
+            .AnyAsync(ug => ug.UserId == userId && ug.GameId == canonicalGame.Id);
 
         if (alreadyAdded)
             throw new InvalidOperationException("Game already added.");
@@ -37,16 +70,16 @@ public class UserGameService : IUserGameService
         var userGame = new UserGame
         {
             UserId = userId,
-            GameId = existingGame.Id,
-            Game = existingGame
+            GameId = canonicalGame.Id,
+            Game = canonicalGame
         };
 
         _db.UserGames.Add(userGame);
         await _db.SaveChangesAsync();
 
-        if (isNewGame)
+        if (triggerSchemaGen)
         {
-            var gameId = existingGame.Id;
+            var gameId = schemaGenGameId;
             _ = Task.Run(async () =>
             {
                 using var scope = _scopeFactory.CreateScope();
@@ -55,7 +88,12 @@ public class UserGameService : IUserGameService
             });
         }
 
-        return userGame;
+        return new AddGameResult
+        {
+            UserGame = userGame,
+            Redirected = redirected,
+            Message = message
+        };
     }
 
     public async Task<List<UserGame>> GetUserGames(Guid userId)

@@ -29,7 +29,7 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
             imageUrl = (string?)null
         });
         addGameResponse.EnsureSuccessStatusCode();
-        var userGame = await addGameResponse.Content.ReadFromJsonAsync<UserGameDto>();
+        var userGame = (await addGameResponse.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
 
         // Manually seed field definitions for that game
         Guid allianceFieldId;
@@ -96,7 +96,7 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
             imageUrl = (string?)null
         });
         addGameResponse.EnsureSuccessStatusCode();
-        var userGame = await addGameResponse.Content.ReadFromJsonAsync<UserGameDto>();
+        var userGame = (await addGameResponse.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
 
         var response = await client.PostAsJsonAsync("/api/characters", new
         {
@@ -122,7 +122,7 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
             imageUrl = (string?)null
         });
         addGameResponse.EnsureSuccessStatusCode();
-        var userGame = await addGameResponse.Content.ReadFromJsonAsync<UserGameDto>();
+        var userGame = (await addGameResponse.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
 
         Guid classFieldId;
         using (var scope = Factory.Services.CreateScope())
@@ -172,6 +172,7 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
     }
 
     private record UserGameDto(Guid Id, Guid GameId);
+    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterResponseDto(Guid Id, string Name);
     private record GameFieldDto(Guid FieldDefinitionId, string Key, string Label, string Value, string Type);
     private record CharacterWithFieldsDto(Guid Id, string Name, List<GameFieldDto> GameFields);

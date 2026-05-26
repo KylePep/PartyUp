@@ -135,10 +135,11 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
             imageUrl = (string?)null
         });
         response.EnsureSuccessStatusCode();
-        return (await response.Content.ReadFromJsonAsync<UserGameDto>())!;
+        return (await response.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
     }
 
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
+    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
     private record DiscoveredDto(Guid Id, string Name);
 }
