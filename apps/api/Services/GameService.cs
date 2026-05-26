@@ -89,7 +89,8 @@ public class GameService : IGameService
       Website = rawgGame.Website,
       Rating = rawgGame.Rating,
       Platforms = rawgGame.Platforms.Select(p => p.Platform.Name).ToList(),
-      SchemaStatus = PartyUp.Api.Models.Enums.SchemaStatus.Pending
+      SchemaStatus = PartyUp.Api.Models.Enums.SchemaStatus.Pending,
+      ParentExternalId = rawgGame.Parent_Game?.Id
     };
 
     _db.Games.Add(game);
