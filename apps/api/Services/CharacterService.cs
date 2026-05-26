@@ -166,6 +166,7 @@ public class CharacterService : ICharacterService
         GameImageUrl = c.UserGame.Game.ImageUrl,
         GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
         {
+          FieldDefinitionId = fv.FieldDefinitionId,
           Key = fv.FieldDefinition.Key,
           Label = fv.FieldDefinition.Label,
           Value = fv.Value,
@@ -183,6 +184,7 @@ public class CharacterService : ICharacterService
   {
     var character = await _db.Characters
       .Include(c => c.UserGame)
+      .Include(c => c.FieldValues)
       .FirstOrDefaultAsync(c =>
         c.Id == characterId &&
         c.UserGameId == userGameId &&
@@ -206,6 +208,18 @@ public class CharacterService : ICharacterService
     character.Playstyle = request.Playstyle;
     character.Rank = request.Rank;
     character.Region = request.Region;
+
+    if (request.GameFields != null)
+    {
+      _db.CharacterFieldValues.RemoveRange(character.FieldValues);
+      foreach (var field in request.GameFields)
+        _db.CharacterFieldValues.Add(new CharacterFieldValue
+        {
+          CharacterId = character.Id,
+          FieldDefinitionId = field.FieldDefinitionId,
+          Value = field.Value
+        });
+    }
 
     await _db.SaveChangesAsync();
     return true;

@@ -1,6 +1,7 @@
 import { apiDelete, apiGet, apiPost, apiPostForm, apiPut } from "../client";
 
 export type CharacterGameField = {
+  fieldDefinitionId: string;
   key: string;
   label: string;
   value: string;
@@ -69,6 +70,7 @@ export type CharacterUpdate = {
   playstyle?: string;
   rank?: string;
   region?: string;
+  gameFields?: CharacterFieldValueCreate[];
 };
 
 export type DiscoverCharacter = {

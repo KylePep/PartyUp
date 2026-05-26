@@ -25,7 +25,7 @@ function toFormData(c: Character): Partial<CharacterFormData> {
     activeTimes: c.activeTimes ?? [],
     usesVoiceChat: c.usesVoiceChat,
     languages: c.languages ?? [],
-    gameFields: Object.fromEntries((c.gameFields ?? []).map(f => [f.key, f.value])),
+    gameFields: Object.fromEntries((c.gameFields ?? []).map(f => [f.fieldDefinitionId, f.value])),
   }
 }
 
