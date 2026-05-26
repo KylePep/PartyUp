@@ -51,6 +51,12 @@ public class ApiFactory : WebApplicationFactory<Program>
             if (gcsDescriptor != null)
                 services.Remove(gcsDescriptor);
             services.AddScoped<IGcsStorageService, FakeGcsService>();
+
+            var schemaDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IGameSchemaGenerationService));
+            if (schemaDescriptor != null)
+                services.Remove(schemaDescriptor);
+            services.AddScoped<IGameSchemaGenerationService, NoOpGameSchemaGenerationService>();
         });
     }
 }
