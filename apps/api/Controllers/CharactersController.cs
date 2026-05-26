@@ -69,6 +69,22 @@ public class CharactersController : ControllerBase
     return Ok(new UploadImageResponse { Url = url });
   }
 
+  [HttpPut("{userGameId}/{id}")]
+  public async Task<IActionResult> UpdateCharacter(Guid userGameId, Guid id, [FromBody] UpdateCharacterRequest request)
+  {
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var updated = await _characterService.UpdateCharacterAsync(userId, userGameId, id, request);
+    return updated ? NoContent() : NotFound();
+  }
+
+  [HttpDelete("{userGameId}/{id}")]
+  public async Task<IActionResult> DeleteCharacter(Guid userGameId, Guid id)
+  {
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var deleted = await _characterService.DeleteCharacterAsync(userId, userGameId, id);
+    return deleted ? NoContent() : NotFound();
+  }
+
   [HttpGet("discover")]
   public async Task<IActionResult> Discover([FromQuery] Guid gameId)
   {
