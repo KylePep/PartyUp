@@ -78,23 +78,25 @@ public class CharacterService : ICharacterService
     if (!userGameExists)
       return [];
 
-    return await _db.Characters
+    var chars = await _db.Characters
       .Include(c => c.FieldValues)
         .ThenInclude(fv => fv.FieldDefinition)
       .Where(x => x.UserGameId == userGameId)
-      .Select(x => ToResponse(x))
       .ToListAsync();
+
+    return chars.Select(ToResponse).ToList();
   }
 
   public async Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId)
   {
-    return await _db.Characters
+    var chars = await _db.Characters
       .Include(c => c.UserGame)
       .Include(c => c.FieldValues)
         .ThenInclude(fv => fv.FieldDefinition)
       .Where(c => c.UserGame.UserId == userId)
-      .Select(c => ToResponse(c))
       .ToListAsync();
+
+    return chars.Select(ToResponse).ToList();
   }
 
   public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null)
