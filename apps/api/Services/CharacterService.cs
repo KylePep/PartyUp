@@ -166,7 +166,7 @@ public class CharacterService : ICharacterService
         GameImageUrl = c.UserGame.Game.ImageUrl,
         GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
         {
-          FieldDefinitionId = fv.FieldDefinitionId,
+          FieldDefinitionId = fv.FieldDefinition.Id,
           Key = fv.FieldDefinition.Key,
           Label = fv.FieldDefinition.Label,
           Value = fv.Value,
