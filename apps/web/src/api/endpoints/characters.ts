@@ -115,8 +115,9 @@ export function createCharacter(data: CharacterCreate) {
   return apiPost<Character>("/characters", data);
 }
 
-export function discoverCharacters(gameId: string, filters?: Record<string, string>) {
+export function discoverCharacters(gameId: string, filters?: Record<string, string>, platforms?: string[]) {
   const qs = new URLSearchParams({ gameId, ...filters });
+  platforms?.forEach(p => qs.append('platform', p));
   return apiGet<DiscoverCharacter[]>(`/characters/discover?${qs.toString()}`);
 }
 
