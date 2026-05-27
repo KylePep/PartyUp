@@ -19,6 +19,10 @@ public class CharacterService : ICharacterService
     Guid userGameId,
     CreateCharacterRequest request)
   {
+    var count = await _db.Characters.CountAsync(c => c.UserGame.UserId == userId);
+    if (count >= 3)
+      throw new InvalidOperationException("Character limit reached.");
+
     var userGame = await _db.UserGames
       .FirstOrDefaultAsync(x => x.Id == userGameId && x.UserId == userId);
 

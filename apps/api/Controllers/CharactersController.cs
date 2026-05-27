@@ -38,12 +38,19 @@ public class CharactersController : ControllerBase
   public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterRequest request)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    var result = await _characterService.CreateCharacterAsync(userId, request.UserGameId, request);
+    try
+    {
+      var result = await _characterService.CreateCharacterAsync(userId, request.UserGameId, request);
 
-    if (result == null)
-      return NotFound("UserGame not found or does not belong to you.");
+      if (result == null)
+        return NotFound("UserGame not found or does not belong to you.");
 
-    return CreatedAtAction(nameof(GetMyCharacters), result);
+      return CreatedAtAction(nameof(GetMyCharacters), result);
+    }
+    catch (InvalidOperationException ex)
+    {
+      return Conflict(new { message = ex.Message });
+    }
   }
 
   private static readonly Dictionary<string, string> AllowedImageTypes = new()
