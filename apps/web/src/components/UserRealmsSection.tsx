@@ -74,7 +74,30 @@ export function UserRealmsSection({ games, onAdd, onRemove }: UserRealmsSectionP
       <section>
         <h2 className="text-xs font-mono text-muted uppercase tracking-widest mb-4">My Realms</h2>
         {games.length === 0 ? (
-          <EmptyState message="No realms yet — search for a game below" />
+          <div className="flex flex-col gap-4">
+            <div className="bg-surface border border-border rounded-lg px-5 py-4 flex flex-col gap-4">
+              <p className="text-xs font-mono text-muted uppercase tracking-widest">How PartyUp works</p>
+              <ol className="flex flex-col gap-3">
+                {[
+                  { n: 1, title: 'Find your game', body: 'Search for a title and add it to your account.' },
+                  { n: 2, title: 'Build your character', body: 'Set your role, rank, playstyle, and availability.' },
+                  { n: 3, title: 'Set your platform handle', body: 'Stays private until a match — only revealed to your new teammate.' },
+                  { n: 4, title: 'Swipe on players', body: 'Like the characters you want to party with.' },
+                  { n: 5, title: 'Match and connect', body: 'A mutual like reveals both handles so you can link up directly.' },
+                ].map(step => (
+                  <li key={step.n} className="flex items-start gap-3">
+                    <span className="font-mono font-bold text-accent text-sm shrink-0">{step.n}.</span>
+                    <p className="text-sm text-text leading-relaxed">
+                      <span className="font-semibold">{step.title}</span>
+                      {' — '}
+                      <span className="text-muted">{step.body}</span>
+                    </p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <EmptyState message="No realms yet — search for a game below" />
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {games.map(g => (

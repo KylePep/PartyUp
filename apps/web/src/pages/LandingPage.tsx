@@ -31,17 +31,45 @@ export default function LandingPage() {
       </main>
 
       <section className="bg-surface border-t border-border py-16 px-6">
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-          {[
-            { title: 'Build your character', body: 'Create a profile for each game — your role, rank, playstyle, and availability.' },
-            { title: 'Swipe on players', body: 'Discover other characters in your game and swipe right to connect.' },
-            { title: 'Form your party', body: "Mutual likes create a match. Your next teammate is one swipe away." },
-          ].map(item => (
-            <div key={item.title} className="flex flex-col gap-3">
-              <h3 className="font-display font-semibold text-text">{item.title}</h3>
-              <p className="text-sm text-muted leading-relaxed">{item.body}</p>
-            </div>
-          ))}
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs font-mono text-muted uppercase tracking-widest text-center mb-10">
+            How it works
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 text-center">
+            {[
+              {
+                n: 1,
+                title: 'Find your game',
+                body: 'Search from thousands of titles and add it to your account.',
+              },
+              {
+                n: 2,
+                title: 'Build your character',
+                body: 'Set your role, rank, playstyle, and availability.',
+              },
+              {
+                n: 3,
+                title: 'Set your handle',
+                body: 'Your platform handle stays private — only revealed after a match.',
+              },
+              {
+                n: 4,
+                title: 'Swipe on players',
+                body: 'Discover characters in your game and like the ones you want to party with.',
+              },
+              {
+                n: 5,
+                title: 'Match and connect',
+                body: 'A mutual like reveals both handles so you can link up directly.',
+              },
+            ].map(step => (
+              <div key={step.n} className="flex flex-col items-center gap-3">
+                <span className="font-mono font-bold text-3xl text-accent">{step.n}</span>
+                <h3 className="font-display font-semibold text-text text-sm">{step.title}</h3>
+                <p className="text-xs text-muted leading-relaxed">{step.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
