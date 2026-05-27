@@ -94,6 +94,14 @@ public class CharacterService : ICharacterService
       .ToListAsync();
   }
 
+  public async Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId)
+  {
+    return await _db.Characters
+      .Where(c => c.Id == characterId && c.UserGame.UserId == userId)
+      .Select(ToProjection())
+      .FirstOrDefaultAsync();
+  }
+
   public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null, List<string>? platformFilters = null)
   {
     var myUserGame = await _db.UserGames
