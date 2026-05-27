@@ -1,7 +1,8 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Input } from '../ui'
 import { ToggleButtonGroup } from '../forms/ToggleButtonGroup'
 import { type CharacterFormData, PLATFORMS } from './types'
+import { compressImageIfNeeded } from '../../utils/imageCompression'
 
 interface IdentityStepProps {
   data: CharacterFormData
@@ -14,10 +15,21 @@ const toOptions = (arr: string[]) => arr.map(v => ({ value: v, label: v }))
 export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
   const platformOptions = platforms && platforms.length > 0 ? platforms : PLATFORMS
   const fileRef = useRef<HTMLInputElement>(null)
+  const [compressedNotice, setCompressedNotice] = useState(false)
+  const [imageError, setImageError] = useState('')
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null
-    onChange({ imageFile: file, imageUrl: '' })
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.files?.[0] ?? null
+    if (!raw) return
+    setCompressedNotice(false)
+    setImageError('')
+    try {
+      const { file, wasCompressed } = await compressImageIfNeeded(raw)
+      onChange({ imageFile: file, imageUrl: '' })
+      setCompressedNotice(wasCompressed)
+    } catch {
+      setImageError('Could not process this image. Please try a different file.')
+    }
   }
 
   const previewUrl = data.imageFile
@@ -61,7 +73,7 @@ export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
             className="w-24 h-24 object-cover rounded mb-3 border border-border"
           />
         )}
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-3 items-center flex-wrap">
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
@@ -84,6 +96,14 @@ export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
             />
           )}
         </div>
+        {compressedNotice && (
+          <p className="text-xs font-mono text-muted mt-2">
+            Image was resized to fit the 5 MB limit.
+          </p>
+        )}
+        {imageError && (
+          <p className="text-xs font-mono text-danger mt-2">{imageError}</p>
+        )}
         <input
           ref={fileRef}
           type="file"
