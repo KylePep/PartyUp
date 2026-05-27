@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.UserGame;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services.Interfaces;
 
@@ -9,12 +10,14 @@ public class UserGameService : IUserGameService
     private readonly AppDbContext _db;
     private readonly IGameService _gameService;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<UserGameService> _logger;
 
-    public UserGameService(AppDbContext db, IGameService gameService, IServiceScopeFactory scopeFactory)
+    public UserGameService(AppDbContext db, IGameService gameService, IServiceScopeFactory scopeFactory, ILogger<UserGameService> logger)
     {
         _db = db;
         _gameService = gameService;
         _scopeFactory = scopeFactory;
+        _logger = logger;
     }
 
     public async Task<AddGameResult> AddGameToUser(Guid userId, AddUserGameRequest request)
@@ -82,9 +85,23 @@ public class UserGameService : IUserGameService
             var gameId = schemaGenGameId;
             _ = Task.Run(async () =>
             {
-                using var scope = _scopeFactory.CreateScope();
-                var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
-                await generator.GenerateForGameAsync(gameId);
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                try
+                {
+                    var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
+                    await generator.GenerateForGameAsync(gameId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Schema generation failed for game {GameId} — marking as Failed", gameId);
+                    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    var g = await db.Games.FindAsync(gameId);
+                    if (g != null && g.SchemaStatus == SchemaStatus.Pending)
+                    {
+                        g.SchemaStatus = SchemaStatus.Failed;
+                        await db.SaveChangesAsync();
+                    }
+                }
             });
         }
 

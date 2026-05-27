@@ -2,5 +2,5 @@ namespace PartyUp.Api.Services.Interfaces;
 
 public interface IGameSchemaGenerationService
 {
-    Task GenerateForGameAsync(Guid gameId);
+    Task GenerateForGameAsync(Guid gameId, bool force = false);
 }

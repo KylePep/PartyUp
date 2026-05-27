@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models.DTOs.Game;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Services.Interfaces;
 
 [ApiController]
@@ -10,11 +12,13 @@ public class GamesController : ControllerBase
 {
   private readonly IGameService _service;
   private readonly IGameFieldDefinitionService _fieldDefinitionService;
+  private readonly ILogger<GamesController> _logger;
 
-  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService)
+  public GamesController(IGameService service, IGameFieldDefinitionService fieldDefinitionService, ILogger<GamesController> logger)
   {
     _service = service;
     _fieldDefinitionService = fieldDefinitionService;
+    _logger = logger;
   }
 
   [Authorize]
@@ -95,8 +99,22 @@ public class GamesController : ControllerBase
     _ = Task.Run(async () =>
     {
       await using var scope = scopeFactory.CreateAsyncScope();
-      var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
-      await generator.GenerateForGameAsync(id);
+      try
+      {
+        var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
+        await generator.GenerateForGameAsync(id, force: true);
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "Regenerate-schema failed for game {GameId} — marking as Failed", id);
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var g = await db.Games.FindAsync(id);
+        if (g != null)
+        {
+          g.SchemaStatus = SchemaStatus.Failed;
+          await db.SaveChangesAsync();
+        }
+      }
     });
 
     return Accepted();
