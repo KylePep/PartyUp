@@ -29,6 +29,24 @@ public class GameService : IGameService
       ImageUrl = g.Background_Image
     }).ToList();
 
+    if (games.Count > 0)
+    {
+      var externalIds = games.Select(g => g.ExternalId).ToList();
+
+      var counts = await _db.UserGames
+          .Include(ug => ug.Game)
+          .Where(ug => externalIds.Contains(ug.Game.ExternalId))
+          .GroupBy(ug => ug.Game.ExternalId)
+          .Select(g => new { ExternalId = g.Key, Count = g.Count() })
+          .ToDictionaryAsync(x => x.ExternalId, x => x.Count);
+
+      foreach (var game in games)
+      {
+        if (counts.TryGetValue(game.ExternalId, out var count))
+          game.PlayerCount = count;
+      }
+    }
+
     return new PagedGamesResult
     {
       Games = games,
