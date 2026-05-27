@@ -166,6 +166,40 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
   }
 
   [Fact]
+  public async Task AddGame_StaleRecord_StillRedirectsToParent()
+  {
+      // Arrange: two independent users so we can add 91001 twice
+      var clientA = await CreateAuthenticatedClientAsync();
+      var clientB = await CreateAuthenticatedClientAsync();
+
+      // clientA adds the addition first — this persists the Game record for 91001
+      // in the DB (with ParentExternalId correctly set via the parent-games endpoint)
+      // and creates a UserGame pointing at the parent 91000.
+      var firstAdd = await clientA.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = 91001,
+          name = "Game 91001",
+          imageUrl = (string?)null
+      });
+      firstAdd.EnsureSuccessStatusCode();
+
+      // clientB now adds the same DLC — the Game row for 91001 is already in the
+      // DB. TryPopulateParentExternalId should handle the stale-record path and
+      // the redirect to 91000 should still occur.
+      var secondAdd = await clientB.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = 91001,
+          name = "Game 91001",
+          imageUrl = (string?)null
+      });
+
+      secondAdd.StatusCode.Should().Be(HttpStatusCode.OK);
+      var result = await secondAdd.Content.ReadFromJsonAsync<AddGameResultDto>();
+      result!.Redirected.Should().BeTrue();
+      result.UserGame.GameName.Should().Be("Game 91000");
+  }
+
+  [Fact]
   public async Task AddGame_CanonicalGame_NotRedirected()
   {
       var client = await CreateAuthenticatedClientAsync();

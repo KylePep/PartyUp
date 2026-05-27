@@ -28,6 +28,13 @@ public class UserGameService : IUserGameService
 
         var existingSelected = await _gameService.getGameByExternalId(request.ExternalId);
         var isSelectedNew = existingSelected == null;
+
+        // If the game is already in the DB but was persisted before the
+        // parent-games fix, ParentExternalId will be null even for DLCs.
+        // Re-check RAWG so the redirect logic below can work correctly.
+        if (existingSelected != null && !existingSelected.ParentExternalId.HasValue)
+            await _gameService.TryPopulateParentExternalId(existingSelected);
+
         var selectedGame = existingSelected ?? await _gameService.GetAndPersistGameDetails(request.ExternalId);
 
         if (selectedGame == null)

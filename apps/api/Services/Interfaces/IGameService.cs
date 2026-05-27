@@ -8,4 +8,12 @@ public interface IGameService
   Task<Game?> GetGameByDbId(Guid id);
   Task<Game?> getGameByExternalId(int id);
   Task<Game?> GetAndPersistGameDetails(int id);
+
+  /// <summary>
+  /// Calls RAWG's /parent-games endpoint and, if a parent is found, updates
+  /// <paramref name="game"/>.ParentExternalId and saves to the DB.
+  /// No-op if the game already has a ParentExternalId or if RAWG returns none.
+  /// Used to backfill stale Game records that were persisted before this fix.
+  /// </summary>
+  Task TryPopulateParentExternalId(Game game);
 }
