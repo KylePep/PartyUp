@@ -9,6 +9,13 @@ public class RawgGameDetailed
   public string? Website { get; set; }
   public double Rating { get; set; }
   public List<RawgPlatformWrapper> Platforms { get; set; } = [];
+  public RawgParentGame? Parent_Game { get; set; }
+}
+
+public class RawgParentGame
+{
+  public int Id { get; set; }
+  public string Name { get; set; } = string.Empty;
 }
 
 public class RawgPlatformWrapper

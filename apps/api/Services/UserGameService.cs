@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.UserGame;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services.Interfaces;
 
@@ -9,27 +10,62 @@ public class UserGameService : IUserGameService
     private readonly AppDbContext _db;
     private readonly IGameService _gameService;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<UserGameService> _logger;
 
-    public UserGameService(AppDbContext db, IGameService gameService, IServiceScopeFactory scopeFactory)
+    public UserGameService(AppDbContext db, IGameService gameService, IServiceScopeFactory scopeFactory, ILogger<UserGameService> logger)
     {
         _db = db;
         _gameService = gameService;
         _scopeFactory = scopeFactory;
+        _logger = logger;
     }
 
-    public async Task<UserGame> AddGameToUser(Guid userId, AddUserGameRequest request)
+    public async Task<AddGameResult> AddGameToUser(Guid userId, AddUserGameRequest request)
     {
-        var existingGame = await _gameService.getGameByExternalId(request.ExternalId);
-        var isNewGame = existingGame == null;
+        var existingSelected = await _gameService.getGameByExternalId(request.ExternalId);
+        var isSelectedNew = existingSelected == null;
+        var selectedGame = existingSelected ?? await _gameService.GetAndPersistGameDetails(request.ExternalId);
 
-        if (isNewGame)
-            existingGame = await _gameService.GetAndPersistGameDetails(request.ExternalId);
-
-        if (existingGame == null)
+        if (selectedGame == null)
             throw new InvalidOperationException("Game not found.");
 
+        Game canonicalGame;
+        bool redirected = false;
+        string? message = null;
+        bool triggerSchemaGen;
+        Guid schemaGenGameId;
+
+        if (selectedGame.ParentExternalId.HasValue)
+        {
+            var existingParent = await _gameService.getGameByExternalId(selectedGame.ParentExternalId.Value);
+            var isParentNew = existingParent == null;
+            var parent = existingParent ?? await _gameService.GetAndPersistGameDetails(selectedGame.ParentExternalId.Value);
+
+            // Fall back to selected game if RAWG is unreachable
+            canonicalGame = parent ?? selectedGame;
+            redirected = parent != null;
+
+            if (redirected)
+            {
+                message = $"{selectedGame.Name} is an expansion — we've added you to {canonicalGame.Name} instead.";
+                triggerSchemaGen = isParentNew;
+                schemaGenGameId = canonicalGame.Id;
+            }
+            else
+            {
+                triggerSchemaGen = isSelectedNew;
+                schemaGenGameId = selectedGame.Id;
+            }
+        }
+        else
+        {
+            canonicalGame = selectedGame;
+            triggerSchemaGen = isSelectedNew;
+            schemaGenGameId = selectedGame.Id;
+        }
+
         var alreadyAdded = await _db.UserGames
-            .AnyAsync(ug => ug.UserId == userId && ug.GameId == existingGame.Id);
+            .AnyAsync(ug => ug.UserId == userId && ug.GameId == canonicalGame.Id);
 
         if (alreadyAdded)
             throw new InvalidOperationException("Game already added.");
@@ -37,25 +73,44 @@ public class UserGameService : IUserGameService
         var userGame = new UserGame
         {
             UserId = userId,
-            GameId = existingGame.Id,
-            Game = existingGame
+            GameId = canonicalGame.Id,
+            Game = canonicalGame
         };
 
         _db.UserGames.Add(userGame);
         await _db.SaveChangesAsync();
 
-        if (isNewGame)
+        if (triggerSchemaGen)
         {
-            var gameId = existingGame.Id;
+            var gameId = schemaGenGameId;
             _ = Task.Run(async () =>
             {
-                using var scope = _scopeFactory.CreateScope();
-                var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
-                await generator.GenerateForGameAsync(gameId);
+                await using var scope = _scopeFactory.CreateAsyncScope();
+                try
+                {
+                    var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
+                    await generator.GenerateForGameAsync(gameId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Schema generation failed for game {GameId} — marking as Failed", gameId);
+                    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    var g = await db.Games.FindAsync(gameId);
+                    if (g != null && g.SchemaStatus == SchemaStatus.Pending)
+                    {
+                        g.SchemaStatus = SchemaStatus.Failed;
+                        await db.SaveChangesAsync();
+                    }
+                }
             });
         }
 
-        return userGame;
+        return new AddGameResult
+        {
+            UserGame = userGame,
+            Redirected = redirected,
+            Message = message
+        };
     }
 
     public async Task<List<UserGame>> GetUserGames(Guid userId)

@@ -22,8 +22,13 @@ public class UserGamesController : ControllerBase
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     try
     {
-      var userGame = await _service.AddGameToUser(userId, request);
-      return Ok(ToResponse(userGame));
+      var result = await _service.AddGameToUser(userId, request);
+      return Ok(new
+      {
+        userGame = ToResponse(result.UserGame),
+        redirected = result.Redirected,
+        message = result.Message
+      });
     }
     catch (InvalidOperationException ex)
     {

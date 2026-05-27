@@ -21,6 +21,7 @@ export type Game = {
   externalId: number;
   name: string;
   imageUrl: string;
+  playerCount: number;
 };
 
 export type GameDetails = {

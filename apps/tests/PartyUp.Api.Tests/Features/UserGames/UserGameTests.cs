@@ -26,8 +26,8 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
         });
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var userGame = await response.Content.ReadFromJsonAsync<UserGameDto>();
-        userGame!.Id.Should().NotBeEmpty();
+        var result = await response.Content.ReadFromJsonAsync<AddGameResultDto>();
+        result!.UserGame.Id.Should().NotBeEmpty();
     }
 
     [Fact]
@@ -62,9 +62,9 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
             name = $"Game {id}",
             imageUrl = (string?)null
         });
-        var userGame = (await addResponse.Content.ReadFromJsonAsync<UserGameDto>())!;
+        var addResult = (await addResponse.Content.ReadFromJsonAsync<AddGameResultDto>())!;
 
-        var deleteResponse = await client.DeleteAsync($"/api/user-games/{userGame.Id}");
+        var deleteResponse = await client.DeleteAsync($"/api/user-games/{addResult.UserGame.Id}");
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var getResponse = await client.GetAsync("/api/user-games");
@@ -134,9 +134,9 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
       imageUrl = (string?)null
     });
     addResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-    var userGame = await addResponse.Content.ReadFromJsonAsync<UserGameDto>();
+    var addResult = await addResponse.Content.ReadFromJsonAsync<AddGameResultDto>();
 
-    var detailResponse = await client.GetAsync($"/api/user-games/{userGame!.GameId}/game");
+    var detailResponse = await client.GetAsync($"/api/user-games/{addResult!.UserGame.GameId}/game");
 
     detailResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     var detail = await detailResponse.Content.ReadFromJsonAsync<UserGameDetailDto>();
@@ -144,7 +144,80 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
     detail.Platforms.Should().NotBeNull();
   }
 
+  [Fact]
+  public async Task AddGame_Addition_RedirectsToParent()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+
+      // 91001 is wired in FakeRawgHandler to have parent_game = 91000
+      var response = await client.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = 91001,
+          name = "Game 91001",
+          imageUrl = (string?)null
+      });
+
+      response.StatusCode.Should().Be(HttpStatusCode.OK);
+      var result = await response.Content.ReadFromJsonAsync<AddGameResultDto>();
+      result!.Redirected.Should().BeTrue();
+      result.Message.Should().Contain("Game 91001");
+      result.Message.Should().Contain("Game 91000");
+      result.UserGame.GameName.Should().Be("Game 91000");
+  }
+
+  [Fact]
+  public async Task AddGame_CanonicalGame_NotRedirected()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+      var id = Interlocked.Increment(ref _gameCounter);
+
+      var response = await client.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = id,
+          name = $"Game {id}",
+          imageUrl = (string?)null
+      });
+
+      response.StatusCode.Should().Be(HttpStatusCode.OK);
+      var result = await response.Content.ReadFromJsonAsync<AddGameResultDto>();
+      result!.Redirected.Should().BeFalse();
+      result.Message.Should().BeNull();
+  }
+
+  [Fact]
+  public async Task AddGame_TwoUsersSelectDifferentEditions_BothInParentPool()
+  {
+      var clientA = await CreateAuthenticatedClientAsync();
+      var clientB = await CreateAuthenticatedClientAsync();
+
+      // clientA selects the addition (91001), clientB selects the canonical (91000)
+      var responseA = await clientA.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = 91001,
+          name = "Game 91001",
+          imageUrl = (string?)null
+      });
+      var responseB = await clientB.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = 91000,
+          name = "Game 91000",
+          imageUrl = (string?)null
+      });
+
+      responseA.StatusCode.Should().Be(HttpStatusCode.OK);
+      responseB.StatusCode.Should().Be(HttpStatusCode.OK);
+
+      var resultA = await responseA.Content.ReadFromJsonAsync<AddGameResultDto>();
+      var resultB = await responseB.Content.ReadFromJsonAsync<AddGameResultDto>();
+
+      // Both should be enrolled in the same game (91000)
+      resultA!.UserGame.GameName.Should().Be("Game 91000");
+      resultB!.UserGame.GameName.Should().Be("Game 91000");
+  }
+
   private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
+
+  private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
 
   private record UserGameDetailDto(
     Guid Id,

@@ -24,10 +24,11 @@ public class GameSchemaGenerationService : IGameSchemaGenerationService
         _logger = logger;
     }
 
-    public async Task GenerateForGameAsync(Guid gameId)
+    public async Task GenerateForGameAsync(Guid gameId, bool force = false)
     {
         var game = await _db.Games.FindAsync(gameId);
-        if (game == null || game.SchemaStatus != SchemaStatus.Pending) return;
+        if (game == null) return;
+        if (!force && game.SchemaStatus != SchemaStatus.Pending) return;
 
         game.SchemaStatus = SchemaStatus.Generating;
         var stale = _db.GameFieldDefinitions.Where(d => d.GameId == gameId);

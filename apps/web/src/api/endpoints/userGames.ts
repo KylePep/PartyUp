@@ -26,8 +26,14 @@ export type UserGameDetail = {
   platforms: string[];
 };
 
-export function addUserGame(payload: AddUserGamePayload): Promise<UserGame> {
-  return apiPost<UserGame>("/user-games", payload);
+export type AddUserGameResult = {
+  userGame: UserGame;
+  redirected: boolean;
+  message: string | null;
+};
+
+export function addUserGame(payload: AddUserGamePayload): Promise<AddUserGameResult> {
+  return apiPost<AddUserGameResult>("/user-games", payload);
 }
 
 export function getUserGames(): Promise<UserGame[]> {

@@ -18,6 +18,7 @@ export function UserRealmsSection({ games, onAdd, onRemove }: UserRealmsSectionP
   const [pendingGame, setPendingGame] = useState<Game | null>(null)
   const [adding, setAdding] = useState(false)
   const [removeTarget, setRemoveTarget] = useState<UserGame | null>(null)
+  const [redirectMessage, setRedirectMessage] = useState<string | null>(null)
 
   async function handleSearch() {
     if (!query.trim()) return
@@ -31,12 +32,15 @@ export function UserRealmsSection({ games, onAdd, onRemove }: UserRealmsSectionP
     if (!pendingGame) return
     setAdding(true)
     try {
-      const newGame = await apiAddUserGame({
+      const result = await apiAddUserGame({
         externalId: pendingGame.externalId,
         name: pendingGame.name,
         imageUrl: pendingGame.imageUrl,
       })
-      onAdd(newGame)
+      onAdd(result.userGame)
+      if (result.redirected && result.message) {
+        setRedirectMessage(result.message)
+      }
       setPendingGame(null)
       setQuery('')
       setResults([])
@@ -55,6 +59,18 @@ export function UserRealmsSection({ games, onAdd, onRemove }: UserRealmsSectionP
 
   return (
     <div className="flex flex-col gap-10">
+      {redirectMessage && (
+        <div className="flex items-start justify-between gap-3 bg-surface border border-accent rounded-lg px-4 py-3">
+          <p className="text-sm text-text font-mono">{redirectMessage}</p>
+          <button
+            onClick={() => setRedirectMessage(null)}
+            className="text-muted hover:text-text text-xs font-mono shrink-0"
+          >
+            dismiss
+          </button>
+        </div>
+      )}
+
       <section>
         <h2 className="text-xs font-mono text-muted uppercase tracking-widest mb-4">My Realms</h2>
         {games.length === 0 ? (
@@ -91,7 +107,7 @@ export function UserRealmsSection({ games, onAdd, onRemove }: UserRealmsSectionP
         {results.length > 0 && (
           <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {results.map(g => (
-              <GameCard key={g.id} game={g} onSelect={setPendingGame} />
+              <GameCard key={g.externalId} game={g} onSelect={setPendingGame} />
             ))}
           </div>
         )}

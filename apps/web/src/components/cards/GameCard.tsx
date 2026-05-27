@@ -24,8 +24,11 @@ export function GameCard({ game, onSelect }: GameCardProps) {
           <span className="text-muted text-xs font-mono uppercase">No image</span>
         </div>
       )}
-      <div className="p-3">
+      <div className="p-3 flex flex-col gap-1">
         <p className="text-sm font-mono text-text truncate">{game.name}</p>
+        <p className="text-xs font-mono text-muted">
+          {game.playerCount > 0 ? `${game.playerCount} players` : 'Be the first!'}
+        </p>
       </div>
     </button>
   )
