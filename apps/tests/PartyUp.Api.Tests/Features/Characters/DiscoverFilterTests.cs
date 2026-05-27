@@ -137,6 +137,154 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
         discovered!.Should().HaveCount(2);
     }
 
+    [Fact]
+    public async Task Discover_WithSinglePlatformFilter_ReturnsOnlyThatPlatform()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var clientC = await CreateAuthenticatedClientAsync();
+
+        var externalId = Interlocked.Increment(ref _externalIdCounter);
+        var userGameA = await AddGameAsync(clientA, externalId);
+        var userGameB = await AddGameAsync(clientB, externalId);
+        var userGameC = await AddGameAsync(clientC, externalId);
+        var gameId = userGameC.GameId;
+
+        (await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Xbox Player",
+            platform = "Xbox One X",
+            platformHandle = "PlayerA",
+            userGameId = userGameA.Id
+        })).EnsureSuccessStatusCode();
+
+        (await clientB.PostAsJsonAsync("/api/characters", new
+        {
+            name = "PC Player",
+            platform = "PC (Windows)",
+            platformHandle = "PlayerB",
+            userGameId = userGameB.Id
+        })).EnsureSuccessStatusCode();
+
+        (await clientC.PostAsJsonAsync("/api/characters", new
+        {
+            name = "My Character",
+            platform = "Mac",
+            platformHandle = "PlayerC",
+            userGameId = userGameC.Id
+        })).EnsureSuccessStatusCode();
+
+        var response = await clientC.GetAsync(
+            $"/api/characters/discover?gameId={gameId}&platform=Xbox One X");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        discovered!.Should().ContainSingle(c => c.Name == "Xbox Player");
+        discovered.Should().NotContain(c => c.Name == "PC Player");
+    }
+
+    [Fact]
+    public async Task Discover_WithMultiplePlatformFilters_ReturnsAllMatchingPlatforms()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var clientC = await CreateAuthenticatedClientAsync();
+        var clientD = await CreateAuthenticatedClientAsync();
+
+        var externalId = Interlocked.Increment(ref _externalIdCounter);
+        var userGameA = await AddGameAsync(clientA, externalId);
+        var userGameB = await AddGameAsync(clientB, externalId);
+        var userGameC = await AddGameAsync(clientC, externalId);
+        var userGameD = await AddGameAsync(clientD, externalId);
+        var gameId = userGameD.GameId;
+
+        (await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Xbox Player",
+            platform = "Xbox One X",
+            platformHandle = "PlayerA",
+            userGameId = userGameA.Id
+        })).EnsureSuccessStatusCode();
+
+        (await clientB.PostAsJsonAsync("/api/characters", new
+        {
+            name = "PC Player",
+            platform = "PC (Windows)",
+            platformHandle = "PlayerB",
+            userGameId = userGameB.Id
+        })).EnsureSuccessStatusCode();
+
+        (await clientC.PostAsJsonAsync("/api/characters", new
+        {
+            name = "PS5 Player",
+            platform = "PS5",
+            platformHandle = "PlayerC",
+            userGameId = userGameC.Id
+        })).EnsureSuccessStatusCode();
+
+        (await clientD.PostAsJsonAsync("/api/characters", new
+        {
+            name = "My Character",
+            platform = "Mac",
+            platformHandle = "PlayerD",
+            userGameId = userGameD.Id
+        })).EnsureSuccessStatusCode();
+
+        var response = await clientD.GetAsync(
+            $"/api/characters/discover?gameId={gameId}&platform=Xbox One X&platform=PC (Windows)");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        discovered!.Should().Contain(c => c.Name == "Xbox Player");
+        discovered.Should().Contain(c => c.Name == "PC Player");
+        discovered.Should().NotContain(c => c.Name == "PS5 Player");
+    }
+
+    [Fact]
+    public async Task Discover_WithNoPlatformFilter_ReturnsAllPlatforms()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var clientC = await CreateAuthenticatedClientAsync();
+
+        var externalId = Interlocked.Increment(ref _externalIdCounter);
+        var userGameA = await AddGameAsync(clientA, externalId);
+        var userGameB = await AddGameAsync(clientB, externalId);
+        var userGameC = await AddGameAsync(clientC, externalId);
+        var gameId = userGameC.GameId;
+
+        (await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Xbox Player",
+            platform = "Xbox One X",
+            platformHandle = "PlayerA",
+            userGameId = userGameA.Id
+        })).EnsureSuccessStatusCode();
+
+        (await clientB.PostAsJsonAsync("/api/characters", new
+        {
+            name = "PC Player",
+            platform = "PC (Windows)",
+            platformHandle = "PlayerB",
+            userGameId = userGameB.Id
+        })).EnsureSuccessStatusCode();
+
+        (await clientC.PostAsJsonAsync("/api/characters", new
+        {
+            name = "My Character",
+            platform = "Mac",
+            platformHandle = "PlayerC",
+            userGameId = userGameC.Id
+        })).EnsureSuccessStatusCode();
+
+        // No platform param → returns all platforms
+        var response = await clientC.GetAsync($"/api/characters/discover?gameId={gameId}");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        discovered!.Should().HaveCount(2);
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<UserGameDto> AddGameAsync(HttpClient client, int externalId)

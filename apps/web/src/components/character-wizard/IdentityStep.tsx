@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Input } from '../ui'
 import { ToggleButtonGroup } from '../forms/ToggleButtonGroup'
-import { type CharacterFormData, PLATFORMS } from './types'
+import { type CharacterFormData, PLATFORMS, ALL_PLATFORMS } from './types'
 import { compressImageIfNeeded } from '../../utils/imageCompression'
 
 interface IdentityStepProps {
@@ -14,9 +14,20 @@ const toOptions = (arr: string[]) => arr.map(v => ({ value: v, label: v }))
 
 export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
   const platformOptions = platforms && platforms.length > 0 ? platforms : PLATFORMS
+  const [showAllPlatforms, setShowAllPlatforms] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const [compressedNotice, setCompressedNotice] = useState(false)
   const [imageError, setImageError] = useState('')
+
+  // An override is a platform the user chose that isn't in the game's RAWG list
+  const isOverride = Boolean(data.platform && !platformOptions.includes(data.platform))
+
+  // Expanded section: exclude platforms already shown in primary list (exact match)
+  const primarySet = new Set(platformOptions)
+  const expandedGroups = ALL_PLATFORMS.map(group => ({
+    ...group,
+    platforms: group.platforms.filter(p => !primarySet.has(p)),
+  })).filter(g => g.platforms.length > 0)
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const raw = e.target.files?.[0] ?? null
@@ -40,12 +51,61 @@ export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
     <div className="flex flex-col gap-6">
       <div>
         <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Platform *</p>
-        <ToggleButtonGroup
-          options={toOptions(platformOptions)}
-          value={data.platform ? [data.platform] : []}
-          multiple={false}
-          onChange={vals => onChange({ platform: vals[0] ?? '' })}
-        />
+        <div className="flex flex-wrap gap-2 mb-2">
+          <ToggleButtonGroup
+            options={toOptions(platformOptions)}
+            value={data.platform && !isOverride ? [data.platform] : []}
+            multiple={false}
+            onChange={vals => onChange({ platform: vals[0] ?? '' })}
+          />
+          {isOverride && (
+            <button
+              type="button"
+              onClick={() => onChange({ platform: '' })}
+              className="px-3 py-1.5 rounded text-xs font-mono border bg-accent text-white border-accent"
+              title="Click to clear"
+            >
+              {data.platform} ×
+            </button>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowAllPlatforms(s => !s)}
+          className="text-xs font-mono text-muted hover:text-accent transition-colors mt-1"
+        >
+          {showAllPlatforms ? '− Hide platforms' : '+ Add platform'}
+        </button>
+        {showAllPlatforms && (
+          <div className="mt-3 flex flex-col gap-4 border border-border rounded p-3 bg-surface-raised">
+            {expandedGroups.map(group => (
+              <div key={group.group}>
+                <p className="text-xs font-mono text-muted uppercase tracking-widest mb-2">
+                  {group.group}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {group.platforms.map(p => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => {
+                        onChange({ platform: p })
+                        setShowAllPlatforms(false)
+                      }}
+                      className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
+                        data.platform === p
+                          ? 'bg-accent text-white border-accent'
+                          : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <Input
