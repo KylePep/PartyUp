@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { deleteCharacter, getCharacters, type Character } from '../api/endpoints/characters'
 import { CharacterCard } from './cards/CharacterCard'
 import { EmptyState, Spinner } from './ui'
+import { CHARACTER_LIMIT } from '../utils/limits'
 
 export function CharacterGallery() {
   const [characters, setCharacters] = useState<Character[]>([])
@@ -30,19 +31,24 @@ export function CharacterGallery() {
     return <div className="flex justify-center py-10"><Spinner /></div>
   }
 
-  if (status === 'empty') {
-    return <EmptyState message="You haven't created any characters yet" />
-  }
-
   if (status === 'error') {
     return <EmptyState message="Could not load characters" />
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {characters.map(c => (
-        <CharacterCard key={c.id} character={c} onDelete={handleDelete} />
-      ))}
-    </div>
+    <>
+      <p className="text-xs font-mono text-muted mb-4">
+        {characters.length} / {CHARACTER_LIMIT} characters
+      </p>
+      {status === 'empty' ? (
+        <EmptyState message="You haven't created any characters yet" />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {characters.map(c => (
+            <CharacterCard key={c.id} character={c} onDelete={handleDelete} />
+          ))}
+        </div>
+      )}
+    </>
   )
 }
