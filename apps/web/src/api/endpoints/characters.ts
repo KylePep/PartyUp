@@ -139,3 +139,7 @@ export function interactWithCharacter(fromCharacterId: string, toCharacterId: st
   return apiPost<MatchResponse>("/character-interactions", {fromCharacterId, toCharacterId, type });
 }
 
+export function getCharacterById(id: string) {
+  return apiGet<Character>(`/characters/${id}`)
+}
+
