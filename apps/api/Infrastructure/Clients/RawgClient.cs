@@ -54,4 +54,15 @@ public class RawgClient
 
     return await _http.GetFromJsonAsync<RawgGameDetailed>(url);
   }
+
+  public async Task<RawgResponse?> GetParentGames(int id)
+  {
+    var key = _config["Rawg:ApiKey"];
+    if (string.IsNullOrEmpty(key))
+      throw new Exception("RAWG API key missing");
+
+    var url = $"https://api.rawg.io/api/games/{id}/parent-games?key={key}";
+
+    return await _http.GetFromJsonAsync<RawgResponse>(url);
+  }
 }

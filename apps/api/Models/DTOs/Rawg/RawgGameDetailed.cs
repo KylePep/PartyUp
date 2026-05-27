@@ -9,13 +9,13 @@ public class RawgGameDetailed
   public string? Website { get; set; }
   public double Rating { get; set; }
   public List<RawgPlatformWrapper> Platforms { get; set; } = [];
-  public RawgParentGame? Parent_Game { get; set; }
-}
 
-public class RawgParentGame
-{
-  public int Id { get; set; }
-  public string Name { get; set; } = string.Empty;
+  /// <summary>
+  /// Number of parent games (>0 means this game is a DLC/expansion).
+  /// Populated by RAWG in the game-detail response; actual parent details
+  /// require a separate call to /api/games/{id}/parent-games.
+  /// </summary>
+  public int ParentsCount { get; set; }
 }
 
 public class RawgPlatformWrapper

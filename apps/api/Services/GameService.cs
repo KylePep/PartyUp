@@ -98,6 +98,15 @@ public class GameService : IGameService
     if (rawgGame == null)
       return null;
 
+    // RAWG never populates parent_game inline — parents_count > 0 means we
+    // need a second call to /api/games/{id}/parent-games to get the actual parent.
+    int? parentExternalId = null;
+    if (rawgGame.ParentsCount > 0)
+    {
+      var parentsResponse = await _rawg.GetParentGames(externalId);
+      parentExternalId = parentsResponse?.Results.FirstOrDefault()?.Id;
+    }
+
     var game = new Game
     {
       Name = rawgGame.Name,
@@ -108,11 +117,27 @@ public class GameService : IGameService
       Rating = rawgGame.Rating,
       Platforms = rawgGame.Platforms.Select(p => p.Platform.Name).ToList(),
       SchemaStatus = PartyUp.Api.Models.Enums.SchemaStatus.Pending,
-      ParentExternalId = rawgGame.Parent_Game?.Id
+      ParentExternalId = parentExternalId
     };
 
     _db.Games.Add(game);
     await _db.SaveChangesAsync();
     return game;
+  }
+
+  public async Task TryPopulateParentExternalId(Game game)
+  {
+    // Already populated — nothing to do.
+    if (game.ParentExternalId.HasValue)
+      return;
+
+    var parentsResponse = await _rawg.GetParentGames(game.ExternalId);
+    var parentId = parentsResponse?.Results.FirstOrDefault()?.Id;
+
+    if (parentId == null)
+      return;
+
+    game.ParentExternalId = parentId;
+    await _db.SaveChangesAsync();
   }
 }
