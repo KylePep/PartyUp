@@ -96,10 +96,12 @@ public class CharactersController : ControllerBase
   public async Task<IActionResult> Discover([FromQuery] Guid gameId)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var platformFilters = Request.Query["platform"]
+      .Where(v => v != null).Select(v => v!).ToList();
     var filters = Request.Query
-      .Where(kv => kv.Key != "gameId")
+      .Where(kv => kv.Key != "gameId" && kv.Key != "platform")
       .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
-    var result = await _characterService.DiscoverCharactersAsync(userId, gameId, filters);
+    var result = await _characterService.DiscoverCharactersAsync(userId, gameId, filters, platformFilters);
     return Ok(result);
   }
 }
