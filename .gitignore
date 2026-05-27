@@ -46,3 +46,4 @@ build/
 .vite/
 
 **/appsettings.Development.json
+TODO.md

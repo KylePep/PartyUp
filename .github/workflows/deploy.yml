@@ -77,13 +77,16 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           JWT_KEY: ${{ secrets.JWT_KEY }}
           RAWG_API_KEY: ${{ secrets.RAWG_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GCS_BUCKET_NAME: ${{ secrets.GCS_BUCKET_NAME }}
+          GCS_CREDENTIALS_JSON: ${{ secrets.GCS_CREDENTIALS_JSON }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GHCR_USER: ${{ github.actor }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_PASSWORD,JWT_KEY,RAWG_API_KEY,GHCR_TOKEN,GHCR_USER
+          envs: DB_PASSWORD,JWT_KEY,RAWG_API_KEY,ANTHROPIC_API_KEY,GCS_BUCKET_NAME,GCS_CREDENTIALS_JSON,GHCR_TOKEN,GHCR_USER
           script: |
             echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
             rm -rf /opt/partyup/nginx/nginx.conf
@@ -109,11 +112,16 @@ jobs:
             }
             NGINXEOF
             cd /opt/partyup
+            printf '%s' "$GCS_CREDENTIALS_JSON" > gcs-key.json
+            chmod 600 gcs-key.json
             {
               echo "DB_PASSWORD=$DB_PASSWORD"
               echo "ConnectionStrings__DefaultConnection=Host=partyup-db;Database=partyup;Username=partyup;Password=$DB_PASSWORD"
               echo "Jwt__Key=$JWT_KEY"
               echo "Rawg__ApiKey=$RAWG_API_KEY"
+              echo "Anthropic__ApiKey=$ANTHROPIC_API_KEY"
+              echo "GoogleCloudStorage__BucketName=$GCS_BUCKET_NAME"
+              echo "GOOGLE_APPLICATION_CREDENTIALS=/run/gcs/key.json"
               echo "ASPNETCORE_ENVIRONMENT=Production"
             } > .env
             docker compose -f docker-compose.prod.yml down || true
