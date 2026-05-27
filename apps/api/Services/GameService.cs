@@ -101,7 +101,7 @@ public class GameService : IGameService
     // RAWG never populates parent_game inline — parents_count > 0 means we
     // need a second call to /api/games/{id}/parent-games to get the actual parent.
     int? parentExternalId = null;
-    if (rawgGame.ParentsCount > 0)
+    if (rawgGame.Parents_Count > 0)
     {
       var parentsResponse = await _rawg.GetParentGames(externalId);
       parentExternalId = parentsResponse?.Results.FirstOrDefault()?.Id;

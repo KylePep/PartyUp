@@ -14,8 +14,9 @@ public class RawgGameDetailed
   /// Number of parent games (>0 means this game is a DLC/expansion).
   /// Populated by RAWG in the game-detail response; actual parent details
   /// require a separate call to /api/games/{id}/parent-games.
+  /// Property name matches RAWG's snake_case field via case-insensitive deserialization.
   /// </summary>
-  public int ParentsCount { get; set; }
+  public int Parents_Count { get; set; }
 }
 
 public class RawgPlatformWrapper
