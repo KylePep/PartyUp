@@ -4,6 +4,7 @@ import { getGames, type Game } from '../api/endpoints/games'
 import { RealmCard } from './cards/RealmCard'
 import { GameCard } from './cards/GameCard'
 import { Modal, Button, Input, EmptyState, Spinner } from './ui'
+import { USER_GAME_LIMIT } from '../utils/limits'
 
 interface UserRealmsSectionProps {
   games: UserGame[]
@@ -109,30 +110,38 @@ export function UserRealmsSection({ games, onAdd, onRemove }: UserRealmsSectionP
 
       <section>
         <h2 className="text-xs font-mono text-muted uppercase tracking-widest mb-4">Add a Realm</h2>
-        <div className="flex gap-2 items-end">
-          <div className="flex-1">
-            <Input
-              label=""
-              placeholder="Search games..."
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSearch()}
-            />
-          </div>
-          <Button variant="secondary" onClick={handleSearch} disabled={searchStatus === 'loading'}>
-            Search
-          </Button>
-        </div>
-        {searchStatus === 'loading' && <div className="mt-4"><Spinner /></div>}
-        {searchStatus === 'done' && results.length === 0 && (
-          <p className="mt-4 text-xs text-muted font-mono">No results found.</p>
-        )}
-        {results.length > 0 && (
-          <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {results.map(g => (
-              <GameCard key={g.externalId} game={g} onSelect={setPendingGame} />
-            ))}
-          </div>
+        {games.length >= USER_GAME_LIMIT ? (
+          <p className="text-xs font-mono text-muted">
+            {USER_GAME_LIMIT} / {USER_GAME_LIMIT} realms — remove one to add a new game
+          </p>
+        ) : (
+          <>
+            <div className="flex gap-2 items-end">
+              <div className="flex-1">
+                <Input
+                  label=""
+                  placeholder="Search games..."
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSearch()}
+                />
+              </div>
+              <Button variant="secondary" onClick={handleSearch} disabled={searchStatus === 'loading'}>
+                Search
+              </Button>
+            </div>
+            {searchStatus === 'loading' && <div className="mt-4"><Spinner /></div>}
+            {searchStatus === 'done' && results.length === 0 && (
+              <p className="mt-4 text-xs text-muted font-mono">No results found.</p>
+            )}
+            {results.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {results.map(g => (
+                  <GameCard key={g.externalId} game={g} onSelect={setPendingGame} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </section>
 
