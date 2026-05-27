@@ -11,12 +11,14 @@ interface DiscoveryPanelProps {
   gameId: string
   myCharacter: Character | null | 'loading'
   onMatch: () => void
+  gamePlatforms?: string[]
 }
 
-export function DiscoveryPanel({ gameId, myCharacter, onMatch }: DiscoveryPanelProps) {
+export function DiscoveryPanel({ gameId, myCharacter, onMatch, gamePlatforms = [] }: DiscoveryPanelProps) {
   const [queue, setQueue] = useState<DiscoverCharacter[]>([])
   const [status, setStatus] = useState<DiscoverStatus>('loading')
   const [filters, setFilters] = useState<Record<string, string>>({})
+  const [activePlatforms, setActivePlatforms] = useState<string[]>(gamePlatforms)
   const { data: fieldDefs } = useFieldDefinitions(gameId)
 
   function handleFilterChange(key: string, value: string) {
@@ -36,13 +38,17 @@ export function DiscoveryPanel({ gameId, myCharacter, onMatch }: DiscoveryPanelP
     const activeFilters = Object.fromEntries(
       Object.entries(filters).filter(([, v]) => v !== '')
     )
-    discoverCharacters(gameId, activeFilters)
+    discoverCharacters(
+      gameId,
+      activeFilters,
+      activePlatforms.length > 0 ? activePlatforms : undefined
+    )
       .then(chars => {
         setQueue(chars)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
       })
       .catch(() => setStatus('error'))
-  }, [gameId, filters])
+  }, [gameId, filters, activePlatforms])
 
   async function handleInteract(type: 'Like' | 'Dislike') {
     const current = queue[0]
@@ -66,13 +72,18 @@ export function DiscoveryPanel({ gameId, myCharacter, onMatch }: DiscoveryPanelP
     ? fieldDefs.fields.filter(f => f.isFilterable && f.type === 'Select')
     : []
 
+  const showFilters = filterableFields.length > 0 || gamePlatforms.length > 0
+
   return (
     <div className="flex flex-col gap-4">
-      {filterableFields.length > 0 && (
+      {showFilters && (
         <DiscoveryFilters
           fields={filterableFields}
           activeFilters={filters}
           onChange={handleFilterChange}
+          gamePlatforms={gamePlatforms}
+          activePlatforms={activePlatforms}
+          onPlatformChange={setActivePlatforms}
         />
       )}
 

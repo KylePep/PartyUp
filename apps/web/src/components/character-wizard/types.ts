@@ -1,4 +1,14 @@
 export const PLATFORMS = ['PC', 'PlayStation', 'Xbox', 'Nintendo Switch', 'Mobile']
+
+export const ALL_PLATFORMS: { group: string; platforms: string[] }[] = [
+  { group: 'PC / Desktop', platforms: ['PC (Windows)', 'Mac', 'Linux', 'Steam Deck'] },
+  { group: 'Xbox', platforms: ['Xbox One', 'Xbox One S', 'Xbox One X', 'Xbox Series S', 'Xbox Series X'] },
+  { group: 'PlayStation', platforms: ['PS4', 'PS4 Pro', 'PS5', 'PS5 Pro'] },
+  { group: 'Nintendo', platforms: ['Nintendo Switch', 'Nintendo Switch Lite', 'Nintendo Switch OLED'] },
+  { group: 'Mobile', platforms: ['iOS', 'Android'] },
+]
+
+export const ALL_PLATFORM_VALUES = ALL_PLATFORMS.flatMap(g => g.platforms)
 export const ROLES = ['Tank', 'DPS', 'Support', 'Healer', 'Assassin', 'Marksman', 'Flex']
 export const PREFERRED_MODES = ['Ranked', 'Casual', 'Co-op', 'Story', 'PvP', 'PvE', 'Battle Royale']
 export const PLAYSTYLES = ['Casual', 'Competitive', 'Hybrid', 'Hardcore', 'Story-focused']

@@ -94,7 +94,7 @@ public class CharacterService : ICharacterService
       .ToListAsync();
   }
 
-  public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null)
+  public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null, List<string>? platformFilters = null)
   {
     var myUserGame = await _db.UserGames
       .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
@@ -122,6 +122,9 @@ public class CharacterService : ICharacterService
         c.UserGame.GameId == gameId &&
         c.UserGame.UserId != userId &&
         !alreadySeenIds.Contains(c.Id));
+
+    if (platformFilters != null && platformFilters.Count > 0)
+      query = query.Where(c => platformFilters.Contains(c.Platform));
 
     if (filters != null && filters.Count > 0)
     {

@@ -96,6 +96,7 @@ export default function RealmPage() {
             <DiscoveryPanel
               gameId={gameId!}
               myCharacter={myCharacter}
+              gamePlatforms={userGame?.platforms ?? []}
               onMatch={() => {
                 setMatchBanner(true)
                 setTimeout(() => setMatchBanner(false), 2500)
