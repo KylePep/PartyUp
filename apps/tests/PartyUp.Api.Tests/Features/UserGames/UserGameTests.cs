@@ -215,9 +215,43 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
       resultB!.UserGame.GameName.Should().Be("Game 91000");
   }
 
+  [Fact]
+  public async Task AddGame_AtLimit_ReturnsConflict()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+
+      // Add 10 games
+      for (var i = 0; i < 10; i++)
+      {
+          var id = Interlocked.Increment(ref _gameCounter);
+          var r = await client.PostAsJsonAsync("/api/user-games", new
+          {
+              externalId = id,
+              name = $"Game {id}",
+              imageUrl = (string?)null
+          });
+          r.EnsureSuccessStatusCode();
+      }
+
+      // 11th game — should be rejected
+      var eleventh = Interlocked.Increment(ref _gameCounter);
+      var response = await client.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = eleventh,
+          name = $"Game {eleventh}",
+          imageUrl = (string?)null
+      });
+
+      response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+      var body = await response.Content.ReadFromJsonAsync<RealmLimitErrorDto>();
+      body!.Message.Should().Contain("Realm limit");
+  }
+
   private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
 
   private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+
+  private record RealmLimitErrorDto(string Message);
 
   private record UserGameDetailDto(
     Guid Id,
