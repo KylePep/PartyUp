@@ -22,8 +22,19 @@ public class UserGameService : IUserGameService
 
     public async Task<AddGameResult> AddGameToUser(Guid userId, AddUserGameRequest request)
     {
+        var gameCount = await _db.UserGames.CountAsync(ug => ug.UserId == userId);
+        if (gameCount >= 10)
+            throw new InvalidOperationException("Realm limit of 10 reached.");
+
         var existingSelected = await _gameService.getGameByExternalId(request.ExternalId);
         var isSelectedNew = existingSelected == null;
+
+        // If the game is already in the DB but was persisted before the
+        // parent-games fix, ParentExternalId will be null even for DLCs.
+        // Re-check RAWG so the redirect logic below can work correctly.
+        if (existingSelected != null && !existingSelected.ParentExternalId.HasValue)
+            await _gameService.TryPopulateParentExternalId(existingSelected);
+
         var selectedGame = existingSelected ?? await _gameService.GetAndPersistGameDetails(request.ExternalId);
 
         if (selectedGame == null)
