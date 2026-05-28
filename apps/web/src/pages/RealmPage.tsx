@@ -3,8 +3,10 @@ import { useParams, Link } from 'react-router-dom'
 import DOMPurify from 'dompurify'
 import { getUserGameByGameId, type UserGameDetail } from '../api/endpoints/userGames'
 import { getUserGameCharacters, type Character } from '../api/endpoints/characters'
+import { useFieldDefinitions } from '../hooks/useFieldDefinitions'
 import { CharacterPanel } from '../components/CharacterPanel'
 import { DiscoveryPanel } from '../components/DiscoveryPanel'
+import { DiscoveryFilterMenu } from '../components/DiscoveryFilterMenu'
 import { MatchGallery } from '../components/MatchGallery'
 import { Spinner } from '../components/ui'
 import { PageLayout } from '../components/layout/PageLayout'
@@ -18,6 +20,24 @@ export default function RealmPage() {
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<Tab>('discover')
   const [matchBanner, setMatchBanner] = useState(false)
+
+  // Filter state — lifted from DiscoveryPanel
+  const [filters, setFilters] = useState<Record<string, string>>({})
+  const [activePlatforms, setActivePlatforms] = useState<string[]>([])
+  const { data: fieldDefs } = useFieldDefinitions(gameId ?? null)
+  const fields = fieldDefs?.schemaStatus === 'Generated' ? fieldDefs.fields : []
+
+  function handleFilterChange(key: string, value: string) {
+    setFilters(prev => {
+      const next = { ...prev }
+      if (value === '') {
+        delete next[key]
+      } else {
+        next[key] = value
+      }
+      return next
+    })
+  }
 
   useEffect(() => {
     if (!gameId) return
@@ -38,6 +58,8 @@ export default function RealmPage() {
   if (loading) {
     return <div className="flex justify-center py-24"><Spinner /></div>
   }
+
+  const gamePlatforms = userGame?.platforms ?? []
 
   return (
     <>
@@ -64,7 +86,6 @@ export default function RealmPage() {
               className="w-16 h-16 object-cover rounded"
             />
           )}
-
         </div>
         {userGame?.description != null && (
           <div
@@ -72,7 +93,6 @@ export default function RealmPage() {
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userGame.description) }}
           />
         )}
-
         <div className="max-w-7xl mx-auto px-4 md:px-8 flex gap-0">
           {(['discover', 'matches'] as Tab[]).map(t => (
             <button
@@ -91,17 +111,36 @@ export default function RealmPage() {
 
       <PageLayout>
         {tab === 'discover' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <CharacterPanel gameId={gameId!} userGame={userGame} />
-            <DiscoveryPanel
-              gameId={gameId!}
-              myCharacter={myCharacter}
-              gamePlatforms={userGame?.platforms ?? []}
-              onMatch={() => {
-                setMatchBanner(true)
-                setTimeout(() => setMatchBanner(false), 2500)
-              }}
-            />
+          <div className="flex flex-col gap-4">
+            {/* Mobile filter button — rendered above character panel, hidden on desktop */}
+            <div className="lg:hidden">
+              <DiscoveryFilterMenu
+                fields={fields}
+                gamePlatforms={gamePlatforms}
+                filters={filters}
+                activePlatforms={activePlatforms}
+                onChange={handleFilterChange}
+                onPlatformChange={setActivePlatforms}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <CharacterPanel gameId={gameId!} userGame={userGame} />
+              <DiscoveryPanel
+                gameId={gameId!}
+                myCharacter={myCharacter}
+                gamePlatforms={gamePlatforms}
+                filters={filters}
+                activePlatforms={activePlatforms}
+                onFiltersChange={handleFilterChange}
+                onPlatformChange={setActivePlatforms}
+                fields={fields}
+                onMatch={() => {
+                  setMatchBanner(true)
+                  setTimeout(() => setMatchBanner(false), 2500)
+                }}
+              />
+            </div>
           </div>
         )}
 

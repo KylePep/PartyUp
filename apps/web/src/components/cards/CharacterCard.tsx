@@ -13,15 +13,21 @@ export function CharacterCard({ character, onEdit, onDelete }: CharacterCardProp
 
   return (
     <div
-      className="rounded-xl flex flex-col overflow-hidden cursor-pointer transition-all hover:brightness-110"
+      className="h-[472px] rounded-xl flex flex-col overflow-hidden cursor-pointer transition-all hover:brightness-110"
       style={{
         backgroundColor: 'var(--color-surface)',
-        border: '1px solid var(--color-border)',
+        border: '2px solid var(--color-border)',
       }}
       onClick={() => navigate(`/characters/${character.id}`)}
     >
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-3 py-2 flex-shrink-0">
+      {/* Nameplate top bar — fixed height */}
+      <div
+        className="h-[52px] flex items-center justify-between px-3 flex-shrink-0"
+        style={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderBottom: '1px solid var(--color-border)',
+        }}
+      >
         <span className="font-display font-semibold text-text text-sm truncate">{character.name}</span>
         {character.platformHandle && (
           <span className="text-xs font-mono text-muted ml-2 flex-shrink-0 truncate max-w-[50%]">
@@ -29,10 +35,10 @@ export function CharacterCard({ character, onEdit, onDelete }: CharacterCardProp
           </span>
         )}
       </div>
-      {/* Art box */}
+      {/* Art box — fixed height, full card width */}
       <div
-        className="mx-3 h-28 overflow-hidden rounded-md"
-        style={{ border: '1px solid var(--color-border)' }}
+        className="h-[300px] flex-shrink-0 overflow-hidden"
+        style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         {character.imageUrl ? (
           <img src={character.imageUrl} alt={character.name} className="w-full h-full object-cover" />
@@ -45,15 +51,18 @@ export function CharacterCard({ character, onEdit, onDelete }: CharacterCardProp
           </div>
         )}
       </div>
-      {/* Bottom panel */}
-      <div className="px-3 py-2 flex items-center justify-between gap-2">
-        <div className="flex gap-1.5 flex-wrap">
+      {/* Bottom panel — takes remaining space (~120px) */}
+      <div className="flex-1 px-3 py-2 flex flex-col overflow-hidden">
+        <div className="flex flex-wrap gap-1.5 mb-1.5">
           {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
           {character.rank && <Badge variant="rank">{character.rank}</Badge>}
         </div>
+        {character.bio && (
+          <p className="text-xs text-muted line-clamp-2 flex-1">{character.bio}</p>
+        )}
         {(onEdit || onDelete) && (
           <div
-            className="flex gap-1 flex-shrink-0"
+            className="flex gap-1 mt-auto flex-shrink-0"
             onClick={e => e.stopPropagation()}
           >
             {onEdit && (
