@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { discoverCharacters, interactWithCharacter, type Character, type DiscoverCharacter } from '../api/endpoints/characters'
-import { useFieldDefinitions } from '../hooks/useFieldDefinitions'
 import { SwipeCard } from './cards/SwipeCard'
-import { DiscoveryFilters } from './DiscoveryFilters'
+import { DiscoveryFilterMenu } from './DiscoveryFilterMenu'
 import { Spinner, EmptyState } from './ui'
+import type { GameFieldDefinition } from '../api/endpoints/games'
 
 type DiscoverStatus = 'loading' | 'ready' | 'empty' | 'error'
 
@@ -12,26 +12,26 @@ interface DiscoveryPanelProps {
   myCharacter: Character | null | 'loading'
   onMatch: () => void
   gamePlatforms?: string[]
+  filters: Record<string, string>
+  activePlatforms: string[]
+  onFiltersChange: (key: string, value: string) => void
+  onPlatformChange: (platforms: string[]) => void
+  fields: GameFieldDefinition[]
 }
 
-export function DiscoveryPanel({ gameId, myCharacter, onMatch, gamePlatforms = [] }: DiscoveryPanelProps) {
+export function DiscoveryPanel({
+  gameId,
+  myCharacter,
+  onMatch,
+  gamePlatforms = [],
+  filters,
+  activePlatforms,
+  onFiltersChange,
+  onPlatformChange,
+  fields,
+}: DiscoveryPanelProps) {
   const [queue, setQueue] = useState<DiscoverCharacter[]>([])
   const [status, setStatus] = useState<DiscoverStatus>('loading')
-  const [filters, setFilters] = useState<Record<string, string>>({})
-  const [activePlatforms, setActivePlatforms] = useState<string[]>(gamePlatforms)
-  const { data: fieldDefs } = useFieldDefinitions(gameId)
-
-  function handleFilterChange(key: string, value: string) {
-    setFilters(prev => {
-      const next = { ...prev }
-      if (value === '') {
-        delete next[key]
-      } else {
-        next[key] = value
-      }
-      return next
-    })
-  }
 
   useEffect(() => {
     setStatus('loading')
@@ -68,24 +68,19 @@ export function DiscoveryPanel({ gameId, myCharacter, onMatch, gamePlatforms = [
     return <EmptyState message="Create a character to start matching" />
   }
 
-  const filterableFields = fieldDefs?.schemaStatus === 'Generated'
-    ? fieldDefs.fields.filter(f => f.isFilterable && f.type === 'Select')
-    : []
-
-  const showFilters = filterableFields.length > 0 || gamePlatforms.length > 0
-
   return (
     <div className="flex flex-col gap-4">
-      {showFilters && (
-        <DiscoveryFilters
-          fields={filterableFields}
-          activeFilters={filters}
-          onChange={handleFilterChange}
+      {/* Desktop filter menu — hidden on mobile (mobile version rendered by RealmPage above CharacterPanel) */}
+      <div className="hidden lg:block">
+        <DiscoveryFilterMenu
+          fields={fields}
           gamePlatforms={gamePlatforms}
+          filters={filters}
           activePlatforms={activePlatforms}
-          onPlatformChange={setActivePlatforms}
+          onChange={onFiltersChange}
+          onPlatformChange={onPlatformChange}
         />
-      )}
+      </div>
 
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner label="Scanning the realm..." /></div>
