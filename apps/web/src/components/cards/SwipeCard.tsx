@@ -13,8 +13,8 @@ interface SwipeCardProps {
 }
 
 const accentBorder = {
-  border: '2px solid var(--color-accent)',
-  boxShadow: '0 0 20px rgba(124, 111, 205, 0.35)',
+  border: '3px solid var(--color-accent)',
+  boxShadow: '0 0 28px rgba(124, 111, 205, 0.50)',
 }
 
 function SwipeFront({ character }: { character: DiscoverCharacter }) {
@@ -23,17 +23,23 @@ function SwipeFront({ character }: { character: DiscoverCharacter }) {
       className="w-full h-full rounded-xl flex flex-col overflow-hidden"
       style={{ backgroundColor: 'var(--color-surface)', ...accentBorder }}
     >
-      {/* Top bar */}
-      <div className="flex items-center justify-between px-3 py-2 flex-shrink-0">
+      {/* Nameplate top bar — fixed height */}
+      <div
+        className="h-[52px] flex items-center justify-between px-3 flex-shrink-0"
+        style={{
+          backgroundColor: 'var(--color-surface-raised)',
+          borderBottom: '1px solid var(--color-border)',
+        }}
+      >
         <span className="font-display font-bold text-text text-base truncate">{character.name}</span>
         {character.platform && (
           <span className="text-xs font-mono text-muted ml-2 flex-shrink-0">{character.platform}</span>
         )}
       </div>
-      {/* Art box */}
+      {/* Art box — fixed height, full card width */}
       <div
-        className="mx-3 flex-1 min-h-0 overflow-hidden rounded-md"
-        style={{ border: '1px solid var(--color-border)' }}
+        className="h-[300px] flex-shrink-0 overflow-hidden"
+        style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         {character.imageUrl ? (
           <img src={character.imageUrl} alt={character.name} className="w-full h-full object-cover" />
@@ -46,9 +52,9 @@ function SwipeFront({ character }: { character: DiscoverCharacter }) {
           </div>
         )}
       </div>
-      {/* Bottom panel */}
-      <div className="px-3 pt-2 pb-3 flex-shrink-0">
-        <div className="flex flex-wrap gap-1.5 mb-2">
+      {/* Bottom panel — takes remaining space */}
+      <div className="flex-1 px-3 pt-2 pb-2 flex flex-col overflow-hidden">
+        <div className="flex flex-wrap gap-1.5 mb-1.5">
           {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
           {character.secondaryRole && <Badge variant="role">{character.secondaryRole}</Badge>}
           {character.rank && <Badge variant="rank">{character.rank}</Badge>}
@@ -56,9 +62,9 @@ function SwipeFront({ character }: { character: DiscoverCharacter }) {
           {character.playstyle && <Badge>{character.playstyle}</Badge>}
         </div>
         {character.bio && (
-          <p className="text-xs text-muted line-clamp-2 mb-2">{character.bio}</p>
+          <p className="text-xs text-muted line-clamp-2 flex-1">{character.bio}</p>
         )}
-        <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
+        <p className="text-xs text-muted text-center mt-auto" style={{ opacity: 0.5 }}>↑ tap for more</p>
       </div>
     </div>
   )
@@ -169,7 +175,7 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
 
   return (
     <div
-      className={`absolute inset-0 flex flex-col gap-2 ${animClass}`}
+      className={`absolute inset-0 flex flex-col ${animClass}`}
       style={{
         zIndex: isTop ? 2 : 1,
         transform: isTop ? undefined : 'scale(0.97) translateY(8px)',
@@ -181,7 +187,7 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
         className="flex-1 min-h-0"
       />
       {isTop && (
-        <div className="flex gap-3 flex-shrink-0">
+        <div className="flex gap-3 flex-shrink-0 mt-2">
           <Button
             variant="secondary"
             className="flex-1 border-danger/50 text-danger hover:bg-danger hover:text-white hover:border-danger"
