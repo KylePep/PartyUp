@@ -1,9 +1,10 @@
 import { useAuth } from '../context/AuthContext'
 import { type UserGame } from '../api/endpoints/userGames'
 import { useUserGames } from '../hooks/useUserGame'
-import { UserRealmsSection } from '../components/UserRealmsSection'
-import { PageLayout } from '../components/layout/PageLayout'
+import { OrbSearch } from '../components/OrbSearch'
+import { RealmCard } from '../components/cards/RealmCard'
 import { Spinner } from '../components/ui'
+import { USER_GAME_LIMIT } from '../utils/limits'
 
 export default function HomePage() {
   const { state: auth } = useAuth()
@@ -12,23 +13,40 @@ export default function HomePage() {
   if (auth.status !== 'authenticated') return null
 
   const { username } = auth.user
+  const displayName = username.split('@')[0]
+  const visibleRealms = userGames.games.slice(0, 3)
+  const atLimit = userGames.games.length >= USER_GAME_LIMIT
 
   return (
-    <PageLayout>
-      <div className="mb-10">
-        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-1">Welcome back</p>
-        <h1 className="font-display font-bold text-xl md:text-4xl text-text">{username.split('@')[0]}</h1>
-      </div>
+    <main className="flex-1 flex items-center justify-center py-4 overflow-hidden">
+      <section className="h-full bg-surface border-white border-2 py-4 px-6 w-1/2 flex flex-col items-center justify-between overflow-hidden">
 
-      {userGames.status === 'loading' ? (
-        <div className="flex justify-center py-10"><Spinner /></div>
-      ) : (
-        <UserRealmsSection
-          games={userGames.games}
-          onAdd={(game: UserGame) => userGames.addUserGame(game)}
-          onRemove={(game: UserGame) => userGames.removeGame(game)}
-        />
-      )}
-    </PageLayout>
+        <h1 className="font-display font-bold text-4xl text-text">
+          {displayName}'s Binder
+        </h1>
+
+        {userGames.status === 'loading' ? (
+          <Spinner />
+        ) : (
+          <OrbSearch
+            onAdd={(game: UserGame) => userGames.addUserGame(game)}
+            disabled={atLimit}
+          />
+        )}
+
+        <div className="flex gap-4 w-3/4 justify-center items-start">
+          {visibleRealms.length === 0 ? (
+            <p className="text-xs font-mono text-muted text-center">
+              Search above to add your first realm
+            </p>
+          ) : (
+            visibleRealms.map(g => (
+              <RealmCard key={g.id} userGame={g} />
+            ))
+          )}
+        </div>
+
+      </section>
+    </main>
   )
 }
