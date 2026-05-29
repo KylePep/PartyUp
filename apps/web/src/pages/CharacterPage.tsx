@@ -36,12 +36,14 @@ export default function CharactersPage() {
   }
 
   const leftContent = selected ? (
-    <CharacterDetailCard
-      character={selected}
-      onBack={() => setSelected(null)}
-      onDelete={selected.userGameId ? handleDelete : undefined}
-      deleting={deleting}
-    />
+    <div className="overflow-y-auto" style={{ height: 'calc(100vh - 6rem)' }}>
+      <CharacterDetailCard
+        character={selected}
+        onBack={() => setSelected(null)}
+        onDelete={selected.userGameId ? handleDelete : undefined}
+        deleting={deleting}
+      />
+    </div>
   ) : (
     <div className="flex items-center justify-center h-full">
       <p className="text-muted font-mono text-sm">Select a character</p>
