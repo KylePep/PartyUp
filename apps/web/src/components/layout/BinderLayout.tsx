@@ -14,7 +14,7 @@ export function BinderLayout({ barColor, barContent, leftContent, rightContent, 
     // Outer wrapper: sets position context for tabs WITHOUT overflow-hidden
     <div className="relative m-4 me-8 w-full" style={{ height: 'calc(100vh - 2rem)' }}>
       {/* Binder frame: overflow-hidden only applies here, not to the tab layer */}
-      <main className="grid grid-cols-2 border-white border-2 w-full h-full relative overflow-hidden">
+      <main className="grid grid-cols-2 border-white border-2 w-full h-full relative">
         {/* Left page */}
         <div className="flex border-r border-border h-full">
           {/* Spine bar */}
@@ -25,13 +25,13 @@ export function BinderLayout({ barColor, barContent, leftContent, rightContent, 
             {barContent}
           </div>
           {/* Left content area */}
-          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
             {leftContent}
           </div>
         </div>
 
         {/* Right page */}
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col h-full overflow-y-auto">
           {rightContent}
         </div>
       </main>

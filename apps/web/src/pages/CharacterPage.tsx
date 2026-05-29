@@ -45,7 +45,7 @@ export default function CharactersPage() {
   }
 
   const leftContent = selected ? (
-    <div className="flex flex-col h-full overflow-y-auto">
+    <div className="flex flex-col h-full min-h-0 overflow-y-auto">
       {/* Hero */}
       <div
         className="flex gap-4 p-4"
@@ -164,7 +164,7 @@ export default function CharactersPage() {
   )
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full">
+    <div className="p-4 overflow-y-auto h-full min-h-0">
       <CharacterGallery
         characters={characters}
         status={status}

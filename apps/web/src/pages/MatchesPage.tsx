@@ -64,7 +64,7 @@ export default function MatchesPage() {
   }, [])
 
   const leftContent = selected ? (
-    <div className="flex flex-col h-full overflow-y-auto">
+    <div className="flex flex-col h-full min-h-0 overflow-y-auto">
       {/* Match header */}
       <div
         className="px-4 py-3"
@@ -99,7 +99,7 @@ export default function MatchesPage() {
   )
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full">
+    <div className="p-4 overflow-y-auto h-full min-h-0">
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner /></div>
       )}

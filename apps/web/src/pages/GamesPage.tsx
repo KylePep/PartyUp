@@ -37,7 +37,7 @@ export default function GamesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="flex flex-col h-full overflow-y-auto p-6 gap-4">
+    <div className="flex flex-col h-full min-h-0 overflow-y-auto p-6 gap-4">
       <div className="w-full aspect-video rounded-lg overflow-hidden border border-border flex-shrink-0">
         {selected.gameImageUrl ? (
           <img src={selected.gameImageUrl} alt={selected.gameName} className="w-full h-full object-cover" />
@@ -76,7 +76,7 @@ export default function GamesPage() {
   )
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full">
+    <div className="p-4 overflow-y-auto h-full min-h-0">
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner /></div>
       )}
