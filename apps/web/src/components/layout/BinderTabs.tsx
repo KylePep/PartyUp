@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom"
 
 export type BinderTabDef = {
   label: string
+  textColor: string
   color: string
   active?: boolean
   to: string
@@ -18,8 +19,8 @@ export function BinderTabs({ tabs }: BinderTabsProps) {
         <NavLink
           key={tab.label}
           to={tab.to}
-          className="w-32 rounded-t border-white border-b-2 py-1 text-xs font-mono text-white uppercase tracking-widest text-center"
-          style={{ backgroundColor: tab.color }}
+          className="w-32 rounded-t py-1 text-xs font-mono text-white uppercase tracking-widest text-center"
+          style={{ backgroundColor: tab.color, color: tab.textColor }}
         >
           {tab.label}
         </NavLink>

@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { Badge, Button } from '../ui'
 import type { Character } from '../../api/endpoints/characters'
 
@@ -18,18 +17,11 @@ function StatRow({ label, children }: { label: string; children: React.ReactNode
 
 interface CharacterDetailCardProps {
   character: Character
-  onBack?: () => void
   onDelete?: () => void
   deleting?: boolean
 }
 
-export function CharacterDetailCard({ character, onBack, onDelete, deleting }: CharacterDetailCardProps) {
-  const navigate = useNavigate()
-
-  function handleBack() {
-    if (onBack) onBack()
-    else navigate(-1)
-  }
+export function CharacterDetailCard({ character, onDelete, deleting }: CharacterDetailCardProps) {
 
   return (
     <div
@@ -45,7 +37,6 @@ export function CharacterDetailCard({ character, onBack, onDelete, deleting }: C
         className="flex items-center justify-between px-4 py-3"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
-        <Button variant="secondary" onClick={handleBack}>← Back</Button>
         {onDelete && (
           <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
             {deleting ? 'Deleting...' : 'Delete Character'}
@@ -104,18 +95,19 @@ export function CharacterDetailCard({ character, onBack, onDelete, deleting }: C
           </StatRow>
         )}
         {character.usesVoiceChat != null && (
-          <StatRow label="Voice Chat">
+          <StatRow label="Communication and connection">
             <span className="text-sm text-text">{character.usesVoiceChat ? 'Yes' : 'No'}</span>
+          </StatRow>
+        )}
+        {character.languages && character.languages.length > 0 && (
+          <StatRow label="Languages">
+
+            {character.languages.map(l => <Badge key={l}>{l}</Badge>)}
           </StatRow>
         )}
         {character.preferredModes.length > 0 && (
           <StatRow label="Modes">
             {character.preferredModes.map(m => <Badge key={m}>{m}</Badge>)}
-          </StatRow>
-        )}
-        {character.languages && character.languages.length > 0 && (
-          <StatRow label="Languages">
-            {character.languages.map(l => <Badge key={l}>{l}</Badge>)}
           </StatRow>
         )}
         {character.timeZone && (

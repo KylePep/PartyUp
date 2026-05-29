@@ -39,7 +39,6 @@ export default function CharactersPage() {
     <div className="overflow-y-auto" style={{ height: 'calc(100vh - 6rem)' }}>
       <CharacterDetailCard
         character={selected}
-        onBack={() => setSelected(null)}
         onDelete={selected.userGameId ? handleDelete : undefined}
         deleting={deleting}
       />
@@ -65,9 +64,9 @@ export default function CharactersPage() {
     <BinderLayout
       barColor='#991b1b'
       tabs={[
-        { label: 'My Cards', color: '#991b1b', to: "/characters" },
-        { label: 'Games', color: '#1e40af', to: "/games" },
-        { label: 'Collection', color: '#166534', to: "/matches" },
+        { label: 'My Cards', textColor: "#ffd900", color: '#000000', to: "/characters" },
+        { label: 'Games', textColor: "#ffffff", color: '#1e40af', to: "/games" },
+        { label: 'Collection', textColor: "#ffffff", color: '#166534', to: "/matches" },
       ]}
       leftContent={leftContent}
       rightContent={rightContent}

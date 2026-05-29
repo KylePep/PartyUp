@@ -149,9 +149,9 @@ export default function MatchesPage() {
     <BinderLayout
       barColor='#166534'
       tabs={[
-        { label: 'My Cards', color: '#991b1b', to: "/characters" },
-        { label: 'Games', color: '#1e40af', to: "/games" },
-        { label: 'Collection', color: '#166534', to: "/matches" },
+        { label: 'My Cards', textColor: "#ffffff", color: '#000000', to: "/characters" },
+        { label: 'Games', textColor: "#ffffff", color: '#000000', to: "/games" },
+        { label: 'Collection', textColor: "#ffd900", color: '#000000', to: "/matches" },
       ]}
       leftContent={leftContent}
       rightContent={rightContent}
