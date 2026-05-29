@@ -21,35 +21,37 @@ export function FlippableCard({ front, back, className = '' }: FlippableCardProp
           transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
         }}
       >
-        {/* Front face */}
-        <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden' }}>
+        {/* Front face — click anywhere to flip */}
+        <div
+          style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', cursor: 'pointer' }}
+          onClick={() => setFlipped(true)}
+        >
           {front}
-          {/* Flip trigger — covers bottom 35% of the card (the bottom info panel) */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: '35%',
-              cursor: 'pointer',
-              zIndex: 10,
-            }}
-            onClick={() => setFlipped(true)}
-          />
         </div>
-        {/* Back face — pre-rotated so it reads correctly when the container flips */}
+
+        {/* Back face */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)',
-            cursor: 'pointer',
           }}
-          onClick={() => setFlipped(false)}
         >
           {back}
+          {/* Flip-back trigger pinned to bottom — outside the scroll container */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '32px',
+              cursor: 'pointer',
+              zIndex: 10,
+            }}
+            onClick={() => setFlipped(false)}
+          />
         </div>
       </div>
     </div>
