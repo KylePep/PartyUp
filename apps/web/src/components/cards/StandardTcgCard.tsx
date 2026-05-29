@@ -25,30 +25,34 @@ export function StandardTcgCard({
 }: StandardTcgCardProps) {
   return (
     <div
-      className={`rounded-xl overflow-hidden flex flex-col${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
-      style={{ border: '4px solid black', backgroundColor: 'var(--color-surface)' }}
+      className={`rounded-xl overflow-hidden flex flex-col h-full w-full p-2 gap-2${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
+      style={{ border: '8px solid black', backgroundColor: 'var(--color-surface)' }}
       onClick={onClick}
     >
-      {/* Header: name (left) + platform (right) */}
-      <div
-        className="h-[52px] flex items-center justify-between px-3 flex-shrink-0"
-        style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
-      >
-        <span className="font-display font-semibold text-text text-sm truncate">{name}</span>
-        {platform && (
-          <span className="text-xs font-mono text-muted ml-2 flex-shrink-0 truncate max-w-[45%]">{platform}</span>
+      <div>
+        {/* Header: name (left) + platform (right) */}
+        <div
+          className="flex items-center justify-between px-3 flex-shrink-0"
+          style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
+        >
+          <span className="font-display font-semibold text-text text-sm truncate">{name}</span>
+          {platform && (
+            <span className="text-xs font-mono text-muted ml-2 flex-shrink-0 truncate max-w-[45%]">{platform}</span>
+          )}
+
+
+        </div>
+        {/* Subtitle: region · language */}
+        {subtitle && (
+          <div className="px-3 flex-shrink-0">
+            <span className="text-xs text-muted italic">{subtitle}</span>
+          </div>
         )}
       </div>
 
-      {/* Subtitle: region · language */}
-      {subtitle && (
-        <div className="px-3 py-1.5 flex-shrink-0" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <span className="text-xs text-muted italic">{subtitle}</span>
-        </div>
-      )}
 
       {/* Image */}
-      <div className="h-[220px] flex-shrink-0 overflow-hidden" style={{ borderBottom: '1px solid var(--color-border)' }}>
+      <div className="aspect-video w-full overflow-hidden flex-shrink-0" >
         {imageUrl ? (
           <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
         ) : (

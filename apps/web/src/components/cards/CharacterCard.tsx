@@ -38,7 +38,6 @@ export function CharacterCard({ character, onEdit, onDelete, onSelect }: Charact
       imageUrl={character.imageUrl}
       statsLine={statsLine}
       textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
-      className="h-[472px]"
       onClick={handleClick}
     >
       {(onEdit || onDelete) && (
