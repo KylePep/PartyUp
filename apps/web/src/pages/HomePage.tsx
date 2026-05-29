@@ -34,9 +34,9 @@ export default function HomePage() {
           />
         )}
 
-        <div className="flex gap-4 w-3/4 justify-center items-start">
+        <div className="grid grid-cols-3 gap-4 w-3/4">
           {visibleRealms.length === 0 ? (
-            <p className="text-xs font-mono text-muted text-center">
+            <p className="col-span-3 text-xs font-mono text-muted text-center">
               Search above to add your first realm
             </p>
           ) : (

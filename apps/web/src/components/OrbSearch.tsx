@@ -49,20 +49,19 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
   return (
     <div className="w-full flex justify-center">
       <div
-        className="group relative bg-white border-black border-4 flex flex-col overflow-hidden transition-all duration-500 ease-in-out"
+        className="group relative bg-white border-black border-4 overflow-hidden transition-all duration-500 ease-in-out"
         style={{
           width: expanded ? '100%' : '20rem',
           height: expanded ? '24rem' : '20rem',
           borderRadius: expanded ? '0.75rem' : '50%',
-          paddingTop: expanded ? '1rem' : 'calc(50% - 1.25rem)',
         }}
       >
-        {/* Search bar — hidden in idle, revealed on hover or when expanded */}
+        {/* Search bar — absolutely positioned; centered in circle, locked to top in rectangle */}
         <div
-          className={`flex gap-2 items-center px-6 shrink-0 transition-opacity duration-300 ${
+          className={`absolute flex gap-2 items-center transition-all duration-500 ease-in-out ${
             expanded
-              ? 'opacity-100'
-              : 'opacity-0 group-hover:opacity-100 focus-within:opacity-100'
+              ? 'top-4 left-4 right-4 opacity-100'
+              : 'top-1/2 -translate-y-1/2 left-8 right-8 opacity-0 group-hover:opacity-100 focus-within:opacity-100'
           }`}
         >
           <input
@@ -84,7 +83,7 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
 
         {/* Results — only mounted when expanded */}
         {expanded && (
-          <div className="flex-1 overflow-y-auto px-4 pb-4 mt-3">
+          <div className="absolute top-16 left-4 right-4 bottom-4 overflow-y-auto">
             {searchStatus === 'loading' && (
               <div className="flex justify-center py-4">
                 <Spinner />
