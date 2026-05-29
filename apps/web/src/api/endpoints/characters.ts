@@ -26,6 +26,8 @@ export type Character = {
   playstyle?: string;
   rank?: string;
   region?: string;
+  gameName?: string;
+  gameImageUrl?: string;
   gameFields: CharacterGameField[];
 };
 
