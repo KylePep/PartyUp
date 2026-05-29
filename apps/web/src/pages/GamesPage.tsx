@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getUserGames, deleteUserGame, type UserGame } from '../api/endpoints/userGames'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Button, EmptyState, Spinner } from '../components/ui'
+import { LandCard } from '../components/cards/LandCard'
 
 export default function GamesPage() {
   const [games, setGames] = useState<UserGame[]>([])
@@ -37,37 +38,23 @@ export default function GamesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="flex flex-col h-full min-h-0 overflow-y-auto p-6 gap-4">
-      <div className="w-full aspect-video rounded-lg overflow-hidden border border-border flex-shrink-0">
-        {selected.gameImageUrl ? (
-          <img src={selected.gameImageUrl} alt={selected.gameName} className="w-full h-full object-cover" />
-        ) : (
-          <div
-            className="w-full h-full flex items-center justify-center text-muted font-mono text-4xl"
-            style={{ backgroundColor: 'var(--color-surface-raised)' }}
-          >
-            {selected.gameName.charAt(0).toUpperCase()}
-          </div>
-        )}
-      </div>
-      <div>
-        <h1 className="font-display font-bold text-xl text-text mb-1">{selected.gameName}</h1>
+    <div className="overflow-y-auto p-4" style={{ height: 'calc(100vh - 6rem)' }}>
+      <LandCard
+        name={selected.gameName}
+        imageUrl={selected.gameImageUrl}
+      >
         <p className="text-xs font-mono text-muted">
           Added {new Date(selected.createdAt).toLocaleDateString()}
         </p>
-      </div>
-      <div className="flex gap-2 mt-auto">
-        <Button onClick={() => navigate(`/realm/${selected.gameId}`)}>
-          Enter Realm
-        </Button>
-        <Button
-          variant="danger"
-          disabled={deleting}
-          onClick={handleDelete}
-        >
-          {deleting ? 'Deleting...' : 'Delete Game'}
-        </Button>
-      </div>
+        <div className="flex gap-2">
+          <Button onClick={() => navigate(`/realm/${selected.gameId}`)}>
+            Enter Realm
+          </Button>
+          <Button variant="danger" disabled={deleting} onClick={handleDelete}>
+            {deleting ? 'Deleting...' : 'Delete Game'}
+          </Button>
+        </div>
+      </LandCard>
     </div>
   ) : (
     <div className="flex items-center justify-center h-full">
@@ -85,32 +72,17 @@ export default function GamesPage() {
       {status === 'ready' && (
         <div className="grid grid-cols-2 gap-3">
           {games.map(game => (
-            <button
+            <div
               key={game.id}
-              onClick={() => setSelected(game)}
-              className="rounded-lg overflow-hidden border-2 transition-all text-left"
-              style={{
-                borderColor: selected?.id === game.id ? '#1e40af' : 'var(--color-border)',
-                boxShadow: selected?.id === game.id ? '0 0 0 2px #1e40af40' : 'none',
-                backgroundColor: 'var(--color-surface)',
-              }}
+              className={selected?.id === game.id ? 'ring-2 ring-blue-700 ring-offset-2 ring-offset-[--color-bg] rounded-xl' : ''}
             >
-              <div className="aspect-video overflow-hidden">
-                {game.gameImageUrl ? (
-                  <img src={game.gameImageUrl} alt={game.gameName} className="w-full h-full object-cover" />
-                ) : (
-                  <div
-                    className="w-full h-full flex items-center justify-center text-muted font-mono text-2xl"
-                    style={{ backgroundColor: 'var(--color-surface-raised)' }}
-                  >
-                    {game.gameName.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <div className="px-2 py-1.5">
-                <p className="text-xs font-mono text-text truncate">{game.gameName}</p>
-              </div>
-            </button>
+              <LandCard
+                name={game.gameName}
+                imageUrl={game.gameImageUrl}
+                onClick={() => setSelected(game)}
+                className="w-full hover:brightness-110 transition-all"
+              />
+            </div>
           ))}
         </div>
       )}
