@@ -63,6 +63,9 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           {character.platformHandle && (
             <p className="font-mono text-muted text-sm mb-1">{character.platformHandle}</p>
           )}
+          {character.gameName && (
+            <p className="text-xs text-accent font-display mb-0.5">{character.gameName}</p>
+          )}
           <p className="text-xs text-muted mb-3">{character.platform}</p>
           <div className="flex flex-wrap gap-1.5">
             {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
