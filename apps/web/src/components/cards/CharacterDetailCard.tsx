@@ -65,10 +65,14 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           )}
           <p className="text-xs text-muted mb-3">{character.platform}</p>
           <div className="flex flex-wrap gap-1.5">
-            {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-            {character.secondaryRole && <Badge variant="role">{character.secondaryRole}</Badge>}
-            {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-            {character.region && <Badge variant="region">{character.region}</Badge>}
+            {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
+            {character.languages && character.languages.length > 0 && (
+              <>
+                {character.languages.map(l => <Badge key={l}>{l}</Badge>)}
+              </>
+            )}
+            {character.timeZone && <Badge variant="region">{character.timeZone}</Badge>}
+            {character.activeTimes && <Badge variant="region">{character.activeTimes}</Badge>}
           </div>
         </div>
       </div>
@@ -76,51 +80,13 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
       {/* Scrollable details */}
       <div className="flex-1 min-h-0 overflow-y-auto">
 
-        {/* Stats section */}
-        <div
-          className="px-4 pt-3 pb-1"
-          style={{ borderBottom: '1px solid var(--color-border)' }}
-        >
-          <h2 className="text-xs text-muted uppercase tracking-widest mb-1">Stats</h2>
-          {character.playstyle && (
-            <StatRow label="Playstyle">
-              <span className="text-sm text-text">{character.playstyle}</span>
-            </StatRow>
-          )}
-          {character.usesVoiceChat != null && (
-            <StatRow label="Communication and connection">
-              <span className="text-sm text-text">{character.usesVoiceChat ? 'Yes' : 'No'}</span>
-            </StatRow>
-          )}
-          {character.languages && character.languages.length > 0 && (
-            <StatRow label="Languages">
-              {character.languages.map(l => <Badge key={l}>{l}</Badge>)}
-            </StatRow>
-          )}
-          {character.preferredModes.length > 0 && (
-            <StatRow label="Modes">
-              {character.preferredModes.map(m => <Badge key={m}>{m}</Badge>)}
-            </StatRow>
-          )}
-          {character.timeZone && (
-            <StatRow label="Time Zone">
-              <span className="text-sm text-text">{character.timeZone}</span>
-            </StatRow>
-          )}
-          {character.activeTimes && character.activeTimes.length > 0 && (
-            <StatRow label="Active Times">
-              {character.activeTimes.map(t => <Badge key={t}>{t}</Badge>)}
-            </StatRow>
-          )}
-        </div>
-
         {/* Game Fields section */}
         {character.gameFields.length > 0 && (
           <div
-            className="px-4 pt-3 pb-1"
+            className="px-4 pt-3 pb-1 grid grid-cols-2"
             style={{ borderBottom: '1px solid var(--color-border)' }}
           >
-            <h2 className="text-xs text-muted uppercase tracking-widest mb-1">Game Fields</h2>
+            <h2 className="text-xs text-muted uppercase tracking-widest mb-1 col-span-2">Game Fields</h2>
             {character.gameFields.map(f => (
               <StatRow key={f.key} label={f.label}>
                 <span className="text-sm text-text">{f.value}</span>
