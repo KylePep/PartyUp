@@ -15,10 +15,9 @@ export function RealmCard({ userGame }: RealmCardProps) {
     >
       <LandCard
         name={userGame.gameName}
-        imageUrl={userGame.gameImageUrl}
+        imageUrl={userGame.gameImageUrl ?? undefined}
         className="hover:brightness-110 transition-all"
-      >
-      </LandCard>
+      />
     </Link>
   )
 }

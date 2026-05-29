@@ -57,9 +57,9 @@ export default function RealmPage() {
         barColor="#381b03"
         barContent={character ? <CharacterMiniCard character={character} /> : undefined}
         tabs={[
-          { label: 'My Cards', color: '#991b1b', to: "/characters" },
-          { label: 'Games', color: '#1e40af', to: "/games" },
-          { label: 'Collection', color: '#166534', to: "/matches" },
+          { label: 'My Cards', textColor: "#ffffff", color: '#991b1b', to: "/characters" },
+          { label: 'Games', textColor: "#ffffff", color: '#1e40af', to: "/games" },
+          { label: 'Collection', textColor: "#ffffff", color: '#166534', to: "/matches" },
         ]}
         leftContent={
           <RealmLeftPage

@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getUserGames, deleteUserGame, type UserGame } from '../api/endpoints/userGames'
+import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Button, EmptyState, Spinner } from '../components/ui'
 import { LandCard } from '../components/cards/LandCard'
+import DOMPurify from 'dompurify'
 
 export default function GamesPage() {
   const [games, setGames] = useState<UserGame[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<UserGame | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [selectedDetail, setSelectedDetail] = useState<UserGameDetail | null>(null)
+  const [detailLoading, setDetailLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,6 +23,15 @@ export default function GamesPage() {
       })
       .catch(() => setStatus('error'))
   }, [])
+
+  function handleSelect(game: UserGame) {
+    setSelected(game)
+    setSelectedDetail(null)
+    setDetailLoading(true)
+    getUserGameByGameId(game.gameId)
+      .then(detail => setSelectedDetail(detail))
+      .finally(() => setDetailLoading(false))
+  }
 
   async function handleDelete() {
     if (!selected) return
@@ -38,20 +50,54 @@ export default function GamesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="overflow-y-auto p-4" style={{ height: 'calc(100vh - 6rem)' }}>
+    <div className="overflow-y-auto mx-auto" style={{ height: 'calc(100vh - 6rem)', width: "500px" }}>
       <LandCard
         name={selected.gameName}
-        imageUrl={selected.gameImageUrl}
+        imageUrl={selected.gameImageUrl ?? undefined}
       >
-        <p className="text-xs font-mono text-muted">
-          Added {new Date(selected.createdAt).toLocaleDateString()}
-        </p>
-        <div className="flex gap-2">
+        <div className='flex justify-between border-1 border-black px-2 py-1'>
+          {selectedDetail && selectedDetail.platforms.length > 0 && (
+            <p className="text-xs font-mono text-muted">{selectedDetail.platforms.join(' • ')}</p>
+          )}
+          {selectedDetail && selectedDetail.rating > 0 && (
+            <p className="text-xs font-mono text-muted">★ {selectedDetail.rating.toFixed(1)}</p>
+          )}
+        </div>
+        {detailLoading && !selectedDetail ? (
+          <div className="flex flex-col gap-2">
+            <div className="animate-pulse bg-muted/30 rounded h-3 w-full" />
+            <div className="animate-pulse bg-muted/30 rounded h-3 w-3/4" />
+          </div>
+        ) : selectedDetail?.description ? (
+          <div
+            className="text-xs font-mono text-muted flex-1 min-h-0 overflow-y-auto border-1 border-black px-2 py-1"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedDetail.description) }}
+          />
+        ) : null}
+
+
+        <div className='flex justify-between gap-4'>
+          {selectedDetail?.website && (
+            <a
+              href={selectedDetail.website}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs font-mono text-blue-400 hover:underline truncate block"
+            >
+              {selectedDetail.website}
+            </a>
+          )}
+          <p className="text-xs font-mono text-muted text-nowrap">
+            Added {new Date(selected.createdAt).toLocaleDateString()}
+          </p>
+        </div>
+
+        <div className="flex gap-2 justify-end">
           <Button onClick={() => navigate(`/realm/${selected.gameId}`)}>
-            Enter Realm
+            Enter
           </Button>
           <Button variant="danger" disabled={deleting} onClick={handleDelete}>
-            {deleting ? 'Deleting...' : 'Delete Game'}
+            {deleting ? 'Deleting...' : 'Delete'}
           </Button>
         </div>
       </LandCard>
@@ -78,10 +124,12 @@ export default function GamesPage() {
             >
               <LandCard
                 name={game.gameName}
-                imageUrl={game.gameImageUrl}
-                onClick={() => setSelected(game)}
+                imageUrl={game.gameImageUrl ?? undefined}
+                onClick={() => handleSelect(game)}
                 className="w-full h-full hover:brightness-110 transition-all"
-              />
+              >
+                <div className='flex flex-1 items-center justify-center text-7xl'>❖</div>
+              </LandCard>
             </div>
           ))}
         </div>
