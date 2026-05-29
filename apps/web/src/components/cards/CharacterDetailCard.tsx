@@ -18,10 +18,11 @@ function StatRow({ label, children }: { label: string; children: React.ReactNode
 interface CharacterDetailCardProps {
   character: Character
   onDelete?: () => void
+  onEdit?: () => void
   deleting?: boolean
 }
 
-export function CharacterDetailCard({ character, onDelete, deleting }: CharacterDetailCardProps) {
+export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: CharacterDetailCardProps) {
 
   return (
     <div
@@ -140,14 +141,23 @@ export function CharacterDetailCard({ character, onDelete, deleting }: Character
 
       {/* Action bar — pinned */}
       <div
-        className="flex items-center justify-end px-4 py-3 flex-shrink-0"
+        className="flex items-center justify-between px-4 py-3 flex-shrink-0"
         style={{ borderTop: '1px solid var(--color-border)' }}
       >
-        {onDelete && (
-          <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
-            {deleting ? 'Deleting...' : 'Delete Character'}
-          </Button>
-        )}
+        <div>
+          {onEdit && (
+            <Button variant="ghost" size="sm" onClick={onEdit}>
+              Edit Character
+            </Button>
+          )}
+        </div>
+        <div>
+          {onDelete && (
+            <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
+              {deleting ? 'Deleting...' : 'Delete Character'}
+            </Button>
+          )}
+        </div>
       </div>
 
     </div>
