@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'iimport { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { getUserGameByGameId, type UserGameDetail } from '../api/endpoints/userGames'
 import { getUserGameCharacters, type Character } from '../api/endpoints/characters'
 import { BinderLayout } from '../components/layout/BinderLayout'
