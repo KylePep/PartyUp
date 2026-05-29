@@ -36,23 +36,25 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
 
   return (
     <nav
-      className={`z-40 w-64 h-screen justify-between px-6  ${variant === 'landing'
-        ? 'top-0 left-0 bg-black sticky absolute'
-        : 'sticky top-0 bg-surface/80 backdrop-blur-sm border-b border-border'
-        }`}
+      className={`z-40 flex w-full h-16 px-6 items-center justify-between md:w-64 md:h-screen md:flex-col md:justify-between md:items-stretch md:py-8 md:sticky md:top-0 ${
+        variant === 'landing'
+          ? 'bg-black'
+          : 'bg-surface/80 backdrop-blur-sm border-b border-border md:border-b-0 md:border-r'
+      }`}
     >
-      <Link to="/home" className="font-display font-bold text-text text-lg tracking-wide w-full flex justify-center py-8">
+      <Link to="/" className="font-display font-bold text-text text-lg tracking-wide">
         PartyUp
       </Link>
 
       {variant === 'app' && (
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex flex-col gap-6">
           {navLinks.map(link => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `text-xs font-mono uppercase tracking-widest transition-colors ${isActive ? 'text-accent' : 'text-muted hover:text-text'
+                `text-xs font-mono uppercase tracking-widest transition-colors ${
+                  isActive ? 'text-accent' : 'text-muted hover:text-text'
                 }`
               }
             >
@@ -63,7 +65,7 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
       )}
 
       {variant === 'landing' && (
-        <div className="flex flex-col gap-6">
+        <div className="flex md:flex-col gap-4 md:gap-6">
           <button
             onClick={onSignIn}
             className="text-xs font-mono uppercase tracking-widest text-muted hover:text-text transition-colors"
@@ -90,7 +92,7 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
             <Avatar fallback={username} size="sm" />
           </button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-44 bg-surface border border-border rounded-lg shadow-xl overflow-hidden">
+            <div className="absolute right-0 mt-2 md:right-auto md:left-0 md:bottom-full md:top-auto md:mt-0 md:mb-2 w-44 bg-surface border border-border rounded-lg shadow-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-xs font-mono text-muted uppercase tracking-widest">Signed in as</p>
                 <p className="text-sm text-text font-medium truncate">{username}</p>
