@@ -11,7 +11,7 @@ interface NavBarProps {
   onSignUp?: () => void
 }
 
-const navLinks = [
+const navLinks: { to: string; label: string }[] = [
   // { to: '/home', label: 'Home' },
   // { to: '/characters', label: 'Characters' },
   // { to: '/matches', label: 'Matches' },
