@@ -126,7 +126,8 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
 
   return (
     <div className="flex flex-col h-full gap-8 overflow-y-auto"
-      style={{ height: 'calc(100vh - 6rem)' }}>
+      style={{ height: 'calc(100vh - 6rem)' }}
+    >
       {loadingFields && (
         <p className="text-xs font-mono text-muted text-center animate-pulse">
           Loading game fields...
