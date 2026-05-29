@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getUserGames, deleteUserGame, type UserGame } from '../api/endpoints/userGames'
+import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Button, EmptyState, Spinner } from '../components/ui'
 import { LandCard } from '../components/cards/LandCard'
@@ -10,6 +10,8 @@ export default function GamesPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<UserGame | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [selectedDetail, setSelectedDetail] = useState<UserGameDetail | null>(null)
+  const [detailLoading, setDetailLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,6 +22,15 @@ export default function GamesPage() {
       })
       .catch(() => setStatus('error'))
   }, [])
+
+  function handleSelect(game: UserGame) {
+    setSelected(game)
+    setSelectedDetail(null)
+    setDetailLoading(true)
+    getUserGameByGameId(game.gameId)
+      .then(detail => setSelectedDetail(detail))
+      .finally(() => setDetailLoading(false))
+  }
 
   async function handleDelete() {
     if (!selected) return
@@ -41,8 +52,36 @@ export default function GamesPage() {
     <div className="overflow-y-auto p-4" style={{ height: 'calc(100vh - 6rem)' }}>
       <LandCard
         name={selected.gameName}
-        imageUrl={selected.gameImageUrl}
+        imageUrl={selected.gameImageUrl ?? undefined}
       >
+        {detailLoading && !selectedDetail ? (
+          <div className="flex flex-col gap-2">
+            <div className="animate-pulse bg-muted/30 rounded h-3 w-full" />
+            <div className="animate-pulse bg-muted/30 rounded h-3 w-3/4" />
+          </div>
+        ) : selectedDetail?.description ? (
+          <p className="text-xs font-mono text-muted">{selectedDetail.description}</p>
+        ) : null}
+
+        {selectedDetail && selectedDetail.rating > 0 && (
+          <p className="text-xs font-mono text-muted">★ {selectedDetail.rating.toFixed(1)}</p>
+        )}
+
+        {selectedDetail && selectedDetail.platforms.length > 0 && (
+          <p className="text-xs font-mono text-muted">{selectedDetail.platforms.join(' • ')}</p>
+        )}
+
+        {selectedDetail?.website && (
+          <a
+            href={selectedDetail.website}
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs font-mono text-blue-400 hover:underline truncate block"
+          >
+            {selectedDetail.website}
+          </a>
+        )}
+
         <p className="text-xs font-mono text-muted">
           Added {new Date(selected.createdAt).toLocaleDateString()}
         </p>
@@ -78,8 +117,8 @@ export default function GamesPage() {
             >
               <LandCard
                 name={game.gameName}
-                imageUrl={game.gameImageUrl}
-                onClick={() => setSelected(game)}
+                imageUrl={game.gameImageUrl ?? undefined}
+                onClick={() => handleSelect(game)}
                 className="w-full h-full hover:brightness-110 transition-all"
               />
             </div>
