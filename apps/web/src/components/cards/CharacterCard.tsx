@@ -6,10 +6,19 @@ interface CharacterCardProps {
   character: Character
   onEdit?: (character: Character) => void
   onDelete?: (character: Character) => void
+  onSelect?: (character: Character) => void
 }
 
-export function CharacterCard({ character, onEdit, onDelete }: CharacterCardProps) {
+export function CharacterCard({ character, onEdit, onDelete, onSelect }: CharacterCardProps) {
   const navigate = useNavigate()
+
+  function handleBodyClick() {
+    if (onSelect) {
+      onSelect(character)
+    } else {
+      navigate(`/characters/${character.id}`)
+    }
+  }
 
   return (
     <div
@@ -18,7 +27,7 @@ export function CharacterCard({ character, onEdit, onDelete }: CharacterCardProp
         backgroundColor: 'var(--color-surface)',
         border: '2px solid var(--color-border)',
       }}
-      onClick={() => navigate(`/characters/${character.id}`)}
+      onClick={handleBodyClick}
     >
       {/* Nameplate top bar — fixed height */}
       <div
