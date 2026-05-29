@@ -43,7 +43,7 @@ export default function LandingPage() {
       <main className="flex-1 flex flex-col items-center justify-center text-center py-4 gap-4">
         <section className='h-full bg-surface border-white border-2 py-4 px-6 w-1/2 flex flex-col items-center justify-between'>
 
-          <h1 className="font-display font-bold text-4xl md:text-6xl text-text leading-tight mb-6">
+          <h1 className="font-display font-bold text-4xl text-text">
             Magic Binder
           </h1>
 
@@ -95,7 +95,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex justify-around border-white border-2 w-3/4 h-1/3 p-8 ">
+          <div className="flex justify-around items-center border-white border-2 w-3/4 h-1/3 p-8 ">
             <Button size="lg" onClick={() => setModal('sign-up')}>
               Get Started
             </Button>

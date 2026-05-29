@@ -5,6 +5,7 @@ import { OrbSearch } from '../components/OrbSearch'
 import { RealmCard } from '../components/cards/RealmCard'
 import { Spinner } from '../components/ui'
 import { USER_GAME_LIMIT } from '../utils/limits'
+import { BinderTabs } from '../components/layout/BinderTabs'
 
 export default function HomePage() {
   const { state: auth } = useAuth()
@@ -19,7 +20,7 @@ export default function HomePage() {
 
   return (
     <main className="flex-1 flex items-center justify-center py-4 overflow-hidden">
-      <section className="h-full bg-surface border-white border-2 py-4 px-6 w-1/2 flex flex-col items-center justify-between overflow-hidden">
+      <section className="h-full bg-surface border-white border-2 py-4 px-6 w-1/2 flex flex-col items-center justify-between relative">
 
         <h1 className="font-display font-bold text-4xl text-text">
           {displayName}'s Binder
@@ -45,7 +46,11 @@ export default function HomePage() {
             ))
           )}
         </div>
-
+        <BinderTabs tabs={[
+          { label: 'My Cards', color: '#991b1b', to: "/characters" },
+          { label: 'Games', color: '#1e40af', to: "/games" },
+          { label: 'Collection', color: '#166534', to: "/matches" },
+        ]} />
       </section>
     </main>
   )

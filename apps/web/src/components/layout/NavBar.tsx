@@ -12,9 +12,9 @@ interface NavBarProps {
 }
 
 const navLinks = [
-  { to: '/home', label: 'Home' },
-  { to: '/characters', label: 'Characters' },
-  { to: '/matches', label: 'Matches' },
+  // { to: '/home', label: 'Home' },
+  // { to: '/characters', label: 'Characters' },
+  // { to: '/matches', label: 'Matches' },
 ]
 
 export function NavBar({ variant }: NavBarProps) {

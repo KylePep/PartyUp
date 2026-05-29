@@ -54,7 +54,7 @@ export default function RealmPage() {
         </div>
       )}
       <BinderLayout
-        barColor="#991b1b"
+        barColor="#381b03"
         barContent={character ? <CharacterMiniCard character={character} /> : undefined}
         tabs={[
           { label: 'My Cards', color: '#991b1b', to: "/characters" },

@@ -58,11 +58,10 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
       >
         {/* Search bar — absolutely positioned; centered in circle, locked to top in rectangle */}
         <div
-          className={`absolute flex gap-2 items-center transition-all duration-500 ease-in-out ${
-            expanded
+          className={`absolute flex gap-2 items-center transition-all duration-500 ease-in-out ${expanded
               ? 'top-4 left-4 right-4 opacity-100'
               : 'top-1/2 -translate-y-1/2 left-8 right-8 opacity-0 group-hover:opacity-100 focus-within:opacity-100'
-          }`}
+            }`}
         >
           <input
             className="flex-1 bg-transparent border-b-2 border-black text-black text-sm font-mono placeholder:text-gray-400 outline-none pb-1"
@@ -95,7 +94,7 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
               </p>
             )}
             {results.length > 0 && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 {results.map(g => (
                   <GameCard key={g.externalId} game={g} onSelect={setPendingGame} />
                 ))}

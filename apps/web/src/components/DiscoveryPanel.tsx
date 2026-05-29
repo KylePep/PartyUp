@@ -67,7 +67,7 @@ export function DiscoveryPanel({
       )}
 
       {status === 'ready' && (
-        <div className="relative" style={{ height: '520px' }}>
+        <div className="relative mx-auto" style={{ height: '520px', width: "300px" }}>
           {queue.slice(0, 2).map((char, i) => (
             <SwipeCard
               key={char.id}
