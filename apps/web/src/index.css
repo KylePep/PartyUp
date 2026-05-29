@@ -33,6 +33,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Minimal scrollbar — prevents scrollbar from overlapping card content */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
 @keyframes float {
 
   0%,
