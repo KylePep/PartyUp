@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Badge, Button } from '../ui'
 import { type DiscoverCharacter } from '../../api/endpoints/characters'
 import { FlippableCard } from './FlippableCard'
-import { FullArtTcgCard } from './FullArtTcgCard'
+import { StandardTcgCard } from './StandardTcgCard'
 
 type ExitDirection = 'left' | 'right' | null
 
@@ -14,25 +14,30 @@ interface SwipeCardProps {
 }
 
 function SwipeFront({ character }: { character: DiscoverCharacter }) {
+  const subtitle = [character.region, character.languages?.[0]].filter(Boolean).join(' · ') || undefined
+
+  const statsLine = (character.mainRole || character.rank || character.usesVoiceChat != null) ? (
+    <div className="flex flex-wrap gap-1.5">
+      {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
+      {character.rank && <Badge variant="rank">{character.rank}</Badge>}
+      {character.usesVoiceChat != null && (
+        <Badge>{character.usesVoiceChat ? 'Voice ✓' : 'Voice ✗'}</Badge>
+      )}
+    </div>
+  ) : undefined
+
   return (
-    <FullArtTcgCard
+    <StandardTcgCard
       name={character.name}
       platform={character.platform}
+      subtitle={subtitle}
       imageUrl={character.imageUrl}
+      statsLine={statsLine}
+      textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
       className="w-full h-full"
     >
-      <div className="flex flex-wrap gap-1 mb-1">
-        {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-        {character.secondaryRole && <Badge variant="role">{character.secondaryRole}</Badge>}
-        {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-        {character.region && <Badge variant="region">{character.region}</Badge>}
-        {character.playstyle && <Badge>{character.playstyle}</Badge>}
-      </div>
-      {character.bio && (
-        <p className="text-xs text-white/80 line-clamp-2 mb-1">{character.bio}</p>
-      )}
-      <p className="text-xs text-white/50 text-center">↑ tap for more</p>
-    </FullArtTcgCard>
+      <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
+    </StandardTcgCard>
   )
 }
 

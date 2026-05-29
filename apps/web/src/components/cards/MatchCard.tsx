@@ -12,13 +12,10 @@ interface MatchCardProps {
 function MatchFront({ character, gameName, matchedAt }: MatchCardProps) {
   const date = new Date(matchedAt).toLocaleDateString()
 
-  const statsLine = (character.mainRole || character.rank || character.region || character.playstyle) ? (
+  const statsLine = (character.mainRole || character.rank) ? (
     <div className="flex flex-wrap gap-1.5">
       {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-      {character.secondaryRole && <Badge variant="role">{character.secondaryRole}</Badge>}
       {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-      {character.region && <Badge variant="region">{character.region}</Badge>}
-      {character.playstyle && <Badge>{character.playstyle}</Badge>}
     </div>
   ) : undefined
 
@@ -26,12 +23,15 @@ function MatchFront({ character, gameName, matchedAt }: MatchCardProps) {
     <StandardTcgCard
       name={character.platformHandle}
       platform={character.name}
+      subtitle={character.region}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
-      textBody={character.bio ? <p className="text-xs text-muted line-clamp-2">{character.bio}</p> : undefined}
+      textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
       bottomStat={`${gameName} · ${date}`}
       className="w-full h-full"
-    />
+    >
+      <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
+    </StandardTcgCard>
   )
 }
 
