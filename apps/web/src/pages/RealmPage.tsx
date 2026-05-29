@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'iimport { useParams } from 'react-router-dom'
 import { getUserGameByGameId, type UserGameDetail } from '../api/endpoints/userGames'
 import { getUserGameCharacters, type Character } from '../api/endpoints/characters'
 import { BinderLayout } from '../components/layout/BinderLayout'
@@ -25,7 +24,7 @@ export default function RealmPage() {
       .then(chars => {
         setCharacter(chars.find(c => c.userGameId) ?? null)
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false))
   }, [gameId])
 
@@ -57,9 +56,9 @@ export default function RealmPage() {
         barColor="#991b1b"
         barContent={character ? <CharacterMiniCard character={character} /> : undefined}
         tabs={[
-          { label: 'Realm', color: '#991b1b', onClick: () => {} },
-          { label: 'Explore', color: '#1e40af', onClick: () => {} },
-          { label: 'Friends', color: '#166534', onClick: () => {} },
+          { label: 'Realm', color: '#991b1b', onClick: () => { } },
+          { label: 'Explore', color: '#1e40af', onClick: () => { } },
+          { label: 'Friends', color: '#166534', onClick: () => { } },
         ]}
         leftContent={
           <RealmLeftPage

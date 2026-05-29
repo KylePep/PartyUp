@@ -31,8 +31,8 @@ export function RealmRightPage({ userGame, gameId }: RealmRightPageProps) {
       </div>
 
       {/* Matches grid — bottom 2/3 */}
-      <div className="flex-[2] p-6 overflow-hidden">
-        <h2 className="text-xs font-mono text-muted uppercase tracking-widest mb-4">Matches</h2>
+      <div className="flex-[5] px-6 overflow-hidden">
+        <h2 className="text-xs font-mono text-muted uppercase tracking-widest mb-4 mt-2">Matches</h2>
         <MatchGallery gameId={gameId} limit={6} />
       </div>
     </div>

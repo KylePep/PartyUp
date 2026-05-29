@@ -7,7 +7,7 @@ interface CharacterMiniCardProps {
 export function CharacterMiniCard({ character }: CharacterMiniCardProps) {
   return (
     <div
-      className="relative w-36 rounded overflow-hidden border border-white/20 shrink-0"
+      className="relative w-36 rounded overflow-hidden border-4 border-black shrink-0"
       style={{ aspectRatio: '2/3' }}
     >
       {character.imageUrl ? (

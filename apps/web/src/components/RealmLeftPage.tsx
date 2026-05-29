@@ -44,7 +44,7 @@ export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated,
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-x-hidden">
       {/* Filter bar — only in discovery mode */}
       {zone === 'discovery' && (
         <div className="px-4 py-3 border-b border-border">

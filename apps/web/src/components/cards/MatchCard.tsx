@@ -8,17 +8,11 @@ interface MatchCardProps {
   matchedAt: string
 }
 
-const successBorder = {
-  border: '3px solid var(--color-success)',
-  boxShadow: '0 0 28px rgba(82, 199, 122, 0.40)',
-}
-
 function MatchFront({ character, gameName, matchedAt }: MatchCardProps) {
   const date = new Date(matchedAt).toLocaleDateString()
   return (
     <div
-      className="w-full h-full rounded-xl flex flex-col overflow-hidden"
-      style={{ backgroundColor: 'var(--color-surface)', ...successBorder }}
+      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black border-6 bg-black"
     >
       {/* Nameplate top bar — fixed height, platform handle primary */}
       <div
@@ -33,7 +27,7 @@ function MatchFront({ character, gameName, matchedAt }: MatchCardProps) {
       </div>
       {/* Art box — fixed height, full card width */}
       <div
-        className="h-[300px] flex-shrink-0 overflow-hidden"
+        className=" flex-shrink-0 overflow-hidden"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         {character.imageUrl ? (
@@ -72,10 +66,9 @@ function MatchBack({ character, gameName, matchedAt }: MatchCardProps) {
   const date = new Date(matchedAt).toLocaleDateString()
   return (
     <div
-      className="w-full h-full rounded-xl flex flex-col overflow-hidden"
-      style={{ backgroundColor: '#000', ...successBorder }}
+      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black border-6"
     >
-      <div className="px-4 py-3 flex-1 overflow-y-auto">
+      <div className="px-4 py-3 flex-1 overflow-y-auto overflow-x-hidden">
         <p className="font-display font-bold text-text text-lg">{character.platformHandle}</p>
         <p className="text-sm text-muted mb-3">{character.name} · {gameName}</p>
         <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-3">
@@ -138,7 +131,7 @@ function MatchBack({ character, gameName, matchedAt }: MatchCardProps) {
 
 export function MatchCard({ character, gameName, matchedAt }: MatchCardProps) {
   return (
-    <div className="h-[472px]">
+    <div className="min-h-50">
       <FlippableCard
         front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} />}
         back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} />}
