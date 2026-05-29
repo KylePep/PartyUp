@@ -36,12 +36,12 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
 
   return (
     <nav
-      className={`z-40 w-full flex items-center justify-between px-6 h-14 ${variant === 'landing'
-          ? 'absolute top-0 left-0 bg-transparent'
-          : 'sticky top-0 bg-surface/80 backdrop-blur-sm border-b border-border'
+      className={`z-40 w-64 h-screen justify-between px-6  ${variant === 'landing'
+        ? 'top-0 left-0 bg-black sticky absolute'
+        : 'sticky top-0 bg-surface/80 backdrop-blur-sm border-b border-border'
         }`}
     >
-      <Link to="/home" className="font-display font-bold text-text text-lg tracking-wide">
+      <Link to="/home" className="font-display font-bold text-text text-lg tracking-wide w-full flex justify-center py-8">
         PartyUp
       </Link>
 
@@ -63,7 +63,7 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
       )}
 
       {variant === 'landing' && (
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-6">
           <button
             onClick={onSignIn}
             className="text-xs font-mono uppercase tracking-widest text-muted hover:text-text transition-colors"

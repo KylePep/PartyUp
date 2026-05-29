@@ -1,3 +1,72 @@
+# Landing Page Carousel Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Replace the static circular div on the LandingPage with an auto-advancing carousel that cycles through the 5 "how it works" steps using an SVG circular progress ring.
+
+**Architecture:** An SVG `<circle>` with `stroke-dashoffset` animation traces the circumference over 3 seconds, then a `useEffect` timer advances the step. The SVG gets `key={step}` so React re-mounts it on each step change, restarting the animation. Hover controls (prev/pause/next) are revealed via Tailwind's `group-hover:` pattern.
+
+**Tech Stack:** React, TypeScript, Tailwind CSS v4, SVG
+
+---
+
+## Files
+
+| File | Change |
+|---|---|
+| `apps/web/src/index.css` | Add `@keyframes ring` and `@keyframes fadeIn` |
+| `apps/web/src/pages/LandingPage.tsx` | Replace static circle with full carousel implementation |
+
+---
+
+## Task 1: Add CSS Keyframes
+
+**Files:**
+- Modify: `apps/web/src/index.css`
+
+- [ ] **Step 1: Append two keyframes after the existing `@keyframes card-enter` block**
+
+Open `apps/web/src/index.css` and add after the closing `}` of `@keyframes card-enter`:
+
+```css
+@keyframes ring {
+  from { stroke-dashoffset: 1081; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+```
+
+- [ ] **Step 2: Verify no build errors**
+
+```bash
+npm run build --prefix apps/web
+```
+
+Expected: exits with code 0, no CSS errors.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add apps/web/src/index.css
+git commit -m "feat: add ring and fadeIn keyframes for landing carousel"
+```
+
+---
+
+## Task 2: Implement the Carousel in LandingPage
+
+**Files:**
+- Modify: `apps/web/src/pages/LandingPage.tsx`
+
+The full circumference of the SVG ring is `2 * π * 172 ≈ 1081` — this must match the `stroke-dashoffset` values in the `ring` keyframe.
+
+- [ ] **Step 1: Replace the entire content of `apps/web/src/pages/LandingPage.tsx`**
+
+```tsx
 import { useState, useEffect } from 'react'
 import { NavBar } from '../components/layout/NavBar'
 import AuthModal from '../components/modals/AuthModal'
@@ -22,7 +91,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (paused) return
-    const id = setTimeout(() => setStep(s => (s + 1) % steps.length), 5000)
+    const id = setTimeout(() => setStep(s => (s + 1) % steps.length), 3000)
     return () => clearTimeout(id)
   }, [step, paused])
 
@@ -49,7 +118,7 @@ export default function LandingPage() {
 
           <div className="group relative h-[352px] w-[352px] bg-white border-black border-4 rounded-full flex items-center justify-center">
 
-            {/* SVG progress ring — key={step} re-mounts on step change, restarting the animation */}
+            {/* SVG progress ring — key={step} causes re-mount on step change, restarting the animation */}
             <svg
               key={step}
               className="absolute inset-0 w-full h-full"
@@ -65,7 +134,7 @@ export default function LandingPage() {
                 strokeLinecap="round"
                 strokeDasharray={CIRCUMFERENCE}
                 transform="rotate(-90 176 176)"
-                className="animate-[ring_5s_linear_forwards]"
+                className="animate-[ring_3s_linear_forwards]"
                 style={{ animationPlayState: paused ? 'paused' : 'running' }}
               />
             </svg>
@@ -110,3 +179,34 @@ export default function LandingPage() {
     </div>
   )
 }
+```
+
+- [ ] **Step 2: Verify TypeScript compiles cleanly**
+
+```bash
+npm run build --prefix apps/web
+```
+
+Expected: exits with code 0, no TypeScript errors.
+
+- [ ] **Step 3: Start the dev server and manually verify the carousel**
+
+```bash
+npm run dev --prefix apps/web
+```
+
+Open `http://localhost:5173` and check:
+- The ring animates from 12 o'clock, filling clockwise over 3 seconds
+- After 3 seconds, the ring resets and the next step fades in
+- After step 5, it loops back to step 1
+- Hovering the circle reveals ← ⏸ → buttons
+- Clicking ⏸ freezes the ring mid-arc; clicking ▶ resumes from that position
+- Clicking ← / → jumps to the adjacent step and resets the ring
+- The step counter (`1 / 5`, `2 / 5`, etc.) updates correctly
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add apps/web/src/pages/LandingPage.tsx
+git commit -m "feat: replace static circle with animated step carousel on landing page"
+```
