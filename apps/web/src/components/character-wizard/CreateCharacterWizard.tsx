@@ -87,15 +87,15 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
         const validIds = new Set(fieldDefs?.fields.map(f => f.id) ?? [])
         const gameFields = hasDynamicFields
           ? Object.entries(data.gameFields)
-              .filter(([id, v]) => v !== '' && validIds.has(id))
-              .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+            .filter(([id, v]) => v !== '' && validIds.has(id))
+            .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
           : undefined
         await updateCharacter(userGameId, characterId, { ...payload, gameFields })
       } else {
         const gameFields = hasDynamicFields
           ? Object.entries(data.gameFields)
-              .filter(([, v]) => v !== '')
-              .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+            .filter(([, v]) => v !== '')
+            .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
           : undefined
         await createCharacter({ userGameId, ...payload, gameFields })
       }
@@ -125,7 +125,8 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col h-full gap-8 overflow-y-auto"
+      style={{ height: 'calc(100vh - 6rem)' }}>
       {loadingFields && (
         <p className="text-xs font-mono text-muted text-center animate-pulse">
           Loading game fields...
@@ -182,8 +183,8 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
           {submitting
             ? (mode === 'edit' ? 'Saving...' : 'Creating...')
             : isLast
-            ? (mode === 'edit' ? 'Save Changes' : 'Create Character')
-            : 'Next'}
+              ? (mode === 'edit' ? 'Save Changes' : 'Create Character')
+              : 'Next'}
         </Button>
       </div>
     </div>
