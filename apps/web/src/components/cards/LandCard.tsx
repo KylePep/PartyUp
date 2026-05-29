@@ -34,17 +34,20 @@ export function LandCard({ name, imageUrl, playerCount, className, onClick, chil
       </div>
 
       {/* Footer: children (Enter button etc.) + player count */}
-      <div
-        className="px-3 py-2 flex flex-col gap-2 flex-1"
-        style={{ backgroundColor: 'var(--color-surface-raised)', borderTop: '1px solid var(--color-border)' }}
-      >
-        {children}
-        {playerCount !== undefined && (
-          <p className="text-xs font-mono text-muted text-right">
-            {playerCount > 0 ? `${playerCount} players` : 'Be the first!'}
-          </p>
-        )}
-      </div>
+      {children || playerCount !== undefined && (
+
+        <div
+          className="px-3 py-2 flex flex-col gap-2 flex-1"
+          style={{ backgroundColor: 'var(--color-surface-raised)', borderTop: '1px solid var(--color-border)' }}
+        >
+          {children}
+          {playerCount !== undefined && (
+            <p className="text-xs font-mono text-muted text-right">
+              {playerCount > 0 ? `${playerCount} players` : 'Be the first!'}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

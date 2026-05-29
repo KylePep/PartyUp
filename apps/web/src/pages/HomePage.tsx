@@ -36,6 +36,7 @@ export default function HomePage() {
         )}
 
         <div className="grid grid-cols-3 gap-4 w-3/4 border-white border-2 h-1/3 p-8">
+          <h2 className='col-span-3 font-display font-bold text-center'>Recent Realms</h2>
           {visibleRealms.length === 0 ? (
             <p className="col-span-3 text-xs font-mono text-muted text-center">
               Search above to add your first realm
@@ -47,9 +48,9 @@ export default function HomePage() {
           )}
         </div>
         <BinderTabs tabs={[
-          { label: 'My Cards', color: '#991b1b', to: "/characters" },
-          { label: 'Games', color: '#1e40af', to: "/games" },
-          { label: 'Collection', color: '#166534', to: "/matches" },
+          { label: 'My Cards', textColor: "#ffffff", color: '#991b1b', to: "/characters" },
+          { label: 'Games', textColor: "#ffffff", color: '#1e40af', to: "/games" },
+          { label: 'Collection', textColor: "#ffffff", color: '#166534', to: "/matches" },
         ]} />
       </section>
     </main>
