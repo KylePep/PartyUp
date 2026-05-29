@@ -16,8 +16,20 @@ function StatRow({ label, children }: { label: string; children: React.ReactNode
   )
 }
 
-export function CharacterDetailCard({ character }: { character: Character }) {
+interface CharacterDetailCardProps {
+  character: Character
+  onBack?: () => void
+  onDelete?: () => void
+  deleting?: boolean
+}
+
+export function CharacterDetailCard({ character, onBack, onDelete, deleting }: CharacterDetailCardProps) {
   const navigate = useNavigate()
+
+  function handleBack() {
+    if (onBack) onBack()
+    else navigate(-1)
+  }
 
   return (
     <div
@@ -30,10 +42,15 @@ export function CharacterDetailCard({ character }: { character: Character }) {
     >
       {/* Action bar */}
       <div
-        className="flex items-center px-4 py-3"
+        className="flex items-center justify-between px-4 py-3"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
-        <Button variant="secondary" onClick={() => navigate(-1)}>← Back to Realm</Button>
+        <Button variant="secondary" onClick={handleBack}>← Back</Button>
+        {onDelete && (
+          <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
+            {deleting ? 'Deleting...' : 'Delete Character'}
+          </Button>
+        )}
       </div>
 
       {/* Hero section */}
