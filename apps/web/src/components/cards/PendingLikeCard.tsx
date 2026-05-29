@@ -1,4 +1,5 @@
 import type { DiscoverCharacter } from '../../api/endpoints/characters'
+import { FullArtTcgCard } from './FullArtTcgCard'
 
 interface PendingLikeCardProps {
   character: DiscoverCharacter
@@ -8,33 +9,13 @@ interface PendingLikeCardProps {
 
 export function PendingLikeCard({ character, onLike, onDislike }: PendingLikeCardProps) {
   return (
-    <div
-      className="relative rounded overflow-hidden border border-border shrink-0"
+    <FullArtTcgCard
+      name={character.name}
+      imageUrl={character.imageUrl}
       style={{ width: '80px', aspectRatio: '2/3' }}
+      className="shrink-0"
     >
-      {character.imageUrl ? (
-        <img
-          src={character.imageUrl}
-          alt={character.name}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-surface-raised flex items-center justify-center">
-          <span className="text-xl font-mono text-muted font-bold">
-            {character.name[0].toUpperCase()}
-          </span>
-        </div>
-      )}
-
-      {/* Name overlay — top */}
-      <div className="absolute top-0 left-0 right-0 px-1.5 pt-1.5 pb-3 bg-gradient-to-b from-black/80 to-transparent">
-        <span className="text-[10px] font-mono text-white font-bold leading-tight block truncate">
-          {character.name}
-        </span>
-      </div>
-
-      {/* Action buttons — bottom */}
-      <div className="absolute bottom-0 left-0 right-0 px-1 pb-1.5 pt-4 bg-gradient-to-t from-black/80 to-transparent flex justify-around">
+      <div className="flex justify-around">
         <button
           onClick={onLike}
           className="text-success text-sm leading-none hover:scale-125 transition-transform"
@@ -50,6 +31,6 @@ export function PendingLikeCard({ character, onLike, onDislike }: PendingLikeCar
           ✕
         </button>
       </div>
-    </div>
+    </FullArtTcgCard>
   )
 }
