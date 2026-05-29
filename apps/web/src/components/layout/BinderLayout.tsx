@@ -11,7 +11,7 @@ interface BinderLayoutProps {
 
 export function BinderLayout({ barColor, barContent, leftContent, rightContent, tabs }: BinderLayoutProps) {
   return (
-    <main className="grid grid-cols-2 border-white border-2 m-4 me-8 w-full relative min-h-0">
+    <main className="grid grid-cols-2 border-white border-2 m-4 me-8 w-full relative overflow-hidden" style={{ height: 'calc(100vh - 2rem)' }}>
       {/* Left page */}
       <div className="flex border-r border-border min-h-0">
         {/* Spine bar */}

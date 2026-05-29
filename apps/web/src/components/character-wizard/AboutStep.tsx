@@ -14,7 +14,7 @@ export function AboutStep({ data, onChange }: AboutStepProps) {
         placeholder="What kind of player are you? What are you looking for in a teammate?"
         value={data.bio}
         onChange={e => onChange({ bio: e.target.value })}
-        maxLength={1000}
+        maxLength={500}
         rows={6}
       />
     </div>

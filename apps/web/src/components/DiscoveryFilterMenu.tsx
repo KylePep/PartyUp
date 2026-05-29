@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { DiscoveryFilters } from './DiscoveryFilters'
-import { Modal } from './ui'
 import type { GameFieldDefinition } from '../api/endpoints/games'
 
 interface DiscoveryFilterMenuProps {
@@ -29,7 +28,6 @@ export function DiscoveryFilterMenu({
   const showMenu = hasFilterableFields || gamePlatforms.length > 0
   const activeCount = Object.keys(filters).length + (activePlatforms.length > 0 ? 1 : 0)
 
-  // Close desktop dropdown on click outside
   useEffect(() => {
     if (!open) return
     function handleClick(e: MouseEvent) {
@@ -41,7 +39,6 @@ export function DiscoveryFilterMenu({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
 
-  // Close on Escape
   useEffect(() => {
     if (!open) return
     function handleKey(e: KeyboardEvent) {
@@ -53,57 +50,39 @@ export function DiscoveryFilterMenu({
 
   if (!showMenu) return null
 
-  const triggerButton = (
-    <button
-      type="button"
-      onClick={() => setOpen(o => !o)}
-      className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
-        activeCount > 0
-          ? 'border-accent text-accent bg-accent/10'
-          : 'border-border text-muted hover:border-accent hover:text-text'
-      }`}
-    >
-      {activeCount > 0 ? `Filters · ${activeCount}` : 'Filters'}
-    </button>
-  )
-
-  const filterContent = (
-    <DiscoveryFilters
-      fields={fields}
-      activeFilters={filters}
-      onChange={onChange}
-      gamePlatforms={gamePlatforms}
-      activePlatforms={activePlatforms}
-      onPlatformChange={onPlatformChange}
-    />
-  )
-
   return (
-    <div className={className}>
-      {/* Desktop: dropdown */}
-      <div className="hidden lg:block relative" ref={dropdownRef}>
-        {triggerButton}
-        {open && (
-          <div
-            className="absolute top-full left-0 mt-1 z-50 rounded-lg p-4 shadow-xl"
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              minWidth: '280px',
-            }}
-          >
-            {filterContent}
-          </div>
-        )}
-      </div>
+    <div className={`relative ${className}`} ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
+          activeCount > 0
+            ? 'border-accent text-accent bg-accent/10'
+            : 'border-border text-muted hover:border-accent hover:text-text'
+        }`}
+      >
+        {activeCount > 0 ? `Filters · ${activeCount}` : 'Filters'}
+      </button>
 
-      {/* Mobile: modal */}
-      <div className="lg:hidden">
-        {triggerButton}
-        <Modal isOpen={open} onClose={() => setOpen(false)} title="Filters">
-          <div className="p-4">{filterContent}</div>
-        </Modal>
-      </div>
+      {open && (
+        <div
+          className="absolute top-full left-0 mt-1 z-50 rounded-lg p-4 shadow-xl"
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+            minWidth: '280px',
+          }}
+        >
+          <DiscoveryFilters
+            fields={fields}
+            activeFilters={filters}
+            onChange={onChange}
+            gamePlatforms={gamePlatforms}
+            activePlatforms={activePlatforms}
+            onPlatformChange={onPlatformChange}
+          />
+        </div>
+      )}
     </div>
   )
 }

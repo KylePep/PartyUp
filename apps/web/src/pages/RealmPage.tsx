@@ -56,6 +56,11 @@ export default function RealmPage() {
       <BinderLayout
         barColor="#991b1b"
         barContent={character ? <CharacterMiniCard character={character} /> : undefined}
+        tabs={[
+          { label: 'Realm', color: '#991b1b', onClick: () => {} },
+          { label: 'Explore', color: '#1e40af', onClick: () => {} },
+          { label: 'Friends', color: '#166534', onClick: () => {} },
+        ]}
         leftContent={
           <RealmLeftPage
             gameId={gameId!}
