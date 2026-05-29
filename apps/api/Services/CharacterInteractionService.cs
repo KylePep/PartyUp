@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs.Character;
 
 public class CharacterInteractionService : ICharacterInteractionService
 {
@@ -85,6 +86,63 @@ public class CharacterInteractionService : ICharacterInteractionService
       CharacterBId = bId,
       MatchedAt = match.MatchedAt
     };
+  }
+
+  public async Task<List<DiscoverCharacterResponse>> GetPendingLikesAsync(Guid characterId, Guid userId)
+  {
+    var ownsCharacter = await _db.Characters
+        .Include(c => c.UserGame)
+        .AnyAsync(c => c.Id == characterId && c.UserGame.UserId == userId);
+
+    if (!ownsCharacter)
+      throw new UnauthorizedAccessException("Character does not belong to the authenticated user");
+
+    var iAlreadyRespondedTo = await _db.CharacterInteractions
+        .Where(i => i.FromCharacterId == characterId)
+        .Select(i => i.ToCharacterId)
+        .ToListAsync();
+
+    var pendingLikerIds = await _db.CharacterInteractions
+        .Where(i =>
+            i.ToCharacterId == characterId &&
+            i.Type == InteractionType.Like &&
+            !iAlreadyRespondedTo.Contains(i.FromCharacterId))
+        .Select(i => i.FromCharacterId)
+        .ToListAsync();
+
+    return await _db.Characters
+        .Include(c => c.UserGame)
+            .ThenInclude(ug => ug.Game)
+        .Include(c => c.FieldValues)
+            .ThenInclude(fv => fv.FieldDefinition)
+        .Where(c => pendingLikerIds.Contains(c.Id))
+        .Select(c => new DiscoverCharacterResponse
+        {
+          Id = c.Id,
+          Name = c.Name,
+          Platform = c.Platform,
+          ImageUrl = c.ImageUrl,
+          Bio = c.Bio,
+          MainRole = c.MainRole,
+          SecondaryRole = c.SecondaryRole,
+          PreferredModes = c.PreferredModes,
+          UsesVoiceChat = c.UsesVoiceChat,
+          Languages = c.Languages,
+          Playstyle = c.Playstyle,
+          Rank = c.Rank,
+          Region = c.Region,
+          GameName = c.UserGame.Game.Name,
+          GameImageUrl = c.UserGame.Game.ImageUrl,
+          GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+          {
+            FieldDefinitionId = fv.FieldDefinitionId,
+            Key = fv.FieldDefinition.Key,
+            Label = fv.FieldDefinition.Label,
+            Value = fv.Value,
+            Type = fv.FieldDefinition.Type.ToString()
+          }).ToList(),
+        })
+        .ToListAsync();
   }
 
   private static (Guid, Guid) Order(Guid a, Guid b)
