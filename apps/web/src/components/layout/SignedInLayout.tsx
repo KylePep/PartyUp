@@ -20,7 +20,7 @@ export default function SignedInLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col pb-16 md:pb-0">
+    <div className="min-h-screen bg-bg flex flex-col md:flex-row pb-16 md:pb-0">
       <NavBar variant="app" />
       <Outlet />
       <BottomTray />
