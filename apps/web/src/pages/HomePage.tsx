@@ -35,8 +35,8 @@ export default function HomePage() {
           />
         )}
 
+        <h2 className='col-span-3 font-display font-bold text-center'>Recent Realms</h2>
         <div className="grid grid-cols-3 gap-4 w-3/4 border-white border-2 h-1/3 p-8">
-          <h2 className='col-span-3 font-display font-bold text-center'>Recent Realms</h2>
           {visibleRealms.length === 0 ? (
             <p className="col-span-3 text-xs font-mono text-muted text-center">
               Search above to add your first realm

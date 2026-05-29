@@ -25,28 +25,17 @@ export function CharacterDetailCard({ character, onDelete, deleting }: Character
 
   return (
     <div
-      className="rounded-xl overflow-hidden"
+      className="flex flex-col flex-1 min-h-0 rounded-xl overflow-hidden"
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '2px solid var(--color-accent)',
         boxShadow: '0 0 24px rgba(124, 111, 205, 0.25)',
       }}
     >
-      {/* Action bar */}
-      <div
-        className="flex items-center justify-between px-4 py-3"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
-      >
-        {onDelete && (
-          <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
-            {deleting ? 'Deleting...' : 'Delete Character'}
-          </Button>
-        )}
-      </div>
 
-      {/* Hero section */}
+      {/* Hero — pinned */}
       <div
-        className="flex gap-6 p-4"
+        className="flex gap-6 p-4 flex-shrink-0"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         <div
@@ -83,67 +72,84 @@ export function CharacterDetailCard({ character, onDelete, deleting }: Character
         </div>
       </div>
 
-      {/* Stats section */}
-      <div
-        className="px-4 pt-3 pb-1"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
-      >
-        <h2 className="text-xs text-muted uppercase tracking-widest mb-1">Stats</h2>
-        {character.playstyle && (
-          <StatRow label="Playstyle">
-            <span className="text-sm text-text">{character.playstyle}</span>
-          </StatRow>
-        )}
-        {character.usesVoiceChat != null && (
-          <StatRow label="Communication and connection">
-            <span className="text-sm text-text">{character.usesVoiceChat ? 'Yes' : 'No'}</span>
-          </StatRow>
-        )}
-        {character.languages && character.languages.length > 0 && (
-          <StatRow label="Languages">
+      {/* Scrollable details */}
+      <div className="flex-1 min-h-0 overflow-y-auto">
 
-            {character.languages.map(l => <Badge key={l}>{l}</Badge>)}
-          </StatRow>
-        )}
-        {character.preferredModes.length > 0 && (
-          <StatRow label="Modes">
-            {character.preferredModes.map(m => <Badge key={m}>{m}</Badge>)}
-          </StatRow>
-        )}
-        {character.timeZone && (
-          <StatRow label="Time Zone">
-            <span className="text-sm text-text">{character.timeZone}</span>
-          </StatRow>
-        )}
-        {character.activeTimes && character.activeTimes.length > 0 && (
-          <StatRow label="Active Times">
-            {character.activeTimes.map(t => <Badge key={t}>{t}</Badge>)}
-          </StatRow>
-        )}
-      </div>
-
-      {/* Game Fields section */}
-      {character.gameFields.length > 0 && (
+        {/* Stats section */}
         <div
           className="px-4 pt-3 pb-1"
           style={{ borderBottom: '1px solid var(--color-border)' }}
         >
-          <h2 className="text-xs text-muted uppercase tracking-widest mb-1">Game Fields</h2>
-          {character.gameFields.map(f => (
-            <StatRow key={f.key} label={f.label}>
-              <span className="text-sm text-text">{f.value}</span>
+          <h2 className="text-xs text-muted uppercase tracking-widest mb-1">Stats</h2>
+          {character.playstyle && (
+            <StatRow label="Playstyle">
+              <span className="text-sm text-text">{character.playstyle}</span>
             </StatRow>
-          ))}
+          )}
+          {character.usesVoiceChat != null && (
+            <StatRow label="Communication and connection">
+              <span className="text-sm text-text">{character.usesVoiceChat ? 'Yes' : 'No'}</span>
+            </StatRow>
+          )}
+          {character.languages && character.languages.length > 0 && (
+            <StatRow label="Languages">
+              {character.languages.map(l => <Badge key={l}>{l}</Badge>)}
+            </StatRow>
+          )}
+          {character.preferredModes.length > 0 && (
+            <StatRow label="Modes">
+              {character.preferredModes.map(m => <Badge key={m}>{m}</Badge>)}
+            </StatRow>
+          )}
+          {character.timeZone && (
+            <StatRow label="Time Zone">
+              <span className="text-sm text-text">{character.timeZone}</span>
+            </StatRow>
+          )}
+          {character.activeTimes && character.activeTimes.length > 0 && (
+            <StatRow label="Active Times">
+              {character.activeTimes.map(t => <Badge key={t}>{t}</Badge>)}
+            </StatRow>
+          )}
         </div>
-      )}
 
-      {/* Bio section */}
-      {character.bio && (
-        <div className="px-4 py-3">
-          <h2 className="text-xs text-muted uppercase tracking-widest mb-2">Bio</h2>
-          <p className="text-sm text-text leading-relaxed">{character.bio}</p>
-        </div>
-      )}
+        {/* Game Fields section */}
+        {character.gameFields.length > 0 && (
+          <div
+            className="px-4 pt-3 pb-1"
+            style={{ borderBottom: '1px solid var(--color-border)' }}
+          >
+            <h2 className="text-xs text-muted uppercase tracking-widest mb-1">Game Fields</h2>
+            {character.gameFields.map(f => (
+              <StatRow key={f.key} label={f.label}>
+                <span className="text-sm text-text">{f.value}</span>
+              </StatRow>
+            ))}
+          </div>
+        )}
+
+        {/* Bio section */}
+        {character.bio && (
+          <div className="px-4 py-3">
+            <h2 className="text-xs text-muted uppercase tracking-widest mb-2">Bio</h2>
+            <p className="text-sm text-text leading-relaxed">{character.bio}</p>
+          </div>
+        )}
+
+      </div>
+
+      {/* Action bar — pinned */}
+      <div
+        className="flex items-center justify-end px-4 py-3 flex-shrink-0"
+        style={{ borderTop: '1px solid var(--color-border)' }}
+      >
+        {onDelete && (
+          <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
+            {deleting ? 'Deleting...' : 'Delete Character'}
+          </Button>
+        )}
+      </div>
+
     </div>
   )
 }

@@ -36,7 +36,7 @@ export default function CharactersPage() {
   }
 
   const leftContent = selected ? (
-    <div className="overflow-y-auto" style={{ height: 'calc(100vh - 6rem)' }}>
+    <div className="flex flex-col flex-1 min-h-0 p-4">
       <CharacterDetailCard
         character={selected}
         onDelete={selected.userGameId ? handleDelete : undefined}

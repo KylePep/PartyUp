@@ -25,7 +25,7 @@ export function BinderLayout({ barColor, barContent, leftContent, rightContent, 
             {barContent}
           </div>
           {/* Left content area */}
-          <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
+          <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
             {leftContent}
           </div>
         </div>
