@@ -157,6 +157,25 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         body!.Message.Should().Contain("Character limit reached");
     }
 
+    [Fact]
+    public async Task GetMyCharacters_ReturnsGameName()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+
+        await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Game Name Test",
+            platform = "PC",
+            platformHandle = "TestHandle",
+            userGameId = userGame.Id
+        });
+
+        var response = await client.GetAsync("/api/characters");
+        var characters = await response.Content.ReadFromJsonAsync<List<CharacterWithGameDto>>();
+        characters.Should().ContainSingle(c => c.GameName == userGame.GameName);
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<UserGameDto> AddGameAsync(HttpClient client, int? externalId = null)
@@ -177,4 +196,5 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
     private record DiscoveredDto(Guid Id, string Name);
     private record LimitErrorDto(string Message);
+    private record CharacterWithGameDto(Guid Id, string Name, string? GameName);
 }

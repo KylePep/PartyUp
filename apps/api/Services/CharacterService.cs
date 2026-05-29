@@ -273,6 +273,8 @@ public class CharacterService : ICharacterService
       Playstyle = c.Playstyle,
       Rank = c.Rank,
       Region = c.Region,
+      GameName = c.UserGame.Game.Name,
+      GameImageUrl = c.UserGame.Game.ImageUrl,
       CreatedAt = c.CreatedAt,
       GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
       {

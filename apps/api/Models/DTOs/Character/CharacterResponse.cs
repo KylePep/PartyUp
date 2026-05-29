@@ -20,6 +20,8 @@ public class CharacterResponse
   public string? Playstyle { get; set; }
   public string? Rank { get; set; }
   public string? Region { get; set; }
+  public string? GameName { get; set; }
+  public string? GameImageUrl { get; set; }
 
   public DateTime CreatedAt { get; set; }
   public List<CharacterFieldValueDto> GameFields { get; set; } = [];
