@@ -62,23 +62,6 @@ export function NavBar({ variant }: NavBarProps) {
         </div>
       )}
 
-      {/* {variant === 'landing' && (
-        <div className="flex md:flex-col gap-4 md:gap-6">
-          <button
-            onClick={onSignIn}
-            className="text-xs font-mono uppercase tracking-widest text-muted hover:text-text transition-colors"
-          >
-            Sign In
-          </button>
-          <button
-            onClick={onSignUp}
-            className="text-xs font-mono uppercase tracking-widest px-4 py-2 border border-border text-text hover:border-accent hover:text-accent transition-colors rounded"
-          >
-            Sign Up
-          </button>
-        </div>
-      )} */}
-
       {variant === 'app' && username && (
         <div className="relative" ref={dropdownRef}>
           <button

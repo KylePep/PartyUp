@@ -9,7 +9,7 @@ export default function SignedInLayout() {
 
   if (state.status === 'loading') {
     return (
-      <div className="min-h-screen bg-bg flex items-center justify-center">
+      <div className="min-h-screen w-full bg-bg flex items-center justify-center">
         <Spinner label="Loading..." />
       </div>
     )

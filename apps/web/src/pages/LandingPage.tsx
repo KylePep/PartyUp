@@ -47,7 +47,7 @@ export default function LandingPage() {
             Magic Binder
           </h1>
 
-          <div className="group relative h-[352px] w-[352px] bg-white border-black border-4 rounded-full flex items-center justify-center">
+          <div className="group relative h-[20rem] w-[20rem] bg-white border-black border-4 rounded-full flex items-center justify-center">
 
             {/* SVG progress ring — key={step} re-mounts on step change, restarting the animation */}
             <svg
@@ -95,7 +95,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex justify-around border-white border-2 w-3/4 py-10">
+          <div className="flex justify-around border-white border-2 w-3/4 h-1/3 p-8 ">
             <Button size="lg" onClick={() => setModal('sign-up')}>
               Get Started
             </Button>
