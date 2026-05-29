@@ -1,13 +1,11 @@
 import { Link } from 'react-router-dom'
 import { type UserGame } from '../../api/endpoints/userGames'
-import { Button } from '../ui'
 
 interface RealmCardProps {
   userGame: UserGame
-  onRemove: (userGame: UserGame) => void
 }
 
-export function RealmCard({ userGame, onRemove }: RealmCardProps) {
+export function RealmCard({ userGame }: RealmCardProps) {
   return (
     <div className="bg-surface border border-border rounded-lg overflow-hidden hover:border-accent/50 transition-colors">
       {userGame.gameImageUrl ? (
@@ -17,24 +15,14 @@ export function RealmCard({ userGame, onRemove }: RealmCardProps) {
       ) : (
         <div className="aspect-video w-full bg-surface-raised" />
       )}
-      <div className="p-3 flex flex-col gap-3">
+      <div className="p-3 flex flex-col gap-2">
         <p className="text-sm font-mono text-text truncate">{userGame.gameName}</p>
-        <div className="flex gap-2">
-          <Link
-            to={`/realm/${userGame.gameId}`}
-            className="flex-1 text-center text-xs font-mono uppercase tracking-widest py-2 border border-border text-muted hover:border-accent hover:text-accent transition-colors rounded"
-          >
-            Enter
-          </Link>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onRemove(userGame)}
-            className="text-danger hover:opacity-70"
-          >
-            Remove
-          </Button>
-        </div>
+        <Link
+          to={`/realm/${userGame.gameId}`}
+          className="block text-center text-xs font-mono uppercase tracking-widest py-2 border border-border text-muted hover:border-accent hover:text-accent transition-colors rounded"
+        >
+          Enter
+        </Link>
       </div>
     </div>
   )
