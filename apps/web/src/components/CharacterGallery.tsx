@@ -1,40 +1,22 @@
-import { useEffect, useState } from 'react'
-import { deleteCharacter, getCharacters, type Character } from '../api/endpoints/characters'
 import { CharacterCard } from './cards/CharacterCard'
 import { EmptyState, Spinner } from './ui'
 import { CHARACTER_LIMIT } from '../utils/limits'
+import type { Character } from '../api/endpoints/characters'
 
-export function CharacterGallery() {
-  const [characters, setCharacters] = useState<Character[]>([])
-  const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
+interface CharacterGalleryProps {
+  characters: Character[]
+  status: 'loading' | 'ready' | 'empty' | 'error'
+  selectedId: string | null
+  onSelect: (character: Character) => void
+}
 
-  useEffect(() => {
-    getCharacters()
-      .then(chars => {
-        setCharacters(chars)
-        setStatus(chars.length === 0 ? 'empty' : 'ready')
-      })
-      .catch(() => setStatus('error'))
-  }, [])
-
-  async function handleDelete(character: Character) {
-    if (!character.userGameId) return
-    await deleteCharacter(character.userGameId, character.id)
-    setCharacters(prev => {
-      const next = prev.filter(c => c.id !== character.id)
-      if (next.length === 0) setStatus('empty')
-      return next
-    })
-  }
-
+export function CharacterGallery({ characters, status, selectedId, onSelect }: CharacterGalleryProps) {
   if (status === 'loading') {
     return <div className="flex justify-center py-10"><Spinner /></div>
   }
-
   if (status === 'error') {
     return <EmptyState message="Could not load characters" />
   }
-
   return (
     <>
       <p className="text-xs font-mono text-muted mb-4">
@@ -45,7 +27,16 @@ export function CharacterGallery() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {characters.map(c => (
-            <CharacterCard key={c.id} character={c} onDelete={handleDelete} />
+            <div
+              key={c.id}
+              className="rounded-xl transition-all"
+              style={{
+                outline: selectedId === c.id ? '2px solid #991b1b' : '2px solid transparent',
+                outlineOffset: '2px',
+              }}
+            >
+              <CharacterCard character={c} onSelect={onSelect} />
+            </div>
           ))}
         </div>
       )}
