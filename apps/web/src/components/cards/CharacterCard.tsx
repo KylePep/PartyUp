@@ -18,22 +18,24 @@ export function CharacterCard({ character, onEdit, onDelete, onSelect }: Charact
     else navigate(`/characters/${character.id}`)
   }
 
-  const subtitle = [character.region, character.languages?.[0]].filter(Boolean).join(' · ') || undefined
+  const subtitle = [character.gameName, character.platform].filter(Boolean).join(' · ') || undefined
 
-  const statsLine = (character.mainRole || character.rank || character.usesVoiceChat != null) ? (
+  const hasStats = character.mainRole || character.rank || character.usesVoiceChat != null || character.region || character.languages?.length
+  const statsLine = hasStats ? (
     <div className="flex flex-wrap gap-1.5">
       {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
       {character.rank && <Badge variant="rank">{character.rank}</Badge>}
       {character.usesVoiceChat != null && (
         <Badge>{character.usesVoiceChat ? 'Voice ✓' : 'Voice ✗'}</Badge>
       )}
+      {character.region && <Badge variant="region">{character.region}</Badge>}
+      {character.languages?.[0] && <Badge>{character.languages[0]}</Badge>}
     </div>
   ) : undefined
 
   return (
     <StandardTcgCard
       name={character.name}
-      platform={character.platform}
       subtitle={subtitle}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
