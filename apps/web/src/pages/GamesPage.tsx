@@ -4,6 +4,7 @@ import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type 
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Button, EmptyState, Spinner } from '../components/ui'
 import { LandCard } from '../components/cards/LandCard'
+import DOMPurify from 'dompurify'
 
 export default function GamesPage() {
   const [games, setGames] = useState<UserGame[]>([])
@@ -60,7 +61,10 @@ export default function GamesPage() {
             <div className="animate-pulse bg-muted/30 rounded h-3 w-3/4" />
           </div>
         ) : selectedDetail?.description ? (
-          <p className="text-xs font-mono text-muted">{selectedDetail.description}</p>
+          <div
+            className="text-xs font-mono text-muted"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedDetail.description) }}
+          />
         ) : null}
 
         {selectedDetail && selectedDetail.rating > 0 && (
