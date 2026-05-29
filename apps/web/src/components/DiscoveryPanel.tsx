@@ -1,34 +1,24 @@
 import { useEffect, useState } from 'react'
 import { discoverCharacters, interactWithCharacter, type Character, type DiscoverCharacter } from '../api/endpoints/characters'
 import { SwipeCard } from './cards/SwipeCard'
-import { DiscoveryFilterMenu } from './DiscoveryFilterMenu'
 import { Spinner, EmptyState } from './ui'
-import type { GameFieldDefinition } from '../api/endpoints/games'
 
 type DiscoverStatus = 'loading' | 'ready' | 'empty' | 'error'
 
 interface DiscoveryPanelProps {
   gameId: string
-  myCharacter: Character | null | 'loading'
+  myCharacter: Character
   onMatch: () => void
-  gamePlatforms?: string[]
   filters: Record<string, string>
   activePlatforms: string[]
-  onFiltersChange: (key: string, value: string) => void
-  onPlatformChange: (platforms: string[]) => void
-  fields: GameFieldDefinition[]
 }
 
 export function DiscoveryPanel({
   gameId,
   myCharacter,
   onMatch,
-  gamePlatforms = [],
   filters,
   activePlatforms,
-  onFiltersChange,
-  onPlatformChange,
-  fields,
 }: DiscoveryPanelProps) {
   const [queue, setQueue] = useState<DiscoverCharacter[]>([])
   const [status, setStatus] = useState<DiscoverStatus>('loading')
@@ -52,7 +42,7 @@ export function DiscoveryPanel({
 
   async function handleInteract(type: 'Like' | 'Dislike') {
     const current = queue[0]
-    if (!current || !myCharacter || myCharacter === 'loading') return
+    if (!current) return
     try {
       const res = await interactWithCharacter(myCharacter.id, current.id, type)
       if (res.isMatch) onMatch()
@@ -64,24 +54,8 @@ export function DiscoveryPanel({
     })
   }
 
-  if (!myCharacter || myCharacter === 'loading') {
-    return <EmptyState message="Create a character to start matching" />
-  }
-
   return (
     <div className="flex flex-col gap-4">
-      {/* Desktop filter menu — hidden on mobile (mobile version rendered by RealmPage above CharacterPanel) */}
-      <div className="hidden lg:block">
-        <DiscoveryFilterMenu
-          fields={fields}
-          gamePlatforms={gamePlatforms}
-          filters={filters}
-          activePlatforms={activePlatforms}
-          onChange={onFiltersChange}
-          onPlatformChange={onPlatformChange}
-        />
-      </div>
-
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner label="Scanning the realm..." /></div>
       )}

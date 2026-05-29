@@ -5,9 +5,10 @@ import { EmptyState, Spinner } from './ui'
 
 interface MatchGalleryProps {
   gameId?: string
+  limit?: number
 }
 
-export function MatchGallery({ gameId }: MatchGalleryProps) {
+export function MatchGallery({ gameId, limit }: MatchGalleryProps) {
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
 
@@ -33,9 +34,11 @@ export function MatchGallery({ gameId }: MatchGalleryProps) {
     return <EmptyState message="Could not load matches" />
   }
 
+  const displayed = limit !== undefined ? matches.slice(0, limit) : matches
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {matches.map(m => (
+    <div className="grid grid-cols-3 gap-4">
+      {displayed.map(m => (
         <MatchCard
           key={m.matchId}
           character={m.theirCharacter}

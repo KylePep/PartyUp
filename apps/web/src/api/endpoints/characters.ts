@@ -143,3 +143,7 @@ export function getCharacterById(id: string) {
   return apiGet<Character>(`/characters/${id}`)
 }
 
+export function getPendingLikes(characterId: string) {
+  return apiGet<DiscoverCharacter[]>(`/character-interactions/pending?characterId=${characterId}`)
+}
+

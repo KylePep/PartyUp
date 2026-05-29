@@ -17,7 +17,7 @@ const navLinks = [
   { to: '/matches', label: 'Matches' },
 ]
 
-export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
+export function NavBar({ variant }: NavBarProps) {
   const { state, logout } = useAuth()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -36,25 +36,23 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
 
   return (
     <nav
-      className={`z-40 flex w-full h-16 px-6 items-center justify-between md:w-64 md:h-screen md:flex-col md:justify-between md:items-stretch md:py-8 md:sticky md:top-0 ${
-        variant === 'landing'
-          ? 'bg-black'
-          : 'bg-surface/80 backdrop-blur-sm border-b border-border md:border-b-0 md:border-r'
-      }`}
+      className={`z-40 flex w-full h-16 px-6 absolute md:w-64 md:h-screen md:flex-col md:justify-between md:py-8 md:ps-8 md:top-0 ${variant === 'landing'
+        ? ''
+        : ''
+        }`}
     >
-      <Link to="/" className="font-display font-bold text-text text-lg tracking-wide">
+      <Link to="/home" className="font-display font-bold text-text text-lg tracking-wide">
         PartyUp
       </Link>
 
       {variant === 'app' && (
-        <div className="hidden md:flex flex-col gap-6">
+        <div className="hidden md:flex flex-col gap-6 h-full justify-center mt-6">
           {navLinks.map(link => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `text-xs font-mono uppercase tracking-widest transition-colors ${
-                  isActive ? 'text-accent' : 'text-muted hover:text-text'
+                `text-xs font-mono uppercase tracking-widest transition-colors ${isActive ? 'text-accent' : 'text-white hover:text-text'
                 }`
               }
             >
@@ -64,7 +62,7 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
         </div>
       )}
 
-      {variant === 'landing' && (
+      {/* {variant === 'landing' && (
         <div className="flex md:flex-col gap-4 md:gap-6">
           <button
             onClick={onSignIn}
@@ -79,7 +77,7 @@ export function NavBar({ variant, onSignIn, onSignUp }: NavBarProps) {
             Sign Up
           </button>
         </div>
-      )}
+      )} */}
 
       {variant === 'app' && username && (
         <div className="relative" ref={dropdownRef}>
