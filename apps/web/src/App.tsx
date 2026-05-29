@@ -10,6 +10,7 @@ import "./App.css";
 import CharactersPage from "./pages/CharacterPage";
 import CharacterDetailPage from "./pages/CharacterDetailPage";
 import MatchesPage from "./pages/MatchesPage";
+import GamesPage from "./pages/GamesPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/characters" element={<CharactersPage />} />
             <Route path="/characters/:characterId" element={<CharacterDetailPage />} />
             <Route path="/matches" element={<MatchesPage />} />
+            <Route path="/games" element={<GamesPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
