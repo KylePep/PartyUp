@@ -7,4 +7,5 @@ public class UserGameResponse
   public Guid GameId { get; set; }
   public string GameName { get; set; } = string.Empty;
   public string? GameImageUrl { get; set; }
+  public DateTime CreatedAt { get; set; }
 }

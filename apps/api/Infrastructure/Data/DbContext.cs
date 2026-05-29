@@ -41,6 +41,11 @@ namespace PartyUp.Api.Infrastructure.Data
                 e.Property(g => g.SchemaStatus).HasConversion<string>();
             });
 
+            modelBuilder.Entity<UserGame>(e =>
+            {
+                e.Property(ug => ug.CreatedAt).HasDefaultValueSql("NOW()");
+            });
+
             modelBuilder.Entity<GameFieldDefinition>(e =>
             {
                 e.HasKey(x => x.Id);

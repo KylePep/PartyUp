@@ -85,7 +85,8 @@ public class UserGameService : IUserGameService
         {
             UserId = userId,
             GameId = canonicalGame.Id,
-            Game = canonicalGame
+            Game = canonicalGame,
+            CreatedAt = DateTime.UtcNow
         };
 
         _db.UserGames.Add(userGame);
@@ -129,6 +130,7 @@ public class UserGameService : IUserGameService
         return await _db.UserGames
             .Where(ug => ug.UserId == userId)
             .Include(ug => ug.Game)
+            .OrderByDescending(ug => ug.CreatedAt)
             .ToListAsync();
     }
 

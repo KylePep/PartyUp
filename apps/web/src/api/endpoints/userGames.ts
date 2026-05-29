@@ -12,6 +12,7 @@ export type UserGame = {
   gameId: string;
   gameName: string;
   gameImageUrl: string | null;
+  createdAt: string;
 };
 
 export type UserGameDetail = {

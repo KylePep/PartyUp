@@ -70,7 +70,8 @@ public class UserGamesController : ControllerBase
     UserId = ug.UserId,
     GameId = ug.GameId,
     GameName = ug.Game.Name,
-    GameImageUrl = ug.Game.ImageUrl
+    GameImageUrl = ug.Game.ImageUrl,
+    CreatedAt = ug.CreatedAt
   };
 
   private static UserGameDetailResponse ToDetailResponse(UserGame ug) => new()
