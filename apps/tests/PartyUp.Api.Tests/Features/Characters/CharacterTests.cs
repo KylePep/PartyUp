@@ -176,6 +176,29 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         characters.Should().ContainSingle(c => c.GameName == userGame.GameName);
     }
 
+    [Fact]
+    public async Task CreateCharacter_WithAdditionalNotes_RoundtripsValue()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+
+        var response = await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Notes Character",
+            platform = "PC",
+            platformHandle = "NotesHandle",
+            userGameId = userGame.Id,
+            additionalNotes = "Looking for a chill group, play evenings EST."
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var all = await client.GetFromJsonAsync<List<CharacterWithNotesDto>>("/api/characters");
+        all!.Should().ContainSingle(c =>
+            c.Name == "Notes Character" &&
+            c.AdditionalNotes == "Looking for a chill group, play evenings EST.");
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<UserGameDto> AddGameAsync(HttpClient client, int? externalId = null)
@@ -197,4 +220,5 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record DiscoveredDto(Guid Id, string Name);
     private record LimitErrorDto(string Message);
     private record CharacterWithGameDto(Guid Id, string Name, string? GameName);
+    private record CharacterWithNotesDto(Guid Id, string Name, string? AdditionalNotes);
 }

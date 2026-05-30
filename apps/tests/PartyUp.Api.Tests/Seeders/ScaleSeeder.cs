@@ -64,8 +64,6 @@ public class ScaleSeeder
                 PlatformHandle = $"ESO_Player_{i:D3}",
                 Name = $"Character_{i:D3}",
                 Bio = $"Veteran ESO player #{i}.",
-                Playstyle = Pick("Casual", "Competitive", "Hardcore"),
-                PreferredModes = [Pick("PvE", "PvP", "Trials", "Dungeons")]
             };
 
             fieldValues.AddRange([
