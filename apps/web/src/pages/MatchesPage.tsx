@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getMatches, type CharacterMatchDto, type CharacterSummary } from '../api/endpoints/matches'
 import { BinderLayout } from '../components/layout/BinderLayout'
-import { Badge, EmptyState, Spinner } from '../components/ui'
+import { EmptyState, Spinner } from '../components/ui'
 import { MatchGallery } from '../components/MatchGallery'
 import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
@@ -28,15 +28,11 @@ function MatchCharacterDetail({ character }: { character: CharacterSummary }) {
       <div className="flex-1 min-w-0">
         <p className="font-display font-bold text-text text-sm">{character.platformHandle}</p>
         <p className="text-xs text-muted mb-2">{character.name}</p>
-        <div className="flex flex-wrap gap-1 mb-2">
-          {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-          {character.secondaryRole && <Badge variant="role">{character.secondaryRole}</Badge>}
-          {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-          {character.region && <Badge variant="region">{character.region}</Badge>}
-          {character.playstyle && <Badge>{character.playstyle}</Badge>}
-        </div>
         {character.bio && (
-          <p className="text-xs text-muted line-clamp-3 leading-relaxed">{character.bio}</p>
+          <p className="text-xs text-muted line-clamp-3 leading-relaxed mb-2">{character.bio}</p>
+        )}
+        {character.additionalNotes && (
+          <p className="text-xs text-muted line-clamp-2 leading-relaxed">{character.additionalNotes}</p>
         )}
         {character.gameFields.length > 0 && (
           <div className="mt-2 space-y-0.5">
