@@ -34,7 +34,7 @@ public class AnthropicService : IAnthropicService
             - commonField values are card rendering slot identifiers (e.g. class_slot) — never use them as a key or label. Game-specific terminology always takes precedence in those fields.
 
             Exclude these fields — they are already collected elsewhere in the app:
-            - Platform, Character Name, Language, Time zone, Voice chat, Play schedule / active times
+            - Platform, Character Name, Language, Time zone, Voice chat, microphone, push-to-talk, audio communication preferences, Play schedule / active times, Additional Notes
 
             Allowed field types: Select, MultiSelect, Text
 
