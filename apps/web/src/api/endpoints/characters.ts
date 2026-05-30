@@ -6,6 +6,7 @@ export type CharacterGameField = {
   label: string;
   value: string;
   type: string;
+  commonField?: string;
 };
 
 export type Character = {

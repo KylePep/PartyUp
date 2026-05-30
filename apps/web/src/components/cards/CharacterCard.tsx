@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import { Badge } from '../ui'
 import type { Character } from '../../api/endpoints/characters'
 import { StandardTcgCard } from './StandardTcgCard'
 
@@ -18,29 +17,22 @@ export function CharacterCard({ character, onSelect }: CharacterCardProps) {
     else navigate(`/characters/${character.id}`)
   }
 
-  const subtitle = [character.gameName,].filter(Boolean).join(' · ') || undefined
+  const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
+  const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
 
-  const hasStats = character.mainRole || character.rank || character.usesVoiceChat != null || character.region || character.languages?.length
-  const statsLine = hasStats ? (
-    <div className="flex flex-wrap gap-1.5">
-      {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-      {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-      {character.usesVoiceChat != null && (
-        <Badge>{character.usesVoiceChat ? 'Voice ✓' : 'Voice ✗'}</Badge>
-      )}
-      {character.region && <Badge variant="region">{character.region}</Badge>}
-      {character.languages?.[0] && <Badge>{character.languages[0]}</Badge>}
-    </div>
+  const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
+  const statsLine = statsContent ? (
+    <span className="text-xs text-muted font-semibold">{statsContent}</span>
   ) : undefined
 
   return (
     <StandardTcgCard
       name={character.name}
       platform={character.platform}
-      subtitle={subtitle}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
       textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+      bottomStat={levelField?.value}
       onClick={handleClick}
     />
   )
