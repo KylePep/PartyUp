@@ -59,50 +59,10 @@ function SwipeBack({ character }: { character: DiscoverCharacter }) {
     >
       <div className="px-4 py-3 flex-1 overflow-y-auto">
         <p className="font-display font-bold text-text text-lg mb-3">{character.name}</p>
-        <div className="grid grid-cols-1 gap-x-4 gap-y-3 mb-3">
-          {character.mainRole && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Role</span>
-              <Badge variant="role">{character.mainRole}</Badge>
-            </div>
-          )}
-          {character.secondaryRole && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Alt Role</span>
-              <Badge variant="role">{character.secondaryRole}</Badge>
-            </div>
-          )}
-          {character.rank && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Rank</span>
-              <Badge variant="rank">{character.rank}</Badge>
-            </div>
-          )}
-          {character.region && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Region</span>
-              <Badge variant="region">{character.region}</Badge>
-            </div>
-          )}
-          {character.playstyle && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Playstyle</span>
-              <Badge>{character.playstyle}</Badge>
-            </div>
-          )}
-          {character.usesVoiceChat != null && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Voice</span>
-              <Badge>{character.usesVoiceChat ? 'Yes' : 'No'}</Badge>
-            </div>
-          )}
-        </div>
-        {character.preferredModes.length > 0 && (
+        {character.usesVoiceChat != null && (
           <div className="mb-3">
-            <span className="text-xs text-muted block mb-1">Modes</span>
-            <div className="flex flex-wrap gap-1">
-              {character.preferredModes.map(m => <Badge key={m}>{m}</Badge>)}
-            </div>
+            <span className="text-xs text-muted block mb-0.5">Voice</span>
+            <Badge>{character.usesVoiceChat ? 'Yes' : 'No'}</Badge>
           </div>
         )}
         {character.languages && character.languages.length > 0 && (
@@ -127,9 +87,15 @@ function SwipeBack({ character }: { character: DiscoverCharacter }) {
           </div>
         )}
         {character.bio && (
-          <div>
+          <div className="mb-3">
             <span className="text-xs text-muted block mb-1">Bio</span>
             <p className="text-sm text-text leading-relaxed">{character.bio}</p>
+          </div>
+        )}
+        {character.additionalNotes && (
+          <div>
+            <span className="text-xs text-muted block mb-1">Notes</span>
+            <p className="text-sm text-text leading-relaxed">{character.additionalNotes}</p>
           </div>
         )}
       </div>
