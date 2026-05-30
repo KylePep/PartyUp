@@ -1,5 +1,5 @@
 import { apiGet } from "../client";
-import type { CharacterGameField } from "./characters";
+import type { Character, CharacterGameField } from "./characters";
 
 export type CharacterSummary = {
   id: string;
@@ -19,7 +19,7 @@ export type CharacterMatchDto = {
   matchId: string;
   matchedAt: string;
   myCharacter: CharacterSummary;
-  theirCharacter: CharacterSummary;
+  theirCharacter: Character;
   gameId: string;
   gameName: string;
 };

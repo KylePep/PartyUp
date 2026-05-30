@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getMatches, type CharacterMatchDto, type CharacterSummary } from '../api/endpoints/matches'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Badge, EmptyState, Spinner } from '../components/ui'
+import { MatchGallery } from '../components/MatchGallery'
 
 function MatchCharacterDetail({ character }: { character: CharacterSummary }) {
   return (
@@ -99,48 +100,19 @@ export default function MatchesPage() {
   )
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full min-h-0">
+    <div className="p-4 overflow-y-auto h-full w-full min-h-0">
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner /></div>
       )}
       {status === 'error' && <EmptyState message="Could not load matches" />}
       {status === 'empty' && <EmptyState message="No matches yet — keep swiping!" />}
       {status === 'ready' && (
-        <div className="grid grid-cols-3 gap-3">
-          {matches.map(m => {
-            const c = m.theirCharacter
-            const isSelected = selected?.matchId === m.matchId
-            return (
-              <button
-                key={m.matchId}
-                onClick={() => setSelected(m)}
-                className="rounded-xl overflow-hidden border-2 transition-all text-left flex flex-col"
-                style={{
-                  borderColor: isSelected ? '#166534' : 'var(--color-border)',
-                  boxShadow: isSelected ? '0 0 0 2px #16663440' : 'none',
-                  backgroundColor: 'var(--color-surface)',
-                }}
-              >
-                <div className="h-32 overflow-hidden flex-shrink-0">
-                  {c.imageUrl ? (
-                    <img src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div
-                      className="w-full h-full flex items-center justify-center text-muted font-mono text-3xl"
-                      style={{ backgroundColor: 'var(--color-surface-raised)' }}
-                    >
-                      {c.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <div className="px-2 py-1.5">
-                  <p className="text-xs font-mono font-bold text-text truncate">{c.platformHandle}</p>
-                  <p className="text-xs text-muted truncate">{m.gameName}</p>
-                </div>
-              </button>
-            )
-          })}
-        </div>
+        <MatchGallery
+          matches={matches}
+          selectedId={selected?.matchId ?? null}
+          onSelect={setSelected}
+          limit={6}
+        />
       )}
     </div>
   )

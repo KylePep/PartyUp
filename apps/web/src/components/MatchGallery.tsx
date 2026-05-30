@@ -4,23 +4,33 @@ import { MatchCard } from './cards/MatchCard'
 import { EmptyState, Spinner } from './ui'
 
 interface MatchGalleryProps {
-  gameId?: string
+  matches?: CharacterMatchDto[]
+  selectedId?: string | null
+  onSelect?: (match: CharacterMatchDto) => void
+  gameId?: string | null
   limit?: number
 }
 
-export function MatchGallery({ gameId, limit }: MatchGalleryProps) {
+export function MatchGallery({ matches: providedMatches, gameId, limit, onSelect }: MatchGalleryProps) {
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
 
   useEffect(() => {
+    if (providedMatches) {
+      setMatches(providedMatches)
+      setStatus(providedMatches.length ? 'ready' : 'empty')
+      return
+    }
+
     setStatus('loading')
-    getMatches(gameId)
-      .then(m => {
-        setMatches(m)
-        setStatus(m.length === 0 ? 'empty' : 'ready')
-      })
-      .catch(() => setStatus('error'))
-  }, [gameId])
+    if (gameId != null)
+      getMatches(gameId)
+        .then(m => {
+          setMatches(m)
+          setStatus(m.length ? 'ready' : 'empty')
+        })
+        .catch(() => setStatus('error'))
+  }, [providedMatches, gameId])
 
   if (status === 'loading') {
     return <div className="flex justify-center py-10"><Spinner /></div>
@@ -44,6 +54,7 @@ export function MatchGallery({ gameId, limit }: MatchGalleryProps) {
           character={m.theirCharacter}
           gameName={m.gameName}
           matchedAt={m.matchedAt}
+          onSelect={onSelect ? () => onSelect(m) : undefined}
         />
       ))}
     </div>

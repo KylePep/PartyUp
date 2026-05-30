@@ -7,7 +7,7 @@ public class CharacterMatchDto
     public Guid MatchId { get; set; }
     public DateTime MatchedAt { get; set; }
     public CharacterSummaryDto MyCharacter { get; set; } = default!;
-    public CharacterSummaryDto TheirCharacter { get; set; } = default!;
+    public CharacterResponse TheirCharacter { get; set; } = default!;
     public Guid GameId { get; set; }
     public string GameName { get; set; } = default!;
 }

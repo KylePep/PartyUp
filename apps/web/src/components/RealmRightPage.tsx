@@ -11,7 +11,7 @@ export function RealmRightPage({ userGame, gameId }: RealmRightPageProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Game details — top 1/3 */}
-      <div className="flex-[1] p-6 border-b border-border flex gap-4 items-start overflow-hidden">
+      {/* <div className="flex-[1] p-6 border-b border-border flex gap-4 items-start overflow-hidden">
         {userGame.gameImageUrl && (
           <img
             src={userGame.gameImageUrl}
@@ -28,7 +28,7 @@ export function RealmRightPage({ userGame, gameId }: RealmRightPageProps) {
             />
           )}
         </div>
-      </div>
+      </div> */}
 
       {/* Matches grid — bottom 2/3 */}
       <div className="flex-[5] px-6 overflow-hidden">

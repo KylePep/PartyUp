@@ -4,9 +4,10 @@ interface FlippableCardProps {
   front: React.ReactNode
   back: React.ReactNode
   className?: string
+  onFrontClick?: () => void
 }
 
-export function FlippableCard({ front, back, className = '' }: FlippableCardProps) {
+export function FlippableCard({ front, back, className = '', onFrontClick }: FlippableCardProps) {
   const [flipped, setFlipped] = useState(false)
 
   return (
@@ -24,7 +25,7 @@ export function FlippableCard({ front, back, className = '' }: FlippableCardProp
         {/* Front face — click anywhere to flip */}
         <div
           style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', cursor: 'pointer' }}
-          onClick={() => setFlipped(true)}
+          onClick={() => onFrontClick ? onFrontClick() : setFlipped(true)}
         >
           {front}
         </div>

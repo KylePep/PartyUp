@@ -1,33 +1,41 @@
 import { Badge } from '../ui'
-import type { CharacterSummary } from '../../api/endpoints/matches'
 import { FlippableCard } from './FlippableCard'
 import { StandardTcgCard } from './StandardTcgCard'
+import type { Character } from '../../api/endpoints/characters'
 
 interface MatchCardProps {
-  character: CharacterSummary
+  character: Character
   gameName: string
   matchedAt: string
+  onSelect?: (character: Character) => void
 }
 
-function MatchFront({ character, gameName, matchedAt }: MatchCardProps) {
-  const date = new Date(matchedAt).toLocaleDateString()
 
-  const statsLine = (character.mainRole || character.rank) ? (
+function MatchFront({ character }: MatchCardProps) {
+
+  const subtitle = [character.gameName, character.platform].filter(Boolean).join(' · ') || undefined
+
+  const hasStats = character.mainRole || character.rank || character.usesVoiceChat != null || character.region || character.languages?.length
+  const statsLine = hasStats ? (
     <div className="flex flex-wrap gap-1.5">
       {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
       {character.rank && <Badge variant="rank">{character.rank}</Badge>}
+      {character.usesVoiceChat != null && (
+        <Badge>{character.usesVoiceChat ? 'Voice ✓' : 'Voice ✗'}</Badge>
+      )}
+      {character.region && <Badge variant="region">{character.region}</Badge>}
+      {character.languages?.[0] && <Badge>{character.languages[0]}</Badge>}
     </div>
   ) : undefined
 
   return (
     <StandardTcgCard
-      name={character.platformHandle}
-      platform={character.name}
-      subtitle={character.region}
+      name={character.name}
+      platform={""}
+      subtitle={subtitle}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
       textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
-      bottomStat={`${gameName} · ${date}`}
       className="w-full h-full"
     >
       <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
@@ -102,12 +110,13 @@ function MatchBack({ character, gameName, matchedAt }: MatchCardProps) {
   )
 }
 
-export function MatchCard({ character, gameName, matchedAt }: MatchCardProps) {
+export function MatchCard({ character, gameName, matchedAt, onSelect }: MatchCardProps) {
   return (
     <div className="min-h-50">
       <FlippableCard
         front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} />}
         back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} />}
+        onFrontClick={onSelect ? () => onSelect(character) : undefined}
         className="h-full"
       />
     </div>
