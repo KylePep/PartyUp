@@ -124,11 +124,7 @@ export default function MatchesPage() {
           <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} />
         </>
       ) : undefined}
-      tabs={[
-        { label: 'My Cards', textColor: "#ffffff", color: '#000000', to: "/characters" },
-        { label: 'Games', textColor: "#ffffff", color: '#000000', to: "/games" },
-        { label: 'Collection', textColor: "#ffd900", color: '#000000', to: "/matches" },
-      ]}
+      activeTab={"Collection"}
       leftContent={leftContent}
       rightContent={rightContent}
     />

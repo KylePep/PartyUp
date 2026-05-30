@@ -62,11 +62,7 @@ export default function RealmPage() {
             <GameMiniCard game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }} />
           </>
         ) : undefined}
-        tabs={[
-          { label: 'My Cards', textColor: "#ffffff", color: '#991b1b', to: "/characters" },
-          { label: 'Games', textColor: "#ffffff", color: '#1e40af', to: "/games" },
-          { label: 'Collection', textColor: "#ffffff", color: '#166534', to: "/matches" },
-        ]}
+        activeTab=""
         leftContent={
           <RealmLeftPage
             gameId={gameId!}

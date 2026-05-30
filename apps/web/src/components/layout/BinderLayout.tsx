@@ -1,15 +1,15 @@
 import type { ReactNode } from 'react'
-import { BinderTabs, type BinderTabDef } from './BinderTabs'
+import { BinderTabs } from './BinderTabs'
 
 interface BinderLayoutProps {
   barColor: string
   barContent?: ReactNode
   leftContent: ReactNode
   rightContent: ReactNode
-  tabs?: BinderTabDef[]
+  activeTab: string
 }
 
-export function BinderLayout({ barColor, barContent, leftContent, rightContent, tabs }: BinderLayoutProps) {
+export function BinderLayout({ barColor, barContent, leftContent, rightContent, activeTab }: BinderLayoutProps) {
   return (
     // Outer wrapper: sets position context for tabs WITHOUT overflow-hidden
     <div className="relative m-4 me-8 w-full" style={{ height: 'calc(100vh - 2rem)' }}>
@@ -37,7 +37,7 @@ export function BinderLayout({ barColor, barContent, leftContent, rightContent, 
       </main>
 
       {/* Tabs sit outside the overflow-hidden main so rotation doesn't get clipped */}
-      {tabs && tabs.length > 0 && <BinderTabs tabs={tabs} />}
+      <BinderTabs activeTab={activeTab} />
     </div>
   )
 }
