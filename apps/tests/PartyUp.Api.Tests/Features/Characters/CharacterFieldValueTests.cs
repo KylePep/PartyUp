@@ -171,9 +171,72 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
         gameField.FieldDefinitionId.Should().Be(classFieldId);
     }
 
+    [Fact]
+    public async Task GetMyCharacters_ReturnsCommonField_WhenFieldDefinitionHasCommonField()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var externalId = Interlocked.Increment(ref _externalIdCounter);
+
+        var addGameResponse = await client.PostAsJsonAsync("/api/user-games", new
+        {
+            externalId,
+            name = $"Game {externalId}",
+            imageUrl = (string?)null
+        });
+        addGameResponse.EnsureSuccessStatusCode();
+        var userGame = (await addGameResponse.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
+
+        Guid jobFieldId;
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var game = await db.Games.FindAsync(userGame!.GameId);
+            game!.SchemaStatus = SchemaStatus.Generated;
+
+            var field = new GameFieldDefinition
+            {
+                Id = Guid.NewGuid(),
+                GameId = userGame.GameId,
+                Key = "job",
+                Label = "Job",
+                Type = FieldType.Select,
+                Options = ["Paladin", "Warrior", "White Mage"],
+                IsFilterable = true,
+                IsRequired = true,
+                SortOrder = 1,
+                CommonField = "class_slot"
+            };
+            jobFieldId = field.Id;
+            db.GameFieldDefinitions.Add(field);
+            await db.SaveChangesAsync();
+        }
+
+        await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "FFXIV Character",
+            platform = "PC",
+            platformHandle = "FFPlayer",
+            userGameId = userGame!.Id,
+            gameFields = new[]
+            {
+                new { fieldDefinitionId = jobFieldId, value = "Paladin" }
+            }
+        });
+
+        var response = await client.GetAsync("/api/characters");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var characters = await response.Content.ReadFromJsonAsync<List<CharacterWithFieldsDto>>();
+        var target = characters!.Single(c => c.Name == "FFXIV Character");
+        var gameField = target.GameFields.Should().ContainSingle().Subject;
+        gameField.Key.Should().Be("job");
+        gameField.Value.Should().Be("Paladin");
+        gameField.CommonField.Should().Be("class_slot");
+    }
+
     private record UserGameDto(Guid Id, Guid GameId);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterResponseDto(Guid Id, string Name);
-    private record GameFieldDto(Guid FieldDefinitionId, string Key, string Label, string Value, string Type);
+    private record GameFieldDto(Guid FieldDefinitionId, string Key, string Label, string Value, string Type, string? CommonField = null);
     private record CharacterWithFieldsDto(Guid Id, string Name, List<GameFieldDto> GameFields);
 }

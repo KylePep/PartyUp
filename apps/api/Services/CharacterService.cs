@@ -178,7 +178,8 @@ public class CharacterService : ICharacterService
           Key = fv.FieldDefinition.Key,
           Label = fv.FieldDefinition.Label,
           Value = fv.Value,
-          Type = fv.FieldDefinition.Type.ToString()
+          Type = fv.FieldDefinition.Type.ToString(),
+          CommonField = fv.FieldDefinition.CommonField
         }).ToList(),
       })
       .ToListAsync();
@@ -282,7 +283,8 @@ public class CharacterService : ICharacterService
         Key = fv.FieldDefinition.Key,
         Label = fv.FieldDefinition.Label,
         Value = fv.Value,
-        Type = fv.FieldDefinition.Type.ToString()
+        Type = fv.FieldDefinition.Type.ToString(),
+        CommonField = fv.FieldDefinition.CommonField
       }).ToList(),
     };
 }
