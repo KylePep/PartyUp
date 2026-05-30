@@ -51,6 +51,7 @@ export function MatchGallery({ matches: providedMatches, gameId, limit, onSelect
       {displayed.map(m => (
         <MatchCard
           key={m.matchId}
+          matchId={m.matchId}
           character={m.theirCharacter}
           gameName={m.gameName}
           matchedAt={m.matchedAt}

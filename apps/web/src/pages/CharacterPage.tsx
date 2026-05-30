@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { getCharacters, deleteCharacter, type Character } from '../api/endpoints/characters'
 import { getUserGames, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { CharacterGallery } from '../components/CharacterGallery'
@@ -32,6 +33,8 @@ function toFormData(c: Character): Partial<CharacterFormData> {
 }
 
 export default function CharactersPage() {
+  const [searchParams] = useSearchParams()
+  const targetId = searchParams.get('id')
   const [characters, setCharacters] = useState<Character[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<Character | null>(null)
@@ -45,9 +48,12 @@ export default function CharactersPage() {
         setCharacters(chars)
         setUserGames(ug)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
+        if (targetId) {
+          setSelected(chars.find(c => c.id === targetId) ?? null)
+        }
       })
       .catch(() => setStatus('error'))
-  }, [])
+  }, [targetId])
 
   async function handleDelete() {
     if (!selected?.userGameId) return
@@ -145,7 +151,7 @@ export default function CharactersPage() {
       barContent={selected ? (
         <>
           <CharacterMiniCard character={selected} />
-          {selected.gameName && <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} />}
+          {selected.gameName && <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} gameId={selected.gameId} />}
         </>
       ) : undefined}
       activeTab={"My Cards"}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { getMatches, type CharacterMatchDto, type CharacterSummary } from '../api/endpoints/matches'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Badge, EmptyState, Spinner } from '../components/ui'
@@ -54,6 +55,8 @@ function MatchCharacterDetail({ character }: { character: CharacterSummary }) {
 
 
 export default function MatchesPage() {
+  const [searchParams] = useSearchParams()
+  const targetId = searchParams.get('id')
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<CharacterMatchDto | null>(null)
@@ -63,9 +66,12 @@ export default function MatchesPage() {
       .then(m => {
         setMatches(m)
         setStatus(m.length === 0 ? 'empty' : 'ready')
+        if (targetId) {
+          setSelected(m.find(match => match.matchId === targetId) ?? null)
+        }
       })
       .catch(() => setStatus('error'))
-  }, [])
+  }, [targetId])
 
   const leftContent = selected ? (
     <div className="flex flex-col h-full min-h-0 overflow-y-auto">
@@ -120,8 +126,8 @@ export default function MatchesPage() {
       barColor='#166534'
       barContent={selected ? (
         <>
-          <CharacterMiniCard character={selected.myCharacter} />
-          <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} />
+          <CharacterMiniCard character={selected.myCharacter} characterId={selected.myCharacter.id} />
+          <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} gameId={selected.gameId} />
         </>
       ) : undefined}
       activeTab={"Collection"}

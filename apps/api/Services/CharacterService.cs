@@ -259,6 +259,7 @@ public class CharacterService : ICharacterService
     {
       Id = c.Id,
       UserGameId = c.UserGameId,
+      GameId = c.UserGame.GameId,
       Platform = c.Platform,
       PlatformHandle = c.PlatformHandle,
       Name = c.Name,

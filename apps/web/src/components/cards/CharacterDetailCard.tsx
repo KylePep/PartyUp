@@ -10,7 +10,7 @@ function StatRow({ label, children }: { label: string; children: React.ReactNode
       <span className="text-xs text-muted uppercase tracking-widest w-28 flex-shrink-0 pt-0.5">
         {label}
       </span>
-      <div className="flex flex-wrap gap-1 min-w-0">{children}</div>
+      <div className="flex flex-wrap text-wrap gap-1 min-w-0">{children}</div>
     </div>
   )
 }
@@ -99,7 +99,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
             <h2 className="text-xs text-muted uppercase tracking-widest mb-1 col-span-2">Game Fields</h2>
             {character.gameFields.map(f => (
               <StatRow key={f.key} label={f.label}>
-                <span className="text-sm text-text">{f.value}</span>
+                <span className="text-sm text-text break-all">{f.value}</span>
               </StatRow>
             ))}
           </div>

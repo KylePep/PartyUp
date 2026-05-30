@@ -67,7 +67,7 @@ export function StandardTcgCard({
       {/* Stats line: badges, key attributes */}
       {statsLine && (
         <div
-          className="px-3 py-2 flex-shrink-0"
+          className="px-3 flex-shrink-0"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           {statsLine}
@@ -76,7 +76,7 @@ export function StandardTcgCard({
 
       {/* Text body: bio (flex-1 so it fills remaining space) */}
       {textBody && (
-        <div className="px-3 py-2 flex-1 overflow-hidden">
+        <div className="px-3 py-2 flex flex-col flex-1 overflow-hidden">
           {textBody}
         </div>
       )}
@@ -84,7 +84,7 @@ export function StandardTcgCard({
       {/* Bottom stat: rank/level — right-aligned */}
       {bottomStat && (
         <div
-          className="px-3 py-1.5 flex justify-end flex-shrink-0"
+          className="px-3 py-1 flex justify-end flex-shrink-0"
           style={{ borderTop: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface-raised)' }}
         >
           <span className="font-mono text-xs text-muted">{bottomStat}</span>

@@ -55,7 +55,7 @@ export function DiscoveryPanel({
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex-1 flex flex-col h-full gap-4">
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner label="Scanning the realm..." /></div>
       )}
@@ -67,7 +67,7 @@ export function DiscoveryPanel({
       )}
 
       {status === 'ready' && (
-        <div className="relative mx-auto" style={{ height: '520px', width: "300px" }}>
+        <div className="relative mx-auto w-full h-full min-h-0">
           {queue.slice(0, 2).map((char, i) => (
             <SwipeCard
               key={char.id}

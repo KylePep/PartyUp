@@ -7,13 +7,15 @@ interface FullArtTcgCardProps {
   className?: string
   style?: React.CSSProperties
   children?: React.ReactNode
+  onClick?: () => void
 }
 
-export function FullArtTcgCard({ name, platform, imageUrl, className, style, children }: FullArtTcgCardProps) {
+export function FullArtTcgCard({ name, platform, imageUrl, className, style, children, onClick }: FullArtTcgCardProps) {
   return (
     <div
-      className={`relative overflow-hidden border-4 border-black rounded-xl${className ? ' ' + className : ''}`}
+      className={`relative overflow-hidden border-4 border-black rounded-xl${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
       style={style}
+      onClick={onClick}
     >
       {/* Background image */}
       {imageUrl ? (

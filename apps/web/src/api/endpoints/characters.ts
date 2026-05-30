@@ -12,6 +12,7 @@ export type CharacterGameField = {
 export type Character = {
   id: string;
   userGameId?: string;
+  gameId?: string;
   platform: string;
   platformHandle: string;
   name: string;

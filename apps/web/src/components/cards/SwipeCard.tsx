@@ -14,29 +14,39 @@ interface SwipeCardProps {
 }
 
 function SwipeFront({ character }: { character: DiscoverCharacter }) {
-  const subtitle = [character.region, character.languages?.[0]].filter(Boolean).join(' · ') || undefined
+  const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
+  const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
+  const roleField = character.gameFields.find(gf => gf.commonField === 'role_slot')
+  const factionField = character.gameFields.find(gf => gf.commonField === 'faction_slot')
+  const buildField = character.gameFields.find(gf => gf.commonField === 'build_slot')
+  const serverField = character.gameFields.find(gf => gf.commonField === 'server_slot')
+  const playstyleField = character.gameFields.find(gf => gf.commonField === 'playstyle_slot')
 
-  const statsLine = (character.mainRole || character.rank || character.usesVoiceChat != null) ? (
-    <div className="flex flex-wrap gap-1.5">
-      {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-      {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-      {character.usesVoiceChat != null && (
-        <Badge>{character.usesVoiceChat ? 'Voice ✓' : 'Voice ✗'}</Badge>
-      )}
-    </div>
+
+  const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
+  const statsLine = statsContent ? (
+    <span className="text-xs text-muted font-semibold">{statsContent}</span>
   ) : undefined
+
+  const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')
 
   return (
     <StandardTcgCard
       name={character.name}
       platform={character.platform}
-      subtitle={subtitle}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
-      textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
-      className="w-full h-full"
+      textBody={
+        <>
+          <p className="text-xs text-muted mb-2">{topBioContent}</p>
+          {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+          <p className="flex flex-col flex-1 text-xs text-muted items-center justify-end" style={{ opacity: 0.5 }}>↑ tap for more</p>
+        </>
+      }
+      bottomStat={levelField?.value}
+      className=""
     >
-      <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
+
     </StandardTcgCard>
   )
 }
@@ -49,7 +59,7 @@ function SwipeBack({ character }: { character: DiscoverCharacter }) {
     >
       <div className="px-4 py-3 flex-1 overflow-y-auto">
         <p className="font-display font-bold text-text text-lg mb-3">{character.name}</p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-3">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-3 mb-3">
           {character.mainRole && (
             <div>
               <span className="text-xs text-muted block mb-0.5">Role</span>
@@ -106,11 +116,11 @@ function SwipeBack({ character }: { character: DiscoverCharacter }) {
         {character.gameFields.length > 0 && (
           <div className="mb-3">
             <span className="text-xs text-muted block mb-1">Game Fields</span>
-            <div className="grid grid-cols-2 gap-1">
+            <div className="grid grid-cols-1 gap-1">
               {character.gameFields.map(f => (
                 <div key={f.key} className="text-xs">
                   <span className="text-muted">{f.label}: </span>
-                  <span className="text-text">{f.value}</span>
+                  <span className="text-text break-all">{f.value}</span>
                 </div>
               ))}
             </div>
@@ -140,8 +150,8 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
     ? exiting === 'right'
       ? '[animation:slide-out-right_0.38s_ease_forwards]'
       : exiting === 'left'
-      ? '[animation:slide-out-left_0.38s_ease_forwards]'
-      : '[animation:slide-in-left_0.35s_ease_forwards]'
+        ? '[animation:slide-out-left_0.38s_ease_forwards]'
+        : '[animation:slide-in-left_0.35s_ease_forwards]'
     : '[animation:card-enter_0.35s_ease_forwards]'
 
   return (
@@ -152,11 +162,15 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
         transform: isTop ? undefined : 'scale(0.97) translateY(8px)',
       }}
     >
-      <FlippableCard
-        front={<SwipeFront character={character} />}
-        back={<SwipeBack character={character} />}
-        className="flex-1 min-h-0"
-      />
+      <div className="flex flex-1 items-center justify-center">
+        <div className="h-full aspect-[2/3]">
+          <FlippableCard
+            front={<SwipeFront character={character} />}
+            back={<SwipeBack character={character} />}
+            className="h-full w-full"
+          />
+        </div>
+      </div>
       {isTop && (
         <div className="flex gap-3 flex-shrink-0 mt-2">
           <Button

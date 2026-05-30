@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { Avatar } from '../ui'
 
@@ -10,12 +10,6 @@ interface NavBarProps {
   onSignIn?: () => void
   onSignUp?: () => void
 }
-
-const navLinks: { to: string; label: string }[] = [
-  // { to: '/home', label: 'Home' },
-  // { to: '/characters', label: 'Characters' },
-  // { to: '/matches', label: 'Matches' },
-]
 
 export function NavBar({ variant }: NavBarProps) {
   const { state, logout } = useAuth()
@@ -36,34 +30,18 @@ export function NavBar({ variant }: NavBarProps) {
 
   return (
     <nav
-      className={`z-40 flex w-full h-16 px-6 absolute md:w-52 md:h-screen md:flex-col md:justify-between md:py-8 md:ps-8 md:top-0 ${variant === 'landing'
-        ? ''
-        : ''
+      className={`pointer-events-none z-40 flex w-full h-16 px-6 absolute md:w-52 md:h-screen md:flex-col md:justify-between md:py-8 md:ps-8 md:top-0
+ ${variant === 'landing'
+          ? ''
+          : ''
         }`}
     >
-      <Link to="/home" className="font-display font-bold text-text text-lg tracking-wide">
+      <Link to="/home" className="pointer-events-auto font-display font-bold text-text text-lg tracking-wide">
         PartyUp
       </Link>
 
-      {/* {variant === 'app' && (
-        <div className="hidden md:flex flex-col gap-6 h-full justify-center mt-6 w-full">
-          {navLinks.map(link => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `text-xs font-mono uppercase tracking-widest transition-colors ${isActive ? 'text-accent' : 'text-white hover:text-text'
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-        </div>
-      )} */}
-
       {variant === 'app' && username && (
-        <div className="relative" ref={dropdownRef}>
+        <div className="pointer-events-auto relative" ref={dropdownRef}>
           <button
             onClick={() => setDropdownOpen(o => !o)}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"

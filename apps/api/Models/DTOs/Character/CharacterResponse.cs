@@ -4,6 +4,7 @@ public class CharacterResponse
 {
   public Guid Id { get; set; }
   public Guid UserGameId { get; set; }
+  public Guid GameId { get; set; }
 
   public string Platform { get; set; } = default!;
   public string PlatformHandle { get; set; } = default!;

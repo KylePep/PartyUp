@@ -56,12 +56,20 @@ export default function RealmPage() {
       )}
       <BinderLayout
         barColor="#381b03"
-        barContent={character ? (
+        barContent={
           <>
-            <CharacterMiniCard character={character} />
-            <GameMiniCard game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }} />
+            {character ? (
+              <>
+                <CharacterMiniCard character={character} characterId={character.id} />
+              </>
+            ) : undefined}
+            {userGame ? (
+              <>
+                <GameMiniCard game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }} userGameId={userGame.id} />
+              </>
+            ) : undefined}
           </>
-        ) : undefined}
+        }
         activeTab=""
         leftContent={
           <RealmLeftPage

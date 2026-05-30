@@ -1,13 +1,12 @@
 interface LandCardProps {
   name: string
   imageUrl?: string
-  playerCount?: number
   className?: string
   onClick?: () => void
   children?: React.ReactNode
 }
 
-export function LandCard({ name, imageUrl, playerCount, className, onClick, children }: LandCardProps) {
+export function LandCard({ name, imageUrl, className, onClick, children }: LandCardProps) {
   return (
     <div
       className={`h-full rounded-xl overflow-hidden flex flex-col p-2 gap-2 ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
@@ -33,17 +32,12 @@ export function LandCard({ name, imageUrl, playerCount, className, onClick, chil
         )}
       </div>
       {/* Footer: children (Enter button etc.) + player count */}
-      {(children != null || playerCount !== undefined) && (
+      {(children != null) && (
         <div
           className=" py-2 flex flex-col gap-2 flex-1 min-h-0 justify-between"
         >
           {children}
 
-          {playerCount !== undefined && (
-            <p className="text-xs font-mono text-muted text-right">
-              {playerCount > 0 ? `${playerCount} players` : 'Be the first!'}
-            </p>
-          )}
         </div>
       )}
     </div>

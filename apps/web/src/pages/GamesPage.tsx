@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Button, EmptyState, Spinner } from '../components/ui'
@@ -7,6 +7,8 @@ import { LandCard } from '../components/cards/LandCard'
 import DOMPurify from 'dompurify'
 
 export default function GamesPage() {
+  const [searchParams] = useSearchParams()
+  const targetId = searchParams.get('id')
   const [games, setGames] = useState<UserGame[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<UserGame | null>(null)
@@ -20,9 +22,19 @@ export default function GamesPage() {
       .then(gs => {
         setGames(gs)
         setStatus(gs.length === 0 ? 'empty' : 'ready')
+        if (targetId) {
+          const match = gs.find(g => g.id === targetId)
+          if (match) {
+            setSelected(match)
+            setDetailLoading(true)
+            getUserGameByGameId(match.gameId)
+              .then(detail => setSelectedDetail(detail))
+              .finally(() => setDetailLoading(false))
+          }
+        }
       })
       .catch(() => setStatus('error'))
-  }, [])
+  }, [targetId])
 
   function handleSelect(game: UserGame) {
     setSelected(game)

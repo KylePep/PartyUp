@@ -19,9 +19,9 @@ export function CharacterGallery({ characters, status, selectedId, onSelect }: C
   }
   return (
     <>
-      <p className="text-xs font-mono text-muted mb-4">
+      {/* <p className="text-xs font-mono text-muted mb-4">
         {characters.length} / {CHARACTER_LIMIT} characters
-      </p>
+      </p> */}
       {status === 'empty' ? (
         <EmptyState message="You haven't created any characters yet" />
       ) : (

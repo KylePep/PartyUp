@@ -19,11 +19,18 @@ export function CharacterCard({ character, onSelect }: CharacterCardProps) {
 
   const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
   const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
+  const roleField = character.gameFields.find(gf => gf.commonField === 'role_slot')
+  const factionField = character.gameFields.find(gf => gf.commonField === 'faction_slot')
+  const buildField = character.gameFields.find(gf => gf.commonField === 'build_slot')
+  const serverField = character.gameFields.find(gf => gf.commonField === 'server_slot')
+  const playstyleField = character.gameFields.find(gf => gf.commonField === 'playstyle_slot')
 
   const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
   const statsLine = statsContent ? (
     <span className="text-xs text-muted font-semibold">{statsContent}</span>
   ) : undefined
+
+  const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')
 
   return (
     <StandardTcgCard
@@ -31,7 +38,12 @@ export function CharacterCard({ character, onSelect }: CharacterCardProps) {
       platform={character.platform}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
-      textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+      textBody={
+        <>
+          <p className="text-xs text-muted mb-2">{topBioContent}</p>
+          {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+        </>
+      }
       bottomStat={levelField?.value}
       onClick={handleClick}
     />

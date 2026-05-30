@@ -1,4 +1,5 @@
-import { Badge } from '../ui'
+import { useNavigate } from 'react-router-dom'
+import { Badge, Button } from '../ui'
 import { FlippableCard } from './FlippableCard'
 import { StandardTcgCard } from './StandardTcgCard'
 import type { Character } from '../../api/endpoints/characters'
@@ -7,33 +8,29 @@ interface MatchCardProps {
   character: Character
   gameName: string
   matchedAt: string
+  matchId: string
   onSelect?: (character: Character) => void
 }
 
 
 function MatchFront({ character }: MatchCardProps) {
 
-  const hasStats = character.mainRole || character.rank || character.usesVoiceChat != null || character.region || character.languages?.length
-  const statsLine = hasStats ? (
-    <div className="flex flex-wrap gap-1.5">
-      {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-      {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-      {character.usesVoiceChat != null && (
-        <Badge>{character.usesVoiceChat ? 'Voice ✓' : 'Voice ✗'}</Badge>
-      )}
-      {character.region && <Badge variant="region">{character.region}</Badge>}
-      {character.languages?.[0] && <Badge>{character.languages[0]}</Badge>}
-    </div>
+  const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
+  const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
+
+  const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
+  const statsLine = statsContent ? (
+    <span className="text-xs text-muted font-semibold">{statsContent}</span>
   ) : undefined
 
   return (
     <StandardTcgCard
       name={character.name}
       platform={character.platform}
-      subtitle={character.gameName}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
       textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+      bottomStat={levelField?.value}
       className="w-full h-full"
     >
       <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
@@ -41,7 +38,8 @@ function MatchFront({ character }: MatchCardProps) {
   )
 }
 
-function MatchBack({ character, gameName, matchedAt }: MatchCardProps) {
+function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) {
+  const navigate = useNavigate()
   const date = new Date(matchedAt).toLocaleDateString()
   return (
     <div
@@ -87,7 +85,7 @@ function MatchBack({ character, gameName, matchedAt }: MatchCardProps) {
         {character.gameFields.length > 0 && (
           <div className="mb-3">
             <span className="text-xs text-muted block mb-1">Game Fields</span>
-            <div className="grid grid-cols-2 gap-1">
+            <div className="grid grid-cols-1 gap-1">
               {character.gameFields.map(f => (
                 <div key={f.key} className="text-xs">
                   <span className="text-muted">{f.label}: </span>
@@ -105,17 +103,22 @@ function MatchBack({ character, gameName, matchedAt }: MatchCardProps) {
         )}
         <p className="text-xs text-muted mt-3">Matched {date}</p>
       </div>
+      <div className="px-4 pb-2 flex justify-end" style={{ position: 'relative', zIndex: 20 }}>
+        <Button size="sm" variant="ghost" onClick={() => navigate(`/matches?id=${matchId}`)}>
+          View Match →
+        </Button>
+      </div>
       <p className="text-xs text-muted text-center py-2" style={{ opacity: 0.5 }}>tap to flip back</p>
     </div>
   )
 }
 
-export function MatchCard({ character, gameName, matchedAt, onSelect }: MatchCardProps) {
+export function MatchCard({ character, gameName, matchedAt, matchId, onSelect }: MatchCardProps) {
   return (
     <div className="min-h-50">
       <FlippableCard
-        front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} />}
-        back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} />}
+        front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
+        back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         onFrontClick={onSelect ? () => onSelect(character) : undefined}
         className="h-full"
       />
