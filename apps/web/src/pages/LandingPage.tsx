@@ -7,7 +7,7 @@ type ModalMode = 'sign-in' | 'sign-up'
 
 const steps = [
   { n: 1, title: 'Find your game', body: 'Search from thousands of titles and add it to your account.' },
-  { n: 2, title: 'Build your character', body: 'Set your role, rank, playstyle, and availability.' },
+  { n: 2, title: 'Build your character', body: 'Fill out game-specific fields, set your availability, and write your bio.' },
   { n: 3, title: 'Set your handle', body: 'Your platform handle stays private — only revealed after a match.' },
   { n: 4, title: 'Swipe on players', body: 'Discover characters in your game and like the ones you want to party with.' },
   { n: 5, title: 'Match and connect', body: 'A mutual like reveals both handles so you can link up directly.' },
