@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Badge, Button } from '../ui'
+import { Button } from '../ui'
 import { FlippableCard } from './FlippableCard'
 import { StandardTcgCard } from './StandardTcgCard'
 import type { Character } from '../../api/endpoints/characters'
@@ -50,38 +50,6 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
         <p className="text-sm text-muted mb-1">{character.name}</p>
         <p className="text-sm text-muted mb-1">{gameName}</p>
         <p className="text-sm text-muted mb-1">{character.platform}</p>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-3">
-          {character.mainRole && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Role</span>
-              <Badge variant="role">{character.mainRole}</Badge>
-            </div>
-          )}
-          {character.secondaryRole && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Alt Role</span>
-              <Badge variant="role">{character.secondaryRole}</Badge>
-            </div>
-          )}
-          {character.rank && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Rank</span>
-              <Badge variant="rank">{character.rank}</Badge>
-            </div>
-          )}
-          {character.region && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Region</span>
-              <Badge variant="region">{character.region}</Badge>
-            </div>
-          )}
-          {character.playstyle && (
-            <div>
-              <span className="text-xs text-muted block mb-0.5">Playstyle</span>
-              <Badge>{character.playstyle}</Badge>
-            </div>
-          )}
-        </div>
         {character.gameFields.length > 0 && (
           <div className="mb-3">
             <span className="text-xs text-muted block mb-1">Game Fields</span>
@@ -96,9 +64,15 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
           </div>
         )}
         {character.bio && (
-          <div>
+          <div className="mb-3">
             <span className="text-xs text-muted block mb-1">Bio</span>
             <p className="text-sm text-text leading-relaxed">{character.bio}</p>
+          </div>
+        )}
+        {character.additionalNotes && (
+          <div className="mb-3">
+            <span className="text-xs text-muted block mb-1">Notes</span>
+            <p className="text-sm text-text leading-relaxed">{character.additionalNotes}</p>
           </div>
         )}
         <p className="text-xs text-muted mt-3">Matched {date}</p>
