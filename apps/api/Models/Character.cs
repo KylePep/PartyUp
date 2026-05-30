@@ -28,14 +28,6 @@ public class Character
   [MaxLength(1000)]
   public string? Bio { get; set; }
 
-  [MaxLength(50)]
-  public string? MainRole { get; set; }
-
-  [MaxLength(50)]
-  public string? SecondaryRole { get; set; }
-
-  public List<string> PreferredModes { get; set; } = [];
-
   public string? TimeZone { get; set; }
   public string[]? ActiveTimes { get; set; }
 
@@ -43,14 +35,8 @@ public class Character
 
   public string[]? Languages { get; set; }
 
-  [MaxLength(100)]
-  public string? Playstyle { get; set; }
-
-  [MaxLength(50)]
-  public string? Rank { get; set; }
-
-  [MaxLength(50)]
-  public string? Region { get; set; }
+  [MaxLength(1000)]
+  public string? AdditionalNotes { get; set; }
 
   public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
   public List<CharacterFieldValue> FieldValues { get; set; } = [];
