@@ -6,11 +6,7 @@ export type CharacterSummary = {
   name: string;
   imageUrl?: string;
   bio?: string;
-  mainRole?: string;
-  secondaryRole?: string;
-  playstyle?: string;
-  rank?: string;
-  region?: string;
+  additionalNotes?: string;
   platformHandle: string;
   gameFields: CharacterGameField[];
 };
