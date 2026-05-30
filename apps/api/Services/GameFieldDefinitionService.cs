@@ -32,7 +32,8 @@ public class GameFieldDefinitionService : IGameFieldDefinitionService
             Options = dto.Options,
             IsFilterable = dto.IsFilterable,
             IsRequired = dto.IsRequired,
-            SortOrder = dto.SortOrder
+            SortOrder = dto.SortOrder,
+            CommonField = dto.CommonField
         }).ToList();
 
         _db.GameFieldDefinitions.AddRange(definitions);

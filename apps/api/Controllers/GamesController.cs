@@ -80,7 +80,8 @@ public class GamesController : ControllerBase
         Options = d.Options,
         IsFilterable = d.IsFilterable,
         IsRequired = d.IsRequired,
-        SortOrder = d.SortOrder
+        SortOrder = d.SortOrder,
+        CommonField = d.CommonField
       }).ToList()
     };
 
