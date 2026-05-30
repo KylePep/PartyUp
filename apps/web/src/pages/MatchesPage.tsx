@@ -3,6 +3,8 @@ import { getMatches, type CharacterMatchDto, type CharacterSummary } from '../ap
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Badge, EmptyState, Spinner } from '../components/ui'
 import { MatchGallery } from '../components/MatchGallery'
+import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
+import { GameMiniCard } from '../components/cards/GameMiniCard'
 
 function MatchCharacterDetail({ character }: { character: CharacterSummary }) {
   return (
@@ -50,6 +52,7 @@ function MatchCharacterDetail({ character }: { character: CharacterSummary }) {
   )
 }
 
+
 export default function MatchesPage() {
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
@@ -87,11 +90,6 @@ export default function MatchesPage() {
         <MatchCharacterDetail character={selected.theirCharacter} />
       </div>
 
-      {/* My character */}
-      <div className="px-4 py-4">
-        <p className="text-xs text-muted uppercase tracking-widest mb-3">Your Character</p>
-        <MatchCharacterDetail character={selected.myCharacter} />
-      </div>
     </div>
   ) : (
     <div className="flex items-center justify-center h-full">
@@ -120,6 +118,12 @@ export default function MatchesPage() {
   return (
     <BinderLayout
       barColor='#166534'
+      barContent={selected ? (
+        <>
+          <CharacterMiniCard character={selected.myCharacter} />
+          <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} />
+        </>
+      ) : undefined}
       tabs={[
         { label: 'My Cards', textColor: "#ffffff", color: '#000000', to: "/characters" },
         { label: 'Games', textColor: "#ffffff", color: '#000000', to: "/games" },

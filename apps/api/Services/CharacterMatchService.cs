@@ -46,7 +46,8 @@ public class CharacterMatchService : ICharacterMatchService
                 MyCharacter = ToSummary(mine),
                 TheirCharacter = ToProjection(theirs),
                 GameId = mine.UserGame.GameId,
-                GameName = mine.UserGame.Game.Name
+                GameName = mine.UserGame.Game.Name,
+                GameImageUrl = mine.UserGame.Game.ImageUrl
             };
         }).ToList();
     }

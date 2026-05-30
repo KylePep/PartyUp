@@ -36,7 +36,7 @@ export function NavBar({ variant }: NavBarProps) {
 
   return (
     <nav
-      className={`z-40 flex w-full h-16 px-6 absolute md:w-64 md:h-screen md:flex-col md:justify-between md:py-8 md:ps-8 md:top-0 ${variant === 'landing'
+      className={`z-40 flex w-full h-16 px-6 absolute md:w-52 md:h-screen md:flex-col md:justify-between md:py-8 md:ps-8 md:top-0 ${variant === 'landing'
         ? ''
         : ''
         }`}
@@ -45,8 +45,8 @@ export function NavBar({ variant }: NavBarProps) {
         PartyUp
       </Link>
 
-      {variant === 'app' && (
-        <div className="hidden md:flex flex-col gap-6 h-full justify-center mt-6">
+      {/* {variant === 'app' && (
+        <div className="hidden md:flex flex-col gap-6 h-full justify-center mt-6 w-full">
           {navLinks.map(link => (
             <NavLink
               key={link.to}
@@ -60,7 +60,7 @@ export function NavBar({ variant }: NavBarProps) {
             </NavLink>
           ))}
         </div>
-      )}
+      )} */}
 
       {variant === 'app' && username && (
         <div className="relative" ref={dropdownRef}>

@@ -3,6 +3,8 @@ import { getCharacters, deleteCharacter, type Character } from '../api/endpoints
 import { getUserGames, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { CharacterGallery } from '../components/CharacterGallery'
 import { BinderLayout } from '../components/layout/BinderLayout'
+import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
+import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
 import { CreateCharacterWizard } from '../components/character-wizard/CreateCharacterWizard'
 import type { CharacterFormData } from '../components/character-wizard/types'
@@ -140,6 +142,12 @@ export default function CharactersPage() {
   return (
     <BinderLayout
       barColor='#991b1b'
+      barContent={selected ? (
+        <>
+          <CharacterMiniCard character={selected} />
+          {selected.gameName && <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} />}
+        </>
+      ) : undefined}
       tabs={[
         { label: 'My Cards', textColor: "#ffd900", color: '#000000', to: "/characters" },
         { label: 'Games', textColor: "#ffffff", color: '#1e40af', to: "/games" },

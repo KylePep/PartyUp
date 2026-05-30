@@ -1,8 +1,7 @@
-import type { Character } from '../../api/endpoints/characters'
 import { FullArtTcgCard } from './FullArtTcgCard'
 
 interface CharacterMiniCardProps {
-  character: Character
+  character: { name: string; imageUrl?: string }
 }
 
 export function CharacterMiniCard({ character }: CharacterMiniCardProps) {
@@ -10,7 +9,7 @@ export function CharacterMiniCard({ character }: CharacterMiniCardProps) {
     <FullArtTcgCard
       name={character.name}
       imageUrl={character.imageUrl}
-      className="w-36 shrink-0"
+      className="w-40 shrink-0"
       style={{ aspectRatio: '2/3' }}
     />
   )

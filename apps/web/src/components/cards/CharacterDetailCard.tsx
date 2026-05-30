@@ -1,4 +1,4 @@
-import { Badge, Button } from '../ui'
+import { Badge, Button, PlatformIcon } from '../ui'
 import type { Character } from '../../api/endpoints/characters'
 
 function StatRow({ label, children }: { label: string; children: React.ReactNode }) {
@@ -66,16 +66,23 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           {character.gameName && (
             <p className="text-xs text-accent font-display mb-0.5">{character.gameName}</p>
           )}
-          <p className="text-xs text-muted mb-3">{character.platform}</p>
+          <div className="flex items-center gap-2 mb-3">
+            <PlatformIcon platform={character.platform} size={22} />
+            <span className="text-xs text-muted">{character.platform}</span>
+          </div>
           <div className="flex flex-wrap gap-1.5">
             {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
             {character.languages && character.languages.length > 0 && (
               <>
-                {character.languages.map(l => <Badge key={l}>{l}</Badge>)}
+                {character.languages.map(l => <Badge key={l}>{l + " "}</Badge>)}
               </>
             )}
             {character.timeZone && <Badge variant="region">{character.timeZone}</Badge>}
-            {character.activeTimes && <Badge variant="region">{character.activeTimes}</Badge>}
+            {character.activeTimes && character.activeTimes.length > 0 && (
+              <>
+                {character.activeTimes.map(l => <Badge variant='rank' key={l}>{l + " "}</Badge>)}
+              </>
+            )}
           </div>
         </div>
       </div>

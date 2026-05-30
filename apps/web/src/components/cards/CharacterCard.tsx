@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Badge, Button } from '../ui'
+import { Badge } from '../ui'
 import type { Character } from '../../api/endpoints/characters'
 import { StandardTcgCard } from './StandardTcgCard'
 
@@ -10,7 +10,7 @@ interface CharacterCardProps {
   onSelect?: (character: Character) => void
 }
 
-export function CharacterCard({ character, onEdit, onDelete, onSelect }: CharacterCardProps) {
+export function CharacterCard({ character, onSelect }: CharacterCardProps) {
   const navigate = useNavigate()
 
   function handleClick() {
@@ -18,7 +18,7 @@ export function CharacterCard({ character, onEdit, onDelete, onSelect }: Charact
     else navigate(`/characters/${character.id}`)
   }
 
-  const subtitle = [character.gameName, character.platform].filter(Boolean).join(' · ') || undefined
+  const subtitle = [character.gameName,].filter(Boolean).join(' · ') || undefined
 
   const hasStats = character.mainRole || character.rank || character.usesVoiceChat != null || character.region || character.languages?.length
   const statsLine = hasStats ? (
@@ -36,6 +36,7 @@ export function CharacterCard({ character, onEdit, onDelete, onSelect }: Charact
   return (
     <StandardTcgCard
       name={character.name}
+      platform={character.platform}
       subtitle={subtitle}
       imageUrl={character.imageUrl}
       statsLine={statsLine}

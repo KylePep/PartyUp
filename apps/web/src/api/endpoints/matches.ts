@@ -22,6 +22,7 @@ export type CharacterMatchDto = {
   theirCharacter: Character;
   gameId: string;
   gameName: string;
+  gameImageUrl?: string;
 };
 
 export function getMatches(gameId?: string): Promise<CharacterMatchDto[]> {

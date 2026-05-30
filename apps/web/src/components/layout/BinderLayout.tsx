@@ -19,7 +19,7 @@ export function BinderLayout({ barColor, barContent, leftContent, rightContent, 
         <div className="flex border-r border-border h-full">
           {/* Spine bar */}
           <div
-            className="min-w-48 flex flex-col items-center pt-16 shrink-0 h-full"
+            className="min-w-48 flex flex-col items-center pt-12 shrink-0 h-full gap-4"
             style={{ backgroundColor: barColor }}
           >
             {barContent}

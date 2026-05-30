@@ -1,3 +1,5 @@
+import { PlatformIcon } from '../ui'
+
 interface FullArtTcgCardProps {
   name: string
   platform?: string
@@ -26,9 +28,7 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, chi
       <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent px-3 py-2">
         <div className="flex items-center justify-between">
           <span className="font-display text-white text-sm font-bold truncate">{name}</span>
-          {platform && (
-            <span className="text-xs font-mono text-white/80 ml-2 flex-shrink-0">{platform}</span>
-          )}
+          {platform && <PlatformIcon platform={platform} size={22} />}
         </div>
       </div>
 

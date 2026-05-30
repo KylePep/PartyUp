@@ -4,6 +4,7 @@ import { getUserGameByGameId, type UserGameDetail } from '../api/endpoints/userG
 import { getUserGameCharacters, type Character } from '../api/endpoints/characters'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
+import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { RealmLeftPage } from '../components/RealmLeftPage'
 import { RealmRightPage } from '../components/RealmRightPage'
 import { Spinner } from '../components/ui'
@@ -55,7 +56,12 @@ export default function RealmPage() {
       )}
       <BinderLayout
         barColor="#381b03"
-        barContent={character ? <CharacterMiniCard character={character} /> : undefined}
+        barContent={character ? (
+          <>
+            <CharacterMiniCard character={character} />
+            <GameMiniCard game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }} />
+          </>
+        ) : undefined}
         tabs={[
           { label: 'My Cards', textColor: "#ffffff", color: '#991b1b', to: "/characters" },
           { label: 'Games', textColor: "#ffffff", color: '#1e40af', to: "/games" },

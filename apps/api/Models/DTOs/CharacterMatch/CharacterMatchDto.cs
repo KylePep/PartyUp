@@ -10,6 +10,7 @@ public class CharacterMatchDto
     public CharacterResponse TheirCharacter { get; set; } = default!;
     public Guid GameId { get; set; }
     public string GameName { get; set; } = default!;
+    public string? GameImageUrl { get; set; }
 }
 
 public class CharacterSummaryDto

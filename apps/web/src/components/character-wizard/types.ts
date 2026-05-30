@@ -1,9 +1,9 @@
 export const PLATFORMS = ['PC', 'PlayStation', 'Xbox', 'Nintendo Switch', 'Mobile']
 
 export const ALL_PLATFORMS: { group: string; platforms: string[] }[] = [
-  { group: 'PC / Desktop', platforms: ['PC (Windows)', 'Mac', 'Linux', 'Steam Deck'] },
+  { group: 'PC / Desktop', platforms: ['PC', 'macOS', 'Linux', 'Steam Deck'] },
   { group: 'Xbox', platforms: ['Xbox One', 'Xbox One S', 'Xbox One X', 'Xbox Series S', 'Xbox Series X'] },
-  { group: 'PlayStation', platforms: ['PS4', 'PS4 Pro', 'PS5', 'PS5 Pro'] },
+  { group: 'PlayStation', platforms: ['PlayStation 4', 'PlayStation 4 Pro', 'PlayStation 5', 'PlayStation 5 Pro'] },
   { group: 'Nintendo', platforms: ['Nintendo Switch', 'Nintendo Switch Lite', 'Nintendo Switch OLED'] },
   { group: 'Mobile', platforms: ['iOS', 'Android'] },
 ]

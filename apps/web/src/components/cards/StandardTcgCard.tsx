@@ -1,3 +1,5 @@
+import { PlatformIcon } from '../ui'
+
 interface StandardTcgCardProps {
   name: string
   platform?: string
@@ -32,20 +34,17 @@ export function StandardTcgCard({
       <div>
         {/* Header: name (left) + platform (right) */}
         <div
-          className="flex items-center justify-between px-3 flex-shrink-0"
+          className="flex items-center justify-between px-1 flex-shrink-0"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           <span className="font-display font-semibold text-text text-sm truncate">{name}</span>
-          {platform && (
-            <span className="text-xs font-mono text-muted ml-2 flex-shrink-0 truncate max-w-[45%]">{platform}</span>
-          )}
-
-
+          <span>{platform && <PlatformIcon platform={platform} size={22} />} </span>
         </div>
+
         {/* Subtitle: region · language */}
         {subtitle && (
-          <div className="px-3 flex-shrink-0">
-            <span className="text-xs text-muted italic">{subtitle}</span>
+          <div className="px-1 flex-shrink-0 flex justify-between">
+            <span className="text-xs text-muted italic">{subtitle}  </span>
           </div>
         )}
       </div>

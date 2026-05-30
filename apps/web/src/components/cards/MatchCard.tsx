@@ -13,8 +13,6 @@ interface MatchCardProps {
 
 function MatchFront({ character }: MatchCardProps) {
 
-  const subtitle = [character.gameName, character.platform].filter(Boolean).join(' · ') || undefined
-
   const hasStats = character.mainRole || character.rank || character.usesVoiceChat != null || character.region || character.languages?.length
   const statsLine = hasStats ? (
     <div className="flex flex-wrap gap-1.5">
@@ -31,8 +29,8 @@ function MatchFront({ character }: MatchCardProps) {
   return (
     <StandardTcgCard
       name={character.name}
-      platform={""}
-      subtitle={subtitle}
+      platform={character.platform}
+      subtitle={character.gameName}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
       textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
@@ -51,7 +49,9 @@ function MatchBack({ character, gameName, matchedAt }: MatchCardProps) {
     >
       <div className="px-4 py-3 flex-1 overflow-y-auto overflow-x-hidden">
         <p className="font-display font-bold text-text text-lg">{character.platformHandle}</p>
-        <p className="text-sm text-muted mb-3">{character.name} · {gameName}</p>
+        <p className="text-sm text-muted mb-1">{character.name}</p>
+        <p className="text-sm text-muted mb-1">{gameName}</p>
+        <p className="text-sm text-muted mb-1">{character.platform}</p>
         <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-3">
           {character.mainRole && (
             <div>
