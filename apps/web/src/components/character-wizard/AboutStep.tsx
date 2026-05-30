@@ -17,6 +17,14 @@ export function AboutStep({ data, onChange }: AboutStepProps) {
         maxLength={500}
         rows={6}
       />
+      <Textarea
+        label="Additional Notes"
+        placeholder="Anything else you'd like teammates to know?"
+        value={data.additionalNotes}
+        onChange={e => onChange({ additionalNotes: e.target.value })}
+        maxLength={1000}
+        rows={4}
+      />
     </div>
   )
 }

@@ -4,7 +4,6 @@ import { useFieldDefinitions } from '../../hooks/useFieldDefinitions'
 import { Button } from '../ui'
 import { IdentityStep } from './IdentityStep'
 import { GameplayStep } from './GameplayStep'
-import { DynamicGameplayStep } from './DynamicGameplayStep'
 import { AvailabilityStep } from './AvailabilityStep'
 import { AboutStep } from './AboutStep'
 import { defaultFormData, type CharacterFormData } from './types'
@@ -19,14 +18,10 @@ interface CreateCharacterWizardProps {
   initialData?: Partial<CharacterFormData>
 }
 
-export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess, mode = 'create', characterId, initialData }: CreateCharacterWizardProps) {
-  const { data: fieldDefs, loading: loadingFields } = useFieldDefinitions(gameId)
-  const hasDynamicFields =
-    fieldDefs?.schemaStatus === 'Generated' && fieldDefs.fields.length > 0
+const STEPS = ['Identity', 'Gameplay', 'Availability', 'About'] as const
 
-  const STEPS = hasDynamicFields
-    ? (['Identity', 'Game Fields', 'Availability', 'About'] as const)
-    : (['Identity', 'Gameplay', 'Availability', 'About'] as const)
+export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess, mode = 'create', characterId, initialData }: CreateCharacterWizardProps) {
+  const { data: fieldDefs } = useFieldDefinitions(gameId)
 
   const [step, setStep] = useState(0)
   const [data, setData] = useState<CharacterFormData>({ ...defaultFormData, ...initialData })
@@ -71,32 +66,21 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
         name: data.name.trim(),
         imageUrl,
         bio: data.bio.trim() || undefined,
-        mainRole: data.mainRole || undefined,
-        secondaryRole: data.secondaryRole || undefined,
-        preferredModes: data.preferredModes,
-        playstyle: data.playstyle || undefined,
-        rank: data.rank || undefined,
-        region: data.region || undefined,
+        additionalNotes: data.additionalNotes.trim() || undefined,
         timeZone: data.timeZone.trim() || undefined,
         activeTimes: data.activeTimes.length > 0 ? data.activeTimes : undefined,
         usesVoiceChat: data.usesVoiceChat,
         languages: data.languages.length > 0 ? data.languages : undefined,
       }
 
+      const validIds = new Set(fieldDefs?.fields.map(f => f.id) ?? [])
+      const gameFields = Object.entries(data.gameFields)
+        .filter(([id, v]) => v !== '' && validIds.has(id))
+        .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
+
       if (mode === 'edit' && characterId) {
-        const validIds = new Set(fieldDefs?.fields.map(f => f.id) ?? [])
-        const gameFields = hasDynamicFields
-          ? Object.entries(data.gameFields)
-            .filter(([id, v]) => v !== '' && validIds.has(id))
-            .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
-          : undefined
         await updateCharacter(userGameId, characterId, { ...payload, gameFields })
       } else {
-        const gameFields = hasDynamicFields
-          ? Object.entries(data.gameFields)
-            .filter(([, v]) => v !== '')
-            .map(([fieldDefinitionId, value]) => ({ fieldDefinitionId, value }))
-          : undefined
         await createCharacter({ userGameId, ...payload, gameFields })
       }
       onSuccess()
@@ -111,15 +95,14 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
   function renderStep() {
     const label = STEPS[step]
     if (label === 'Identity') return <IdentityStep data={data} onChange={patch} platforms={platforms} />
-    if (label === 'Game Fields')
+    if (label === 'Gameplay')
       return (
-        <DynamicGameplayStep
+        <GameplayStep
           fields={fieldDefs?.fields ?? []}
           values={data.gameFields}
           onChange={setGameField}
         />
       )
-    if (label === 'Gameplay') return <GameplayStep data={data} onChange={patch} />
     if (label === 'Availability') return <AvailabilityStep data={data} onChange={patch} />
     if (label === 'About') return <AboutStep data={data} onChange={patch} />
   }
@@ -128,12 +111,6 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
     <div className="flex flex-col h-full gap-8 overflow-y-auto"
       style={{ height: 'calc(100vh - 6rem)' }}
     >
-      {loadingFields && (
-        <p className="text-xs font-mono text-muted text-center animate-pulse">
-          Loading game fields...
-        </p>
-      )}
-
       {/* Progress indicator */}
       <div className="flex items-center gap-2">
         {STEPS.map((label, i) => (

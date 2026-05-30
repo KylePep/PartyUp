@@ -1,75 +1,71 @@
+import { Input } from '../ui'
 import { ToggleButtonGroup } from '../forms/ToggleButtonGroup'
-import { type CharacterFormData, ROLES, PREFERRED_MODES, PLAYSTYLES, RANKS, REGIONS } from './types'
+import { type GameFieldDefinition } from '../../api/endpoints/games'
 
 interface GameplayStepProps {
-  data: CharacterFormData
-  onChange: (patch: Partial<CharacterFormData>) => void
+  fields: GameFieldDefinition[]
+  values: Record<string, string>
+  onChange: (fieldId: string, value: string) => void
 }
 
 const toOptions = (arr: string[]) => arr.map(v => ({ value: v, label: v }))
 
-export function GameplayStep({ data, onChange }: GameplayStepProps) {
+export function GameplayStep({ fields, values, onChange }: GameplayStepProps) {
+  if (fields.length === 0) {
+    return (
+      <p className="text-sm font-mono text-muted text-center py-8">
+        No game-specific fields available yet.
+      </p>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Main Role</p>
-        <ToggleButtonGroup
-          options={toOptions(ROLES)}
-          value={data.mainRole ? [data.mainRole] : []}
-          multiple={false}
-          onChange={vals => onChange({ mainRole: vals[0] ?? '' })}
-        />
-      </div>
+      {fields.map(field => {
+        const current = values[field.id] ?? ''
 
-      <div>
-        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Secondary Role</p>
-        <ToggleButtonGroup
-          options={toOptions(ROLES)}
-          value={data.secondaryRole ? [data.secondaryRole] : []}
-          multiple={false}
-          onChange={vals => onChange({ secondaryRole: vals[0] ?? '' })}
-        />
-      </div>
+        if (field.type === 'Text') {
+          return (
+            <Input
+              key={field.id}
+              label={field.label + (field.isRequired ? ' *' : '')}
+              value={current}
+              onChange={e => onChange(field.id, e.target.value)}
+            />
+          )
+        }
 
-      <div>
-        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Preferred Modes</p>
-        <ToggleButtonGroup
-          options={toOptions(PREFERRED_MODES)}
-          value={data.preferredModes}
-          multiple={true}
-          onChange={vals => onChange({ preferredModes: vals })}
-        />
-      </div>
+        if (field.type === 'MultiSelect') {
+          const selected = current ? current.split('|') : []
+          return (
+            <div key={field.id}>
+              <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">
+                {field.label}{field.isRequired ? ' *' : ''}
+              </p>
+              <ToggleButtonGroup
+                options={toOptions(field.options)}
+                value={selected}
+                multiple={true}
+                onChange={vals => onChange(field.id, vals.join('|'))}
+              />
+            </div>
+          )
+        }
 
-      <div>
-        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Playstyle</p>
-        <ToggleButtonGroup
-          options={toOptions(PLAYSTYLES)}
-          value={data.playstyle ? [data.playstyle] : []}
-          multiple={false}
-          onChange={vals => onChange({ playstyle: vals[0] ?? '' })}
-        />
-      </div>
-
-      <div>
-        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Rank</p>
-        <ToggleButtonGroup
-          options={toOptions(RANKS)}
-          value={data.rank ? [data.rank] : []}
-          multiple={false}
-          onChange={vals => onChange({ rank: vals[0] ?? '' })}
-        />
-      </div>
-
-      <div>
-        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Region</p>
-        <ToggleButtonGroup
-          options={toOptions(REGIONS)}
-          value={data.region ? [data.region] : []}
-          multiple={false}
-          onChange={vals => onChange({ region: vals[0] ?? '' })}
-        />
-      </div>
+        return (
+          <div key={field.id}>
+            <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">
+              {field.label}{field.isRequired ? ' *' : ''}
+            </p>
+            <ToggleButtonGroup
+              options={toOptions(field.options)}
+              value={current ? [current] : []}
+              multiple={false}
+              onChange={vals => onChange(field.id, vals[0] ?? '')}
+            />
+          </div>
+        )
+      })}
     </div>
   )
 }
