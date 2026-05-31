@@ -42,6 +42,10 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
   function canAdvance() {
     if (step === 0)
       return data.platform.trim() !== '' && data.platformHandle.trim() !== '' && data.name.trim() !== ''
+    if (step === 1) {
+      const required = fieldDefs?.fields.filter(f => f.isRequired) ?? []
+      return required.every(f => (data.gameFields[f.id] ?? '').trim() !== '')
+    }
     return true
   }
 
