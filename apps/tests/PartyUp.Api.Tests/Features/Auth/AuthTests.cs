@@ -15,7 +15,7 @@ public class AuthTests : TestBase, IClassFixture<ApiFactory>
     {
         var response = await Client.PostAsJsonAsync("/api/auth/register", new
         {
-            username = "testuser",
+            email = "test@example.com",
             password = "Password123!"
         });
 
@@ -29,13 +29,13 @@ public class AuthTests : TestBase, IClassFixture<ApiFactory>
     {
         await Client.PostAsJsonAsync("/api/auth/register", new
         {
-            username = "testuser",
+            email = "test@example.com",
             password = "Password123!"
         });
 
         var response = await Client.PostAsJsonAsync("/api/auth/login", new
         {
-            username = "testuser",
+            email = "test@example.com",
             password = "WrongPassword!"
         });
 
@@ -43,17 +43,17 @@ public class AuthTests : TestBase, IClassFixture<ApiFactory>
     }
 
     [Fact]
-    public async Task Register_WithDuplicateUsername_ReturnsBadRequest()
+    public async Task Register_WithDuplicateEmail_ReturnsBadRequest()
     {
         await Client.PostAsJsonAsync("/api/auth/register", new
         {
-            username = "dupeuser",
+            email = "dupe@example.com",
             password = "Password123!"
         });
 
         var response = await Client.PostAsJsonAsync("/api/auth/register", new
         {
-            username = "dupeuser",
+            email = "dupe@example.com",
             password = "Password123!"
         });
 
@@ -72,7 +72,7 @@ public class AuthTests : TestBase, IClassFixture<ApiFactory>
     {
         var response = await Client.PostAsJsonAsync("/api/auth/register", new
         {
-            username = "validuser",
+            email = "valid@example.com",
             password = "abc"
         });
 
@@ -80,16 +80,16 @@ public class AuthTests : TestBase, IClassFixture<ApiFactory>
     }
 
     [Fact]
-    public async Task Register_WithEmptyUsername_ReturnsBadRequest()
+    public async Task Register_WithInvalidEmail_ReturnsBadRequest()
     {
         var response = await Client.PostAsJsonAsync("/api/auth/register", new
         {
-            username = "",
+            email = "not-an-email",
             password = "ValidPass1!"
         });
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
-    private record AuthResult(string Token, string Username);
+    private record AuthResult(string Token, string Email);
 }

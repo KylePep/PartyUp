@@ -19,35 +19,36 @@ public class AuthController : ControllerBase
   [HttpPost("register")]
   public async Task<IActionResult> Register(RegisterRequest request, IConfiguration config)
   {
-    var user = await _auth.Register(request.Username, request.Password);
+    var user = await _auth.Register(request.Email, request.Password);
     if (user == null)
-      return BadRequest("Username already exists");
+      return BadRequest("Email already registered");
 
-    var token = await _auth.Login(request.Username, request.Password, config);
-    return Ok(new AuthResponse { Token = token!, Username = user.Username });
+    var token = await _auth.Login(request.Email, request.Password, config);
+    return Ok(new AuthResponse { Token = token!, Email = user.Email });
   }
 
   [EnableRateLimiting("auth")]
   [HttpPost("login")]
   public async Task<IActionResult> Login(LoginRequest request, IConfiguration config)
   {
-    var token = await _auth.Login(request.Username, request.Password, config);
+    var token = await _auth.Login(request.Email, request.Password, config);
     if (token == null)
       return Unauthorized();
 
-    return Ok(new AuthResponse { Token = token, Username = request.Username });
+    return Ok(new AuthResponse { Token = token, Email = request.Email });
   }
 
   [Authorize]
   [HttpGet("me")]
-  public IActionResult Me()
+  public async Task<IActionResult> Me()
   {
-    var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var username = User.FindFirstValue(ClaimTypes.Name);
+    var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (idClaim == null) return Unauthorized();
 
-    if (id == null || username == null)
-      return Unauthorized();
+    var userId = Guid.Parse(idClaim);
+    var user = await _auth.GetByIdAsync(userId);
+    if (user == null) return Unauthorized();
 
-    return Ok(new { id, username });
+    return Ok(new { id = user.Id, email = user.Email, profile = (object?)null });
   }
 }

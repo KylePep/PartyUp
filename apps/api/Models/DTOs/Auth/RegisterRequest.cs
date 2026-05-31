@@ -5,8 +5,9 @@ namespace PartyUp.Api.Models.DTOs.Auth;
 public class RegisterRequest
 {
     [Required]
-    [StringLength(50, MinimumLength = 3)]
-    public string Username { get; set; } = string.Empty;
+    [EmailAddress]
+    [StringLength(254)]
+    public string Email { get; set; } = string.Empty;
 
     [Required]
     [StringLength(128, MinimumLength = 8)]

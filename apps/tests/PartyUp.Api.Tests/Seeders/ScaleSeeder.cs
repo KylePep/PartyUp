@@ -43,7 +43,7 @@ public class ScaleSeeder
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Username = $"player_{i:D3}",
+                Email = $"player_{i:D3}@example.com",
                 PasswordHash = "seeded-hash"
             };
             users.Add(user);
