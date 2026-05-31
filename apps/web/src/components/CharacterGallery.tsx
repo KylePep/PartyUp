@@ -1,6 +1,5 @@
 import { CharacterCard } from './cards/CharacterCard'
 import { EmptyState, Spinner } from './ui'
-import { CHARACTER_LIMIT } from '../utils/limits'
 import type { Character } from '../api/endpoints/characters'
 
 interface CharacterGalleryProps {
@@ -19,9 +18,6 @@ export function CharacterGallery({ characters, status, selectedId, onSelect }: C
   }
   return (
     <>
-      {/* <p className="text-xs font-mono text-muted mb-4">
-        {characters.length} / {CHARACTER_LIMIT} characters
-      </p> */}
       {status === 'empty' ? (
         <EmptyState message="You haven't created any characters yet" />
       ) : (
