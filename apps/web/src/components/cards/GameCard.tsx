@@ -11,7 +11,6 @@ export function GameCard({ game, onSelect }: GameCardProps) {
     <LandCard
       name={game.name}
       imageUrl={game.imageUrl}
-      playerCount={game.playerCount}
       onClick={() => onSelect(game)}
       className="w-full text-left hover:brightness-110 transition-all"
     />

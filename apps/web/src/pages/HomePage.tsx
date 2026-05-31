@@ -47,11 +47,7 @@ export default function HomePage() {
             ))
           )}
         </div>
-        <BinderTabs tabs={[
-          { label: 'My Cards', textColor: "#ffffff", color: '#991b1b', to: "/characters" },
-          { label: 'Games', textColor: "#ffffff", color: '#1e40af', to: "/games" },
-          { label: 'Collection', textColor: "#ffffff", color: '#166534', to: "/matches" },
-        ]} />
+        <BinderTabs activeTab='' />
       </section>
     </main>
   )
