@@ -9,10 +9,12 @@ using System.Security.Claims;
 public class AuthController : ControllerBase
 {
   private readonly IAuthService _auth;
+  private readonly IProfileService _profileService;
 
-  public AuthController(IAuthService auth)
+  public AuthController(IAuthService auth, IProfileService profileService)
   {
     _auth = auth;
+    _profileService = profileService;
   }
 
   [EnableRateLimiting("auth")]
@@ -49,6 +51,20 @@ public class AuthController : ControllerBase
     var user = await _auth.GetByIdAsync(userId);
     if (user == null) return Unauthorized();
 
-    return Ok(new { id = user.Id, email = user.Email, profile = (object?)null });
+    var profile = await _profileService.GetProfileAsync(userId);
+    return Ok(new { id = user.Id, email = user.Email, profile });
+  }
+
+  [Authorize]
+  [EnableRateLimiting("auth")]
+  [HttpPut("password")]
+  public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+  {
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var success = await _auth.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
+    if (!success)
+      return BadRequest("Current password is incorrect");
+
+    return Ok();
   }
 }
