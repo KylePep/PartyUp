@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { discoverCharacters, interactWithCharacter, type Character, type DiscoverCharacter } from '../api/endpoints/characters'
+import { useDebounce } from '../hooks/useDebounce'
 import { SwipeCard } from './cards/SwipeCard'
 import { Spinner, EmptyState } from './ui'
 
@@ -23,22 +24,25 @@ export function DiscoveryPanel({
   const [queue, setQueue] = useState<DiscoverCharacter[]>([])
   const [status, setStatus] = useState<DiscoverStatus>('loading')
 
+  const debouncedFilters = useDebounce(filters, 400)
+  const debouncedPlatforms = useDebounce(activePlatforms, 400)
+
   useEffect(() => {
     setStatus('loading')
     const activeFilters = Object.fromEntries(
-      Object.entries(filters).filter(([, v]) => v !== '')
+      Object.entries(debouncedFilters).filter(([, v]) => v !== '')
     )
     discoverCharacters(
       gameId,
       activeFilters,
-      activePlatforms.length > 0 ? activePlatforms : undefined
+      debouncedPlatforms.length > 0 ? debouncedPlatforms : undefined
     )
       .then(chars => {
         setQueue(chars)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
       })
       .catch(() => setStatus('error'))
-  }, [gameId, filters, activePlatforms])
+  }, [gameId, debouncedFilters, debouncedPlatforms])
 
   async function handleInteract(type: 'Like' | 'Dislike') {
     const current = queue[0]
@@ -46,7 +50,9 @@ export function DiscoveryPanel({
     try {
       const res = await interactWithCharacter(myCharacter.id, current.id, type)
       if (res.isMatch) onMatch()
-    } catch { /* fail silently */ }
+    } catch (err) {
+      console.error(`Failed to ${type.toLowerCase()} character:`, err)
+    }
     setQueue(q => {
       const next = q.slice(1)
       if (next.length === 0) setStatus('empty')
