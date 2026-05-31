@@ -8,24 +8,7 @@ import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
 import { CreateCharacterWizard } from '../components/character-wizard/CreateCharacterWizard'
-import type { CharacterFormData } from '../components/character-wizard/types'
-
-function toFormData(c: Character): Partial<CharacterFormData> {
-  return {
-    platform: c.platform ?? '',
-    platformHandle: c.platformHandle ?? '',
-    name: c.name ?? '',
-    imageUrl: c.imageUrl ?? '',
-    imageFile: null,
-    bio: c.bio ?? '',
-    additionalNotes: c.additionalNotes ?? '',
-    timeZone: c.timeZone ?? '',
-    activeTimes: c.activeTimes ?? [],
-    usesVoiceChat: c.usesVoiceChat,
-    languages: c.languages ?? [],
-    gameFields: Object.fromEntries((c.gameFields ?? []).map(f => [f.fieldDefinitionId, f.value])),
-  }
-}
+import { characterToFormData } from '../components/character-wizard/types'
 
 export default function CharactersPage() {
   const [searchParams] = useSearchParams()
@@ -104,7 +87,7 @@ export default function CharactersPage() {
             platforms={editingUserGame.platforms}
             mode="edit"
             characterId={selected.id}
-            initialData={toFormData(selected)}
+            initialData={characterToFormData(selected)}
             onSuccess={handleEditSuccess}
           />
         </div>

@@ -1,3 +1,5 @@
+import type { Character } from '../../api/endpoints/characters'
+
 export const PLATFORMS = ['PC', 'PlayStation', 'Xbox', 'Nintendo Switch', 'Mobile']
 
 export const ALL_PLATFORMS: { group: string; platforms: string[] }[] = [
@@ -41,4 +43,21 @@ export const defaultFormData: CharacterFormData = {
   usesVoiceChat: undefined,
   languages: [],
   gameFields: {},
+}
+
+export function characterToFormData(c: Character): Partial<CharacterFormData> {
+  return {
+    platform: c.platform ?? '',
+    platformHandle: c.platformHandle ?? '',
+    name: c.name ?? '',
+    imageUrl: c.imageUrl ?? '',
+    imageFile: null,
+    bio: c.bio ?? '',
+    additionalNotes: c.additionalNotes ?? '',
+    timeZone: c.timeZone ?? '',
+    activeTimes: c.activeTimes ?? [],
+    usesVoiceChat: c.usesVoiceChat,
+    languages: c.languages ?? [],
+    gameFields: Object.fromEntries((c.gameFields ?? []).map(f => [f.fieldDefinitionId, f.value])),
+  }
 }
