@@ -1,5 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { DiscoveryFilters } from './DiscoveryFilters'
+import { useClickOutside } from '../hooks/useClickOutside'
+import { useEscapeKey } from '../hooks/useEscapeKey'
 import type { GameFieldDefinition } from '../api/endpoints/games'
 
 interface DiscoveryFilterMenuProps {
@@ -24,29 +26,13 @@ export function DiscoveryFilterMenu({
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  const closeMenu = useCallback(() => setOpen(false), [])
+  useClickOutside(dropdownRef, closeMenu, open)
+  useEscapeKey(closeMenu, open)
+
   const hasFilterableFields = fields.some(f => f.isFilterable && f.type === 'Select')
   const showMenu = hasFilterableFields || gamePlatforms.length > 0
   const activeCount = Object.keys(filters).length + (activePlatforms.length > 0 ? 1 : 0)
-
-  useEffect(() => {
-    if (!open) return
-    function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [open])
-
-  useEffect(() => {
-    if (!open) return
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [open])
 
   if (!showMenu) return null
 

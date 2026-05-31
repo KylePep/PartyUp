@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useClickOutside } from '../../hooks/useClickOutside'
 import { Avatar } from '../ui'
 
 type Variant = 'landing' | 'app'
@@ -16,15 +17,8 @@ export function NavBar({ variant }: NavBarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
+  const closeDropdown = useCallback(() => setDropdownOpen(false), [])
+  useClickOutside(dropdownRef, closeDropdown)
 
   const username = state.status === 'authenticated' ? state.user.username : ''
 

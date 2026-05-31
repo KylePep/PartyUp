@@ -1,5 +1,6 @@
-import { useEffect, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { useEscapeKey } from '../../hooks/useEscapeKey'
 
 interface ModalProps {
   isOpen: boolean
@@ -9,14 +10,7 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, children, title }: ModalProps) {
-  useEffect(() => {
-    if (!isOpen) return
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [isOpen, onClose])
+  useEscapeKey(onClose, isOpen)
 
   if (!isOpen) return null
 
