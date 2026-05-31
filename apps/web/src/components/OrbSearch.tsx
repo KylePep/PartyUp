@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { getGames, type Game } from '../api/endpoints/games'
 import { addUserGame as apiAddUserGame, type UserGame } from '../api/endpoints/userGames'
 import { GameCard } from './cards/GameCard'
@@ -16,14 +16,21 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
   const [searchStatus, setSearchStatus] = useState<'idle' | 'loading' | 'done'>('idle')
   const [pendingGame, setPendingGame] = useState<Game | null>(null)
   const [adding, setAdding] = useState(false)
+  const searchGen = useRef(0)
 
   async function handleSearch() {
     if (!query.trim() || disabled) return
     setExpanded(true)
     setSearchStatus('loading')
-    const data = await getGames({ q: query })
-    setResults(data.games)
-    setSearchStatus('done')
+    const gen = ++searchGen.current
+    try {
+      const data = await getGames({ q: query })
+      if (gen !== searchGen.current) return
+      setResults(data.games)
+      setSearchStatus('done')
+    } catch {
+      if (gen === searchGen.current) setSearchStatus('done')
+    }
   }
 
   async function confirmAdd() {
