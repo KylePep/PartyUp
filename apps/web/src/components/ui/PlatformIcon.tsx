@@ -12,6 +12,7 @@ export function PlatformIcon({ platform, size = 28 }: PlatformIconProps) {
     <div
       className="rounded-full border-1 border-black flex items-center justify-center shrink-0"
       style={{ width: size, height: size, backgroundColor: bg }}
+      aria-label={`${platform} platform`}
       title={platform}
     >
       <GamepadIcon color={icon} size={Math.round(size * 0.62)} />

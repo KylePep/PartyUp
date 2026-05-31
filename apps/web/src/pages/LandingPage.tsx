@@ -83,13 +83,13 @@ export default function LandingPage() {
 
             {/* Hover controls — revealed via group-hover */}
             <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button onClick={goPrev} className="text-muted hover:text-black transition-colors text-lg leading-none">
+              <button onClick={goPrev} aria-label="Previous step" className="text-muted hover:text-black transition-colors text-lg leading-none">
                 &#8592;
               </button>
-              <button onClick={() => setPaused(p => !p)} className="text-muted hover:text-black transition-colors text-lg leading-none">
+              <button onClick={() => setPaused(p => !p)} aria-label={paused ? 'Resume' : 'Pause'} className="text-muted hover:text-black transition-colors text-lg leading-none">
                 {paused ? '▶' : '⏸'}
               </button>
-              <button onClick={goNext} className="text-muted hover:text-black transition-colors text-lg leading-none">
+              <button onClick={goNext} aria-label="Next step" className="text-muted hover:text-black transition-colors text-lg leading-none">
                 &#8594;
               </button>
             </div>
