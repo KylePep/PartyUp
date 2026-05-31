@@ -1,6 +1,6 @@
 import { useAuth } from '../context/AuthContext'
 import { type UserGame } from '../api/endpoints/userGames'
-import { useUserGames } from '../hooks/useUserGame'
+import { useUserGames } from '../hooks/useUserGames'
 import { OrbSearch } from '../components/OrbSearch'
 import { RealmCard } from '../components/cards/RealmCard'
 import { Spinner } from '../components/ui'

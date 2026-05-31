@@ -1,4 +1,3 @@
-// hooks/useUserGames.ts
 import { useEffect, useState } from "react";
 import { getUserGames, type UserGame } from "../api/endpoints/userGames";
 
