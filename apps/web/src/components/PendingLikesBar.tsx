@@ -15,17 +15,23 @@ interface PendingLikesBarProps {
 export function PendingLikesBar({ character, onMatch }: PendingLikesBarProps) {
   const [open, setOpen] = useState(false)
   const [pending, setPending] = useState<DiscoverCharacter[]>([])
+  const [processing, setProcessing] = useState<string | null>(null)
 
   useEffect(() => {
     getPendingLikes(character.id).then(setPending).catch(() => {})
   }, [character.id])
 
   async function handleInteract(toCharacterId: string, type: 'Like' | 'Dislike') {
+    if (processing === toCharacterId) return
+    setProcessing(toCharacterId)
     try {
       const res = await interactWithCharacter(character.id, toCharacterId, type)
       if (res.isMatch) onMatch()
-    } catch { /* fail silently */ }
+    } catch (err) {
+      console.error(`Failed to ${type.toLowerCase()} pending character:`, err)
+    }
     setPending(p => p.filter(c => c.id !== toCharacterId))
+    setProcessing(null)
   }
 
   if (pending.length === 0) return null
