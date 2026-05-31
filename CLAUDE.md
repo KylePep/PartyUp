@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PartyUp is a swipe-based matchmaking platform for multiplayer gamers. Users build character profiles per game and swipe on other characters — mutual likes create a match. It's a monorepo with an ASP.NET Core 8 backend API and a React + TypeScript + Vite frontend.
 
+## Branching Policy
+
+**Before starting any multi-task implementation, you MUST create a feature branch.** Do not write code on `main` or `dev` without explicit user approval.
+
+- Check the current branch before starting: `git rev-parse --abbrev-ref HEAD`
+- If on `main` or `dev`, create a branch first: `git checkout -b feature/<name>` or `refactor/<name>`
+- Commit after each logical section, not just at the end
+
 ## Common Commands
 
 ### Start Everything

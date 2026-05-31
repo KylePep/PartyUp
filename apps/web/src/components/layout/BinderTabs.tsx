@@ -1,8 +1,8 @@
 import { NavLink } from "react-router-dom"
 
 const tabs = [
-  { label: "My Cards", color: "#991b1b", to: "/characters" },
   { label: "Games", color: "#1e40af", to: "/games" },
+  { label: "My Cards", color: "#991b1b", to: "/characters" },
   { label: "Collection", color: "#166534", to: "/matches" },
   { label: "Settings", color: "#dcba31", to: "/settings" },
 ] as const
