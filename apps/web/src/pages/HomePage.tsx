@@ -13,8 +13,8 @@ export default function HomePage() {
 
   if (auth.status !== 'authenticated') return null
 
-  const { username } = auth.user
-  const displayName = username.split('@')[0]
+  const { email } = auth.user
+  const displayName = email.split('@')[0]
   const visibleRealms = userGames.games.slice(0, 3)
   const atLimit = userGames.games.length >= USER_GAME_LIMIT
 

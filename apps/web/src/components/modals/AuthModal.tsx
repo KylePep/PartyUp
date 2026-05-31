@@ -13,7 +13,7 @@ interface AuthModalProps {
 
 export default function AuthModal({ initialMode, onClose }: AuthModalProps) {
   const [mode, setMode] = useState<Mode>(initialMode)
-  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -28,10 +28,10 @@ export default function AuthModal({ initialMode, onClose }: AuthModalProps) {
     setLoading(true)
     try {
       if (mode === 'sign-up') {
-        await register(username, password)
+        await register(email, password)
       }
-      const token = await login(username, password)
-      await loginToContext(username, token)
+      const token = await login(email, password)
+      await loginToContext(email, token)
       setSuccess(true)
       setTimeout(() => navigate('/home'), 800)
     } catch (err) {
@@ -51,7 +51,7 @@ export default function AuthModal({ initialMode, onClose }: AuthModalProps) {
       <div className="px-6 py-4">
         {success ? (
           <div className="text-center py-6">
-            <p className="font-display text-accent text-xl tracking-wide mb-2">Welcome, {username}</p>
+            <p className="font-display text-accent text-xl tracking-wide mb-2">Welcome, {email}</p>
             <p className="text-muted text-sm font-mono">Entering the realm...</p>
           </div>
         ) : (
@@ -79,11 +79,12 @@ export default function AuthModal({ initialMode, onClose }: AuthModalProps) {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <Input
-                label="Username"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                autoComplete="username"
-                placeholder="Your username"
+                label="Email"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                autoComplete="email"
+                placeholder="your@email.com"
               />
               <Input
                 label="Password"

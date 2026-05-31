@@ -20,7 +20,7 @@ export function NavBar({ variant }: NavBarProps) {
   const closeDropdown = useCallback(() => setDropdownOpen(false), [])
   useClickOutside(dropdownRef, closeDropdown)
 
-  const username = state.status === 'authenticated' ? state.user.username : ''
+  const username = state.status === 'authenticated' ? state.user.email : ''
 
   return (
     <nav

@@ -23,7 +23,7 @@ function authHeaders(): Record<string, string> {
 
 function clearAuth() {
   localStorage.removeItem("token");
-  localStorage.removeItem("username");
+  localStorage.removeItem("email");
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {
@@ -85,6 +85,19 @@ export async function apiPostEmpty(url: string): Promise<void> {
 export async function apiPut<T>(url: string, body: unknown): Promise<T> {
   const res = await fetch(`${API_BASE}${url}`, {
     method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify(body),
+  });
+
+  return handleResponse<T>(res);
+}
+
+export async function apiPatch<T>(url: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE}${url}`, {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       ...authHeaders(),
