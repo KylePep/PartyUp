@@ -14,7 +14,8 @@ export default function HomePage() {
   if (auth.status !== 'authenticated') return null
 
   const { email } = auth.user
-  const displayName = email.split('@')[0]
+  const displayName = auth.user.profile?.displayName
+  const name = displayName ?? email.split('@')[0]
   const visibleRealms = userGames.games.slice(0, 3)
   const atLimit = userGames.games.length >= USER_GAME_LIMIT
 
@@ -23,7 +24,7 @@ export default function HomePage() {
       <section className="h-full bg-surface border-white border-2 py-4 px-6 w-1/2 flex flex-col items-center justify-between relative">
 
         <h1 className="font-display font-bold text-4xl text-text">
-          {displayName}'s Binder
+          {name}'s Binder
         </h1>
 
         {userGames.status === 'loading' ? (
