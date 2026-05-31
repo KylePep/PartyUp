@@ -29,6 +29,10 @@ public class AuthService : IAuthService
     _context.Users.Add(user);
     await _context.SaveChangesAsync();
 
+    var profile = new UserProfile { UserId = user.Id };
+    _context.UserProfiles.Add(profile);
+    await _context.SaveChangesAsync();
+
     return user;
   }
 
