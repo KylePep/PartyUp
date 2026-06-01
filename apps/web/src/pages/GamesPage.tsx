@@ -133,7 +133,7 @@ export default function GamesPage() {
         {status === 'error' && <EmptyState message="Could not load games" />}
         {status === 'empty' && <EmptyState message="You haven't added any games yet" />}
         {status === 'ready' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 grid-rows-2 h-full gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 h-full gap-3">
             {games.map(game => (
               <div
                 key={game.id}
@@ -143,7 +143,7 @@ export default function GamesPage() {
                   name={game.gameName}
                   imageUrl={game.gameImageUrl ?? undefined}
                   onClick={() => handleSelect(game)}
-                  className="w-full h-full hover:brightness-110 transition-all"
+                  className="w-full hover:brightness-110 transition-all"
                 >
                   <div className='flex flex-1 items-center justify-center text-7xl'>❖</div>
                 </LandCard>

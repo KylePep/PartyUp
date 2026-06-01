@@ -54,12 +54,12 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center min-h-90 md:min-h-96">
+    <div className="w-full flex flex-col items-center justify-center min-h-82 md:min-h-96">
       <div
         className={`
           group relative bg-white border-black border-4 overflow-hidden
           transition-all duration-500 ease-in-out
-          ${expanded ? 'w-full h-90 md:h-96 rounded-xl' : 'w-64 md:w-80 h-64 md:h-80 rounded-full'}
+          ${expanded ? 'w-full h-82 md:h-96 rounded-xl' : 'w-64 md:w-80 h-64 md:h-80 rounded-full'}
         `}
       >
         {/* Search bar — absolutely positioned; centered in circle, locked to top in rectangle */}

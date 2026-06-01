@@ -20,7 +20,7 @@ export default function SignedInLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col md:flex-row relative">
+    <div className="min-h-screen max-h-screen bg-bg flex flex-col md:flex-row relative overflow-hidden">
       <NavBar variant="app" />
       <Outlet />
       {/* <BottomTray /> */}

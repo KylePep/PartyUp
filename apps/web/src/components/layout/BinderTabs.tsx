@@ -53,7 +53,7 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
                 : "#ffffff",
             }}
           >
-            <span className="hidden md:flex flex-col w-full leading-0 rotate-90 -translate-y-1/4 text-center justify-center text-nowrap">
+            <span className="md:flex flex-col w-full leading-0 rotate-90 -translate-y-1/4 -translate-x-14 md:translate-x-0 text-center justify-center text-nowrap">
               {tab.label}
             </span>
           </NavLink>

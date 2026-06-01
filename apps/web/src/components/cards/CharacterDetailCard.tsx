@@ -93,7 +93,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
         {/* Game Fields section */}
         {character.gameFields.length > 0 && (
           <div
-            className="px-4 pt-3 pb-1 grid grid-cols-2"
+            className="px-4 pt-3 pb-1 grid-cols-1 md:grid grid-cols-2"
             style={{ borderBottom: '1px solid var(--color-border)' }}
           >
             <h2 className="text-xs text-muted uppercase tracking-widest mb-1 col-span-2">Game Fields</h2>

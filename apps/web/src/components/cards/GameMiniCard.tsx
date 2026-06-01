@@ -20,7 +20,7 @@ export function GameMiniCard({ game, gameId, userGameId }: GameMiniCardProps) {
     <FullArtTcgCard
       name={game.name}
       imageUrl={game.imageUrl ?? undefined}
-      className="w-40 shrink-0"
+      className="w-20 md:w-40 shrink-0"
       style={{ aspectRatio: '2/3' }}
       onClick={handleClick}
     />

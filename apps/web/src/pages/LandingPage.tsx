@@ -40,7 +40,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-bg text-text flex relative">
       <NavBar variant="landing" onSignIn={() => setModal('sign-in')} onSignUp={() => setModal('sign-up')} />
 
-      <main className="flex-1 flex flex-col items-center justify-center text-center py-2 md:py-4">
+      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 mx-4">
         <section className='h-full bg-surface border-white border-2 pb-4 pt-16 md:pt-4 py-4 px-6 w-[91%] md:w-1/2 flex flex-col items-center justify-between'>
 
           <h1 className="font-display font-bold text-xl md:text-4xl text-text">

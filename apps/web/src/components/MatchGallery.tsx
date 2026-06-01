@@ -47,7 +47,7 @@ export function MatchGallery({ matches: providedMatches, gameId, limit, onSelect
   const displayed = limit !== undefined ? matches.slice(0, limit) : matches
 
   return (
-    <div className="grid grid-cols-3 grid-rows-2 gap-4 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-4 h-full">
       {displayed.map(m => (
         <MatchCard
           key={m.matchId}

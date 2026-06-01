@@ -84,10 +84,13 @@ export default function RealmPage() {
           />
         }
         rightContent={
-          <RealmRightPage
-            userGame={userGame}
-            gameId={gameId!}
-          />
+          <>
+            <div className='block md:hidden min-h-24 bg-black'></div>
+            <RealmRightPage
+              userGame={userGame}
+              gameId={gameId!}
+            />
+          </>
         }
       />
     </>

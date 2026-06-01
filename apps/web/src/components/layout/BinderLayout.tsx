@@ -22,7 +22,7 @@ export function BinderLayout({
 }: BinderLayoutProps) {
   return (
     // Outer wrapper: ms-8 on mobile gives room for left-side toggle button
-    <div className="relative m-4 ms-8 me-8 w-full" style={{ height: 'calc(100vh - 2rem)' }}>
+    <div className="relative m-4 ms-8 me-8 md:w-full" style={{ height: 'calc(100vh - 2rem)' }}>
       {/* Binder frame */}
       <main className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-white border-2 w-full h-full relative">
         {/* Left page — hidden on mobile when right is active */}

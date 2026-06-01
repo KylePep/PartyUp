@@ -13,7 +13,7 @@ export function CharacterMiniCard({ character, characterId }: CharacterMiniCardP
     <FullArtTcgCard
       name={character.name}
       imageUrl={character.imageUrl}
-      className="w-40 shrink-0"
+      className="w-20 md:w-40 shrink-0"
       style={{ aspectRatio: '2/3' }}
       onClick={characterId ? () => navigate(`/characters?id=${characterId}`) : undefined}
     />

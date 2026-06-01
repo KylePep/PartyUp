@@ -10,7 +10,7 @@ export function RealmCard({ userGame }: RealmCardProps) {
   return (
     <Link
       to={`/realm/${userGame.gameId}`}
-      className="block text-center text-xs font-mono uppercase tracking-widest text-muted hover:border-accent hover:text-accent transition-colors rounded"
+      className="block text-center text-xs font-mono uppercase tracking-widest text-muted hover:border-accent hover:text-accent transition-colors rounded w-3/4 md:w-full"
       onClick={e => e.stopPropagation()}
     >
       <LandCard
