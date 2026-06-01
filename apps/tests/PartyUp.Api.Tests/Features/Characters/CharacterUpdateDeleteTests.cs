@@ -96,6 +96,20 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    [Fact]
+    public async Task UpdateCharacter_WithEmptyName_ReturnsBadRequest()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+        var character = await CreateCharacterAsync(client, userGame.Id);
+
+        var response = await client.PutAsJsonAsync(
+            $"/api/characters/{userGame.Id}/{character.Id}",
+            new { name = "" });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<UserGameDto> AddGameAsync(HttpClient client)
