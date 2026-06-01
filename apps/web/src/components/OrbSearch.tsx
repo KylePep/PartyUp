@@ -54,24 +54,23 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
   }
 
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex flex-col items-center justify-center min-h-90 md:min-h-96">
       <div
-        className="group relative bg-white border-black border-4 overflow-hidden transition-all duration-500 ease-in-out"
-        style={{
-          width: expanded ? '100%' : '20rem',
-          height: expanded ? '24rem' : '20rem',
-          borderRadius: expanded ? '0.75rem' : '50%',
-        }}
+        className={`
+          group relative bg-white border-black border-4 overflow-hidden
+          transition-all duration-500 ease-in-out
+          ${expanded ? 'w-full h-90 md:h-96 rounded-xl' : 'w-64 md:w-80 h-64 md:h-80 rounded-full'}
+        `}
       >
         {/* Search bar — absolutely positioned; centered in circle, locked to top in rectangle */}
         <div
           className={`absolute flex gap-2 items-center transition-all duration-500 ease-in-out ${expanded
-              ? 'top-4 left-4 right-4 opacity-100'
-              : 'top-1/2 -translate-y-1/2 left-8 right-8 opacity-0 group-hover:opacity-100 focus-within:opacity-100'
+            ? 'top-4 left-4 right-4 opacity-100'
+            : 'top-1/2 -translate-y-1/2 left-8 right-8 opacity-0 group-hover:opacity-100 focus-within:opacity-100'
             }`}
         >
           <input
-            className="flex-1 bg-transparent border-b-2 border-black text-black text-sm font-mono placeholder:text-gray-400 outline-none pb-1"
+            className="flex-1 w-32 md:width-auto bg-transparent border-b-2 border-black text-black text-sm font-mono placeholder:text-gray-400 outline-none pb-1"
             placeholder="Search games..."
             value={query}
             onChange={e => setQuery(e.target.value)}
@@ -101,7 +100,7 @@ export function OrbSearch({ onAdd, disabled = false }: OrbSearchProps) {
               </p>
             )}
             {results.length > 0 && (
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {results.map(g => (
                   <GameCard key={g.externalId} game={g} onSelect={setPendingGame} />
                 ))}

@@ -40,14 +40,14 @@ export default function LandingPage() {
     <div className="min-h-screen bg-bg text-text flex relative">
       <NavBar variant="landing" onSignIn={() => setModal('sign-in')} onSignUp={() => setModal('sign-up')} />
 
-      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 gap-4">
-        <section className='h-full bg-surface border-white border-2 py-4 px-6 w-1/2 flex flex-col items-center justify-between'>
+      <main className="flex-1 flex flex-col items-center justify-center text-center py-2 md:py-4">
+        <section className='h-full bg-surface border-white border-2 pb-4 pt-16 md:pt-4 py-4 px-6 w-[91%] md:w-1/2 flex flex-col items-center justify-between'>
 
-          <h1 className="font-display font-bold text-4xl text-text">
+          <h1 className="font-display font-bold text-xl md:text-4xl text-text">
             Magic Binder
           </h1>
 
-          <div className="group relative h-[20rem] w-[20rem] bg-white border-black border-4 rounded-full flex items-center justify-center">
+          <div className="group relative h-[16rem] md:h-[20rem] w-[16rem] md:w-[20rem] bg-white border-black border-4 rounded-full flex items-center justify-center">
 
             {/* SVG progress ring — key={step} re-mounts on step change, restarting the animation */}
             <svg
@@ -95,7 +95,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex justify-around items-center border-white border-2 w-3/4 h-1/3 p-8 ">
+          <div className="flex justify-around items-center border-white border-2 w-full md:w-3/4 md:h-1/3 p-8 ">
             <Button size="lg" onClick={() => setModal('sign-up')}>
               Get Started
             </Button>

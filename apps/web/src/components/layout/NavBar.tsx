@@ -24,7 +24,7 @@ export function NavBar({ variant }: NavBarProps) {
 
   return (
     <nav
-      className={`pointer-events-none z-40 flex w-full h-16 px-6 absolute md:w-52 md:h-screen md:flex-col md:justify-between md:py-8 md:ps-8 md:top-0
+      className={`pointer-events-none z-40 w-full h-16 absolute flex md:w-52 md:h-screen md:flex-col justify-between pe-11 md:pe-6  ps-8 md:ps-8 pt-6 md:py-8 top-0
  ${variant === 'landing'
           ? ''
           : ''
