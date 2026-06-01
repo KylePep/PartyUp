@@ -14,6 +14,7 @@ export default function SettingsPage() {
 
   const [email, setEmail] = useState(currentEmail);
   const [displayName, setDisplayName] = useState("");
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
   const [accountError, setAccountError] = useState<string | null>(null);
   const [accountSuccess, setAccountSuccess] = useState(false);
   const [accountSaving, setAccountSaving] = useState(false);
@@ -160,54 +161,57 @@ export default function SettingsPage() {
   );
 
   const rightContent = (
-    <div className="p-6">
-      <h2 className="text-lg font-semibold text-white mb-4">Preferences</h2>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-white">Dark Mode</p>
-            <p className="text-xs text-gray-400">Toggle the app theme</p>
+    <>
+      <div className='block md:hidden min-h-24 bg-black'></div>
+      <div className="p-6">
+        <h2 className="text-lg font-semibold text-white mb-4">Preferences</h2>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-white">Dark Mode</p>
+              <p className="text-xs text-gray-400">Toggle the app theme</p>
+            </div>
+            <button
+              role="switch"
+              aria-checked={profile?.preferences.darkMode ?? false}
+              onClick={() =>
+                updatePreferences({ darkMode: !(profile?.preferences.darkMode ?? false) })
+              }
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${profile?.preferences.darkMode ? "bg-blue-600" : "bg-gray-600"
+                }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${profile?.preferences.darkMode ? "translate-x-6" : "translate-x-1"
+                  }`}
+              />
+            </button>
           </div>
-          <button
-            role="switch"
-            aria-checked={profile?.preferences.darkMode ?? false}
-            onClick={() =>
-              updatePreferences({ darkMode: !(profile?.preferences.darkMode ?? false) })
-            }
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              profile?.preferences.darkMode ? "bg-blue-600" : "bg-gray-600"
-            }`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                profile?.preferences.darkMode ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
-          </button>
-        </div>
 
-        <div className="flex items-center justify-between opacity-50">
-          <div>
-            <p className="text-sm text-white">Notifications</p>
-            <p className="text-xs text-gray-400">Coming soon</p>
+          <div className="flex items-center justify-between opacity-50">
+            <div>
+              <p className="text-sm text-white">Notifications</p>
+              <p className="text-xs text-gray-400">Coming soon</p>
+            </div>
+            <button
+              role="switch"
+              aria-checked={false}
+              disabled
+              className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-600 cursor-not-allowed"
+            >
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
+            </button>
           </div>
-          <button
-            role="switch"
-            aria-checked={false}
-            disabled
-            className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-600 cursor-not-allowed"
-          >
-            <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
-          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 
   return (
     <BinderLayout
       barColor="#374151"
       activeTab="Settings"
+      activeSide={activeSide}
+      onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}
       rightContent={rightContent}
     />

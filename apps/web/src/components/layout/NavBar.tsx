@@ -24,7 +24,7 @@ export function NavBar({ variant }: NavBarProps) {
 
   return (
     <nav
-      className={`pointer-events-none z-40 flex w-full h-16 px-6 absolute md:w-52 md:h-screen md:flex-col md:justify-between md:py-8 md:ps-8 md:top-0
+      className={`pointer-events-none z-40 w-full h-16 absolute flex flex-col gap-y-4 md:justify-between md:w-52 md:h-screen px-12 md:pe-6 md:ps-12 pt-6 md:py-8 top-0
  ${variant === 'landing'
           ? ''
           : ''
@@ -45,7 +45,7 @@ export function NavBar({ variant }: NavBarProps) {
             <Avatar fallback={username} size="sm" />
           </button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 md:right-auto md:left-0 md:bottom-full md:top-auto md:mt-0 md:mb-2 w-44 bg-surface border border-border rounded-lg shadow-xl overflow-hidden">
+            <div className="absolute left-0 mt-2 md:right-auto md:left-0 md:bottom-full md:top-auto md:mt-0 md:mb-2 w-44 bg-surface border border-border rounded-lg shadow-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-xs font-mono text-muted uppercase tracking-widest">Signed in as</p>
                 <p className="text-sm text-text font-medium truncate">{username}</p>

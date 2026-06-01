@@ -18,13 +18,13 @@ export function LandCard({ name, imageUrl, className, onClick, children }: LandC
         className="px-3 py-2 flex-shrink-0"
         style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
       >
-        <span className="font-display font-semibold text-text text-sm truncate block">{name}</span>
+        <span className="font-display font-semibold text-text text-xs md:text-sm truncate block">{name}</span>
       </div>
 
       {/* Image */}
       <div className="aspect-video w-full overflow-hidden flex-shrink-0">
         {imageUrl ? (
-          <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+          <img src={imageUrl} alt={name} className="w-full h-full object-cover bg-center" />
         ) : (
           <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--color-surface-raised)' }}>
             <span className="text-muted text-xs font-mono uppercase">No image</span>
