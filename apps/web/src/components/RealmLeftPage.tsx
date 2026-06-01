@@ -60,7 +60,7 @@ export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated,
       )}
 
       {/* Main zone — grows to fill available space */}
-      <div className="h-full p-6 overflow-hidden">
+      <div className="h-full p-6 overflow-y-auto overflow-hidden">
         {zone === 'prompt' && (
           <div className="flex flex-col items-start gap-3">
             <Button onClick={() => setZone('wizard')}>Create Character</Button>

@@ -51,7 +51,7 @@ export default function RealmPage() {
   return (
     <>
       {matchBanner && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white px-6 py-3 rounded-lg font-mono text-sm shadow-lg">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white px-6 py-3 rounded-lg font-mono text-sm shadow-lg ">
           It's a match!
         </div>
       )}
