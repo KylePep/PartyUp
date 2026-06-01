@@ -19,6 +19,7 @@ export default function CharactersPage() {
   const [deleting, setDeleting] = useState(false)
   const [userGames, setUserGames] = useState<UserGame[]>([])
   const [editingUserGame, setEditingUserGame] = useState<UserGameDetail | null>(null)
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
 
   useEffect(() => {
     Promise.all([getCharacters(), getUserGames()])
@@ -27,11 +28,18 @@ export default function CharactersPage() {
         setUserGames(ug)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
         if (targetId) {
-          setSelected(chars.find(c => c.id === targetId) ?? null)
+          const match = chars.find(c => c.id === targetId) ?? null
+          setSelected(match)
+          if (match) setActiveSide('left')
         }
       })
       .catch(() => setStatus('error'))
   }, [targetId])
+
+  function handleSelect(character: Character) {
+    setSelected(character)
+    setActiveSide('left')
+  }
 
   async function handleDelete() {
     if (!selected?.userGameId) return
@@ -95,7 +103,7 @@ export default function CharactersPage() {
     }
     if (selected) {
       return (
-        <div className="flex flex-col flex-1 min-h-0 p-4">
+        <div className="flex flex-col md:flex-1 md:min-h-0 p-4">
           <CharacterDetailCard
             character={selected}
             onDelete={selected.userGameId ? handleDelete : undefined}
@@ -113,14 +121,17 @@ export default function CharactersPage() {
   })()
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full min-h-0">
-      <CharacterGallery
-        characters={characters}
-        status={status}
-        selectedId={selected?.id ?? null}
-        onSelect={setSelected}
-      />
-    </div>
+    <>
+      <div className='block md:hidden min-h-24 bg-black'></div>
+      <div className="p-4 overflow-y-auto h-full min-h-0 relative">
+        <CharacterGallery
+          characters={characters}
+          status={status}
+          selectedId={selected?.id ?? null}
+          onSelect={handleSelect}
+        />
+      </div>
+    </>
   )
 
   return (
@@ -133,6 +144,8 @@ export default function CharactersPage() {
         </>
       ) : undefined}
       activeTab={"My Cards"}
+      activeSide={activeSide}
+      onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}
       rightContent={rightContent}
     />

@@ -15,6 +15,7 @@ export default function MatchesPage() {
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<CharacterMatchDto | null>(null)
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
 
   useEffect(() => {
     getMatches()
@@ -22,11 +23,18 @@ export default function MatchesPage() {
         setMatches(m)
         setStatus(m.length === 0 ? 'empty' : 'ready')
         if (targetId) {
-          setSelected(m.find(match => match.matchId === targetId) ?? null)
+          const match = m.find(match => match.matchId === targetId) ?? null
+          setSelected(match)
+          if (match) setActiveSide('left')
         }
       })
       .catch(() => setStatus('error'))
   }, [targetId])
+
+  function handleSelect(match: CharacterMatchDto) {
+    setSelected(match)
+    setActiveSide('left')
+  }
 
   const leftContent = selected ? (
     <div className="flex flex-col h-full min-h-0 overflow-y-auto">
@@ -59,21 +67,24 @@ export default function MatchesPage() {
   )
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full w-full min-h-0">
-      {status === 'loading' && (
-        <div className="flex justify-center py-10"><Spinner /></div>
-      )}
-      {status === 'error' && <EmptyState message="Could not load matches" />}
-      {status === 'empty' && <EmptyState message="No matches yet — keep swiping!" />}
-      {status === 'ready' && (
-        <MatchGallery
-          matches={matches}
-          selectedId={selected?.matchId ?? null}
-          onSelect={setSelected}
-          limit={6}
-        />
-      )}
-    </div>
+    <>
+      <div className='block md:hidden min-h-24 bg-black'></div>
+      <div className="p-4 overflow-y-auto h-full w-full min-h-0">
+        {status === 'loading' && (
+          <div className="flex justify-center py-10"><Spinner /></div>
+        )}
+        {status === 'error' && <EmptyState message="Could not load matches" />}
+        {status === 'empty' && <EmptyState message="No matches yet — keep swiping!" />}
+        {status === 'ready' && (
+          <MatchGallery
+            matches={matches}
+            selectedId={selected?.matchId ?? null}
+            onSelect={handleSelect}
+            limit={6}
+          />
+        )}
+      </div>
+    </>
   )
 
   return (
@@ -86,6 +97,8 @@ export default function MatchesPage() {
         </>
       ) : undefined}
       activeTab={"Collection"}
+      activeSide={activeSide}
+      onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}
       rightContent={rightContent}
     />
