@@ -97,13 +97,17 @@ public class CharacterService : ICharacterService
       .FirstOrDefaultAsync();
   }
 
-  public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null, List<string>? platformFilters = null)
+  public async Task<PagedDiscoverResult> DiscoverCharactersAsync(
+    Guid userId, Guid gameId,
+    Dictionary<string, string>? filters = null,
+    List<string>? platformFilters = null,
+    int page = 1, int pageSize = 20)
   {
     var myUserGame = await _db.UserGames
       .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
 
     if (myUserGame == null)
-      return [];
+      return new PagedDiscoverResult();
 
     var myCharacterIds = await _db.Characters
       .Where(c => c.UserGameId == myUserGame.Id)
@@ -111,7 +115,7 @@ public class CharacterService : ICharacterService
       .ToListAsync();
 
     if (myCharacterIds.Count == 0)
-      return [];
+      return new PagedDiscoverResult();
 
     var alreadySeenIds = await _db.CharacterInteractions
       .Where(i => myCharacterIds.Contains(i.FromCharacterId))
@@ -149,7 +153,11 @@ public class CharacterService : ICharacterService
       }
     }
 
-    return await query
+    var totalCount = await query.CountAsync();
+
+    var items = await query
+      .Skip((page - 1) * pageSize)
+      .Take(pageSize)
       .Select(c => new DiscoverCharacterResponse
       {
         Id = c.Id,
@@ -173,6 +181,13 @@ public class CharacterService : ICharacterService
         }).ToList(),
       })
       .ToListAsync();
+
+    return new PagedDiscoverResult
+    {
+      Items = items,
+      HasMore = page * pageSize < totalCount,
+      TotalCount = totalCount
+    };
   }
 
   public async Task<bool> UpdateCharacterAsync(

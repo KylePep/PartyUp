@@ -101,15 +101,18 @@ public class CharactersController : ControllerBase
   }
 
   [HttpGet("discover")]
-  public async Task<IActionResult> Discover([FromQuery] Guid gameId)
+  public async Task<IActionResult> Discover(
+    [FromQuery] Guid gameId,
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 20)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     var platformFilters = Request.Query["platform"]
       .Where(v => v != null).Select(v => v!).ToList();
     var filters = Request.Query
-      .Where(kv => kv.Key != "gameId" && kv.Key != "platform")
+      .Where(kv => kv.Key != "gameId" && kv.Key != "platform" && kv.Key != "page" && kv.Key != "pageSize")
       .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
-    var result = await _characterService.DiscoverCharactersAsync(userId, gameId, filters, platformFilters);
+    var result = await _characterService.DiscoverCharactersAsync(userId, gameId, filters, platformFilters, page, pageSize);
     return Ok(result);
   }
 }

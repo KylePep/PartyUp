@@ -6,11 +6,13 @@ public interface ICharacterService
   Task<List<CharacterResponse>> GetCharactersForUserGameAsync(Guid userId, Guid userGameId);
   Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId);
   Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId);
-  Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(
+  Task<PagedDiscoverResult> DiscoverCharactersAsync(
       Guid userId,
       Guid gameId,
       Dictionary<string, string>? filters = null,
-      List<string>? platformFilters = null);
+      List<string>? platformFilters = null,
+      int page = 1,
+      int pageSize = 20);
   Task<bool> UpdateCharacterAsync(Guid userId, Guid userGameId, Guid characterId, UpdateCharacterRequest request);
   Task<bool> DeleteCharacterAsync(Guid userId, Guid userGameId, Guid characterId);
 }
