@@ -11,10 +11,12 @@ import type { UserProfileData } from "../api/endpoints/auth";
 export function useProfile() {
   const [profile, setProfile] = useState<UserProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getProfile()
       .then(setProfile)
+      .catch(() => setError("Failed to load profile"))
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -31,6 +33,7 @@ export function useProfile() {
   return {
     profile,
     isLoading,
+    error,
     updateProfile: handleUpdateProfile,
     updatePreferences: handleUpdatePreferences,
   };
