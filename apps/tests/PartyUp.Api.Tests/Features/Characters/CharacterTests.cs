@@ -80,8 +80,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientA.GetAsync($"/api/characters/discover?gameId={userGameA.GameId}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredDto>>();
-        discovered.Should().ContainSingle(c => c.Name == "User B Character");
+        var paged = await response.Content.ReadFromJsonAsync<PagedDiscoverDto>();
+        paged!.Items.Should().ContainSingle(c => c.Name == "User B Character");
     }
 
     [Fact]
@@ -95,6 +95,15 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         var userGameA = await AddGameAsync(clientA, sharedExternalId);
         var userGameB = await AddGameAsync(clientB, sharedExternalId);
         var userGameC = await AddGameAsync(clientC, sharedExternalId);
+
+        // User A must have a character to be allowed to discover
+        await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "User A Character",
+            platform = "PC",
+            platformHandle = "HandleA",
+            userGameId = userGameA.Id
+        });
 
         await clientB.PostAsJsonAsync("/api/characters", new
         {
