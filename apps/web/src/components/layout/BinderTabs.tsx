@@ -50,7 +50,12 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
                 : "#ffffff",
             }}
           >
-            {tab.label}
+            <span
+              className=" text-xs font-mono uppercase tracking-widest text-nowrap pointer-events-none"
+              style={{ writingMode: 'vertical-lr' }}
+            >
+              {tab.label}
+            </span>
           </NavLink>
         )
       })}
