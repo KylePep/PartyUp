@@ -5,7 +5,6 @@ const tabs = [
   { label: "My Cards", color: "#991b1b", to: "/characters" },
   { label: "Collection", color: "#166534", to: "/matches" },
   { label: "Settings", color: "#dcba31", to: "/settings" },
-  { label: "tab", color: "#ffffff", to: "" },
 ] as const
 
 interface BinderTabsProps {
@@ -44,22 +43,17 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
           <NavLink
             key={tab.label}
             to={tab.to}
-            className={`
-              flex rounded-r py-1 text-xs font-mono uppercase tracking-widest
-              text-center transition-all
-              ${tab.label === 'tab' ? 'block md:hidden' : ''}
-            `}
+            className="flex rounded-r py-1 text-xs font-mono uppercase tracking-widest text-center transition-all"
             style={{
               backgroundColor: isPassed || isActive
                 ? "transparent"
                 : tab.color,
-
               color: isActive
                 ? "#facc15"
                 : "#ffffff",
             }}
           >
-            <span className="hidden md:flex flex-col w-full leading-0 rotate-90 -translate-y-1/4  text-center justify-center text-nowrap ">
+            <span className="hidden md:flex flex-col w-full leading-0 rotate-90 -translate-y-1/4 text-center justify-center text-nowrap">
               {tab.label}
             </span>
           </NavLink>
