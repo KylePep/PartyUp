@@ -14,6 +14,7 @@ export default function SettingsPage() {
 
   const [email, setEmail] = useState(currentEmail);
   const [displayName, setDisplayName] = useState("");
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
   const [accountError, setAccountError] = useState<string | null>(null);
   const [accountSuccess, setAccountSuccess] = useState(false);
   const [accountSaving, setAccountSaving] = useState(false);
@@ -208,6 +209,8 @@ export default function SettingsPage() {
     <BinderLayout
       barColor="#374151"
       activeTab="Settings"
+      activeSide={activeSide}
+      onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}
       rightContent={rightContent}
     />
