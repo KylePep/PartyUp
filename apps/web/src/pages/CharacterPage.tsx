@@ -19,6 +19,7 @@ export default function CharactersPage() {
   const [deleting, setDeleting] = useState(false)
   const [userGames, setUserGames] = useState<UserGame[]>([])
   const [editingUserGame, setEditingUserGame] = useState<UserGameDetail | null>(null)
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
 
   useEffect(() => {
     Promise.all([getCharacters(), getUserGames()])
@@ -32,6 +33,11 @@ export default function CharactersPage() {
       })
       .catch(() => setStatus('error'))
   }, [targetId])
+
+  function handleSelect(character: Character) {
+    setSelected(character)
+    setActiveSide('left')
+  }
 
   async function handleDelete() {
     if (!selected?.userGameId) return
@@ -118,7 +124,7 @@ export default function CharactersPage() {
         characters={characters}
         status={status}
         selectedId={selected?.id ?? null}
-        onSelect={setSelected}
+        onSelect={handleSelect}
       />
     </div>
   )
@@ -133,6 +139,8 @@ export default function CharactersPage() {
         </>
       ) : undefined}
       activeTab={"My Cards"}
+      activeSide={activeSide}
+      onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}
       rightContent={rightContent}
     />
