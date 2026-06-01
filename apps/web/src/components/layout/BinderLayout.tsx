@@ -22,14 +22,14 @@ export function BinderLayout({
 }: BinderLayoutProps) {
   return (
     // Outer wrapper: ms-8 on mobile gives room for left-side toggle button
-    <div className="relative m-4 ms-8 me-8" style={{ height: 'calc(100vh - 2rem)' }}>
+    <div className="relative m-4 ms-8 me-8 w-full" style={{ height: 'calc(100vh - 2rem)' }}>
       {/* Binder frame */}
       <main className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-white border-2 w-full h-full relative">
         {/* Left page — hidden on mobile when right is active */}
         <div className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row border-r border-border h-full`}>
           {/* Spine bar */}
           <div
-            className="min-w-48 flex md:flex-col items-center justify-end min-h-34 px-4 md:pt-12 shrink-0 md:h-full gap-4"
+            className="min-w-48 flex md:flex-col items-center justify-end md:justify-start min-h-34 px-4 md:pt-12 shrink-0 md:h-full gap-4"
             style={{ backgroundColor: barColor }}
           >
             {barContent}
