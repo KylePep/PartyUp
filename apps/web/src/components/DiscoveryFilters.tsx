@@ -75,43 +75,52 @@ export function DiscoveryFilters({
               </button>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={() => setShowAllPlatforms(s => !s)}
-            className="text-xs font-mono text-muted hover:text-accent transition-colors mt-2"
-          >
-            {showAllPlatforms ? '− Show less' : '+ More platforms'}
-          </button>
-          {showAllPlatforms && (
-            <div className="mt-3 flex flex-col gap-4 border border-border rounded p-3 bg-surface-raised">
-              {expandedGroups.map(group => (
-                <div key={group.group}>
-                  <p className="text-xs font-mono text-muted uppercase tracking-widest mb-2">
-                    {group.group}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {group.platforms.map(p => {
-                      const isActive = activePlatforms.includes(p)
-                      return (
-                        <button
-                          key={p}
-                          type="button"
-                          onClick={() => togglePlatform(p)}
-                          className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
-                            isActive
-                              ? 'bg-accent text-white border-accent'
-                              : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
-                          }`}
-                        >
-                          {p}
-                        </button>
-                      )
-                    })}
+          <div className="relative mt-2">
+            <button
+              type="button"
+              onClick={() => setShowAllPlatforms(s => !s)}
+              className="text-xs font-mono text-muted hover:text-accent transition-colors"
+            >
+              {showAllPlatforms ? '− Show less' : '+ More platforms'}
+            </button>
+            {showAllPlatforms && (
+              <div
+                className="absolute top-full left-0 z-50 mt-1 flex flex-col gap-4 rounded p-3 shadow-xl"
+                style={{
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  minWidth: '280px',
+                }}
+              >
+                {expandedGroups.map(group => (
+                  <div key={group.group}>
+                    <p className="text-xs font-mono text-muted uppercase tracking-widest mb-2">
+                      {group.group}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {group.platforms.map(p => {
+                        const isActive = activePlatforms.includes(p)
+                        return (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => togglePlatform(p)}
+                            className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
+                              isActive
+                                ? 'bg-accent text-white border-accent'
+                                : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        )
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
 

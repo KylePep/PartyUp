@@ -12,7 +12,7 @@ public class FakeAnthropicHandler : HttpMessageHandler
         {
             "content": [{
                 "type": "text",
-                "text": "[{\"key\":\"server\",\"label\":\"Server\",\"type\":\"Select\",\"options\":[\"NA\",\"EU\"],\"isFilterable\":true,\"isRequired\":true,\"sortOrder\":1},{\"key\":\"alliance\",\"label\":\"Alliance\",\"type\":\"Select\",\"options\":[\"Ebonheart Pact\",\"Aldmeri Dominion\",\"Daggerfall Covenant\"],\"isFilterable\":true,\"isRequired\":true,\"sortOrder\":2}]"
+                "text": "[{\"key\":\"server\",\"label\":\"Server\",\"type\":\"Select\",\"options\":[\"NA\",\"EU\"],\"isFilterable\":true,\"isRequired\":true,\"sortOrder\":1,\"commonField\":\"server_slot\"},{\"key\":\"alliance\",\"label\":\"Alliance\",\"type\":\"Select\",\"options\":[\"Ebonheart Pact\",\"Aldmeri Dominion\",\"Daggerfall Covenant\"],\"isFilterable\":true,\"isRequired\":true,\"sortOrder\":2,\"commonField\":\"faction_slot\"}]"
             }]
         }
         """;

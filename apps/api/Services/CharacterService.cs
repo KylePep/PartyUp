@@ -38,16 +38,11 @@ public class CharacterService : ICharacterService
       Name = request.Name,
       ImageUrl = request.ImageUrl,
       Bio = request.Bio,
-      MainRole = request.MainRole,
-      SecondaryRole = request.SecondaryRole,
-      PreferredModes = request.PreferredModes,
       TimeZone = request.TimeZone,
       ActiveTimes = request.ActiveTimes,
       UsesVoiceChat = request.UsesVoiceChat,
       Languages = request.Languages,
-      Playstyle = request.Playstyle,
-      Rank = request.Rank,
-      Region = request.Region,
+      AdditionalNotes = request.AdditionalNotes,
     };
 
     _db.Characters.Add(character);
@@ -92,6 +87,14 @@ public class CharacterService : ICharacterService
       .Where(c => c.UserGame.UserId == userId)
       .Select(ToProjection())
       .ToListAsync();
+  }
+
+  public async Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId)
+  {
+    return await _db.Characters
+      .Where(c => c.Id == characterId && c.UserGame.UserId == userId)
+      .Select(ToProjection())
+      .FirstOrDefaultAsync();
   }
 
   public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null, List<string>? platformFilters = null)
@@ -154,14 +157,9 @@ public class CharacterService : ICharacterService
         Platform = c.Platform,
         ImageUrl = c.ImageUrl,
         Bio = c.Bio,
-        MainRole = c.MainRole,
-        SecondaryRole = c.SecondaryRole,
-        PreferredModes = c.PreferredModes,
         UsesVoiceChat = c.UsesVoiceChat,
         Languages = c.Languages,
-        Playstyle = c.Playstyle,
-        Rank = c.Rank,
-        Region = c.Region,
+        AdditionalNotes = c.AdditionalNotes,
         GameName = c.UserGame.Game.Name,
         GameImageUrl = c.UserGame.Game.ImageUrl,
         GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
@@ -170,7 +168,8 @@ public class CharacterService : ICharacterService
           Key = fv.FieldDefinition.Key,
           Label = fv.FieldDefinition.Label,
           Value = fv.Value,
-          Type = fv.FieldDefinition.Type.ToString()
+          Type = fv.FieldDefinition.Type.ToString(),
+          CommonField = fv.FieldDefinition.CommonField
         }).ToList(),
       })
       .ToListAsync();
@@ -198,16 +197,11 @@ public class CharacterService : ICharacterService
     character.Name = request.Name;
     character.ImageUrl = request.ImageUrl;
     character.Bio = request.Bio;
-    character.MainRole = request.MainRole;
-    character.SecondaryRole = request.SecondaryRole;
-    if (request.PreferredModes != null) character.PreferredModes = request.PreferredModes;
     character.TimeZone = request.TimeZone;
     character.ActiveTimes = request.ActiveTimes;
     character.UsesVoiceChat = request.UsesVoiceChat;
     character.Languages = request.Languages;
-    character.Playstyle = request.Playstyle;
-    character.Rank = request.Rank;
-    character.Region = request.Region;
+    character.AdditionalNotes = request.AdditionalNotes;
 
     if (request.GameFields != null)
     {
@@ -250,21 +244,19 @@ public class CharacterService : ICharacterService
     {
       Id = c.Id,
       UserGameId = c.UserGameId,
+      GameId = c.UserGame.GameId,
       Platform = c.Platform,
       PlatformHandle = c.PlatformHandle,
       Name = c.Name,
       ImageUrl = c.ImageUrl,
       Bio = c.Bio,
-      MainRole = c.MainRole,
-      SecondaryRole = c.SecondaryRole,
-      PreferredModes = c.PreferredModes,
       TimeZone = c.TimeZone,
       ActiveTimes = c.ActiveTimes,
       UsesVoiceChat = c.UsesVoiceChat,
       Languages = c.Languages,
-      Playstyle = c.Playstyle,
-      Rank = c.Rank,
-      Region = c.Region,
+      AdditionalNotes = c.AdditionalNotes,
+      GameName = c.UserGame.Game.Name,
+      GameImageUrl = c.UserGame.Game.ImageUrl,
       CreatedAt = c.CreatedAt,
       GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
       {
@@ -272,7 +264,8 @@ public class CharacterService : ICharacterService
         Key = fv.FieldDefinition.Key,
         Label = fv.FieldDefinition.Label,
         Value = fv.Value,
-        Type = fv.FieldDefinition.Type.ToString()
+        Type = fv.FieldDefinition.Type.ToString(),
+        CommonField = fv.FieldDefinition.CommonField
       }).ToList(),
     };
 }

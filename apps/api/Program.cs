@@ -28,6 +28,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddHttpClient<RawgClient>();
 builder.Services.AddHttpClient("anthropic");
 builder.Services.AddScoped<IGameService, GameService>();

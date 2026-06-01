@@ -8,37 +8,42 @@ export function useFieldDefinitions(gameId: string | null) {
   const [data, setData] = useState<FieldDefinitionsResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const pollCount = useRef(0);
+  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMounted = useRef(false);
 
   useEffect(() => {
     if (!gameId) return;
 
+    isMounted.current = true;
     setLoading(true);
     pollCount.current = 0;
 
     async function fetchOnce() {
-      const result = await getFieldDefinitions(gameId!);
-      setData(result);
+      try {
+        const result = await getFieldDefinitions(gameId!);
+        if (!isMounted.current) return;
+        setData(result);
 
-      if (
-        result.schemaStatus === "Pending" ||
-        result.schemaStatus === "Generating"
-      ) {
-        if (pollCount.current < MAX_POLLS) {
-          pollCount.current++;
-          setTimeout(fetchOnce, POLL_INTERVAL_MS);
+        if (result.schemaStatus === "Pending" || result.schemaStatus === "Generating") {
+          if (pollCount.current < MAX_POLLS) {
+            pollCount.current++;
+            timeoutId.current = setTimeout(fetchOnce, POLL_INTERVAL_MS);
+          } else {
+            setLoading(false);
+          }
         } else {
           setLoading(false);
         }
-      } else {
-        setLoading(false);
+      } catch {
+        if (isMounted.current) setLoading(false);
       }
     }
 
-    fetchOnce().catch(() => setLoading(false));
+    fetchOnce();
 
     return () => {
-      // signal cleanup — next setTimeout will be a no-op since component unmounted
-      pollCount.current = MAX_POLLS;
+      isMounted.current = false;
+      if (timeoutId.current) clearTimeout(timeoutId.current);
     };
   }, [gameId]);
 

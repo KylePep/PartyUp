@@ -20,15 +20,15 @@ public abstract class TestBase : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
 
     protected async Task<HttpClient> CreateAuthenticatedClientAsync(
-        string? username = null,
+        string? email = null,
         string password = "Password123!")
     {
-        username ??= $"user_{Guid.NewGuid():N}";
+        email ??= $"user_{Guid.NewGuid():N}@test.com";
 
         var client = Factory.CreateClient();
         var response = await client.PostAsJsonAsync("/api/auth/register", new
         {
-            username,
+            email,
             password
         });
         response.EnsureSuccessStatusCode();
@@ -40,5 +40,5 @@ public abstract class TestBase : IAsyncLifetime
         return client;
     }
 
-    private record AuthResult(string Token, string Username);
+    private record AuthResult(string Token, string Email);
 }

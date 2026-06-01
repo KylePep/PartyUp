@@ -5,6 +5,7 @@ public interface ICharacterService
   Task<CharacterResponse?> CreateCharacterAsync(Guid userId, Guid userGameId, CreateCharacterRequest request);
   Task<List<CharacterResponse>> GetCharactersForUserGameAsync(Guid userId, Guid userGameId);
   Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId);
+  Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId);
   Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(
       Guid userId,
       Guid gameId,

@@ -9,45 +9,62 @@ using System.Security.Claims;
 public class AuthController : ControllerBase
 {
   private readonly IAuthService _auth;
+  private readonly IProfileService _profileService;
 
-  public AuthController(IAuthService auth)
+  public AuthController(IAuthService auth, IProfileService profileService)
   {
     _auth = auth;
+    _profileService = profileService;
   }
 
   [EnableRateLimiting("auth")]
   [HttpPost("register")]
   public async Task<IActionResult> Register(RegisterRequest request, IConfiguration config)
   {
-    var user = await _auth.Register(request.Username, request.Password);
+    var user = await _auth.Register(request.Email, request.Password);
     if (user == null)
-      return BadRequest("Username already exists");
+      return BadRequest("Email already registered");
 
-    var token = await _auth.Login(request.Username, request.Password, config);
-    return Ok(new AuthResponse { Token = token!, Username = user.Username });
+    var token = await _auth.Login(request.Email, request.Password, config);
+    return Ok(new AuthResponse { Token = token!, Email = user.Email });
   }
 
   [EnableRateLimiting("auth")]
   [HttpPost("login")]
   public async Task<IActionResult> Login(LoginRequest request, IConfiguration config)
   {
-    var token = await _auth.Login(request.Username, request.Password, config);
+    var token = await _auth.Login(request.Email, request.Password, config);
     if (token == null)
       return Unauthorized();
 
-    return Ok(new AuthResponse { Token = token, Username = request.Username });
+    return Ok(new AuthResponse { Token = token, Email = request.Email });
   }
 
   [Authorize]
   [HttpGet("me")]
-  public IActionResult Me()
+  public async Task<IActionResult> Me()
   {
-    var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var username = User.FindFirstValue(ClaimTypes.Name);
+    var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (idClaim == null) return Unauthorized();
 
-    if (id == null || username == null)
-      return Unauthorized();
+    var userId = Guid.Parse(idClaim);
+    var user = await _auth.GetByIdAsync(userId);
+    if (user == null) return Unauthorized();
 
-    return Ok(new { id, username });
+    var profile = await _profileService.GetProfileAsync(userId);
+    return Ok(new { id = user.Id, email = user.Email, profile });
+  }
+
+  [Authorize]
+  [EnableRateLimiting("auth")]
+  [HttpPut("password")]
+  public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+  {
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var success = await _auth.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
+    if (!success)
+      return BadRequest("Current password is incorrect");
+
+    return Ok();
   }
 }

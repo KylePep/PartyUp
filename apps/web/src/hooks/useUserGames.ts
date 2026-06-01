@@ -1,4 +1,3 @@
-// hooks/useUserGames.ts
 import { useEffect, useState } from "react";
 import { getUserGames, type UserGame } from "../api/endpoints/userGames";
 
@@ -20,7 +19,7 @@ export function useUserGames() {
   }, []);
 
   function addUserGame(userGame: UserGame) {
-    setGames((prev) => [...prev, userGame]);
+    setGames((prev) => [userGame, ...prev]);
   }
 
 function removeGame(userGame: UserGame) {

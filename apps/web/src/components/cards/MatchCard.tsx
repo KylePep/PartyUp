@@ -1,46 +1,101 @@
-import { Badge, Card } from '../ui'
-import type { CharacterSummary } from '../../api/endpoints/matches'
+import { useNavigate } from 'react-router-dom'
+import { Button } from '../ui'
+import { FlippableCard } from './FlippableCard'
+import { StandardTcgCard } from './StandardTcgCard'
+import type { Character } from '../../api/endpoints/characters'
 
 interface MatchCardProps {
-  character: CharacterSummary
+  character: Character
   gameName: string
   matchedAt: string
+  matchId: string
+  onSelect?: (character: Character) => void
 }
 
-export function MatchCard({ character, gameName, matchedAt }: MatchCardProps) {
+
+function MatchFront({ character }: MatchCardProps) {
+
+  const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
+  const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
+
+  const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
+  const statsLine = statsContent ? (
+    <span className="text-xs text-muted font-semibold">{statsContent}</span>
+  ) : undefined
+
+  return (
+    <StandardTcgCard
+      name={character.name}
+      platform={character.platform}
+      imageUrl={character.imageUrl}
+      statsLine={statsLine}
+      textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+      bottomStat={levelField?.value}
+      className="w-full h-full"
+    >
+      <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
+    </StandardTcgCard>
+  )
+}
+
+function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) {
+  const navigate = useNavigate()
   const date = new Date(matchedAt).toLocaleDateString()
   return (
-    <Card className="flex flex-col gap-3">
-      <div className="flex justify-between items-start">
-        <p className="text-xs font-mono text-muted">Matched {date}</p>
-        <p className="text-xs text-muted">{gameName}</p>
-      </div>
-      <div className="flex items-start gap-3">
-        <div className="w-12 h-12 rounded-full bg-surface-raised flex-shrink-0 overflow-hidden">
-          {character.imageUrl ? (
-            <img src={character.imageUrl} alt={character.name} className="w-full h-full object-cover" />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-muted text-sm font-mono">
-              {character.name.charAt(0).toUpperCase()}
+    <div
+      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black border-[6px]"
+    >
+      <div className="px-4 py-3 flex-1 overflow-y-auto overflow-x-hidden">
+        <p className="font-display font-bold text-text text-lg">{character.platformHandle}</p>
+        <p className="text-sm text-muted mb-1">{character.name}</p>
+        <p className="text-sm text-muted mb-1">{gameName}</p>
+        <p className="text-sm text-muted mb-1">{character.platform}</p>
+        {character.gameFields.length > 0 && (
+          <div className="mb-3">
+            <span className="text-xs text-muted block mb-1">Game Fields</span>
+            <div className="grid grid-cols-1 gap-1">
+              {character.gameFields.map(f => (
+                <div key={f.key} className="text-xs">
+                  <span className="text-muted">{f.label}: </span>
+                  <span className="text-text">{f.value}</span>
+                </div>
+              ))}
             </div>
-          )}
-        </div>
-        <div className="min-w-0">
-          <p className="font-display font-semibold text-text text-sm truncate">{character.name}</p>
-          <p className="text-xs text-muted font-mono truncate">{character.platformHandle}</p>
-        </div>
+          </div>
+        )}
+        {character.bio && (
+          <div className="mb-3">
+            <span className="text-xs text-muted block mb-1">Bio</span>
+            <p className="text-sm text-text leading-relaxed">{character.bio}</p>
+          </div>
+        )}
+        {character.additionalNotes && (
+          <div className="mb-3">
+            <span className="text-xs text-muted block mb-1">Notes</span>
+            <p className="text-sm text-text leading-relaxed">{character.additionalNotes}</p>
+          </div>
+        )}
+        <p className="text-xs text-muted mt-3">Matched {date}</p>
       </div>
-      <div className="flex flex-wrap gap-1.5">
-        {character.mainRole && <Badge variant="role">{character.mainRole}</Badge>}
-        {character.secondaryRole && <Badge variant="role">{character.secondaryRole}</Badge>}
-        {character.rank && <Badge variant="rank">{character.rank}</Badge>}
-        {character.region && <Badge variant="region">{character.region}</Badge>}
-        {character.playstyle && <Badge>{character.playstyle}</Badge>}
-        {character.gameFields.map(f => <Badge key={f.key}>{f.label}: {f.value}</Badge>)}
+      <div className="px-4 pb-2 flex justify-end" style={{ position: 'relative', zIndex: 20 }}>
+        <Button size="sm" variant="ghost" onClick={() => navigate(`/matches?id=${matchId}`)}>
+          View Match →
+        </Button>
       </div>
-      {character.bio && (
-        <p className="text-xs text-muted line-clamp-2">{character.bio}</p>
-      )}
-    </Card>
+      <p className="text-xs text-muted text-center py-2" style={{ opacity: 0.5 }}>tap to flip back</p>
+    </div>
+  )
+}
+
+export function MatchCard({ character, gameName, matchedAt, matchId, onSelect }: MatchCardProps) {
+  return (
+    <div className="min-h-50">
+      <FlippableCard
+        front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
+        back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
+        onFrontClick={onSelect ? () => onSelect(character) : undefined}
+        className="h-full"
+      />
+    </div>
   )
 }

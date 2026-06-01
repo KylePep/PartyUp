@@ -13,7 +13,7 @@ public static class DbInitializer
 
     db.Users.Add(new User
     {
-      Username = "admin",
+      Email = "admin@example.com",
       PasswordHash = "hashed-password"
     });
 

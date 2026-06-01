@@ -44,9 +44,10 @@ public class CharacterMatchService : ICharacterMatchService
                 MatchId = m.Id,
                 MatchedAt = m.MatchedAt,
                 MyCharacter = ToSummary(mine),
-                TheirCharacter = ToSummary(theirs),
+                TheirCharacter = ToProjection(theirs),
                 GameId = mine.UserGame.GameId,
-                GameName = mine.UserGame.Game.Name
+                GameName = mine.UserGame.Game.Name,
+                GameImageUrl = mine.UserGame.Game.ImageUrl
             };
         }).ToList();
     }
@@ -57,12 +58,35 @@ public class CharacterMatchService : ICharacterMatchService
         Name = c.Name,
         ImageUrl = c.ImageUrl,
         Bio = c.Bio,
-        MainRole = c.MainRole,
-        SecondaryRole = c.SecondaryRole,
-        Playstyle = c.Playstyle,
-        Rank = c.Rank,
-        Region = c.Region,
+        AdditionalNotes = c.AdditionalNotes,
         PlatformHandle = c.PlatformHandle,
+        GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
+        {
+            FieldDefinitionId = fv.FieldDefinitionId,
+            Key = fv.FieldDefinition.Key,
+            Label = fv.FieldDefinition.Label,
+            Value = fv.Value,
+            Type = fv.FieldDefinition.Type.ToString()
+        }).ToList(),
+    };
+
+    private static CharacterResponse ToProjection(Character c) => new()
+    {
+        Id = c.Id,
+        UserGameId = c.UserGameId,
+        Platform = c.Platform,
+        PlatformHandle = c.PlatformHandle,
+        Name = c.Name,
+        ImageUrl = c.ImageUrl,
+        Bio = c.Bio,
+        TimeZone = c.TimeZone,
+        ActiveTimes = c.ActiveTimes,
+        UsesVoiceChat = c.UsesVoiceChat,
+        Languages = c.Languages,
+        AdditionalNotes = c.AdditionalNotes,
+        GameName = c.UserGame.Game.Name,
+        GameImageUrl = c.UserGame.Game.ImageUrl,
+        CreatedAt = c.CreatedAt,
         GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
         {
             FieldDefinitionId = fv.FieldDefinitionId,

@@ -5,11 +5,11 @@ namespace PartyUp.Api.Tests.Factories;
 public static class UserFactory
 {
   public static User Create(
-    string username = "testuser")
+    string email = "testuser@example.com")
   {
     return new User
     {
-      Username = username,
+      Email = email,
       PasswordHash = "hash"
     };
   }

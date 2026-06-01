@@ -26,14 +26,6 @@ public class CreateCharacterRequest
     public string? Bio { get; set; }
 
     [StringLength(100)]
-    public string? MainRole { get; set; }
-
-    [StringLength(100)]
-    public string? SecondaryRole { get; set; }
-
-    public List<string> PreferredModes { get; set; } = [];
-
-    [StringLength(100)]
     public string? TimeZone { get; set; }
 
     public string[]? ActiveTimes { get; set; }
@@ -42,14 +34,8 @@ public class CreateCharacterRequest
 
     public string[]? Languages { get; set; }
 
-    [StringLength(200)]
-    public string? Playstyle { get; set; }
-
-    [StringLength(100)]
-    public string? Rank { get; set; }
-
-    [StringLength(100)]
-    public string? Region { get; set; }
+    [StringLength(1000)]
+    public string? AdditionalNotes { get; set; }
 
     public List<CharacterFieldValueRequest> GameFields { get; set; } = [];
 }

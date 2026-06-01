@@ -14,6 +14,7 @@ namespace PartyUp.Api.Infrastructure.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<UserGame> UserGames { get; set; }
         public DbSet<Character> Characters { get; set; }
@@ -39,6 +40,11 @@ namespace PartyUp.Api.Infrastructure.Data
                     .Metadata.SetValueComparer(stringListComparer);
 
                 e.Property(g => g.SchemaStatus).HasConversion<string>();
+            });
+
+            modelBuilder.Entity<UserGame>(e =>
+            {
+                e.Property(ug => ug.CreatedAt).HasDefaultValueSql("NOW()");
             });
 
             modelBuilder.Entity<GameFieldDefinition>(e =>
@@ -68,6 +74,30 @@ namespace PartyUp.Api.Infrastructure.Data
                     .WithMany(c => c.FieldValues)
                     .HasForeignKey(x => x.CharacterId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            var preferencesComparer = new ValueComparer<UserPreferences>(
+                (a, b) => JsonSerializer.Serialize(a, (JsonSerializerOptions?)null) == JsonSerializer.Serialize(b, (JsonSerializerOptions?)null),
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null).GetHashCode(),
+                v => JsonSerializer.Deserialize<UserPreferences>(JsonSerializer.Serialize(v, (JsonSerializerOptions?)null), (JsonSerializerOptions?)null)!);
+
+            modelBuilder.Entity<UserProfile>(e =>
+            {
+                e.HasOne(p => p.User)
+                    .WithOne()
+                    .HasForeignKey<UserProfile>(p => p.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                e.HasIndex(p => p.UserId).IsUnique();
+
+                e.Property(p => p.DisplayName).HasMaxLength(50);
+
+                e.Property(p => p.Preferences)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => JsonSerializer.Deserialize<UserPreferences>(v, (JsonSerializerOptions?)null) ?? new UserPreferences())
+                    .HasColumnType("jsonb")
+                    .Metadata.SetValueComparer(preferencesComparer);
             });
         }
     }

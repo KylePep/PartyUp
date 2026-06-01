@@ -4,22 +4,33 @@ import { MatchCard } from './cards/MatchCard'
 import { EmptyState, Spinner } from './ui'
 
 interface MatchGalleryProps {
-  gameId?: string
+  matches?: CharacterMatchDto[]
+  selectedId?: string | null
+  onSelect?: (match: CharacterMatchDto) => void
+  gameId?: string | null
+  limit?: number
 }
 
-export function MatchGallery({ gameId }: MatchGalleryProps) {
+export function MatchGallery({ matches: providedMatches, gameId, limit, onSelect }: MatchGalleryProps) {
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
 
   useEffect(() => {
+    if (providedMatches) {
+      setMatches(providedMatches)
+      setStatus(providedMatches.length ? 'ready' : 'empty')
+      return
+    }
+
     setStatus('loading')
-    getMatches(gameId)
-      .then(m => {
-        setMatches(m)
-        setStatus(m.length === 0 ? 'empty' : 'ready')
-      })
-      .catch(() => setStatus('error'))
-  }, [gameId])
+    if (gameId != null)
+      getMatches(gameId)
+        .then(m => {
+          setMatches(m)
+          setStatus(m.length ? 'ready' : 'empty')
+        })
+        .catch(() => setStatus('error'))
+  }, [providedMatches, gameId])
 
   if (status === 'loading') {
     return <div className="flex justify-center py-10"><Spinner /></div>
@@ -33,14 +44,18 @@ export function MatchGallery({ gameId }: MatchGalleryProps) {
     return <EmptyState message="Could not load matches" />
   }
 
+  const displayed = limit !== undefined ? matches.slice(0, limit) : matches
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {matches.map(m => (
+    <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-4 h-full">
+      {displayed.map(m => (
         <MatchCard
           key={m.matchId}
+          matchId={m.matchId}
           character={m.theirCharacter}
           gameName={m.gameName}
           matchedAt={m.matchedAt}
+          onSelect={onSelect ? () => onSelect(m) : undefined}
         />
       ))}
     </div>

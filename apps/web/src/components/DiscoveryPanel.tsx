@@ -1,62 +1,58 @@
 import { useEffect, useState } from 'react'
 import { discoverCharacters, interactWithCharacter, type Character, type DiscoverCharacter } from '../api/endpoints/characters'
-import { useFieldDefinitions } from '../hooks/useFieldDefinitions'
+import { useDebounce } from '../hooks/useDebounce'
 import { SwipeCard } from './cards/SwipeCard'
-import { DiscoveryFilters } from './DiscoveryFilters'
 import { Spinner, EmptyState } from './ui'
 
 type DiscoverStatus = 'loading' | 'ready' | 'empty' | 'error'
 
 interface DiscoveryPanelProps {
   gameId: string
-  myCharacter: Character | null | 'loading'
+  myCharacter: Character
   onMatch: () => void
-  gamePlatforms?: string[]
+  filters: Record<string, string>
+  activePlatforms: string[]
 }
 
-export function DiscoveryPanel({ gameId, myCharacter, onMatch, gamePlatforms = [] }: DiscoveryPanelProps) {
+export function DiscoveryPanel({
+  gameId,
+  myCharacter,
+  onMatch,
+  filters,
+  activePlatforms,
+}: DiscoveryPanelProps) {
   const [queue, setQueue] = useState<DiscoverCharacter[]>([])
   const [status, setStatus] = useState<DiscoverStatus>('loading')
-  const [filters, setFilters] = useState<Record<string, string>>({})
-  const [activePlatforms, setActivePlatforms] = useState<string[]>(gamePlatforms)
-  const { data: fieldDefs } = useFieldDefinitions(gameId)
 
-  function handleFilterChange(key: string, value: string) {
-    setFilters(prev => {
-      const next = { ...prev }
-      if (value === '') {
-        delete next[key]
-      } else {
-        next[key] = value
-      }
-      return next
-    })
-  }
+  const debouncedFilters = useDebounce(filters, 400)
+  const debouncedPlatforms = useDebounce(activePlatforms, 400)
 
   useEffect(() => {
     setStatus('loading')
     const activeFilters = Object.fromEntries(
-      Object.entries(filters).filter(([, v]) => v !== '')
+      Object.entries(debouncedFilters).filter(([, v]) => v !== '')
     )
     discoverCharacters(
       gameId,
       activeFilters,
-      activePlatforms.length > 0 ? activePlatforms : undefined
+      debouncedPlatforms.length > 0 ? debouncedPlatforms : undefined
     )
       .then(chars => {
         setQueue(chars)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
       })
       .catch(() => setStatus('error'))
-  }, [gameId, filters, activePlatforms])
+  }, [gameId, debouncedFilters, debouncedPlatforms])
 
   async function handleInteract(type: 'Like' | 'Dislike') {
     const current = queue[0]
-    if (!current || !myCharacter || myCharacter === 'loading') return
+    if (!current) return
     try {
       const res = await interactWithCharacter(myCharacter.id, current.id, type)
       if (res.isMatch) onMatch()
-    } catch { /* fail silently */ }
+    } catch (err) {
+      console.error(`Failed to ${type.toLowerCase()} character:`, err)
+    }
     setQueue(q => {
       const next = q.slice(1)
       if (next.length === 0) setStatus('empty')
@@ -64,29 +60,8 @@ export function DiscoveryPanel({ gameId, myCharacter, onMatch, gamePlatforms = [
     })
   }
 
-  if (!myCharacter || myCharacter === 'loading') {
-    return <EmptyState message="Create a character to start matching" />
-  }
-
-  const filterableFields = fieldDefs?.schemaStatus === 'Generated'
-    ? fieldDefs.fields.filter(f => f.isFilterable && f.type === 'Select')
-    : []
-
-  const showFilters = filterableFields.length > 0 || gamePlatforms.length > 0
-
   return (
-    <div className="flex flex-col gap-4">
-      {showFilters && (
-        <DiscoveryFilters
-          fields={filterableFields}
-          activeFilters={filters}
-          onChange={handleFilterChange}
-          gamePlatforms={gamePlatforms}
-          activePlatforms={activePlatforms}
-          onPlatformChange={setActivePlatforms}
-        />
-      )}
-
+    <div className="flex-1 flex flex-col h-full gap-4">
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner label="Scanning the realm..." /></div>
       )}
@@ -98,7 +73,7 @@ export function DiscoveryPanel({ gameId, myCharacter, onMatch, gamePlatforms = [
       )}
 
       {status === 'ready' && (
-        <div className="relative" style={{ height: '520px' }}>
+        <div className="relative mx-auto w-full h-full min-h-0">
           {queue.slice(0, 2).map((char, i) => (
             <SwipeCard
               key={char.id}

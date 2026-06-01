@@ -43,7 +43,7 @@ public class ScaleSeeder
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Username = $"player_{i:D3}",
+                Email = $"player_{i:D3}@example.com",
                 PasswordHash = "seeded-hash"
             };
             users.Add(user);
@@ -64,8 +64,6 @@ public class ScaleSeeder
                 PlatformHandle = $"ESO_Player_{i:D3}",
                 Name = $"Character_{i:D3}",
                 Bio = $"Veteran ESO player #{i}.",
-                Playstyle = Pick("Casual", "Competitive", "Hardcore"),
-                PreferredModes = [Pick("PvE", "PvP", "Trials", "Dungeons")]
             };
 
             fieldValues.AddRange([

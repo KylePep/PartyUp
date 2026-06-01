@@ -10,7 +10,7 @@ type AuthState =
 
 type AuthContextValue = {
   state: AuthState;
-  login: (username: string, token: string) => Promise<void>;
+  login: (email: string, token: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -34,14 +34,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
   }, []);
 
-  async function login(username: string, token: string) {
-    localStorage.setItem("username", username);
+  async function login(_email: string, token: string) {
     localStorage.setItem("token", token);
     try {
       const user = await getMe();
       setState({ status: "authenticated", user });
     } catch (err) {
-      localStorage.removeItem("username");
       localStorage.removeItem("token");
       throw err;
     }
@@ -49,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   function logout() {
     localStorage.removeItem("token");
-    localStorage.removeItem("username");
     setState({ status: "unauthenticated" });
   }
 

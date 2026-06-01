@@ -34,6 +34,14 @@ public class CharactersController : ControllerBase
     return Ok(result);
   }
 
+  [HttpGet("{id}")]
+  public async Task<IActionResult> GetMyCharacterById(Guid id)
+  {
+    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    var result = await _characterService.GetCharacterByIdAsync(userId, id);
+    return result is null ? NotFound() : Ok(result);
+  }
+
   [HttpPost]
   public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterRequest request)
   {

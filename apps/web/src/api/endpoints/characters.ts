@@ -6,26 +6,25 @@ export type CharacterGameField = {
   label: string;
   value: string;
   type: string;
+  commonField?: string;
 };
 
 export type Character = {
   id: string;
   userGameId?: string;
+  gameId?: string;
   platform: string;
   platformHandle: string;
   name: string;
   imageUrl?: string;
   bio?: string;
-  mainRole?: string;
-  secondaryRole?: string;
-  preferredModes: string[];
   timeZone?: string;
   activeTimes?: string[];
   usesVoiceChat?: boolean;
   languages?: string[];
-  playstyle?: string;
-  rank?: string;
-  region?: string;
+  additionalNotes?: string;
+  gameName?: string;
+  gameImageUrl?: string;
   gameFields: CharacterGameField[];
 };
 
@@ -36,16 +35,11 @@ export type CharacterCreate = {
   name: string;
   imageUrl?: string;
   bio?: string;
-  mainRole?: string;
-  secondaryRole?: string;
-  preferredModes: string[];
   timeZone?: string;
   activeTimes?: string[];
   usesVoiceChat?: boolean;
   languages?: string[];
-  playstyle?: string;
-  rank?: string;
-  region?: string;
+  additionalNotes?: string;
   gameFields?: CharacterFieldValueCreate[];
 };
 
@@ -60,16 +54,11 @@ export type CharacterUpdate = {
   name: string;
   imageUrl?: string;
   bio?: string;
-  mainRole?: string;
-  secondaryRole?: string;
-  preferredModes?: string[];
   timeZone?: string;
   activeTimes?: string[];
   usesVoiceChat?: boolean;
   languages?: string[];
-  playstyle?: string;
-  rank?: string;
-  region?: string;
+  additionalNotes?: string;
   gameFields?: CharacterFieldValueCreate[];
 };
 
@@ -79,27 +68,21 @@ export type DiscoverCharacter = {
   platform: string;
   imageUrl?: string;
   bio?: string;
-  mainRole?: string;
-  secondaryRole?: string;
-  preferredModes: string[];
   usesVoiceChat?: boolean;
   languages?: string[];
-  playstyle?: string;
-  rank?: string;
-  region?: string;
+  additionalNotes?: string;
   gameName?: string;
   gameImageUrl?: string;
   gameFields: CharacterGameField[];
 };
 
 export type MatchResponse = {
-  
-characterAId : string;
-characterBId : string;
-isMatch : false;
-matchId : string;
-matchedAt : Date;
-}
+  characterAId: string;
+  characterBId: string;
+  isMatch: false;
+  matchId: string;
+  matchedAt: Date;
+};
 
 export type InteractionType = "Like" | "Dislike";
 
@@ -107,7 +90,7 @@ export function getCharacters() {
   return apiGet<Character[]>("/characters");
 }
 
-export function getUserGameCharacters(userGameId: string){
+export function getUserGameCharacters(userGameId: string) {
   return apiGet<Character[]>(`/characters/${userGameId}/userGame`);
 }
 
@@ -136,6 +119,13 @@ export function uploadCharacterImage(file: File): Promise<{ url: string }> {
 }
 
 export function interactWithCharacter(fromCharacterId: string, toCharacterId: string, type: InteractionType) {
-  return apiPost<MatchResponse>("/character-interactions", {fromCharacterId, toCharacterId, type });
+  return apiPost<MatchResponse>("/character-interactions", { fromCharacterId, toCharacterId, type });
 }
 
+export function getCharacterById(id: string) {
+  return apiGet<Character>(`/characters/${id}`);
+}
+
+export function getPendingLikes(characterId: string) {
+  return apiGet<DiscoverCharacter[]>(`/character-interactions/pending?characterId=${characterId}`);
+}

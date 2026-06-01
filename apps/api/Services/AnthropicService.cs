@@ -31,9 +31,10 @@ public class AnthropicService : IAnthropicService
             - Prefer structured enumerable fields over free text.
             - For Select and MultiSelect fields, list ALL available options exhaustively — do not truncate or summarize.
             - Use only officially recognized in-game terminology. Do not invent fake game systems or fake terms.
+            - commonField values are card rendering slot identifiers (e.g. class_slot) — never use them as a key or label. Game-specific terminology always takes precedence in those fields.
 
             Exclude these fields — they are already collected elsewhere in the app:
-            - Platform, Character Name, Language, Time zone, Voice chat, Play schedule / active times
+            - Platform, Character Name, Language, Time zone, Voice chat, microphone, push-to-talk, audio communication preferences, Play schedule / active times, Additional Notes
 
             Allowed field types: Select, MultiSelect, Text
 
@@ -49,16 +50,22 @@ public class AnthropicService : IAnthropicService
             Description: {game.Description ?? "N/A"}
             Platforms: {string.Join(", ", game.Platforms)}
 
-            Guidance:
+            Phase 1 — Generate fields using official in-game terminology:
             - Prefer fields players commonly ask each other when forming a group.
             - Use current live-service terminology (patch-accurate class names, rank tiers, etc.).
             - Include exhaustive option lists — do not truncate.
             - Sort fields by matchmaking importance.
 
+            Phase 2 — After finalizing the fields above, optionally annotate each with a commonField from this exact list:
+            class_slot, level_slot, faction_slot, role_slot, build_slot, server_slot, playstyle_slot.
+            Assign one only where the mapping is unambiguous. Omit commonField entirely if no slot fits — do not force a mapping.
+            The commonField is a backend normalization hint only and must not influence the label or key chosen in Phase 1.
+
             Return a JSON array where each element has:
             key (string, camelCase), label (string, display name),
             type (one of: Select, MultiSelect, Text), options (string array, empty for Text),
-            isFilterable (bool), isRequired (bool), sortOrder (int starting at 1).
+            isFilterable (bool), isRequired (bool), sortOrder (int starting at 1),
+            commonField (string or null — omit if no slot applies, must be one of the seven identifiers above).
             """;
 
         var body = new

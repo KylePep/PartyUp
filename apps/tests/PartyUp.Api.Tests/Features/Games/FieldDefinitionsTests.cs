@@ -103,6 +103,48 @@ public class FieldDefinitionsTests : TestBase, IClassFixture<ApiFactory>
         body.Fields.Should().BeEmpty();
     }
 
+    [Fact]
+    public async Task GetFieldDefinitions_IncludesCommonField_WhenPresent()
+    {
+        var game = new Game
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = 55555,
+            Name = "Final Fantasy XIV",
+            SchemaStatus = SchemaStatus.Generated
+        };
+        var field = new GameFieldDefinition
+        {
+            Id = Guid.NewGuid(),
+            GameId = game.Id,
+            Key = "job",
+            Label = "Job",
+            Type = FieldType.Select,
+            Options = ["Paladin", "Warrior", "Dark Knight", "White Mage", "Scholar"],
+            IsFilterable = true,
+            IsRequired = true,
+            SortOrder = 1,
+            CommonField = "class_slot"
+        };
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Games.Add(game);
+            db.GameFieldDefinitions.Add(field);
+            await db.SaveChangesAsync();
+        }
+
+        var authClient = await CreateAuthenticatedClientAsync();
+        var response = await authClient.GetAsync($"/api/games/{game.Id}/field-definitions");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = await response.Content.ReadFromJsonAsync<FieldDefinitionsResponse>();
+        body!.Fields.Should().HaveCount(1);
+        body.Fields[0].Key.Should().Be("job");
+        body.Fields[0].CommonField.Should().Be("class_slot");
+    }
+
     private record FieldDefinitionsResponse(string SchemaStatus, List<FieldDto> Fields);
-    private record FieldDto(string Key, string Label, string Type, List<string> Options, bool IsFilterable, bool IsRequired, int SortOrder);
+    private record FieldDto(string Key, string Label, string Type, List<string> Options, bool IsFilterable, bool IsRequired, int SortOrder, string? CommonField = null);
 }
