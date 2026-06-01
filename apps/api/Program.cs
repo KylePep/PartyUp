@@ -121,6 +121,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "PartyUp API",
+        Version = "v1",
+        Description = "Swipe-based matchmaking for multiplayer gamers"
+    });
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -178,11 +185,8 @@ if (!string.IsNullOrEmpty(app.Configuration.GetConnectionString("DefaultConnecti
 
 #region Middleware
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PartyUp API v1"));
 
 app.MapGet("/api/health", () =>
 {
