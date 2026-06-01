@@ -15,6 +15,7 @@ export default function RealmPage() {
   const [character, setCharacter] = useState<Character | null>(null)
   const [loading, setLoading] = useState(true)
   const [matchBanner, setMatchBanner] = useState(false)
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>('left')
 
   useEffect(() => {
     if (!gameId) return
@@ -71,6 +72,8 @@ export default function RealmPage() {
           </>
         }
         activeTab=""
+        activeSide={activeSide}
+        onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
         leftContent={
           <RealmLeftPage
             gameId={gameId!}
