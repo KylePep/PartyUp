@@ -27,6 +27,7 @@ export default function GamesPage() {
           const match = gs.find(g => g.id === targetId)
           if (match) {
             setSelected(match)
+            setActiveSide('left')
             setDetailLoading(true)
             getUserGameByGameId(match.gameId)
               .then(detail => setSelectedDetail(detail))
@@ -64,7 +65,7 @@ export default function GamesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="overflow-y-auto mx-auto" style={{ height: 'calc(100vh - 6rem)', width: "500px" }}>
+    <div className="overflow-y-auto mx-auto w-full" style={{ height: 'calc(100vh - 6rem)' }}>
       <LandCard
         name={selected.gameName}
         imageUrl={selected.gameImageUrl ?? undefined}
@@ -123,32 +124,35 @@ export default function GamesPage() {
   )
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full min-h-0">
-      {status === 'loading' && (
-        <div className="flex justify-center py-10"><Spinner /></div>
-      )}
-      {status === 'error' && <EmptyState message="Could not load games" />}
-      {status === 'empty' && <EmptyState message="You haven't added any games yet" />}
-      {status === 'ready' && (
-        <div className="grid grid-cols-3 grid-rows-2 h-full gap-3">
-          {games.map(game => (
-            <div
-              key={game.id}
-              className={selected?.id === game.id ? 'ring-2 ring-blue-700 ring-offset-2 ring-offset-[--color-bg] rounded-xl' : ''}
-            >
-              <LandCard
-                name={game.gameName}
-                imageUrl={game.gameImageUrl ?? undefined}
-                onClick={() => handleSelect(game)}
-                className="w-full h-full hover:brightness-110 transition-all"
+    <>
+      <div className='block md:hidden min-h-24 bg-black'></div>
+      <div className="p-4 overflow-y-auto h-full min-h-0">
+        {status === 'loading' && (
+          <div className="flex justify-center py-10"><Spinner /></div>
+        )}
+        {status === 'error' && <EmptyState message="Could not load games" />}
+        {status === 'empty' && <EmptyState message="You haven't added any games yet" />}
+        {status === 'ready' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 grid-rows-2 h-full gap-3">
+            {games.map(game => (
+              <div
+                key={game.id}
+                className={selected?.id === game.id ? 'ring-2 ring-blue-700 ring-offset-2 ring-offset-[--color-bg] rounded-xl' : ''}
               >
-                <div className='flex flex-1 items-center justify-center text-7xl'>❖</div>
-              </LandCard>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+                <LandCard
+                  name={game.gameName}
+                  imageUrl={game.gameImageUrl ?? undefined}
+                  onClick={() => handleSelect(game)}
+                  className="w-full h-full hover:brightness-110 transition-all"
+                >
+                  <div className='flex flex-1 items-center justify-center text-7xl'>❖</div>
+                </LandCard>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </>
   )
 
   return (

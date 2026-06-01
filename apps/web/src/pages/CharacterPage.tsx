@@ -28,7 +28,9 @@ export default function CharactersPage() {
         setUserGames(ug)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
         if (targetId) {
-          setSelected(chars.find(c => c.id === targetId) ?? null)
+          const match = chars.find(c => c.id === targetId) ?? null
+          setSelected(match)
+          if (match) setActiveSide('left')
         }
       })
       .catch(() => setStatus('error'))
@@ -119,14 +121,17 @@ export default function CharactersPage() {
   })()
 
   const rightContent = (
-    <div className="p-4 overflow-y-auto h-full min-h-0">
-      <CharacterGallery
-        characters={characters}
-        status={status}
-        selectedId={selected?.id ?? null}
-        onSelect={handleSelect}
-      />
-    </div>
+    <>
+      <div className='block md:hidden min-h-24 bg-black'></div>
+      <div className="p-4 overflow-y-auto h-full min-h-0 relative">
+        <CharacterGallery
+          characters={characters}
+          status={status}
+          selectedId={selected?.id ?? null}
+          onSelect={handleSelect}
+        />
+      </div>
+    </>
   )
 
   return (
