@@ -15,6 +15,7 @@ export default function GamesPage() {
   const [deleting, setDeleting] = useState(false)
   const [selectedDetail, setSelectedDetail] = useState<UserGameDetail | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function GamesPage() {
   }, [targetId])
 
   function handleSelect(game: UserGame) {
+    setActiveSide('left')
     setSelected(game)
     setSelectedDetail(null)
     setDetailLoading(true)
@@ -153,6 +155,8 @@ export default function GamesPage() {
     <BinderLayout
       barColor="#1e40af"
       activeTab={"Games"}
+      activeSide={activeSide}
+      onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}
       rightContent={rightContent}
     />
