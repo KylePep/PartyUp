@@ -26,7 +26,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
   return (
     <div
-      className="flex flex-col flex-1 min-h-0 rounded-xl overflow-hidden"
+      className="flex flex-col md:flex-1 md:min-h-0 rounded-xl overflow-hidden"
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '2px solid var(--color-accent)',
@@ -36,11 +36,11 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
       {/* Hero — pinned */}
       <div
-        className="flex gap-6 p-4 flex-shrink-0"
+        className="flex flex-col md:flex-row gap-6 p-4 flex-shrink-0"
         style={{ borderBottom: '1px solid var(--color-border)' }}
       >
         <div
-          className="w-40 h-52 rounded-lg overflow-hidden flex-shrink-0"
+          className="w-full md:w-40 h-52 rounded-lg overflow-hidden flex-shrink-0"
           style={{ border: '1px solid var(--color-border)' }}
         >
           {character.imageUrl ? (
@@ -88,7 +88,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
       </div>
 
       {/* Scrollable details */}
-      <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="md:flex-1 md:min-h-0 md:overflow-y-auto">
 
         {/* Game Fields section */}
         {character.gameFields.length > 0 && (

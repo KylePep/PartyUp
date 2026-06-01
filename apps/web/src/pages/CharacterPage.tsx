@@ -103,7 +103,7 @@ export default function CharactersPage() {
     }
     if (selected) {
       return (
-        <div className="flex flex-col flex-1 min-h-0 p-4">
+        <div className="flex flex-col md:flex-1 md:min-h-0 p-4">
           <CharacterDetailCard
             character={selected}
             onDelete={selected.userGameId ? handleDelete : undefined}
