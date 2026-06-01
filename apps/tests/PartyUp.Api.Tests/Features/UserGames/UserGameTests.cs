@@ -281,6 +281,21 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
       body!.Message.Should().Contain("Realm limit");
   }
 
+  [Fact]
+  public async Task AddGame_WithEmptyName_ReturnsBadRequest()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+
+      var response = await client.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = 99999,
+          name = "",
+          imageUrl = (string?)null
+      });
+
+      response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+  }
+
   private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
 
   private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
