@@ -2,16 +2,19 @@ using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.Character;
+using PartyUp.Api.Services.Interfaces;
 
 namespace PartyUp.Api.Services;
 
 public class CharacterService : ICharacterService
 {
   private readonly AppDbContext _db;
+  private readonly IGcsStorageService _gcs;
 
-  public CharacterService(AppDbContext db)
+  public CharacterService(AppDbContext db, IGcsStorageService gcs)
   {
     _db = db;
+    _gcs = gcs;
   }
 
   public async Task<CharacterResponse?> CreateCharacterAsync(
@@ -249,8 +252,13 @@ public class CharacterService : ICharacterService
     if (character == null)
       return false;
 
+    var imageUrl = character.ImageUrl;
     _db.Characters.Remove(character);
     await _db.SaveChangesAsync();
+
+    if (!string.IsNullOrEmpty(imageUrl))
+      await _gcs.DeleteByUrlAsync(imageUrl);
+
     return true;
   }
 

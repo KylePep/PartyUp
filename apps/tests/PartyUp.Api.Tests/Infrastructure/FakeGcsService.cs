@@ -6,4 +6,6 @@ public class FakeGcsService : IGcsStorageService
 {
     public Task<string> UploadAsync(Stream stream, string contentType, string objectName)
         => Task.FromResult($"https://storage.googleapis.com/test-bucket/{objectName}");
+
+    public Task DeleteByUrlAsync(string url) => Task.CompletedTask;
 }
