@@ -105,7 +105,7 @@ export function MatchCard({ character, gameName, matchedAt, matchId, onSelect }:
       front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
       back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
       onFrontClick={onSelect ? () => onSelect(character) : undefined}
-      className="h-full w-full aspect-2/3 h-min md:aspect-auto"
+      className="h-min md:h-full w-full aspect-2/3 md:aspect-auto"
     />
   )
 }
