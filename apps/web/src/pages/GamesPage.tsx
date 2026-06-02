@@ -69,7 +69,7 @@ export default function GamesPage() {
       <LandCard
         name={selected.gameName}
         imageUrl={selected.gameImageUrl ?? undefined}
-        className='md:aspect-2/3 mx-auto'
+        className='md:aspect-3/4 mx-auto'
       >
         <div className='flex justify-between border-1 border-black px-2 py-1'>
           {selectedDetail && selectedDetail.platforms.length > 0 && (
@@ -138,13 +138,16 @@ export default function GamesPage() {
             {games.map(game => (
               <div
                 key={game.id}
-                className={selected?.id === game.id ? 'ring-2 ring-blue-700 ring-offset-2 ring-offset-[--color-bg] rounded-xl' : ''}
+                className={`h-fit md:h-full ${selected?.id === game.id
+                  ? 'ring-2 ring-blue-700 rounded-xl'
+                  : ''
+                  }`}
               >
                 <LandCard
                   name={game.gameName}
                   imageUrl={game.gameImageUrl ?? undefined}
                   onClick={() => handleSelect(game)}
-                  className="h-min md:h-full hover:brightness-110 transition-all"
+                  className="h-min aspect-3/4 md:aspect-auto md:h-full hover:brightness-110 transition-all"
                 >
                   <div className='flex flex-1 items-center justify-center text-7xl'>❖</div>
                 </LandCard>

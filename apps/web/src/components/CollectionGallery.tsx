@@ -11,7 +11,7 @@ interface MatchGalleryProps {
   limit?: number
 }
 
-export function CollectionGallery({ matches: providedMatches, gameId, limit, onSelect }: MatchGalleryProps) {
+export function CollectionGallery({ matches: providedMatches, selectedId, gameId, limit, onSelect }: MatchGalleryProps) {
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
 
@@ -51,7 +51,10 @@ export function CollectionGallery({ matches: providedMatches, gameId, limit, onS
       {displayed.map(m => (
         <div
           key={m.matchId}
-
+          className={`h-fit md:h-full ${selectedId === m.matchId
+              ? 'ring-2 ring-green-700 rounded-xl'
+              : ''
+            }`}
         >
           <CollectionCard
             matchId={m.matchId}
