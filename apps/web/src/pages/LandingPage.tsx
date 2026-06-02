@@ -95,7 +95,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex justify-around items-center border-white border-2 w-full md:w-3/4 md:h-1/3 p-8 ">
+          <div className="flex gap-4 justify-around items-center border-white border-2 w-full md:w-3/4 h-1/3 p-4 md:p-8 ">
             <Button size="lg" onClick={() => setModal('sign-up')}>
               Get Started
             </Button>

@@ -7,6 +7,7 @@ const MAX_POLLS = 10;
 export function useFieldDefinitions(gameId: string | null) {
   const [data, setData] = useState<FieldDefinitionsResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const pollCount = useRef(0);
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMounted = useRef(false);
@@ -16,6 +17,7 @@ export function useFieldDefinitions(gameId: string | null) {
 
     isMounted.current = true;
     setLoading(true);
+    setError(null);
     pollCount.current = 0;
 
     async function fetchOnce() {
@@ -35,7 +37,10 @@ export function useFieldDefinitions(gameId: string | null) {
           setLoading(false);
         }
       } catch {
-        if (isMounted.current) setLoading(false);
+        if (isMounted.current) {
+          setError("Failed to load game schema");
+          setLoading(false);
+        }
       }
     }
 
@@ -47,5 +52,5 @@ export function useFieldDefinitions(gameId: string | null) {
     };
   }, [gameId]);
 
-  return { data, loading };
+  return { data, loading, error };
 }

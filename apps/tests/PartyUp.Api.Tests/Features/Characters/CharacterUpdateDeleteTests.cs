@@ -83,6 +83,31 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task DeleteCharacter_WithImageUrl_RemovesCharacter()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+
+        // Create character with an imageUrl
+        var createResponse = await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Image Character",
+            platform = "PC",
+            platformHandle = "ImageHandle",
+            userGameId = userGame.Id,
+            imageUrl = "https://storage.googleapis.com/test-bucket/characters/test-image.jpg"
+        });
+        createResponse.EnsureSuccessStatusCode();
+        var character = await createResponse.Content.ReadFromJsonAsync<CharacterDto>();
+
+        var deleteResponse = await client.DeleteAsync($"/api/characters/{userGame.Id}/{character!.Id}");
+        deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
+
+        var all = await client.GetFromJsonAsync<List<CharacterDto>>("/api/characters");
+        all!.Should().NotContain(c => c.Id == character.Id);
+    }
+
+    [Fact]
     public async Task DeleteCharacter_OnAnotherUsersCharacter_ReturnsNotFound()
     {
         var clientA = await CreateAuthenticatedClientAsync();
@@ -94,6 +119,20 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientA.DeleteAsync($"/api/characters/{userGameB.Id}/{characterB.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task UpdateCharacter_WithEmptyName_ReturnsBadRequest()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+        var character = await CreateCharacterAsync(client, userGame.Id);
+
+        var response = await client.PutAsJsonAsync(
+            $"/api/characters/{userGame.Id}/{character.Id}",
+            new { name = "" });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────

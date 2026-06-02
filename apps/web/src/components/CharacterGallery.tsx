@@ -25,13 +25,13 @@ export function CharacterGallery({ characters, status, selectedId, onSelect }: C
           {characters.map(c => (
             <div
               key={c.id}
-              className="rounded-xl transition-all"
+              className="rounded-xl transition-all h-fit md:h-full"
               style={{
                 outline: selectedId === c.id ? '2px solid #991b1b' : '2px solid transparent',
                 outlineOffset: '2px',
               }}
             >
-              <CharacterCard character={c} onSelect={onSelect} />
+              <CharacterCard character={c} onSelect={onSelect} className={"h-min md:h-full"} />
             </div>
           ))}
         </div>

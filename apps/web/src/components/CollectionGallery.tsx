@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
 import { getMatches, type CharacterMatchDto } from '../api/endpoints/matches'
-import { MatchCard } from './cards/MatchCard'
 import { EmptyState, Spinner } from './ui'
+import { CollectionCard } from './cards/CollectionCard'
 
 interface MatchGalleryProps {
   matches?: CharacterMatchDto[]
   selectedId?: string | null
-  onSelect?: (match: CharacterMatchDto) => void
   gameId?: string | null
+  onSelect?: (match: CharacterMatchDto) => void
   limit?: number
 }
 
-export function MatchGallery({ matches: providedMatches, gameId, limit, onSelect }: MatchGalleryProps) {
+export function CollectionGallery({ matches: providedMatches, selectedId, gameId, limit, onSelect }: MatchGalleryProps) {
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
 
@@ -51,8 +51,12 @@ export function MatchGallery({ matches: providedMatches, gameId, limit, onSelect
       {displayed.map(m => (
         <div
           key={m.matchId}
+          className={`h-fit md:h-full ${selectedId === m.matchId
+              ? 'ring-2 ring-green-700 rounded-xl'
+              : ''
+            }`}
         >
-          <MatchCard
+          <CollectionCard
             matchId={m.matchId}
             character={m.theirCharacter}
             gameName={m.gameName}

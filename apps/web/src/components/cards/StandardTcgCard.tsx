@@ -27,7 +27,7 @@ export function StandardTcgCard({
 }: StandardTcgCardProps) {
   return (
     <div
-      className={`rounded-xl overflow-hidden flex flex-col h-full w-full p-2 gap-2${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
+      className={`rounded-xl overflow-hidden flex flex-col h-full w-full aspect-3/4 p-2 gap-2${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
       style={{ border: '8px solid black', backgroundColor: 'var(--color-surface)' }}
       onClick={onClick}
     >

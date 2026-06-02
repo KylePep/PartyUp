@@ -80,8 +80,55 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientA.GetAsync($"/api/characters/discover?gameId={userGameA.GameId}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredDto>>();
-        discovered.Should().ContainSingle(c => c.Name == "User B Character");
+        var paged = await response.Content.ReadFromJsonAsync<PagedDiscoverDto>();
+        paged!.Items.Should().ContainSingle(c => c.Name == "User B Character");
+    }
+
+    [Fact]
+    public async Task Discover_WithPagination_ReturnsPagedResult()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var clientC = await CreateAuthenticatedClientAsync();
+
+        var sharedExternalId = Interlocked.Increment(ref _gameCounter);
+        var userGameA = await AddGameAsync(clientA, sharedExternalId);
+        var userGameB = await AddGameAsync(clientB, sharedExternalId);
+        var userGameC = await AddGameAsync(clientC, sharedExternalId);
+
+        // User A must have a character to be allowed to discover
+        await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "User A Character",
+            platform = "PC",
+            platformHandle = "HandleA",
+            userGameId = userGameA.Id
+        });
+
+        await clientB.PostAsJsonAsync("/api/characters", new
+        {
+            name = "User B Character",
+            platform = "PC",
+            platformHandle = "HandleB",
+            userGameId = userGameB.Id
+        });
+
+        await clientC.PostAsJsonAsync("/api/characters", new
+        {
+            name = "User C Character",
+            platform = "PC",
+            platformHandle = "HandleC",
+            userGameId = userGameC.Id
+        });
+
+        var response = await clientA.GetAsync(
+            $"/api/characters/discover?gameId={userGameA.GameId}&page=1&pageSize=1");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var result = await response.Content.ReadFromJsonAsync<PagedDiscoverDto>();
+        result!.Items.Should().HaveCount(1);
+        result.HasMore.Should().BeTrue();
+        result.TotalCount.Should().Be(2);
     }
 
     [Fact]
@@ -221,4 +268,5 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record LimitErrorDto(string Message);
     private record CharacterWithGameDto(Guid Id, string Name, string? GameName);
     private record CharacterWithNotesDto(Guid Id, string Name, string? AdditionalNotes);
+    private record PagedDiscoverDto(List<DiscoveredDto> Items, bool HasMore, int TotalCount);
 }

@@ -14,20 +14,13 @@ public class ProfileService : IProfileService
 
     public async Task<ProfileResponse?> GetProfileAsync(Guid userId)
     {
-        var profile = await _context.UserProfiles
-            .FirstOrDefaultAsync(p => p.UserId == userId);
-
-        if (profile == null) return null;
-
+        var profile = await GetOrCreateProfileAsync(userId);
         return ToResponse(profile);
     }
 
     public async Task<(ProfileResponse? Profile, bool EmailConflict)> UpdateProfileAsync(Guid userId, UpdateProfileRequest request)
     {
-        var profile = await _context.UserProfiles
-            .FirstOrDefaultAsync(p => p.UserId == userId);
-
-        if (profile == null) return (null, false);
+        var profile = await GetOrCreateProfileAsync(userId);
 
         if (request.Email != null)
         {
@@ -48,10 +41,7 @@ public class ProfileService : IProfileService
 
     public async Task<PreferencesResponse?> UpdatePreferencesAsync(Guid userId, UpdatePreferencesRequest request)
     {
-        var profile = await _context.UserProfiles
-            .FirstOrDefaultAsync(p => p.UserId == userId);
-
-        if (profile == null) return null;
+        var profile = await GetOrCreateProfileAsync(userId);
 
         profile.Preferences = new UserPreferences
         {
@@ -66,6 +56,20 @@ public class ProfileService : IProfileService
             DarkMode = profile.Preferences.DarkMode,
             NotificationsEnabled = profile.Preferences.NotificationsEnabled
         };
+    }
+
+    private async Task<UserProfile> GetOrCreateProfileAsync(Guid userId)
+    {
+        var profile = await _context.UserProfiles
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (profile != null) return profile;
+
+        profile = new UserProfile { UserId = userId };
+        _context.UserProfiles.Add(profile);
+        await _context.SaveChangesAsync();
+
+        return profile;
     }
 
     private static ProfileResponse ToResponse(UserProfile profile) => new()

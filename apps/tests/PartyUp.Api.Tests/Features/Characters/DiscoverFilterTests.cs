@@ -86,7 +86,7 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientC.GetAsync($"/api/characters/discover?gameId={gameId}&alliance=Aldmeri");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        var discovered = (await response.Content.ReadFromJsonAsync<PagedResult>())!.Items;
         discovered!.Should().ContainSingle(c => c.Name == "Aldmeri Character");
         discovered.Should().NotContain(c => c.Name == "Daggerfall Character");
     }
@@ -133,7 +133,7 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientC.GetAsync($"/api/characters/discover?gameId={gameId}&nonExistentField=anything");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        var discovered = (await response.Content.ReadFromJsonAsync<PagedResult>())!.Items;
         discovered!.Should().HaveCount(2);
     }
 
@@ -178,7 +178,7 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
             $"/api/characters/discover?gameId={gameId}&platform=Xbox One X");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        var discovered = (await response.Content.ReadFromJsonAsync<PagedResult>())!.Items;
         discovered!.Should().ContainSingle(c => c.Name == "Xbox Player");
         discovered.Should().NotContain(c => c.Name == "PC Player");
     }
@@ -234,7 +234,7 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
             $"/api/characters/discover?gameId={gameId}&platform=Xbox One X&platform=PC (Windows)");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        var discovered = (await response.Content.ReadFromJsonAsync<PagedResult>())!.Items;
         discovered!.Should().Contain(c => c.Name == "Xbox Player");
         discovered.Should().Contain(c => c.Name == "PC Player");
         discovered.Should().NotContain(c => c.Name == "PS5 Player");
@@ -281,7 +281,7 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientC.GetAsync($"/api/characters/discover?gameId={gameId}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var discovered = await response.Content.ReadFromJsonAsync<List<DiscoveredCharacterDto>>();
+        var discovered = (await response.Content.ReadFromJsonAsync<PagedResult>())!.Items;
         discovered!.Should().HaveCount(2);
     }
 
@@ -302,4 +302,5 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
     private record UserGameDto(Guid Id, Guid GameId);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record DiscoveredCharacterDto(Guid Id, string Name);
+    private record PagedResult(List<DiscoveredCharacterDto> Items, bool HasMore, int TotalCount);
 }

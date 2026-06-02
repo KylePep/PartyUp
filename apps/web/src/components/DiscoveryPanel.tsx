@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { discoverCharacters, interactWithCharacter, type Character, type DiscoverCharacter } from '../api/endpoints/characters'
 import { useDebounce } from '../hooks/useDebounce'
 import { SwipeCard } from './cards/SwipeCard'
@@ -14,6 +14,9 @@ interface DiscoveryPanelProps {
   activePlatforms: string[]
 }
 
+const PAGE_SIZE = 20
+const REFETCH_THRESHOLD = 2
+
 export function DiscoveryPanel({
   gameId,
   myCharacter,
@@ -23,26 +26,64 @@ export function DiscoveryPanel({
 }: DiscoveryPanelProps) {
   const [queue, setQueue] = useState<DiscoverCharacter[]>([])
   const [status, setStatus] = useState<DiscoverStatus>('loading')
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(false)
+  const loadingMore = useRef(false)
 
   const debouncedFilters = useDebounce(filters, 400)
   const debouncedPlatforms = useDebounce(activePlatforms, 400)
 
-  useEffect(() => {
-    setStatus('loading')
+  const loadPage = useCallback(async (pageNum: number, replace: boolean) => {
+    if (loadingMore.current) return
+    loadingMore.current = true
+
     const activeFilters = Object.fromEntries(
       Object.entries(debouncedFilters).filter(([, v]) => v !== '')
     )
-    discoverCharacters(
-      gameId,
-      activeFilters,
-      debouncedPlatforms.length > 0 ? debouncedPlatforms : undefined
-    )
-      .then(chars => {
-        setQueue(chars)
-        setStatus(chars.length === 0 ? 'empty' : 'ready')
-      })
-      .catch(() => setStatus('error'))
+
+    try {
+      const result = await discoverCharacters(
+        gameId,
+        activeFilters,
+        debouncedPlatforms.length > 0 ? debouncedPlatforms : undefined,
+        pageNum,
+        PAGE_SIZE
+      )
+      setHasMore(result.hasMore)
+      setPage(pageNum)
+      if (replace) {
+        setQueue(result.items)
+        setStatus(result.items.length === 0 ? 'empty' : 'ready')
+      } else {
+        setQueue(prev => {
+          const next = [...prev, ...result.items]
+          if (next.length === 0) setStatus('empty')
+          return next
+        })
+      }
+    } catch {
+      if (replace) setStatus('error')
+    } finally {
+      loadingMore.current = false
+    }
   }, [gameId, debouncedFilters, debouncedPlatforms])
+
+  // Reset and load page 1 when filters or game change
+  useEffect(() => {
+    setStatus('loading')
+    setQueue([])
+    setPage(1)
+    setHasMore(false)
+    loadingMore.current = false
+    loadPage(1, true)
+  }, [loadPage])
+
+  // Prefetch next page when queue runs low
+  useEffect(() => {
+    if (queue.length <= REFETCH_THRESHOLD && hasMore && status === 'ready') {
+      loadPage(page + 1, false)
+    }
+  }, [queue.length, hasMore, status, page, loadPage])
 
   async function handleInteract(type: 'Like' | 'Dislike') {
     const current = queue[0]
@@ -55,7 +96,7 @@ export function DiscoveryPanel({
     }
     setQueue(q => {
       const next = q.slice(1)
-      if (next.length === 0) setStatus('empty')
+      if (next.length === 0 && !hasMore) setStatus('empty')
       return next
     })
   }
