@@ -31,7 +31,7 @@ export function CharacterGallery({ characters, status, selectedId, onSelect }: C
                 outlineOffset: '2px',
               }}
             >
-              <CharacterCard character={c} onSelect={onSelect} />
+              <CharacterCard character={c} onSelect={onSelect} className={"h-min md:h-full"} />
             </div>
           ))}
         </div>

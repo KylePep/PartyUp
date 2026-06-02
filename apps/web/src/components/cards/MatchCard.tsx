@@ -17,11 +17,18 @@ function MatchFront({ character }: MatchCardProps) {
 
   const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
   const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
+  const roleField = character.gameFields.find(gf => gf.commonField === 'role_slot')
+  const factionField = character.gameFields.find(gf => gf.commonField === 'faction_slot')
+  const buildField = character.gameFields.find(gf => gf.commonField === 'build_slot')
+  const serverField = character.gameFields.find(gf => gf.commonField === 'server_slot')
+  const playstyleField = character.gameFields.find(gf => gf.commonField === 'playstyle_slot')
 
   const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
   const statsLine = statsContent ? (
     <span className="text-xs text-muted font-semibold">{statsContent}</span>
   ) : undefined
+
+  const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')
 
   return (
     <StandardTcgCard
@@ -29,11 +36,16 @@ function MatchFront({ character }: MatchCardProps) {
       platform={character.platform}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
-      textBody={character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+      textBody={
+        <>
+          <p className="text-xs text-muted mb-2">{topBioContent}</p>
+          {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+          <p className="text-xs text-muted text-center mt-auto" style={{ opacity: 0.5 }}>↑ tap for more</p>
+        </>
+      }
       bottomStat={levelField?.value}
-      className="w-full h-full"
+      className="flex flex-col"
     >
-      <p className="text-xs text-muted text-center" style={{ opacity: 0.5 }}>↑ tap for more</p>
     </StandardTcgCard>
   )
 }
@@ -89,13 +101,11 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
 
 export function MatchCard({ character, gameName, matchedAt, matchId, onSelect }: MatchCardProps) {
   return (
-    <div className="min-h-50">
-      <FlippableCard
-        front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
-        back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
-        onFrontClick={onSelect ? () => onSelect(character) : undefined}
-        className="h-full"
-      />
-    </div>
+    <FlippableCard
+      front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
+      back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
+      onFrontClick={onSelect ? () => onSelect(character) : undefined}
+      className="h-full w-full aspect-2/3 h-min md:aspect-auto"
+    />
   )
 }

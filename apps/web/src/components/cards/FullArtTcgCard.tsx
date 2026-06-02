@@ -27,9 +27,11 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, chi
       )}
 
       {/* Top header overlay */}
-      <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent px-3 py-2">
+      <div className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-black to-transparent px-1 py-2 pe-4 md:pe-16">
         <div className="flex items-center justify-between">
-          <span className="font-display text-white text-sm font-bold truncate">{name}</span>
+          <span className="font-display text-white text-xs md:text-sm font-bold truncate pointer-event-none"
+            style={{ writingMode: 'vertical-lr' }}
+          >{name}</span>
           {platform && <PlatformIcon platform={platform} size={22} />}
         </div>
       </div>

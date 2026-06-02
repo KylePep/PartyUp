@@ -9,28 +9,30 @@ interface PendingLikeCardProps {
 
 export function PendingLikeCard({ character, onLike, onDislike }: PendingLikeCardProps) {
   return (
-    <FullArtTcgCard
-      name={character.name}
-      imageUrl={character.imageUrl}
-      style={{ width: '80px', aspectRatio: '2/3' }}
-      className="shrink-0"
-    >
-      <div className="flex justify-around">
+    <div className='flex flex-col gap-y-2'>
+      <button
+        onClick={onDislike}
+        className="text-danger text-sm font-bold leading-none hover:scale-125 transition-transform border-2 border-danger rounded-lg py-1 w-full"
+        aria-label={`Pass on ${character.name}`}
+      >
+        ✕
+      </button>
+      <FullArtTcgCard
+        name={character.name}
+        imageUrl={character.imageUrl}
+        style={{ width: '80px', aspectRatio: '2/3' }}
+        className="shrink-0"
+      >
+      </FullArtTcgCard>
+      <div className="flex justify-around gap-2">
         <button
           onClick={onLike}
-          className="text-success text-sm leading-none hover:scale-125 transition-transform"
+          className="text-success text-sm leading-none hover:scale-125 transition-transform border-2 border-success rounded-lg py-1 w-full"
           aria-label={`Like ${character.name}`}
         >
           ♥
         </button>
-        <button
-          onClick={onDislike}
-          className="text-danger text-sm leading-none hover:scale-125 transition-transform"
-          aria-label={`Pass on ${character.name}`}
-        >
-          ✕
-        </button>
       </div>
-    </FullArtTcgCard>
+    </div>
   )
 }

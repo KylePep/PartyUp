@@ -3,10 +3,10 @@ import { useSearchParams } from 'react-router-dom'
 import { getMatches, type CharacterMatchDto } from '../api/endpoints/matches'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { EmptyState, Spinner } from '../components/ui'
-import { MatchGallery } from '../components/MatchGallery'
 import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { MatchCharacterDetail } from '../components/cards/MatchCharacterDetail'
+import { CollectionGallery } from '../components/CollectionGallery'
 
 
 export default function MatchesPage() {
@@ -76,7 +76,7 @@ export default function MatchesPage() {
         {status === 'error' && <EmptyState message="Could not load matches" />}
         {status === 'empty' && <EmptyState message="No matches yet — keep swiping!" />}
         {status === 'ready' && (
-          <MatchGallery
+          <CollectionGallery
             matches={matches}
             selectedId={selected?.matchId ?? null}
             onSelect={handleSelect}

@@ -4,13 +4,14 @@ import { StandardTcgCard } from './StandardTcgCard'
 
 interface CharacterCardProps {
   character: Character
-  className: string
-  onEdit?: (character: Character) => void
-  onDelete?: (character: Character) => void
+  gameName: string
+  matchedAt: string
+  matchId: string
+  // onDelete?: (character: Character) => void
   onSelect?: (character: Character) => void
 }
 
-export function CharacterCard({ character, onSelect, className }: CharacterCardProps) {
+export function CollectionCard({ character, onSelect }: CharacterCardProps) {
   const navigate = useNavigate()
 
   function handleClick() {
@@ -35,7 +36,6 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
 
   return (
     <StandardTcgCard
-      className={className}
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}

@@ -66,7 +66,8 @@ public class CharacterMatchService : ICharacterMatchService
             Key = fv.FieldDefinition.Key,
             Label = fv.FieldDefinition.Label,
             Value = fv.Value,
-            Type = fv.FieldDefinition.Type.ToString()
+            Type = fv.FieldDefinition.Type.ToString(),
+            CommonField = fv.FieldDefinition.CommonField
         }).ToList(),
     };
 
@@ -93,7 +94,8 @@ public class CharacterMatchService : ICharacterMatchService
             Key = fv.FieldDefinition.Key,
             Label = fv.FieldDefinition.Label,
             Value = fv.Value,
-            Type = fv.FieldDefinition.Type.ToString()
+            Type = fv.FieldDefinition.Type.ToString(),
+            CommonField = fv.FieldDefinition.CommonField
         }).ToList(),
     };
 }

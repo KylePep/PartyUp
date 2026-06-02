@@ -148,7 +148,7 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
             Pass
           </Button>
           <Button
-            className="flex-1"
+            className="flex-1 bg-success hover:bg-green-800"
             onClick={() => handle('right', onLike)}
             disabled={!!exiting}
           >
