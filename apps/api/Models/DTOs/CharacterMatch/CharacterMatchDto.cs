@@ -11,6 +11,7 @@ public class CharacterMatchDto
     public Guid GameId { get; set; }
     public string GameName { get; set; } = default!;
     public string? GameImageUrl { get; set; }
+    public bool IsNew { get; set; }
 }
 
 public class CharacterSummaryDto

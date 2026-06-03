@@ -88,10 +88,8 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
     [Fact]
     public async Task RecordInteraction_WithOtherUsersFromCharacter_ReturnsForbidden()
     {
-        // charA belongs to clientA, charB belongs to clientB
         var (charA, charB, _, clientB) = await SetupTwoUsersWithCharactersAsync();
 
-        // clientB tries to submit an interaction as if they were clientA
         var response = await clientB.PostAsJsonAsync("/api/character-interactions", new
         {
             fromCharacterId = charA,
@@ -100,6 +98,62 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
         });
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task Like_WithMutualLike_ResponseIncludesCharacterPayloads()
+    {
+        var (charA, charB, clientA, clientB) = await SetupTwoUsersWithCharactersAsync();
+
+        await clientA.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charA,
+            toCharacterId = charB,
+            type = InteractionType.Like
+        });
+
+        var response = await clientB.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charB,
+            toCharacterId = charA,
+            type = InteractionType.Like
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<MatchDto>();
+        result!.IsMatch.Should().BeTrue();
+        result.MyCharacter.Should().NotBeNull();
+        result.TheirCharacter.Should().NotBeNull();
+        result.MyCharacter!.Id.Should().Be(charB);
+        result.TheirCharacter!.Id.Should().Be(charA);
+        result.GameName.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Like_WithMutualLike_BothUsersHaveNewMatchNotification()
+    {
+        var (charA, charB, clientA, clientB) = await SetupTwoUsersWithCharactersAsync();
+
+        await clientA.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charA,
+            toCharacterId = charB,
+            type = InteractionType.Like
+        });
+        await clientB.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charB,
+            toCharacterId = charA,
+            type = InteractionType.Like
+        });
+
+        var matchesA = await (await clientA.GetAsync("/api/character-matches"))
+            .Content.ReadFromJsonAsync<List<MatchItemDto>>();
+        var matchesB = await (await clientB.GetAsync("/api/character-matches"))
+            .Content.ReadFromJsonAsync<List<MatchItemDto>>();
+
+        matchesA![0].IsNew.Should().BeTrue();
+        matchesB![0].IsNew.Should().BeTrue();
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
@@ -148,5 +202,8 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
     private record UserGameDto(Guid Id, Guid GameId);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterDto(Guid Id);
-    private record MatchDto(bool IsMatch, Guid? MatchId);
+    private record MatchDto(bool IsMatch, Guid? MatchId, MatchCharacterPayloadDto? MyCharacter, MatchCharacterPayloadDto? TheirCharacter, string? GameName);
+    private record MatchCharacterPayloadDto(Guid Id, string Name, string? ImageUrl);
+    private record MatchItemDto(Guid MatchId, DateTime MatchedAt, CharacterSummaryDto MyCharacter, CharacterSummaryDto TheirCharacter, Guid GameId, string GameName, bool IsNew);
+    private record CharacterSummaryDto(Guid Id, string Name);
 }

@@ -241,6 +241,37 @@ namespace PartyUp.Api.Migrations
                     b.ToTable("GameFieldDefinitions");
                 });
 
+            modelBuilder.Entity("PartyUp.Api.Models.MatchNotification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MatchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ViewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MatchNotifications");
+                });
+
             modelBuilder.Entity("PartyUp.Api.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -382,6 +413,25 @@ namespace PartyUp.Api.Migrations
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PartyUp.Api.Models.MatchNotification", b =>
+                {
+                    b.HasOne("PartyUp.Api.Models.CharacterMatch", "Match")
+                        .WithMany()
+                        .HasForeignKey("MatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PartyUp.Api.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Match");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PartyUp.Api.Models.UserGame", b =>
