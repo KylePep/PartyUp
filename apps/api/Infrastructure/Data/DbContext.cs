@@ -20,6 +20,7 @@ namespace PartyUp.Api.Infrastructure.Data
         public DbSet<Character> Characters { get; set; }
         public DbSet<CharacterInteraction> CharacterInteractions { get; set; }
         public DbSet<CharacterMatch> CharacterMatches { get; set; }
+        public DbSet<MatchNotification> MatchNotifications { get; set; }
         public DbSet<GameFieldDefinition> GameFieldDefinitions { get; set; }
         public DbSet<CharacterFieldValue> CharacterFieldValues { get; set; }
 
@@ -80,6 +81,19 @@ namespace PartyUp.Api.Infrastructure.Data
                 (a, b) => JsonSerializer.Serialize(a, (JsonSerializerOptions?)null) == JsonSerializer.Serialize(b, (JsonSerializerOptions?)null),
                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null).GetHashCode(),
                 v => JsonSerializer.Deserialize<UserPreferences>(JsonSerializer.Serialize(v, (JsonSerializerOptions?)null), (JsonSerializerOptions?)null)!);
+
+            modelBuilder.Entity<MatchNotification>(e =>
+            {
+                e.Property(n => n.Type).HasConversion<string>();
+                e.HasOne(n => n.User)
+                    .WithMany()
+                    .HasForeignKey(n => n.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(n => n.Match)
+                    .WithMany()
+                    .HasForeignKey(n => n.MatchId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             modelBuilder.Entity<UserProfile>(e =>
             {
