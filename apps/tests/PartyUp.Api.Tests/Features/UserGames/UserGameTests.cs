@@ -296,9 +296,73 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
       response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
   }
 
+    [Fact]
+    public async Task GetUserGames_AfterMutualMatch_HasNewMatchCount()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var externalId = Interlocked.Increment(ref _gameCounter);
+
+        var ugAResponse = await clientA.PostAsJsonAsync("/api/user-games", new
+        {
+            externalId,
+            name = $"Game {externalId}",
+            imageUrl = (string?)null
+        });
+        ugAResponse.EnsureSuccessStatusCode();
+        var ugA = (await ugAResponse.Content.ReadFromJsonAsync<AddCountResultDto>())!.UserGame;
+
+        var ugBResponse = await clientB.PostAsJsonAsync("/api/user-games", new
+        {
+            externalId,
+            name = $"Game {externalId}",
+            imageUrl = (string?)null
+        });
+        ugBResponse.EnsureSuccessStatusCode();
+        var ugB = (await ugBResponse.Content.ReadFromJsonAsync<AddCountResultDto>())!.UserGame;
+
+        var charARes = await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "A",
+            platform = "PC",
+            platformHandle = "HandleA",
+            userGameId = ugA.Id
+        });
+        var charA = (await charARes.Content.ReadFromJsonAsync<CharIdDto>())!.Id;
+
+        var charBRes = await clientB.PostAsJsonAsync("/api/characters", new
+        {
+            name = "B",
+            platform = "PC",
+            platformHandle = "HandleB",
+            userGameId = ugB.Id
+        });
+        var charB = (await charBRes.Content.ReadFromJsonAsync<CharIdDto>())!.Id;
+
+        await clientA.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charA,
+            toCharacterId = charB,
+            type = "Like"
+        });
+        await clientB.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charB,
+            toCharacterId = charA,
+            type = "Like"
+        });
+
+        var gamesRes = await clientA.GetAsync("/api/user-games");
+        var games = await gamesRes.Content.ReadFromJsonAsync<List<UserGameWithCountDto>>();
+        games!.Should().ContainSingle(g => g.Id == ugA.Id && g.NewMatchCount == 1);
+    }
+
   private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
 
   private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+  private record AddCountResultDto(bool Redirected, string? Message, UserGameWithCountDto UserGame);
+  private record UserGameWithCountDto(Guid Id, Guid GameId, string GameName, int NewMatchCount);
+  private record CharIdDto(Guid Id);
 
   private record RealmLimitErrorDto(string Message);
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.UserGame;
+using PartyUp.Api.Services.Interfaces;
 
 [ApiController]
 [Route("api/user-games")]
@@ -10,10 +11,12 @@ using PartyUp.Api.Models.DTOs.UserGame;
 public class UserGamesController : ControllerBase
 {
   private readonly IUserGameService _service;
+  private readonly IMatchNotificationService _matchNotifications;
 
-  public UserGamesController(IUserGameService service)
+  public UserGamesController(IUserGameService service, IMatchNotificationService matchNotifications)
   {
     _service = service;
+    _matchNotifications = matchNotifications;
   }
 
   [HttpPost]
@@ -25,7 +28,7 @@ public class UserGamesController : ControllerBase
       var result = await _service.AddGameToUser(userId, request);
       return Ok(new
       {
-        userGame = ToResponse(result.UserGame),
+        userGame = ToResponse(result.UserGame, 0),
         redirected = result.Redirected,
         message = result.Message
       });
@@ -41,7 +44,9 @@ public class UserGamesController : ControllerBase
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     var games = await _service.GetUserGames(userId);
-    return Ok(games.Select(ToResponse));
+    var ids = games.Select(g => g.Id).ToList();
+    var counts = await _matchNotifications.GetNewMatchCountsByUserGameAsync(userId, ids);
+    return Ok(games.Select(g => ToResponse(g, counts.GetValueOrDefault(g.Id, 0))));
   }
 
   [HttpGet("{gameId}/game")]
@@ -64,14 +69,15 @@ public class UserGamesController : ControllerBase
     return NoContent();
   }
 
-  private static UserGameResponse ToResponse(UserGame ug) => new()
+  private static UserGameResponse ToResponse(UserGame ug, int newMatchCount = 0) => new()
   {
     Id = ug.Id,
     UserId = ug.UserId,
     GameId = ug.GameId,
     GameName = ug.Game.Name,
     GameImageUrl = ug.Game.ImageUrl,
-    CreatedAt = ug.CreatedAt
+    CreatedAt = ug.CreatedAt,
+    NewMatchCount = newMatchCount
   };
 
   private static UserGameDetailResponse ToDetailResponse(UserGame ug) => new()
