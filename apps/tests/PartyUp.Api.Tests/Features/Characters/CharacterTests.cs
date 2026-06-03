@@ -261,6 +261,52 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         return (await response.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
     }
 
+    [Fact]
+    public async Task GetCharacters_AfterMutualMatch_HasNewMatchTrue()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var externalId = Interlocked.Increment(ref _gameCounter);
+
+        var ugA = await AddGameAsync(clientA, externalId);
+        var ugB = await AddGameAsync(clientB, externalId);
+
+        var charARes = await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "CharA",
+            platform = "PC",
+            platformHandle = "HandleA",
+            userGameId = ugA.Id
+        });
+        var charA = (await charARes.Content.ReadFromJsonAsync<CharacterDto>())!.Id;
+
+        var charBRes = await clientB.PostAsJsonAsync("/api/characters", new
+        {
+            name = "CharB",
+            platform = "PC",
+            platformHandle = "HandleB",
+            userGameId = ugB.Id
+        });
+        var charB = (await charBRes.Content.ReadFromJsonAsync<CharacterDto>())!.Id;
+
+        await clientA.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charA,
+            toCharacterId = charB,
+            type = "Like"
+        });
+        await clientB.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charB,
+            toCharacterId = charA,
+            type = "Like"
+        });
+
+        var chars = await (await clientA.GetAsync("/api/characters"))
+            .Content.ReadFromJsonAsync<List<CharWithFlagDto>>();
+        chars!.Should().ContainSingle(c => c.Id == charA && c.HasNewMatch);
+    }
+
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
@@ -269,4 +315,5 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record CharacterWithGameDto(Guid Id, string Name, string? GameName);
     private record CharacterWithNotesDto(Guid Id, string Name, string? AdditionalNotes);
     private record PagedDiscoverDto(List<DiscoveredDto> Items, bool HasMore, int TotalCount);
+    private record CharWithFlagDto(Guid Id, bool HasNewMatch);
 }

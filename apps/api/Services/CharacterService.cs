@@ -10,11 +10,13 @@ public class CharacterService : ICharacterService
 {
   private readonly AppDbContext _db;
   private readonly IGcsStorageService _gcs;
+  private readonly IMatchNotificationService _notifications;
 
-  public CharacterService(AppDbContext db, IGcsStorageService gcs)
+  public CharacterService(AppDbContext db, IGcsStorageService gcs, IMatchNotificationService notifications)
   {
     _db = db;
     _gcs = gcs;
+    _notifications = notifications;
   }
 
   public async Task<CharacterResponse?> CreateCharacterAsync(
@@ -86,10 +88,18 @@ public class CharacterService : ICharacterService
 
   public async Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId)
   {
-    return await _db.Characters
+    var characters = await _db.Characters
       .Where(c => c.UserGame.UserId == userId)
       .Select(ToProjection())
       .ToListAsync();
+
+    var characterIds = characters.Select(c => c.Id).ToList();
+    var newMatchIds = await _notifications.GetCharacterIdsWithNewMatchAsync(userId, characterIds);
+
+    foreach (var c in characters)
+      c.HasNewMatch = newMatchIds.Contains(c.Id);
+
+    return characters;
   }
 
   public async Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId)
