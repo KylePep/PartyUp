@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getMatches, type CharacterMatchDto } from '../api/endpoints/matches'
+import { markMatchViewed } from '../api/endpoints/matchNotifications'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { EmptyState, Spinner } from '../components/ui'
 import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
@@ -34,6 +35,13 @@ export default function MatchesPage() {
   function handleSelect(match: CharacterMatchDto) {
     setSelected(match)
     setActiveSide('left')
+    if (match.isNew) {
+      markMatchViewed(match.matchId).then(() => {
+        setMatches(prev =>
+          prev.map(m => m.matchId === match.matchId ? { ...m, isNew: false } : m)
+        )
+      })
+    }
   }
 
   const leftContent = selected ? (

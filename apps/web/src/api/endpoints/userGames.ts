@@ -13,6 +13,7 @@ export type UserGame = {
   gameName: string;
   gameImageUrl: string | null;
   createdAt: string;
+  newMatchCount: number;
 };
 
 export type UserGameDetail = {

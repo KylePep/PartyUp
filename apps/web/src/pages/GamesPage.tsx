@@ -4,6 +4,7 @@ import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type 
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Button, EmptyState, Spinner } from '../components/ui'
 import { LandCard } from '../components/cards/LandCard'
+import { NewMatchBadge } from '../components/ui/NewMatchBadge'
 import DOMPurify from 'dompurify'
 
 export default function GamesPage() {
@@ -138,11 +139,12 @@ export default function GamesPage() {
             {games.map(game => (
               <div
                 key={game.id}
-                className={`h-fit md:h-full ${selected?.id === game.id
+                className={`relative h-fit md:h-full ${selected?.id === game.id
                   ? 'ring-2 ring-blue-700 rounded-xl'
                   : ''
                   }`}
               >
+                <NewMatchBadge count={game.newMatchCount} />
                 <LandCard
                   name={game.gameName}
                   imageUrl={game.gameImageUrl ?? undefined}

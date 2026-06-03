@@ -3,6 +3,7 @@ import { discoverCharacters, interactWithCharacter, type Character, type Discove
 import { useDebounce } from '../hooks/useDebounce'
 import { SwipeCard } from './cards/SwipeCard'
 import { Spinner, EmptyState } from './ui'
+import { useNotifications } from '../context/NotificationContext'
 
 type DiscoverStatus = 'loading' | 'ready' | 'empty' | 'error'
 
@@ -32,6 +33,7 @@ export function DiscoveryPanel({
 
   const debouncedFilters = useDebounce(filters, 400)
   const debouncedPlatforms = useDebounce(activePlatforms, 400)
+  const { push } = useNotifications()
 
   const loadPage = useCallback(async (pageNum: number, replace: boolean) => {
     if (loadingMore.current) return
@@ -90,6 +92,15 @@ export function DiscoveryPanel({
     if (!current) return
     try {
       const res = await interactWithCharacter(myCharacter.id, current.id, type)
+      if (res.isMatch && res.myCharacter && res.theirCharacter) {
+        push({
+          matchId: res.matchId!,
+          myCharacter: res.myCharacter,
+          theirCharacter: res.theirCharacter,
+          gameName: res.gameName ?? '',
+          matchedAt: res.matchedAt ?? new Date().toISOString(),
+        })
+      }
       if (res.isMatch) onMatch()
     } catch (err) {
       console.error(`Failed to ${type.toLowerCase()} character:`, err)

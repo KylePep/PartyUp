@@ -53,7 +53,9 @@ export function CollectionGallery({ matches: providedMatches, selectedId, gameId
           key={m.matchId}
           className={`h-fit md:h-full ${selectedId === m.matchId
               ? 'ring-2 ring-green-700 rounded-xl'
-              : ''
+              : m.isNew
+                ? 'ring-2 ring-green-500 rounded-xl'
+                : ''
             }`}
         >
           <CollectionCard
