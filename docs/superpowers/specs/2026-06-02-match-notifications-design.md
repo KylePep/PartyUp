@@ -92,10 +92,10 @@ Sets `ViewedAt = UtcNow` on the calling user's `MatchNotification` row for the g
 
 ### Frontend badge surfaces
 
-1. **Realm cards (home page)** — badge on `RealmCard` when `hasNewMatch` is true  
-2. **Games page** — badge on `GameCard` when `hasNewMatch` is true  
-3. **Character in collection/realm** — "new match" indicator on character card  
-4. **Match in collection gallery** — visual indicator (glow, badge, or highlight) on `MatchCard`
+1. **Realm cards (home page)** — green circle badge, top-left of card, showing the count of new matches for that realm. Displays `1`–`9`; displays `+` when count exceeds 9.
+2. **Games page** — same green circle badge, top-left of card, same count/overflow rules.
+3. **Character in collection/realm** — green dot, top-left of character card. No number — presence alone indicates a new match involves this character.
+4. **Match in collection gallery** — visual indicator (glow, badge, or highlight) on `MatchCard`.
 
 ### Clearing state
 
