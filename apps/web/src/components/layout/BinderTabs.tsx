@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom"
 
 const tabs = [
-  { label: "Games", color: "#1e40af", to: "/games" },
-  { label: "My Cards", color: "#991b1b", to: "/characters" },
-  { label: "Collection", color: "#166534", to: "/matches" },
-  { label: "Settings", color: "#dcba31", to: "/settings" },
+  { label: "Games", color: "#2851d8", to: "/games" },
+  { label: "My Cards", color: "#be1717", to: "/characters" },
+  { label: "Collection", color: "#1ac75c", to: "/matches" },
+  { label: "Settings", color: "#b95c0c", to: "/settings" },
 ] as const
 
 interface BinderTabsProps {
@@ -20,19 +20,20 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
     <section
       className="
         absolute
-        right-0
+        right-1
         top-0
         origin-left
         translate-x-full
         gap-2
         md:gap-6
-        z-10
         h-full
         grid
         grid-cols-1
         grid-rows-5
         auto-rows-0
-        w-6
+        w-8
+        py-8
+        z-10
       "
     >
       {tabs.map((tab, index) => {
@@ -43,7 +44,8 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
           <NavLink
             key={tab.label}
             to={tab.to}
-            className="flex rounded-r py-1 text-xs font-mono uppercase tracking-widest text-center transition-all"
+            className="flex justify-end rounded-r p-1 text-xs font-mono uppercase tracking-widest text-center transition-all border-black/50 border-1
+          .5"
             style={{
               backgroundColor: isPassed || isActive
                 ? "transparent"

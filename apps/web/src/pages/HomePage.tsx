@@ -21,32 +21,33 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-1 md:items-center ms-8 md:justify-center py-4 md:py-4 overflow-hidden">
-      <section className="md:h-full bg-cyan-900 border-cyan-950 border-10 md:border-16 rounded-l-lg rounded-r-4xl pb-4 pt-16 md:pt-4 px-6 w-[91%] md:w-1/2 flex flex-col items-center justify-between relative">
+      <section className="md:h-full  w-[91%] md:w-1/2 relative">
+        <div className='relative bg-cyan-900 border-cyan-950 border-10 md:border-16 rounded-l-lg rounded-r-4xl pb-4 pt-16 md:pt-4 px-6 h-full w-full flex flex-col items-center justify-between z-20'>
+          <h1 className="text-center font-display font-bold text-xl md:text-4xl text-text mt-6">
+            {name}'s Binder
+          </h1>
 
-        <h1 className="text-center font-display font-bold text-xl md:text-4xl text-text mt-6">
-          {name}'s Binder
-        </h1>
-
-        {userGames.status === 'loading' ? (
-          <Spinner />
-        ) : (
-          <OrbSearch
-            onAdd={(game: UserGame) => userGames.addUserGame(game)}
-            disabled={atLimit}
-          />
-        )}
-
-        <h2 className='col-span-3 font-display font-bold text-center'>Recent Realms</h2>
-        <div className="flex md:grid md:grid-cols-3 grid-rows-1 gap-x-4 w-full md:w-3/4 border-cyan-950/50 border-8 md:border-10 rounded-4xl overflow-x-auto h-1/3 p-2 md:p-8">
-          {visibleRealms.length === 0 ? (
-            <p className="col-span-3 text-xs font-mono text-muted text-center">
-              Search above to add your first realm
-            </p>
+          {userGames.status === 'loading' ? (
+            <Spinner />
           ) : (
-            visibleRealms.map(g => (
-              <RealmCard key={g.id} userGame={g} />
-            ))
+            <OrbSearch
+              onAdd={(game: UserGame) => userGames.addUserGame(game)}
+              disabled={atLimit}
+            />
           )}
+
+          <h2 className='col-span-3 font-display font-bold text-center'>Recent Realms</h2>
+          <div className="grid grid-cols-3 grid-rows-1 gap-x-4 w-full md:w-3/4 border-cyan-950/50 border-8 md:border-10 rounded-4xl overflow-x-auto h-1/3 p-2">
+            {visibleRealms.length === 0 ? (
+              <p className="col-span-3 text-xs font-mono text-muted text-center">
+                Search above to add your first realm
+              </p>
+            ) : (
+              visibleRealms.map(g => (
+                <RealmCard key={g.id} userGame={g} />
+              ))
+            )}
+          </div>
         </div>
         <BinderTabs activeTab='' />
       </section>
