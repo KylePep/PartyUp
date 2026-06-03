@@ -9,7 +9,7 @@ const steps = [
   { n: 1, title: 'Find your game', body: 'Search from thousands of titles and add it to your account.' },
   { n: 2, title: 'Build your character', body: 'Fill out game-specific fields, set your availability, and write your bio.' },
   { n: 3, title: 'Set your handle', body: 'Your platform handle stays private — only revealed after a match.' },
-  { n: 4, title: 'Swipe on players', body: 'Discover characters in your game and like the ones you want to party with.' },
+  { n: 4, title: 'Swipe on characters', body: 'Discover characters in your game and like the ones you want to party with.' },
   { n: 5, title: 'Match and connect', body: 'A mutual like reveals both handles so you can link up directly.' },
 ]
 
@@ -37,17 +37,17 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bg text-text flex relative">
+    <div className="min-h-screen text-text flex relative">
       <NavBar variant="landing" onSignIn={() => setModal('sign-in')} onSignUp={() => setModal('sign-up')} />
 
-      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 mx-4">
-        <section className='h-full bg-surface border-white border-2 pb-4 pt-16 md:pt-4 py-4 px-6 w-[91%] md:w-1/2 flex flex-col items-center justify-between'>
+      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 mx-4 ">
+        <section className='h-full bg-cyan-900 border-cyan-950 border-10 md:border-16 rounded-l-lg rounded-r-4xl pb-4 pt-16 md:pt-4 py-4 px-6 w-[91%] md:w-1/2 flex flex-col items-center justify-between'>
 
-          <h1 className="font-display font-bold text-xl md:text-4xl text-text">
-            Magic Binder
+          <h1 className="font-display font-bold text-xl md:text-4xl text-stone-700 bg-stone-300 px-4 py-1 rounded-md">
+            PartyUp Binder
           </h1>
 
-          <div className="group relative h-[16rem] md:h-[20rem] w-[16rem] md:w-[20rem] bg-white border-black border-4 rounded-full flex items-center justify-center">
+          <div className="group relative h-[16rem] md:h-[20rem] w-[16rem] md:w-[20rem] bg-white border-cyan-950/90 border-8 rounded-full flex items-center justify-center">
 
             {/* SVG progress ring — key={step} re-mounts on step change, restarting the animation */}
             <svg
@@ -60,7 +60,7 @@ export default function LandingPage() {
                 cy="176"
                 r="172"
                 fill="none"
-                stroke="#7c6fcd"
+                stroke="#0e6e43"
                 strokeWidth="4"
                 strokeLinecap="round"
                 strokeDasharray={CIRCUMFERENCE}
@@ -95,7 +95,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex gap-4 justify-around items-center border-white border-2 w-full md:w-3/4 h-1/3 p-4 md:p-8 ">
+          <div className="flex flex-col md:flex-row gap-4 justify-around items-center border-cyan-950/50 border-8 md:border-10 rounded-4xl w-full md:w-3/4 h-1/3 p-4 md:p-8 ">
             <Button size="lg" onClick={() => setModal('sign-up')}>
               Get Started
             </Button>
