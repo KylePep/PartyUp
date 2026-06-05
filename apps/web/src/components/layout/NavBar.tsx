@@ -56,7 +56,7 @@ export function NavBar({ variant }: NavBarProps) {
           PartyUp
         </span>
         <img
-          className='w-7 h-7 block md:hidden'
+          className='w-7 h-7 block md:hidden border-1 bg-slate-900 border-slate-900 rounded-full'
           src="/favicon.png" alt="" />
       </Link>
 
