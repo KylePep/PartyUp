@@ -27,7 +27,8 @@ function GamePlanet({ game, index, imgSize, onSelect }: GamePlanetProps) {
       } as CSSProperties}
     >
       {/* Circle image + SVG arc label */}
-      <div style={{ position: 'relative', width: svgSize, height: svgSize }}>
+      {/* Container height = svgSize + 18 to give the label room below the circle */}
+      <div style={{ position: 'relative', width: svgSize, height: svgSize + 18 }}>
         <img
           src={game.imageUrl ?? '/placeholder-game.png'}
           alt={game.name}
@@ -42,21 +43,30 @@ function GamePlanet({ game, index, imgSize, onSelect }: GamePlanetProps) {
             boxShadow: '0 4px 16px rgba(0,0,0,0.7)',
           }}
         />
-        {/* Arc label — game name curves around the bottom of the circle */}
+        {/* Arc label — game name curves just outside the bottom of the circle.
+            sweep-flag=1 traces the bottom arc (clockwise in SVG space).
+            Radius is 8px larger than the circle so text sits outside it. */}
         <svg
           width={svgSize}
-          height={svgSize}
+          height={svgSize + 18}
           style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible' }}
           aria-hidden
         >
           <defs>
-            {/* Bottom arc: starts at left edge of circle, curves through bottom to right edge */}
             <path
               id={`arc-${index}`}
-              d={`M 12,${svgSize / 2} a ${imgSize / 2},${imgSize / 2} 0 0,0 ${imgSize},0`}
+              d={`M 4,${svgSize / 2} a ${imgSize / 2 + 8},${imgSize / 2 + 8} 0 0,1 ${imgSize + 16},0`}
             />
           </defs>
-          <text fontSize="9" fill="#e8e8f0" textAnchor="middle" letterSpacing="0.5">
+          <text
+            fontSize="11"
+            fill="#e8e8f0"
+            textAnchor="middle"
+            letterSpacing="0.8"
+            stroke="rgba(0,0,0,0.75)"
+            strokeWidth="2.5"
+            paintOrder="stroke fill"
+          >
             <textPath href={`#arc-${index}`} startOffset="50%">
               {game.name}
             </textPath>
