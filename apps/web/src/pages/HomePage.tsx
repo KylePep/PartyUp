@@ -1,7 +1,7 @@
 import { useAuth } from '../context/AuthContext'
 import { type UserGame } from '../api/endpoints/userGames'
 import { useUserGames } from '../hooks/useUserGames'
-import { OrbSearch } from '../components/OrbSearch'
+import { ScryingOrb } from '../components/orb/ScryingOrb'
 import { RealmCard } from '../components/cards/RealmCard'
 import { Spinner } from '../components/ui'
 import { USER_GAME_LIMIT } from '../utils/limits'
@@ -38,7 +38,7 @@ export default function HomePage() {
           {userGames.status === 'loading' ? (
             <Spinner />
           ) : (
-            <OrbSearch
+            <ScryingOrb
               onAdd={(game: UserGame) => userGames.addUserGame(game)}
               disabled={atLimit}
             />
