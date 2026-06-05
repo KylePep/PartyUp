@@ -81,7 +81,7 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
   const [results, setResults] = useState<Game[]>([])
   const [pendingGame, setPendingGame] = useState<Game | null>(null)
   const [adding, setAdding] = useState(false)
-  const [_listOpen, setListOpen] = useState(false)
+  const [listOpen, setListOpen] = useState(false)
   const searchGen = useRef(0)
 
   async function handleSearch() {
@@ -180,6 +180,28 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
           </div>
         )}
 
+        {/* EMPTY STATE */}
+        {searchState === 'empty' && (
+          <div className="w-full h-full flex flex-col items-center justify-between py-8 px-6">
+            <div className="flex items-start justify-end w-full px-2 pt-2">
+              <button
+                onClick={handleClear}
+                className="text-xs font-mono text-cyan-400 hover:text-cyan-200 transition-colors"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            </div>
+            <div
+              className="flex-1 flex items-center justify-center"
+              style={{ animation: 'vision-appear 0.8s ease forwards' } as CSSProperties}
+            >
+              <p className="text-sm font-mono text-muted text-center">Nothing found.</p>
+            </div>
+            <div className="h-6" />
+          </div>
+        )}
+
         {/* RESULTS STATE */}
         {searchState === 'results' && (
           <div className="w-full h-full flex flex-col">
@@ -241,7 +263,31 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
         </div>
       </Modal>
 
-      {/* List view modal — added in Task 8 */}
+      {/* List view modal — plain accessible game list */}
+      <Modal isOpen={listOpen} onClose={() => setListOpen(false)} title="Search Results">
+        <div className="px-4 py-2 flex flex-col gap-2 max-h-96 overflow-y-auto">
+          {results.length === 0 ? (
+            <p className="text-sm text-muted py-4 text-center">No results.</p>
+          ) : (
+            results.map(game => (
+              <div key={game.externalId} className="flex items-center gap-3 py-2 border-b border-border last:border-0">
+                <img
+                  src={game.imageUrl ?? '/placeholder-game.png'}
+                  alt={game.name}
+                  className="w-8 h-8 rounded object-cover flex-shrink-0"
+                />
+                <span className="flex-1 text-sm text-text truncate">{game.name}</span>
+                <Button
+                  size="sm"
+                  onClick={() => { setListOpen(false); setPendingGame(game) }}
+                >
+                  Add
+                </Button>
+              </div>
+            ))
+          )}
+        </div>
+      </Modal>
     </div>
   )
 }
