@@ -5,16 +5,39 @@
   --color-surface: #111120;
   --color-surface-raised: #18182c;
   --color-text: #e8e8f0;
-  --color-muted: #6b6b88;
+  --color-muted: oklch(70.4% 0.04 257);
   --color-border: #22223a;
   --color-accent: #7c6fcd;
   --color-accent-dim: #4a4080;
   --color-danger: #e05252;
   --color-success: #52c77a;
 
+  --color-off-white: oklch(97.1% 0.004 56);
+  --color-off-black: oklch(21% 0.034 265);
+
+  --color-tab-games:      #409cda;
+  --color-tab-cards:      #ee623f;
+  --color-tab-collection: #51e389;
+  --color-tab-settings:   #be4fe3;
+
+  --color-binder-edge:  oklch(30.2% 0.056 230);
+  --color-binder-page:  oklch(39.1% 0.09 241);
+  --color-binder-spine: oklch(25% 0.045 230);
+
   --font-display: "Cinzel", serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+}
+
+.binder-frame {
+  background: linear-gradient(
+    to right,
+    var(--color-binder-edge),
+    var(--color-binder-page) 25%,
+    var(--color-binder-spine) 50%,
+    var(--color-binder-page) 75%,
+    var(--color-binder-edge)
+  );
 }
 
 html,
