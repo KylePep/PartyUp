@@ -21,8 +21,8 @@ export default function HomePage() {
   const atLimit = userGames.games.length >= USER_GAME_LIMIT
 
   return (
-    <main className="flex flex-1 md:items-center ms-8 md:justify-center md:py-4 overflow-hidden">
-      <section className="md:h-full  w-[91%] md:w-1/2 relative py-2 pb-8 md:pb-0">
+    <main className="flex flex-1 md:items-center md:justify-center md:py-4 overflow-hidden">
+      <section className="md:h-full w-full mx-4 md:w-1/2 relative py-2 pb-10 md:pb-0">
         <BinderShell
           title={`${name}'s Binder`}
           className="relative h-full w-full z-20"
