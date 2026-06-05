@@ -12,6 +12,7 @@ import {
 
 interface MagicOrbProps {
   className?: string
+  style?: CSSProperties
   focused?: boolean
   children?: ReactNode
 }
@@ -55,11 +56,11 @@ const ATMO_ICONS: AtmoIcon[] = [
   { Icon: Sword,          color: 'rgba(100,220,255,0.85)',left:'76%', top: '48%', dur: 10, delay: 6.5,op: 0.60, tx: '-5px', ty:  '-8px', tx2: '-10px', ty2: '-15px' },
 ]
 
-export function MagicOrb({ className = '', focused = false, children }: MagicOrbProps) {
+export function MagicOrb({ className = '', style, focused = false, children }: MagicOrbProps) {
   return (
     <div
       className={`rounded-full overflow-hidden relative ${className}`}
-      style={{ animation: 'orb-breathe 5s ease-in-out infinite' }}
+      style={{ animation: 'orb-breathe 5s ease-in-out infinite', ...style }}
     >
       {/* Layer 1: deep teal background */}
       <div

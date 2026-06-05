@@ -11,7 +11,7 @@ export default function LandingPage() {
   const [modal, setModal] = useState<ModalMode | null>(null)
 
   return (
-    <div className="min-h-screen text-text flex relative">
+    <div className="h-dvh text-text flex relative">
       <NavBar variant="landing" onSignIn={() => setModal('sign-in')} onSignUp={() => setModal('sign-up')} />
 
       <main className="flex-1 flex flex-col items-center justify-center text-center py-4 mx-4">

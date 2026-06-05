@@ -1,19 +1,18 @@
-import { useRef, useState, type CSSProperties } from 'react'
+import { useRef, useState, useEffect, type CSSProperties } from 'react'
 import { getGames, type Game } from '../../api/endpoints/games'
 import { addUserGame as apiAddUserGame, type UserGame } from '../../api/endpoints/userGames'
 import { MagicOrb } from './MagicOrb'
 import { Modal, Button } from '../ui'
 
-const IMG_SIZE = 80
-const SVG_SIZE = 104 // IMG_SIZE + 24px padding for arc text
-
 interface GamePlanetProps {
   game: Game
   index: number
+  imgSize: number
   onSelect: (game: Game) => void
 }
 
-function GamePlanet({ game, index, onSelect }: GamePlanetProps) {
+function GamePlanet({ game, index, imgSize, onSelect }: GamePlanetProps) {
+  const svgSize = imgSize + 24
   const bobDur = 3 + (index % 3) * 0.7
   const bobDelay = Math.min(index * 0.3, 2.1)
   const appearDelay = index * 0.05
@@ -28,7 +27,7 @@ function GamePlanet({ game, index, onSelect }: GamePlanetProps) {
       } as CSSProperties}
     >
       {/* Circle image + SVG arc label */}
-      <div style={{ position: 'relative', width: SVG_SIZE, height: SVG_SIZE }}>
+      <div style={{ position: 'relative', width: svgSize, height: svgSize }}>
         <img
           src={game.imageUrl ?? '/placeholder-game.png'}
           alt={game.name}
@@ -36,8 +35,8 @@ function GamePlanet({ game, index, onSelect }: GamePlanetProps) {
             position: 'absolute',
             top: 12,
             left: 12,
-            width: IMG_SIZE,
-            height: IMG_SIZE,
+            width: imgSize,
+            height: imgSize,
             borderRadius: '50%',
             objectFit: 'cover',
             boxShadow: '0 4px 16px rgba(0,0,0,0.7)',
@@ -45,8 +44,8 @@ function GamePlanet({ game, index, onSelect }: GamePlanetProps) {
         />
         {/* Arc label — game name curves around the bottom of the circle */}
         <svg
-          width={SVG_SIZE}
-          height={SVG_SIZE}
+          width={svgSize}
+          height={svgSize}
           style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible' }}
           aria-hidden
         >
@@ -54,7 +53,7 @@ function GamePlanet({ game, index, onSelect }: GamePlanetProps) {
             {/* Bottom arc: starts at left edge of circle, curves through bottom to right edge */}
             <path
               id={`arc-${index}`}
-              d={`M 12,${SVG_SIZE / 2} a ${IMG_SIZE / 2},${IMG_SIZE / 2} 0 0,0 ${IMG_SIZE},0`}
+              d={`M 12,${svgSize / 2} a ${imgSize / 2},${imgSize / 2} 0 0,0 ${imgSize},0`}
             />
           </defs>
           <text fontSize="9" fill="#e8e8f0" textAnchor="middle" letterSpacing="0.5">
@@ -83,6 +82,19 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
   const [adding, setAdding] = useState(false)
   const [listOpen, setListOpen] = useState(false)
   const searchGen = useRef(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [orbSize, setOrbSize] = useState(0)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setOrbSize(Math.floor(Math.min(width, height)))
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   async function handleSearch() {
     if (!query.trim() || disabled) return
@@ -127,10 +139,12 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
     }
   }
 
+  const imgSize = Math.max(60, Math.floor(orbSize * 0.4))
+
   return (
-    <div className="flex-1 min-h-0 w-full flex items-center justify-center py-2 overflow-hidden">
-      <MagicOrb
-        className="w-full aspect-square"
+    <div ref={containerRef} className="flex-1 min-h-0 w-full flex items-center justify-center py-2">
+      {orbSize > 0 && <MagicOrb
+        style={{ width: orbSize, height: orbSize }}
         focused={searchState === 'results'}
       >
         {/* IDLE STATE */}
@@ -204,7 +218,7 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
 
         {/* RESULTS STATE */}
         {searchState === 'results' && (
-          <div className="w-full h-full flex flex-col relative">
+          <div className="w-full h-full flex flex-col">
             {/* Query bar — fixed at top */}
             <div className="flex-shrink-0 flex items-center justify-center gap-2 pt-4 px-4">
               <span className="text-xs font-mono text-muted truncate max-w-[60%]">{query}</span>
@@ -217,29 +231,27 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
               </button>
             </div>
 
-            {/* Scrollable planets grid — flex-1 fills between top and bottom bar */}
-            <div
-              className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 pt-2 pb-14"
-              style={{ scrollbarWidth: 'none' }}
-            >
-              <div className="grid grid-cols-1 gap-4 justify-items-center">
-                {results.map((game, i) => (
-                  <GamePlanet key={game.externalId} game={game} index={i} onSelect={setPendingGame} />
-                ))}
+            {/* Scroll area — flex-1 with relative wrapper so gradient can overlay */}
+            <div className="flex-1 min-h-0 relative">
+              <div
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden px-4 pt-2 pb-10"
+                style={{ scrollbarWidth: 'none' }}
+              >
+                <div className="grid grid-cols-1 gap-4 justify-items-center">
+                  {results.map((game, i) => (
+                    <GamePlanet key={game.externalId} game={game} index={i} imgSize={imgSize} onSelect={setPendingGame} />
+                  ))}
+                </div>
               </div>
+              {/* Gradient overlay — always at visible bottom, independent of scroll position */}
+              <div
+                className="absolute bottom-0 left-0 right-0 h-12 pointer-events-none"
+                style={{ background: 'linear-gradient(to bottom, transparent, rgba(1,6,8,0.92))' }}
+              />
             </div>
 
-            {/* Gradient overlay — pulls up over bottom of scroll to soften the edge */}
-            <div
-              className="absolute left-0 right-0 h-16 pointer-events-none"
-              style={{
-                bottom: '2.5rem',
-                background: 'linear-gradient(to bottom, transparent, rgba(1,6,8,0.92))',
-              }}
-            />
-
             {/* List view button — fixed at bottom, mirrors query bar at top */}
-            <div className="flex-shrink-0 flex items-center justify-center pb-4 pt-1">
+            <div className="flex-shrink-0 flex items-center justify-center py-3">
               <button
                 onClick={() => setListOpen(true)}
                 className="text-xs font-mono text-muted hover:text-off-white transition-colors"
@@ -249,7 +261,7 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
             </div>
           </div>
         )}
-      </MagicOrb>
+      </MagicOrb>}
 
       {/* Add-game confirmation modal — unchanged from OrbSearch */}
       <Modal isOpen={!!pendingGame} onClose={() => setPendingGame(null)} title="Add Realm">
