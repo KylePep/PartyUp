@@ -7,6 +7,7 @@ import { LandCard } from '../components/cards/LandCard'
 import { NewMatchBadge } from '../components/ui/NewMatchBadge'
 import { TABS } from '../lib/tabs'
 import DOMPurify from 'dompurify'
+import { PlanetIcon } from '@phosphor-icons/react'
 
 export default function GamesPage() {
   const TAB = TABS.find(t => t.label === 'Games')!
@@ -161,7 +162,7 @@ export default function GamesPage() {
                     onClick={() => handleSelect(game)}
                     className="h-min aspect-3/4 md:aspect-auto md:h-full hover:brightness-110 transition-all"
                   >
-                    <div className='flex flex-1 items-center justify-center text-7xl'>❖</div>
+                    <div className='flex flex-1 items-center justify-center text-7xl'><PlanetIcon /></div>
                   </LandCard>
                 </div>
               ))}
