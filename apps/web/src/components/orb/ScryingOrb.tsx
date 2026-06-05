@@ -128,16 +128,16 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
   }
 
   return (
-    <div className="flex-1 min-h-0 w-full flex items-center justify-center py-2">
+    <div className="flex-1 min-h-0 w-full flex items-center justify-center py-2 overflow-hidden">
       <MagicOrb
-        className="h-full aspect-square max-w-full"
+        className="w-full aspect-square"
         focused={searchState === 'results'}
       >
         {/* IDLE STATE */}
         {searchState === 'idle' && (
           <div className="w-full h-full flex flex-col items-center justify-between py-8 px-6">
             <div className="flex-1 flex items-center justify-center w-full">
-              <div className="flex gap-2 items-center w-full max-w-[70%]">
+              <div className="flex gap-2 items-center w-full px-8">
                 <input
                   className="flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
                   placeholder="Search realms…"
@@ -204,8 +204,8 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
 
         {/* RESULTS STATE */}
         {searchState === 'results' && (
-          <div className="w-full h-full flex flex-col">
-            {/* Query bar */}
+          <div className="w-full h-full flex flex-col relative">
+            {/* Query bar — fixed at top */}
             <div className="flex-shrink-0 flex items-center justify-center gap-2 pt-4 px-4">
               <span className="text-xs font-mono text-muted truncate max-w-[60%]">{query}</span>
               <button
@@ -217,33 +217,36 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
               </button>
             </div>
 
-            {/* Scrollable planets grid */}
+            {/* Scrollable planets grid — flex-1 fills between top and bottom bar */}
             <div
-              className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 pt-2 pb-8"
+              className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 pt-2 pb-14"
               style={{ scrollbarWidth: 'none' }}
             >
-              <div className="grid grid-cols-2 gap-4 justify-items-center">
+              <div className="grid grid-cols-1 gap-4 justify-items-center">
                 {results.map((game, i) => (
                   <GamePlanet key={game.externalId} game={game} index={i} onSelect={setPendingGame} />
                 ))}
               </div>
-
-              {/* List view button — bottom of scroll content */}
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={() => setListOpen(true)}
-                  className="text-xs font-mono text-muted hover:text-off-white transition-colors"
-                >
-                  List view
-                </button>
-              </div>
             </div>
 
-            {/* Fade-out gradient at bottom edge */}
+            {/* Gradient overlay — pulls up over bottom of scroll to soften the edge */}
             <div
-              className="flex-shrink-0 h-8 pointer-events-none"
-              style={{ background: 'linear-gradient(to bottom, transparent, rgba(1,6,8,0.95))' }}
+              className="absolute left-0 right-0 h-16 pointer-events-none"
+              style={{
+                bottom: '2.5rem',
+                background: 'linear-gradient(to bottom, transparent, rgba(1,6,8,0.92))',
+              }}
             />
+
+            {/* List view button — fixed at bottom, mirrors query bar at top */}
+            <div className="flex-shrink-0 flex items-center justify-center pb-4 pt-1">
+              <button
+                onClick={() => setListOpen(true)}
+                className="text-xs font-mono text-muted hover:text-off-white transition-colors"
+              >
+                List view
+              </button>
+            </div>
           </div>
         )}
       </MagicOrb>

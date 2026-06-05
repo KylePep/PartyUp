@@ -34,9 +34,9 @@ export function CrystalOrb() {
   const { Icon } = STEPS[step]
 
   return (
-    <div className="flex-1 min-h-0 w-full flex items-center justify-center py-2">
+    <div className="flex-1 min-h-0 w-full flex items-center justify-center py-2 overflow-hidden">
       {/* Relative container: orb + progress ring + controls all overlap here */}
-      <div className="group relative h-full aspect-square max-w-full">
+      <div className="group relative w-full aspect-square">
 
         {/* MagicOrb fills the container */}
         <MagicOrb className="absolute inset-0" focused={false}>

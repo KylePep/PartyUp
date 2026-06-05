@@ -89,18 +89,24 @@ export function MagicOrb({ className = '', focused = false, children }: MagicOrb
       {STAR_PARTICLES.map((s, i) => (
         <div
           key={i}
-          className="absolute rounded-full"
+          className="absolute"
           style={{
             top: s.top,
             left: s.left,
-            width: s.size,
-            height: s.size,
-            background: s.color,
             transition: 'opacity 600ms ease',
             opacity: focused ? 0 : 1,
-            animation: `orb-star-twinkle ${s.dur}s ${s.delay}s ease-in-out infinite`,
-          } as CSSProperties}
-        />
+          }}
+        >
+          <div
+            className="rounded-full"
+            style={{
+              width: s.size,
+              height: s.size,
+              background: s.color,
+              animation: `orb-star-twinkle ${s.dur}s ${s.delay}s ease-in-out infinite`,
+            } as CSSProperties}
+          />
+        </div>
       ))}
 
       {/* Layer 5: atmospheric Phosphor icons */}
@@ -113,17 +119,29 @@ export function MagicOrb({ className = '', focused = false, children }: MagicOrb
             top,
             transition: 'opacity 600ms ease',
             opacity: focused ? 0 : 1,
-            '--icon-op': op,
-            '--icon-tx': tx,
-            '--icon-ty': ty,
-            '--icon-tx2': tx2,
-            '--icon-ty2': ty2,
-            animation: `orb-icon-drift ${dur}s ${delay}s ease-in-out infinite`,
-          } as CSSProperties}
+          }}
         >
-          <Icon size={16} color={color} />
+          <div
+            style={{
+              '--icon-op': op,
+              '--icon-tx': tx,
+              '--icon-ty': ty,
+              '--icon-tx2': tx2,
+              '--icon-ty2': ty2,
+              animation: `orb-icon-drift ${dur}s ${delay}s ease-in-out infinite`,
+            } as CSSProperties}
+          >
+            <Icon size={16} color={color} />
+          </div>
         </div>
       ))}
+
+      {/* Children — rendered above background layers */}
+      {children && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          {children}
+        </div>
+      )}
 
       {/* Layer 6: glass highlight — top left */}
       <div
@@ -131,7 +149,7 @@ export function MagicOrb({ className = '', focused = false, children }: MagicOrb
         style={{
           top: '7%', left: '14%',
           width: '42%', height: '30%',
-          background: 'radial-gradient(ellipse, rgba(255,255,255,0.65) 0%, rgba(200,240,255,0.25) 55%, transparent 100%)',
+          background: 'radial-gradient(ellipse, rgba(255,255,255,0.35) 0%, rgba(200,240,255,0.12) 55%, transparent 100%)',
           borderRadius: '50%',
           transform: 'rotate(-28deg)',
           filter: 'blur(3px)',
@@ -144,18 +162,11 @@ export function MagicOrb({ className = '', focused = false, children }: MagicOrb
         style={{
           top: '13%', left: '27%',
           width: '11%', height: '8%',
-          background: 'rgba(255,255,255,0.9)',
+          background: 'rgba(255,255,255,0.55)',
           borderRadius: '50%',
           filter: 'blur(1.5px)',
         }}
       />
-
-      {/* Children — rendered above all layers */}
-      {children && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          {children}
-        </div>
-      )}
     </div>
   )
 }
