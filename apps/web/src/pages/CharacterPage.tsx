@@ -9,8 +9,10 @@ import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
 import { CreateCharacterWizard } from '../components/character-wizard/CreateCharacterWizard'
 import { characterToFormData } from '../components/character-wizard/types'
+import { TABS } from '../lib/tabs'
 
 export default function CharactersPage() {
+  const TAB = TABS.find(t => t.label === 'My Cards')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [characters, setCharacters] = useState<Character[]>([])
@@ -104,7 +106,7 @@ export default function CharactersPage() {
     if (selected) {
       return (
         <div className="flex flex-col md:min-h-0">
-          <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+          <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
             <h2 className="text-xs font-mono uppercase tracking-widest">Character Card Details</h2>
           </div>
           <div className='p-2 md:px-4'>
@@ -120,7 +122,7 @@ export default function CharactersPage() {
     }
     return (
       <div className="flex flex-col md:min-h-0">
-        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
           <h2 className="text-xs font-mono uppercase tracking-widest">Select A Character</h2>
         </div>
       </div>
@@ -130,7 +132,7 @@ export default function CharactersPage() {
   const rightContent = (
     <>
       <div className="relative flex flex-col">
-        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
           <h2 className="text-xs font-mono uppercase tracking-widest">My Character Cards</h2>
         </div>
         <CharacterGallery
@@ -145,7 +147,7 @@ export default function CharactersPage() {
 
   return (
     <BinderLayout
-      barColor='#ee623f'
+      barColor={TAB.color}
       barContent={selected ? (
         <>
           <CharacterMiniCard character={selected} />

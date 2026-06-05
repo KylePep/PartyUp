@@ -8,9 +8,11 @@ import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { MatchCharacterDetail } from '../components/cards/MatchCharacterDetail'
 import { CollectionGallery } from '../components/CollectionGallery'
+import { TABS } from '../lib/tabs'
 
 
 export default function MatchesPage() {
+  const TAB = TABS.find(t => t.label === 'Collection')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
@@ -85,7 +87,7 @@ export default function MatchesPage() {
         {status === 'empty' && <EmptyState message="No matches yet — keep swiping!" />}
         {status === 'ready' && (
           <div className="relative flex flex-col">
-            <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+            <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
               <h2 className="text-xs font-mono uppercase tracking-widest">My Collection</h2>
             </div>
             <CollectionGallery
@@ -102,7 +104,7 @@ export default function MatchesPage() {
 
   return (
     <BinderLayout
-      barColor='#51e389'
+      barColor={TAB.color}
       barContent={selected ? (
         <>
           <CharacterMiniCard character={selected.myCharacter} characterId={selected.myCharacter.id} />

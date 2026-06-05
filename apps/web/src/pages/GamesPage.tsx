@@ -5,9 +5,11 @@ import { BinderLayout } from '../components/layout/BinderLayout'
 import { Button, EmptyState, Spinner } from '../components/ui'
 import { LandCard } from '../components/cards/LandCard'
 import { NewMatchBadge } from '../components/ui/NewMatchBadge'
+import { TABS } from '../lib/tabs'
 import DOMPurify from 'dompurify'
 
 export default function GamesPage() {
+  const TAB = TABS.find(t => t.label === 'Games')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [games, setGames] = useState<UserGame[]>([])
@@ -67,7 +69,7 @@ export default function GamesPage() {
 
   const leftContent = selected ? (
     <div className="flex flex-col md:min-h-0">
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
         <h2 className="text-xs font-mono uppercase tracking-widest">Game Card Details</h2>
       </div>
       <div className="overflow-y-auto mx-auto w-full p-2 md:p-4" >
@@ -76,7 +78,7 @@ export default function GamesPage() {
           imageUrl={selected.gameImageUrl ?? undefined}
           className='md:aspect-3/4 mx-auto'
         >
-          <div className='flex justify-between border-1 border-black px-2 py-1'>
+          <div className='flex justify-between border-1 border-[--color-off-black] px-2 py-1'>
             {selectedDetail && selectedDetail.platforms.length > 0 && (
               <p className="text-xs font-mono text-muted">{selectedDetail.platforms.join(' • ')}</p>
             )}
@@ -91,7 +93,7 @@ export default function GamesPage() {
             </div>
           ) : selectedDetail?.description ? (
             <div
-              className="text-xs font-mono text-muted flex-1 min-h-0 overflow-y-auto border-1 border-black px-2 py-1"
+              className="text-xs font-mono text-muted flex-1 min-h-0 overflow-y-auto border-1 border-[--color-off-black] px-2 py-1"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedDetail.description) }}
             />
           ) : null}
@@ -140,7 +142,7 @@ export default function GamesPage() {
         {status === 'empty' && <EmptyState message="You haven't added any games yet" />}
         {status === 'ready' && (
           <div className="flex flex-col md:min-h-0">
-            <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+            <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
               <h2 className="text-xs font-mono uppercase tracking-widest">My Game Cards</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 h-full gap-3 p-4">
@@ -172,7 +174,7 @@ export default function GamesPage() {
 
   return (
     <BinderLayout
-      barColor="#409cda"
+      barColor={TAB.color}
       activeTab={"Games"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
