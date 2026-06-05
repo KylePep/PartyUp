@@ -45,7 +45,7 @@ function MatchFront({ character }: MatchCardProps) {
         </>
       }
       bottomStat={levelField?.value}
-      className="flex flex-col"
+      className="flex flex-col min-h-fit"
     >
     </StandardTcgCard>
   )
@@ -56,9 +56,9 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
   const date = new Date(matchedAt).toLocaleDateString()
   return (
     <div
-      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black border-[6px]"
+      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black bg-black/80 border-[6px]"
     >
-      <div className="px-4 py-3 flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="px-4 py-3 overflow-y-auto overflow-x-hidden">
         <p className="font-display font-bold text-text text-lg">{character.platformHandle}</p>
         <p className="text-sm text-muted mb-1">{character.name}</p>
         <p className="text-sm text-muted mb-1">{gameName}</p>
@@ -107,7 +107,7 @@ export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSe
         front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         onFrontClick={onSelect ? () => onSelect(character) : undefined}
-        className="h-min md:h-full w-full aspect-2/3 md:aspect-auto"
+        className="h-full w-full aspect-3/4"
       />
     </div>
   )

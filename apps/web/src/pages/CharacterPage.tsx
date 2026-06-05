@@ -103,27 +103,36 @@ export default function CharactersPage() {
     }
     if (selected) {
       return (
-        <div className="flex flex-col md:flex-1 md:min-h-0 p-4">
-          <CharacterDetailCard
-            character={selected}
-            onDelete={selected.userGameId ? handleDelete : undefined}
-            onEdit={selected.userGameId ? handleEdit : undefined}
-            deleting={deleting}
-          />
+        <div className="flex flex-col md:min-h-0">
+          <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+            <h2 className="text-xs font-mono uppercase tracking-widest">Character Card Details</h2>
+          </div>
+          <div className='p-2 md:px-4'>
+            <CharacterDetailCard
+              character={selected}
+              onDelete={selected.userGameId ? handleDelete : undefined}
+              onEdit={selected.userGameId ? handleEdit : undefined}
+              deleting={deleting}
+            />
+          </div>
         </div>
       )
     }
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-muted font-mono text-sm">Select a character</p>
+      <div className="flex flex-col md:min-h-0">
+        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+          <h2 className="text-xs font-mono uppercase tracking-widest">Select A Character</h2>
+        </div>
       </div>
     )
   })()
 
   const rightContent = (
     <>
-      <div className='block md:hidden min-h-24 bg-black'></div>
-      <div className="p-4 overflow-y-auto h-full min-h-0 relative">
+      <div className="relative flex flex-col">
+        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50'>
+          <h2 className="text-xs font-mono uppercase tracking-widest">My Character Cards</h2>
+        </div>
         <CharacterGallery
           characters={characters}
           status={status}
@@ -136,7 +145,7 @@ export default function CharactersPage() {
 
   return (
     <BinderLayout
-      barColor='#991b1b'
+      barColor='#ee623f'
       barContent={selected ? (
         <>
           <CharacterMiniCard character={selected} />

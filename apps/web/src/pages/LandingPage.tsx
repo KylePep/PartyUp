@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavBar } from '../components/layout/NavBar'
+import { BinderShell } from '../components/layout/BinderShell'
 import AuthModal from '../components/modals/AuthModal'
 import { Button } from '../components/ui'
 
@@ -40,13 +41,16 @@ export default function LandingPage() {
     <div className="min-h-screen text-text flex relative">
       <NavBar variant="landing" onSignIn={() => setModal('sign-in')} onSignUp={() => setModal('sign-up')} />
 
-      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 mx-4 ">
-        <section className='h-full bg-cyan-900 border-cyan-950 border-10 md:border-16 rounded-l-lg rounded-r-4xl pb-4 pt-16 md:pt-4 py-4 px-6 w-[91%] md:w-1/2 flex flex-col items-center justify-between'>
-
-          <h1 className="font-display font-bold text-xl md:text-4xl text-stone-700 bg-stone-300 px-4 py-1 rounded-md">
-            PartyUp Binder
-          </h1>
-
+      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 mx-4">
+        <BinderShell
+          title="PartyUp"
+          className="h-full w-[91%] md:w-1/2 py-4"
+          footer={<>
+            <Button size="lg" onClick={() => setModal('sign-up')}>Get Started</Button>
+            <Button size="lg" variant="secondary" onClick={() => setModal('sign-in')}>Sign In</Button>
+          </>}
+          footerClassName="flex flex-col md:flex-row gap-4 justify-around items-center p-4 md:p-8"
+        >
           <div className="group relative h-[16rem] md:h-[20rem] w-[16rem] md:w-[20rem] bg-white border-cyan-950/90 border-8 rounded-full flex items-center justify-center">
 
             {/* SVG progress ring — key={step} re-mounts on step change, restarting the animation */}
@@ -94,16 +98,7 @@ export default function LandingPage() {
               </button>
             </div>
           </div>
-
-          <div className="flex flex-col md:flex-row gap-4 justify-around items-center border-cyan-950/50 border-8 md:border-10 rounded-4xl w-full md:w-3/4 h-1/3 p-4 md:p-8 ">
-            <Button size="lg" onClick={() => setModal('sign-up')}>
-              Get Started
-            </Button>
-            <Button size="lg" variant="secondary" onClick={() => setModal('sign-in')}>
-              Sign In
-            </Button>
-          </div>
-        </section>
+        </BinderShell>
       </main>
 
       {modal && <AuthModal initialMode={modal} onClose={() => setModal(null)} />}

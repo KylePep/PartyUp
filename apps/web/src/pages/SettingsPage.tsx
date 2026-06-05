@@ -162,7 +162,6 @@ export default function SettingsPage() {
 
   const rightContent = (
     <>
-      <div className='block md:hidden min-h-24 bg-black'></div>
       <div className="p-6">
         <h2 className="text-lg font-semibold text-white mb-4">Preferences</h2>
         <div className="space-y-4">
@@ -208,7 +207,7 @@ export default function SettingsPage() {
 
   return (
     <BinderLayout
-      barColor="#374151"
+      barColor="#be4fe3"
       activeTab="Settings"
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}

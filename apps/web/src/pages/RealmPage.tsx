@@ -56,7 +56,7 @@ export default function RealmPage() {
         </div>
       )}
       <BinderLayout
-        barColor="#381b03"
+        barColor="#ea6a01"
         barContent={
           <>
             {character ? (
@@ -85,7 +85,6 @@ export default function RealmPage() {
         }
         rightContent={
           <>
-            <div className='block md:hidden min-h-24 bg-black'></div>
             <RealmRightPage
               userGame={userGame}
               gameId={gameId!}

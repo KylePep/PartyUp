@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom"
 
 const tabs = [
-  { label: "Games", color: "#2851d8", to: "/games" },
-  { label: "My Cards", color: "#be1717", to: "/characters" },
-  { label: "Collection", color: "#1ac75c", to: "/matches" },
-  { label: "Settings", color: "#b95c0c", to: "/settings" },
+  { label: "Games", color: "#409cda", to: "/games", icon: "G" },
+  { label: "My Cards", color: "#ee623f", to: "/characters", icon: "Car" },
+  { label: "Collection", color: "#51e389", to: "/matches", icon: "Col" },
+  { label: "Settings", color: "#be4fe3", to: "/settings", icon: "S" },
 ] as const
 
 interface BinderTabsProps {
@@ -20,19 +20,29 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
     <section
       className="
         absolute
-        right-1
-        top-0
+        left-0
+        md:left-auto
+        md:right-1
+        bottom-2
+        md:bottom-auto
+        md:top-0
         origin-left
-        translate-x-full
-        gap-2
+        md:translate-x-full
+        gap-1
         md:gap-6
-        h-full
+        h-8
+        md:h-full
+        w-full
+        md:w-8
         grid
-        grid-cols-1
-        grid-rows-5
+        grid-cols-5
+        md:grid-cols-1
+        grid-rows-1
+        md:grid-rows-5
         auto-rows-0
-        w-8
-        py-8
+        px-8
+        md:px-0
+        md:py-8
         z-10
       "
     >
@@ -44,22 +54,25 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
           <NavLink
             key={tab.label}
             to={tab.to}
-            className="flex justify-end rounded-r p-1 text-xs font-mono uppercase tracking-widest text-center transition-all border-black/50 border-1
-          .5"
+            className="flex justify-center md:justify-end items-center rounded-b md:rounded-r p-1 text-xs font-mono uppercase tracking-widest text-center transition-all"
             style={{
               backgroundColor: isPassed || isActive
                 ? "transparent"
                 : tab.color,
               color: isActive
-                ? "#facc15"
-                : "#ffffff",
+                ? "#144b68"
+                : "#000000",
             }}
           >
             <span
-              className=" text-xs font-mono uppercase tracking-widest text-nowrap pointer-events-none"
-              style={{ writingMode: 'vertical-lr' }}
+              className=" text-xs font-mono uppercase tracking-widest text-nowrap pointer-events-none md:[writing-mode:vertical-rl]"
             >
-              {tab.label}
+              <span className="hidden md:block">
+                {tab.label}
+              </span>
+              <span className="md:hidden">
+                {tab.icon}
+              </span>
             </span>
           </NavLink>
         )
