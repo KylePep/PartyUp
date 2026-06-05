@@ -21,17 +21,17 @@ export function CharacterGallery({ characters, status, selectedId, onSelect }: C
       {status === 'empty' ? (
         <EmptyState message="You haven't created any characters yet" />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:grid-rows-2 gap-4 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:grid-rows-2 gap-4 h-full p-4">
           {characters.map(c => (
             <div
               key={c.id}
-              className="rounded-xl transition-all h-fit md:h-full"
+              className="rounded-xl transition-all h-fit"
               style={{
                 outline: selectedId === c.id ? '2px solid #991b1b' : '2px solid transparent',
                 outlineOffset: '2px',
               }}
             >
-              <CharacterCard character={c} onSelect={onSelect} className={"h-min md:h-full"} />
+              <CharacterCard character={c} onSelect={onSelect} className={""} />
             </div>
           ))}
         </div>

@@ -10,7 +10,7 @@ export default function SignedInLayout() {
 
   if (state.status === 'loading') {
     return (
-      <div className="min-h-screen w-full bg-bg flex items-center justify-center">
+      <div className="min-h-screen w-full flex items-center justify-center">
         <Spinner label="Loading..." />
       </div>
     )
@@ -23,7 +23,7 @@ export default function SignedInLayout() {
   return (
     <>
       <MatchNotificationToast />
-      <div className="min-h-screen max-h-screen bg-bg flex flex-col md:flex-row relative overflow-hidden">
+      <div className="min-h-screen max-h-screen flex flex-col md:flex-row relative overflow-hidden">
         <NavBar variant="app" />
         <Outlet />
         {/* <BottomTray /> */}

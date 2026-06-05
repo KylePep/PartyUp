@@ -26,7 +26,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
   return (
     <div
-      className="flex flex-col md:flex-1 md:min-h-0 rounded-xl overflow-hidden"
+      className="flex flex-col rounded-xl overflow-hidden"
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '2px solid var(--color-accent)',

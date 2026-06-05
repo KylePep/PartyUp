@@ -1,11 +1,12 @@
 import { useAuth } from '../context/AuthContext'
 import { type UserGame } from '../api/endpoints/userGames'
 import { useUserGames } from '../hooks/useUserGames'
-import { OrbSearch } from '../components/OrbSearch'
+import { ScryingOrb } from '../components/orb/ScryingOrb'
 import { RealmCard } from '../components/cards/RealmCard'
 import { Spinner } from '../components/ui'
 import { USER_GAME_LIMIT } from '../utils/limits'
 import { BinderTabs } from '../components/layout/BinderTabs'
+import { BinderShell } from '../components/layout/BinderShell'
 
 export default function HomePage() {
   const { state: auth } = useAuth()
@@ -20,34 +21,30 @@ export default function HomePage() {
   const atLimit = userGames.games.length >= USER_GAME_LIMIT
 
   return (
-    <main className="flex flex-1 md:items-center ms-8 md:justify-center py-4 md:py-4 overflow-hidden">
-      <section className="md:h-full bg-surface border-white border-2 pb-4 pt-16 md:pt-4 px-6 w-[91%] md:w-1/2 flex flex-col items-center justify-between relative">
-
-        <h1 className="text-center font-display font-bold text-xl md:text-4xl text-text mt-6">
-          {name}'s Binder
-        </h1>
-
-        {userGames.status === 'loading' ? (
-          <Spinner />
-        ) : (
-          <OrbSearch
-            onAdd={(game: UserGame) => userGames.addUserGame(game)}
-            disabled={atLimit}
-          />
-        )}
-
-        <h2 className='col-span-3 font-display font-bold text-center'>Recent Realms</h2>
-        <div className="flex md:grid md:grid-cols-3 grid-rows-1 gap-x-4 w-full md:w-3/4 border-white border-2 overflow-x-auto h-1/3 p-2 md:p-8">
-          {visibleRealms.length === 0 ? (
+    <main className="flex flex-1 md:items-center md:justify-center md:py-4 overflow-hidden">
+      <section className="md:h-full w-full mx-4 md:w-1/2 relative py-2 pb-10 md:pb-0">
+        <BinderShell
+          title={`${name}'s Binder`}
+          className="relative h-full w-full z-20"
+          footer={visibleRealms.length === 0 ? (
             <p className="col-span-3 text-xs font-mono text-muted text-center">
               Search above to add your first realm
             </p>
           ) : (
-            visibleRealms.map(g => (
-              <RealmCard key={g.id} userGame={g} />
-            ))
+            visibleRealms.map(g => <RealmCard key={g.id} userGame={g} />)
           )}
-        </div>
+          footerClassName="flex overflow-x-auto gap-x-2 p-2"
+        >
+          {userGames.status === 'loading' ? (
+            <Spinner />
+          ) : (
+            <ScryingOrb
+              onAdd={(game: UserGame) => userGames.addUserGame(game)}
+              disabled={atLimit}
+            />
+          )}
+          {/* <h2 className='font-display font-bold text-center'>Recent Realms</h2> */}
+        </BinderShell>
         <BinderTabs activeTab='' />
       </section>
     </main>

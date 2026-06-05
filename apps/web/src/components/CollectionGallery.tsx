@@ -47,15 +47,15 @@ export function CollectionGallery({ matches: providedMatches, selectedId, gameId
   const displayed = limit !== undefined ? matches.slice(0, limit) : matches
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:grid-rows-2 gap-4 h-full">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:grid-rows-2 gap-4 h-full p-4">
       {displayed.map(m => (
         <div
           key={m.matchId}
-          className={`h-fit md:h-full ${selectedId === m.matchId
-              ? 'ring-2 ring-green-700 rounded-xl'
-              : m.isNew
-                ? 'ring-2 ring-green-500 rounded-xl'
-                : ''
+          className={`h-fit ${selectedId === m.matchId
+            ? 'ring-2 ring-green-700 rounded-xl'
+            : m.isNew
+              ? 'ring-2 ring-green-500 rounded-xl'
+              : ''
             }`}
         >
           <CollectionCard

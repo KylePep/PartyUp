@@ -24,14 +24,40 @@ export function NavBar({ variant }: NavBarProps) {
 
   return (
     <nav
-      className={`pointer-events-none z-40 w-full h-16 absolute flex flex-col gap-y-4 md:justify-between md:w-52 md:h-screen px-12 md:pe-6 md:ps-12 pt-6 md:py-8 top-0
- ${variant === 'landing'
+      className={`
+        pointer-events-none 
+        z-40 
+        w-full 
+        md:w-52
+        h-9
+        md:h-16 
+        md:h-screen 
+        absolute 
+        bottom-0
+        md:top-0
+        flex 
+        flex-row
+        md:flex-col 
+        justify-between
+        gap-y-4 
+        px-1
+        md:px-12 
+        md:pe-6 
+        md:ps-16 
+        md:pt-6 
+        md:py-10
+        ${variant === 'landing'
           ? ''
           : ''
         }`}
     >
-      <Link to="/home" className="pointer-events-auto font-display font-bold text-text text-lg tracking-wide">
-        PartyUp
+      <Link to="/home" className="pointer-events-auto font-display font-bold text-off-black text-lg tracking-wide">
+        <span className='hidden md:block'>
+          PartyUp
+        </span>
+        <img
+          className='w-7 h-7 block md:hidden'
+          src="/favicon.png" alt="" />
       </Link>
 
       {variant === 'app' && username && (
@@ -45,7 +71,7 @@ export function NavBar({ variant }: NavBarProps) {
             <Avatar fallback={username} size="sm" />
           </button>
           {dropdownOpen && (
-            <div className="absolute left-0 mt-2 md:right-auto md:left-0 md:bottom-full md:top-auto md:mt-0 md:mb-2 w-44 bg-surface border border-border rounded-lg shadow-xl overflow-hidden">
+            <div className="absolute left-0 top-0 md:top-auto -translate-y-full md:translate-y-0 -translate-x-full md:translate-x-0 mt-2 md:right-auto md:left-0 md:bottom-full md:top-auto md:mt-0 md:mb-2 w-44 bg-surface border border-border rounded-lg shadow-xl overflow-hidden">
               <div className="px-4 py-3 border-b border-border">
                 <p className="text-xs font-mono text-muted uppercase tracking-widest">Signed in as</p>
                 <p className="text-sm text-text font-medium truncate">{username}</p>

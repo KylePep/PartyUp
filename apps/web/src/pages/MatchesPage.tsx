@@ -8,9 +8,11 @@ import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { MatchCharacterDetail } from '../components/cards/MatchCharacterDetail'
 import { CollectionGallery } from '../components/CollectionGallery'
+import { TABS } from '../lib/tabs'
 
 
 export default function MatchesPage() {
+  const TAB = TABS.find(t => t.label === 'Collection')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
@@ -48,14 +50,15 @@ export default function MatchesPage() {
     <div className="flex flex-col h-full min-h-0 overflow-y-auto">
       {/* Match header */}
       <div
-        className="px-4 py-3"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
+        className="px-4 py-3 h-[64px] border-b-4 border-cyan-950/50"
       >
-        <p className="text-xs text-muted uppercase tracking-widest mb-0.5">Match</p>
+        <div className='flex gap-4'>
+          <p className="text-xs text-muted uppercase tracking-widest mb-0.5">Match</p>
+          <p className="text-xs text-muted">
+            - {new Date(selected.matchedAt).toLocaleDateString()}
+          </p>
+        </div>
         <p className="font-display font-bold text-text">{selected.gameName}</p>
-        <p className="text-xs text-muted">
-          Matched {new Date(selected.matchedAt).toLocaleDateString()}
-        </p>
       </div>
 
       {/* Their character */}
@@ -76,20 +79,24 @@ export default function MatchesPage() {
 
   const rightContent = (
     <>
-      <div className='block md:hidden min-h-24 bg-black'></div>
-      <div className="p-4 overflow-y-auto h-full w-full min-h-0">
+      <div className=" h-full w-full min-h-0">
         {status === 'loading' && (
           <div className="flex justify-center py-10"><Spinner /></div>
         )}
         {status === 'error' && <EmptyState message="Could not load matches" />}
         {status === 'empty' && <EmptyState message="No matches yet — keep swiping!" />}
         {status === 'ready' && (
-          <CollectionGallery
-            matches={matches}
-            selectedId={selected?.matchId ?? null}
-            onSelect={handleSelect}
-            limit={6}
-          />
+          <div className="relative flex flex-col">
+            <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+              <h2 className="text-xs font-mono uppercase tracking-widest">My Collection</h2>
+            </div>
+            <CollectionGallery
+              matches={matches}
+              selectedId={selected?.matchId ?? null}
+              onSelect={handleSelect}
+              limit={6}
+            />
+          </div>
         )}
       </div>
     </>
@@ -97,7 +104,7 @@ export default function MatchesPage() {
 
   return (
     <BinderLayout
-      barColor='#166534'
+      barColor={TAB.color}
       barContent={selected ? (
         <>
           <CharacterMiniCard character={selected.myCharacter} characterId={selected.myCharacter.id} />

@@ -51,12 +51,12 @@ export default function RealmPage() {
   return (
     <>
       {matchBanner && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white px-6 py-3 rounded-lg font-mono text-sm shadow-lg ">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-off-white px-6 py-3 rounded-lg font-mono text-sm shadow-lg">
           It's a match!
         </div>
       )}
       <BinderLayout
-        barColor="#381b03"
+        barColor="#ea6a01"
         barContent={
           <>
             {character ? (
@@ -85,7 +85,6 @@ export default function RealmPage() {
         }
         rightContent={
           <>
-            <div className='block md:hidden min-h-24 bg-black'></div>
             <RealmRightPage
               userGame={userGame}
               gameId={gameId!}
