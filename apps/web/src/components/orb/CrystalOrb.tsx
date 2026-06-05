@@ -52,8 +52,9 @@ export function CrystalOrb() {
       {orbSize > 0 && (
         <div className="group relative" style={{ width: orbSize, height: orbSize }}>
 
-          {/* MagicOrb fills the container */}
-          <MagicOrb className="absolute inset-0" focused={false}>
+          {/* MagicOrb fills the container — explicit px dimensions, not absolute inset-0
+              (Tailwind outputs `relative` after `absolute` so `relative` would win and collapse the orb) */}
+          <MagicOrb style={{ width: orbSize, height: orbSize }} focused={false}>
             {/* Step content — key causes re-mount and vision-appear animation on change */}
             <div
               key={`step-${step}`}
