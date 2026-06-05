@@ -161,7 +161,7 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
         {searchState === 'idle' && (
           <div className="w-full h-full flex flex-col items-center justify-between py-8 px-6">
             <div className="flex-1 flex items-center justify-center w-full">
-              <div className="flex gap-2 items-center w-full px-8">
+              <div className="flex gap-2 items-center w-full md:px-8">
                 <input
                   className="flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
                   placeholder="Search realms…"
@@ -231,12 +231,12 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
           <div className="w-full h-full flex flex-col">
             {/* Query bar — fixed at top */}
             <div className="flex-shrink-0 flex items-center justify-center gap-2 pt-4 px-4">
-              <span className="text-xs font-mono text-muted truncate max-w-[60%]">{query}</span>
               <button
                 onClick={handleClear}
-                className="text-xs font-mono text-cyan-400 hover:text-cyan-200 transition-colors"
+                className="flex items-center justify-between text-2xl font-mono text-cyan-400 hover:text-cyan-200 transition-colors gap-2"
                 aria-label="Clear search"
               >
+                <span className="text-xs font-mono text-muted truncate max-w-full">{query}</span>
                 ×
               </button>
             </div>

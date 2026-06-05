@@ -29,7 +29,7 @@ export function BinderLayout({
       >
         {/* Left page — hidden on mobile when right is active */}
         <div
-          className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row md:border-r-8 border-cyan-950/50 h-full`}
+          className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row md:border-r-8 border-cyan-950/90 h-full`}
           style={{ boxShadow: 'inset -12px 0 20px -8px rgba(0,0,0,0.4)' }}
         >
           {/* Spine bar */}

@@ -17,7 +17,7 @@ export default function HomePage() {
   const { email } = auth.user
   const displayName = auth.user.profile?.displayName
   const name = displayName ?? email.split('@')[0]
-  const visibleRealms = userGames.games.slice(0, 3)
+  const visibleRealms = userGames.games.slice(0, 4)
   const atLimit = userGames.games.length >= USER_GAME_LIMIT
 
   return (

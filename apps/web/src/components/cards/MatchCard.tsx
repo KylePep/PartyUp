@@ -45,7 +45,7 @@ function MatchFront({ character }: MatchCardProps) {
         </>
       }
       bottomStat={levelField?.value}
-      className="flex flex-col min-h-fit"
+      className="h-full w-full"
     >
     </StandardTcgCard>
   )
@@ -91,7 +91,7 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
         <p className="text-xs text-muted mt-3">Matched {date}</p>
       </div>
       <div className="px-4 pb-2 flex justify-end" style={{ position: 'relative', zIndex: 20 }}>
-        <Button size="sm" variant="ghost" onClick={() => navigate(`/matches?id=${matchId}`)}>
+        <Button size="sm" variant="primary" onClick={() => navigate(`/matches?id=${matchId}`)}>
           View Match →
         </Button>
       </div>
@@ -102,7 +102,7 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
 
 export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSelect }: MatchCardProps) {
   return (
-    <div className={`relative ${isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
+    <div className={`relative flex flex-col flex-1 min-h-0 ${isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
       <FlippableCard
         front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}

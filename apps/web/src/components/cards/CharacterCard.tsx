@@ -35,7 +35,7 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
   const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col flex-1 min-h-0">
       {character.hasNewMatch && <NewMatchDot />}
       <StandardTcgCard
         className={className}

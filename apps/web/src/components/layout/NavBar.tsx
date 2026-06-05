@@ -40,7 +40,7 @@ export function NavBar({ variant }: NavBarProps) {
         md:flex-col 
         justify-between
         gap-y-4 
-        px-1
+        px-2
         md:px-12 
         md:pe-6 
         md:ps-16 

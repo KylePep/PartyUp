@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { BinderLayout } from '../components/layout/BinderLayout'
-import { Button, EmptyState, Spinner } from '../components/ui'
+import { Button } from '../components/ui'
+import { Gallery } from '../components/Gallery'
 import { LandCard } from '../components/cards/LandCard'
 import { NewMatchBadge } from '../components/ui/NewMatchBadge'
 import { TABS } from '../lib/tabs'
@@ -69,15 +70,15 @@ export default function GamesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="flex flex-col md:min-h-0">
+    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
         <h2 className="text-xs font-mono uppercase tracking-widest">Game Card Details</h2>
       </div>
-      <div className="overflow-y-auto mx-auto w-full p-2 md:p-4" >
+      <div className="overflow-y-auto overflow-hidden flex flex-col flex-1 mx-auto p-2 md:p-4" >
         <LandCard
           name={selected.gameName}
           imageUrl={selected.gameImageUrl ?? undefined}
-          className='md:aspect-3/4 mx-auto'
+          className='h-full w-full'
         >
           <div className='flex justify-between border-1 border-[--color-off-black] px-2 py-1'>
             {selectedDetail && selectedDetail.platforms.length > 0 && (
@@ -134,43 +135,31 @@ export default function GamesPage() {
   )
 
   const rightContent = (
-    <>
-      <div className="overflow-y-auto h-full min-h-0">
-        {status === 'loading' && (
-          <div className="flex justify-center py-10"><Spinner /></div>
-        )}
-        {status === 'error' && <EmptyState message="Could not load games" />}
-        {status === 'empty' && <EmptyState message="You haven't added any games yet" />}
-        {status === 'ready' && (
-          <div className="flex flex-col md:min-h-0">
-            <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
-              <h2 className="text-xs font-mono uppercase tracking-widest">My Game Cards</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 h-full gap-3 p-4">
-              {games.map(game => (
-                <div
-                  key={game.id}
-                  className={`relative h-fit md:h-full ${selected?.id === game.id
-                    ? 'ring-2 ring-blue-700 rounded-xl'
-                    : ''
-                    }`}
-                >
-                  <NewMatchBadge count={game.newMatchCount} />
-                  <LandCard
-                    name={game.gameName}
-                    imageUrl={game.gameImageUrl ?? undefined}
-                    onClick={() => handleSelect(game)}
-                    className="h-min aspect-3/4 md:aspect-auto md:h-full hover:brightness-110 transition-all"
-                  >
-                    <div className='flex flex-1 items-center justify-center text-7xl'><PlanetIcon /></div>
-                  </LandCard>
-                </div>
-              ))}
-            </div>
+    <div className="flex flex-col h-full min-h-0">
+      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+        <h2 className="text-xs font-mono uppercase tracking-widest">My Game Cards</h2>
+      </div>
+      <Gallery
+        items={games}
+        status={status}
+        getKey={(g: UserGame) => g.id}
+        emptyMessage="You haven't added any games yet"
+        errorMessage="Could not load games"
+        renderItem={(g: UserGame) => (
+          <div className={`relative h-fit md:h-full ${selected?.id === g.id ? 'ring-2 ring-blue-700 rounded-xl' : ''}`}>
+            <NewMatchBadge count={g.newMatchCount} />
+            <LandCard
+              name={g.gameName}
+              imageUrl={g.gameImageUrl ?? undefined}
+              onClick={() => handleSelect(g)}
+              className="h-min aspect-3/4 md:aspect-auto md:h-full hover:brightness-110 transition-all"
+            >
+              <div className='flex flex-1 items-center justify-center text-7xl'><PlanetIcon /></div>
+            </LandCard>
           </div>
         )}
-      </div>
-    </>
+      />
+    </div>
   )
 
   return (

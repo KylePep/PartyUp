@@ -9,7 +9,7 @@ interface LandCardProps {
 export function LandCard({ name, imageUrl, className, onClick, children }: LandCardProps) {
   return (
     <div
-      className={`h-full rounded-xl overflow-hidden flex flex-col p-2 gap-2 ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
+      className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col p-2 gap-2 ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
       style={{ border: '8px solid black', backgroundColor: 'var(--color-surface)' }}
       onClick={onClick}
     >

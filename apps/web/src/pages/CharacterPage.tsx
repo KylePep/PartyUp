@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getCharacters, deleteCharacter, type Character } from '../api/endpoints/characters'
 import { getUserGames, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
-import { CharacterGallery } from '../components/CharacterGallery'
+import { Gallery } from '../components/Gallery'
+import { CharacterCard } from '../components/cards/CharacterCard'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
@@ -131,15 +132,27 @@ export default function CharactersPage() {
 
   const rightContent = (
     <>
-      <div className="relative flex flex-col">
+      <div className="relative flex flex-col flex-1 min-h-0">
         <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
           <h2 className="text-xs font-mono uppercase tracking-widest">My Character Cards</h2>
         </div>
-        <CharacterGallery
-          characters={characters}
+        <Gallery
+          items={characters}
           status={status}
-          selectedId={selected?.id ?? null}
-          onSelect={handleSelect}
+          getKey={c => c.id}
+          emptyMessage="You haven't created any characters yet"
+          errorMessage="Could not load characters"
+          renderItem={c => (
+            <div
+              className="flex flex-col rounded-xl"
+              style={{
+                outline: selected?.id === c.id ? '2px solid #991b1b' : '2px solid transparent',
+                outlineOffset: '2px',
+              }}
+            >
+              <CharacterCard character={c} onSelect={handleSelect} className="" />
+            </div>
+          )}
         />
       </div>
     </>

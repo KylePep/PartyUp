@@ -17,7 +17,7 @@ export function RealmCard({ userGame }: RealmCardProps) {
       <NewMatchBadge count={userGame.newMatchCount} />
       <FullArtTcgCard
         name={userGame.gameName}
-        className='h-full aspect-3/4 mx-auto'
+        className='h-full aspect-3/4 md:aspect-auto mx-auto'
         imageUrl={userGame.gameImageUrl ?? undefined}
       />
     </Link>

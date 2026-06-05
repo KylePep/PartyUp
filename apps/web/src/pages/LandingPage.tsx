@@ -11,10 +11,10 @@ export default function LandingPage() {
   const [modal, setModal] = useState<ModalMode | null>(null)
 
   return (
-    <div className="h-dvh text-text flex relative">
+    <div className="h-dvh text-text flex relative md:py-4">
       <NavBar variant="landing" onSignIn={() => setModal('sign-in')} onSignUp={() => setModal('sign-up')} />
 
-      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 mx-4">
+      <main className="flex-1 flex flex-col items-center justify-center text-center py-2 mx-4 pb-10 md:pb-0">
         <BinderShell
           title="PartyUp"
           className="h-full w-[91%] md:w-1/2 py-4"
