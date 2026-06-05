@@ -39,7 +39,10 @@ interface AtmoIcon {
   dur: number
   delay: number
   op: number
-  tx: string; ty: string; tx2: string; ty2: string
+  tx: string
+  ty: string
+  tx2: string
+  ty2: string
 }
 
 const ATMO_ICONS: AtmoIcon[] = [
@@ -94,7 +97,7 @@ export function MagicOrb({ className = '', focused = false, children }: MagicOrb
             height: s.size,
             background: s.color,
             transition: 'opacity 600ms ease',
-            opacity: focused ? 0 : undefined,
+            opacity: focused ? 0 : 1,
             animation: `orb-star-twinkle ${s.dur}s ${s.delay}s ease-in-out infinite`,
           } as CSSProperties}
         />
@@ -109,7 +112,7 @@ export function MagicOrb({ className = '', focused = false, children }: MagicOrb
             left,
             top,
             transition: 'opacity 600ms ease',
-            opacity: focused ? 0 : undefined,
+            opacity: focused ? 0 : 1,
             '--icon-op': op,
             '--icon-tx': tx,
             '--icon-ty': ty,
