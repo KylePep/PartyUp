@@ -9,6 +9,7 @@ interface MatchCardProps {
   gameName: string
   matchedAt: string
   matchId: string
+  isNew?: boolean
   onSelect?: (character: Character) => void
 }
 
@@ -44,7 +45,7 @@ function MatchFront({ character }: MatchCardProps) {
         </>
       }
       bottomStat={levelField?.value}
-      className="flex flex-col"
+      className="h-full w-full"
     >
     </StandardTcgCard>
   )
@@ -55,9 +56,9 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
   const date = new Date(matchedAt).toLocaleDateString()
   return (
     <div
-      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black border-[6px]"
+      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black bg-black/80 border-[6px]"
     >
-      <div className="px-4 py-3 flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="px-4 py-3 overflow-y-auto overflow-x-hidden">
         <p className="font-display font-bold text-text text-lg">{character.platformHandle}</p>
         <p className="text-sm text-muted mb-1">{character.name}</p>
         <p className="text-sm text-muted mb-1">{gameName}</p>
@@ -90,7 +91,7 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
         <p className="text-xs text-muted mt-3">Matched {date}</p>
       </div>
       <div className="px-4 pb-2 flex justify-end" style={{ position: 'relative', zIndex: 20 }}>
-        <Button size="sm" variant="ghost" onClick={() => navigate(`/matches?id=${matchId}`)}>
+        <Button size="sm" variant="primary" onClick={() => navigate(`/matches?id=${matchId}`)}>
           View Match →
         </Button>
       </div>
@@ -99,13 +100,15 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
   )
 }
 
-export function MatchCard({ character, gameName, matchedAt, matchId, onSelect }: MatchCardProps) {
+export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSelect }: MatchCardProps) {
   return (
-    <FlippableCard
-      front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
-      back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
-      onFrontClick={onSelect ? () => onSelect(character) : undefined}
-      className="h-min md:h-full w-full aspect-2/3 md:aspect-auto"
-    />
+    <div className={`relative flex flex-col flex-1 min-h-0 ${isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
+      <FlippableCard
+        front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
+        back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
+        onFrontClick={onSelect ? () => onSelect(character) : undefined}
+        className="h-full w-full aspect-3/4"
+      />
+    </div>
   )
 }

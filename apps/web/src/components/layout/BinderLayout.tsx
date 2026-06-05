@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { ArrowLeft, ArrowRight } from "@phosphor-icons/react"
 import { BinderTabs } from './BinderTabs'
 
 interface BinderLayoutProps {
@@ -21,17 +22,25 @@ export function BinderLayout({
   onToggleSide,
 }: BinderLayoutProps) {
   return (
-    // Outer wrapper: ms-8 on mobile gives room for left-side toggle button
-    <div className="relative m-4 ms-8 me-8 md:w-full" style={{ height: 'calc(100vh - 2rem)' }}>
+    <div className="relative flex flex-col md:w-full mx-4 md:mx-8 pt-2 pb-10 md:py-2 h-screen">
       {/* Binder frame */}
-      <main className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-white border-2 w-full h-full relative">
+      <main
+        className="binder-frame grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-cyan-950/50 border-10 rounded-lg md:rounded-4xl w-full h-full relative z-20"
+      >
         {/* Left page — hidden on mobile when right is active */}
-        <div className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row border-r border-border h-full`}>
+        <div
+          className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row md:border-r-8 border-cyan-950/90 h-full`}
+          style={{ boxShadow: 'inset -12px 0 20px -8px rgba(0,0,0,0.4)' }}
+        >
           {/* Spine bar */}
           <div
-            className="min-w-48 flex md:flex-col items-center justify-end md:justify-start min-h-34 px-4 md:pt-12 shrink-0 md:h-full gap-4"
+            className="relative min-w-50 flex md:flex-col items-center md:justify-end md:justify-start min-h-34 px-4 md:pt-12 shrink-0 md:h-full gap-4 md:rounded-l-3xl border-b-8 md:border-b-0 md:border-r-8 border-slate-900/20"
             style={{ backgroundColor: barColor }}
           >
+            <div
+              className="absolute inset-0 pointer-events-none md:rounded-l-3xl"
+              style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.15), transparent 30%, transparent 70%, rgba(0,0,0,0.15))' }}
+            />
             {barContent}
           </div>
           {/* Left content area */}
@@ -41,32 +50,29 @@ export function BinderLayout({
         </div>
 
         {/* Right page — hidden on mobile when left is active */}
-        <div className={`${activeSide === 'right' ? 'flex' : 'hidden md:flex'} flex-col h-full overflow-y-auto`}>
+        <div
+          className={`${activeSide === 'right' ? 'flex' : 'hidden md:flex'} flex-col h-full overflow-y-auto md:overflow-hidden`}
+          style={{ boxShadow: 'inset 12px 0 20px -8px rgba(0,0,0,0.4)' }}
+        >
           {rightContent}
         </div>
       </main>
 
-      {/* Desktop tab strip — unchanged */}
       <BinderTabs activeTab={activeTab} />
 
-      {/* Mobile-only toggle button.
-          Right side (activeSide=right): z-0 so BinderTabs (z-10) covers rows 1-4;
-          the empty 5th grid slot is the visible/tappable gap.
-          Left side (activeSide=left): z-10, protrudes left of the binder frame. */}
+      {/* Mobile-only toggle button */}
       {onToggleSide && (
-        <div className={`pointer-events-none grid grid-cols-1 grid-rows-5 gap-2 md:hidden absolute top-0 w-6 h-full ${activeSide === 'right'
-          ? 'right-0 translate-x-full z-20 rounded-r'
-          : 'left-0 -translate-x-full z-10 rounded-l'
-          }`}>
+        <div className="pointer-events-none grid grid-cols-5 grid-rows-1 gap-1 md:hidden absolute bottom-2 left-0 right-0 w-full h-9 px-8 z-10">
           <button
             onClick={onToggleSide}
             aria-label="Toggle panel"
-            className={`pointer-events-auto row-start-5 block w-full h-full bg-white
-              ${activeSide === 'right'
-                ? 'rounded-r'
-                : 'rounded-l'
-              }`}
-          />
+            className="pointer-events-auto col-start-5 flex items-center justify-center w-full h-full bg-off-white rounded-b"
+          >
+            {activeSide === 'right'
+              ? <ArrowLeft size={16} color="var(--color-off-black)" />
+              : <ArrowRight size={16} color="var(--color-off-black)" />
+            }
+          </button>
         </div>
       )}
     </div>

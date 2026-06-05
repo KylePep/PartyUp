@@ -1,6 +1,8 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import * as signalR from "@microsoft/signalr";
 import { getMe, type CurrentUser } from "../api/endpoints/auth";
-import { UnauthorizedError } from "../api/client";
+import { UnauthorizedError, API_BASE } from "../api/client";
+import { useNotifications, type MatchNotificationPayload } from "./NotificationContext";
 
 type AuthState =
   | { status: "loading" }
@@ -16,15 +18,46 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+const HUB_URL = API_BASE.replace("/api", "") + "/hubs/notifications";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(() =>
     localStorage.getItem("token") ? { status: "loading" } : { status: "unauthenticated" }
   );
+  const connectionRef = useRef<signalR.HubConnection | null>(null);
+  const { push } = useNotifications();
+
+  function startConnection(token: string) {
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl(HUB_URL, { accessTokenFactory: () => token })
+      .withAutomaticReconnect()
+      .build();
+
+    connection.on("NewMatch", (payload: MatchNotificationPayload) => {
+      push(payload);
+    });
+
+    connection.start().catch(() => {
+      // SignalR connection failure is non-fatal — badges still populate from DB on next load
+    });
+
+    connectionRef.current = connection;
+  }
+
+  function stopConnection() {
+    connectionRef.current?.stop();
+    connectionRef.current = null;
+  }
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
     getMe()
-      .then((user) => setState({ status: "authenticated", user }))
+      .then((user) => {
+        setState({ status: "authenticated", user });
+        startConnection(token);
+      })
       .catch((err) => {
         if (err instanceof UnauthorizedError) {
           setState({ status: "unauthenticated" });
@@ -32,6 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setState({ status: "unreachable" });
         }
       });
+
+    return () => stopConnection();
   }, []);
 
   async function login(_email: string, token: string) {
@@ -39,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const user = await getMe();
       setState({ status: "authenticated", user });
+      startConnection(token);
     } catch (err) {
       localStorage.removeItem("token");
       throw err;
@@ -48,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function logout() {
     localStorage.removeItem("token");
     setState({ status: "unauthenticated" });
+    stopConnection();
   }
 
   return (

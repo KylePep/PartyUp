@@ -1,64 +1,65 @@
 import { NavLink } from "react-router-dom"
-
-const tabs = [
-  { label: "Games", color: "#1e40af", to: "/games" },
-  { label: "My Cards", color: "#991b1b", to: "/characters" },
-  { label: "Collection", color: "#166534", to: "/matches" },
-  { label: "Settings", color: "#dcba31", to: "/settings" },
-] as const
+import { TABS } from "../../lib/tabs"
 
 interface BinderTabsProps {
   activeTab: string
 }
 
 export function BinderTabs({ activeTab }: BinderTabsProps) {
-  const activeIndex = tabs.findIndex(
-    tab => tab.label === activeTab
-  )
+  const activeIndex = TABS.findIndex(tab => tab.label === activeTab)
 
   return (
     <section
       className="
+        [filter:drop-shadow(2px_2px_3px_rgba(0,0,0,0.45))]
         absolute
-        right-0
-        top-0
+        left-0
+        md:left-auto
+        md:right-1
+        bottom-2
+        md:bottom-auto
+        md:top-0
         origin-left
-        translate-x-full
-        gap-2
+        md:translate-x-full
+        gap-1
         md:gap-6
-        z-10
-        h-full
+        h-8
+        md:h-full
+        w-full
+        md:w-8
         grid
-        grid-cols-1
-        grid-rows-5
+        grid-cols-5
+        md:grid-cols-1
+        grid-rows-1
+        md:grid-rows-5
         auto-rows-0
-        w-6
+        px-8
+        md:px-0
+        md:py-8
+        z-10
       "
     >
-      {tabs.map((tab, index) => {
+      {TABS.map((tab, index) => {
         const isPassed = index < activeIndex
         const isActive = index === activeIndex
+
+        const bgColor = isPassed || isActive ? "transparent" : tab.color
+        const iconColor = isActive
+          ? tab.color
+          : isPassed
+            ? "var(--color-muted)"
+            : "var(--color-off-black)"
+        const iconWeight = isActive ? "fill" : "regular"
 
         return (
           <NavLink
             key={tab.label}
             to={tab.to}
-            className="flex rounded-r py-1 text-xs font-mono uppercase tracking-widest text-center transition-all"
-            style={{
-              backgroundColor: isPassed || isActive
-                ? "transparent"
-                : tab.color,
-              color: isActive
-                ? "#facc15"
-                : "#ffffff",
-            }}
+            aria-label={tab.label}
+            className="flex justify-center items-center rounded-b md:rounded-r p-1 transition-all"
+            style={{ backgroundColor: bgColor }}
           >
-            <span
-              className=" text-xs font-mono uppercase tracking-widest text-nowrap pointer-events-none"
-              style={{ writingMode: 'vertical-lr' }}
-            >
-              {tab.label}
-            </span>
+            <tab.Icon size={20} weight={iconWeight} color={iconColor} />
           </NavLink>
         )
       })}

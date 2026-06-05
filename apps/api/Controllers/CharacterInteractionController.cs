@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyUp.Api.Models.DTOs.Character;
+using PartyUp.Api.Models.DTOs.CharacterInteraction;
 
 [ApiController]
 [Route("api/character-interactions")]
@@ -16,7 +17,7 @@ public class CharacterInteractionController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<MatchResponse>> RecordInteraction([FromBody] CharacterInteractionRequest request)
+    public async Task<ActionResult<MatchResultResponse>> RecordInteraction([FromBody] CharacterInteractionRequest request)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         try

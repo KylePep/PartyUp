@@ -21,4 +21,5 @@ public class CharacterResponse
 
   public DateTime CreatedAt { get; set; }
   public List<CharacterFieldValueDto> GameFields { get; set; } = [];
+  public bool HasNewMatch { get; set; }
 }

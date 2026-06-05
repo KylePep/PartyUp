@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import type { Character } from '../../api/endpoints/characters'
 import { StandardTcgCard } from './StandardTcgCard'
+import { NewMatchDot } from '../ui/NewMatchDot'
 
 interface CharacterCardProps {
   character: Character
@@ -34,20 +35,23 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
   const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')
 
   return (
-    <StandardTcgCard
-      className={className}
-      name={character.name}
-      platform={character.platform}
-      imageUrl={character.imageUrl}
-      statsLine={statsLine}
-      textBody={
-        <>
-          <p className="text-xs text-muted mb-2">{topBioContent}</p>
-          {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
-        </>
-      }
-      bottomStat={levelField?.value}
-      onClick={handleClick}
-    />
+    <div className="relative flex flex-col flex-1 min-h-0">
+      {character.hasNewMatch && <NewMatchDot />}
+      <StandardTcgCard
+        className={className}
+        name={character.name}
+        platform={character.platform}
+        imageUrl={character.imageUrl}
+        statsLine={statsLine}
+        textBody={
+          <>
+            <p className="text-xs text-muted mb-2">{topBioContent}</p>
+            {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+          </>
+        }
+        bottomStat={levelField?.value}
+        onClick={handleClick}
+      />
+    </div>
   )
 }
