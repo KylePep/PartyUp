@@ -1,24 +1,17 @@
 import { NavLink } from "react-router-dom"
-
-const tabs = [
-  { label: "Games", color: "#409cda", to: "/games", icon: "G" },
-  { label: "My Cards", color: "#ee623f", to: "/characters", icon: "Car" },
-  { label: "Collection", color: "#51e389", to: "/matches", icon: "Col" },
-  { label: "Settings", color: "#be4fe3", to: "/settings", icon: "S" },
-] as const
+import { TABS } from "../../lib/tabs"
 
 interface BinderTabsProps {
   activeTab: string
 }
 
 export function BinderTabs({ activeTab }: BinderTabsProps) {
-  const activeIndex = tabs.findIndex(
-    tab => tab.label === activeTab
-  )
+  const activeIndex = TABS.findIndex(tab => tab.label === activeTab)
 
   return (
     <section
       className="
+        [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.45))]
         absolute
         left-0
         md:left-auto
@@ -46,34 +39,27 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
         z-10
       "
     >
-      {tabs.map((tab, index) => {
+      {TABS.map((tab, index) => {
         const isPassed = index < activeIndex
         const isActive = index === activeIndex
+
+        const bgColor = isPassed || isActive ? "transparent" : tab.color
+        const iconColor = isActive
+          ? tab.color
+          : isPassed
+          ? "var(--color-muted)"
+          : "var(--color-off-black)"
+        const iconWeight = isActive ? "fill" : "regular"
 
         return (
           <NavLink
             key={tab.label}
             to={tab.to}
-            className="flex justify-center md:justify-end items-center rounded-b md:rounded-r p-1 text-xs font-mono uppercase tracking-widest text-center transition-all"
-            style={{
-              backgroundColor: isPassed || isActive
-                ? "transparent"
-                : tab.color,
-              color: isActive
-                ? "#144b68"
-                : "#000000",
-            }}
+            aria-label={tab.label}
+            className="flex justify-center items-center rounded-b md:rounded-r p-1 transition-all"
+            style={{ backgroundColor: bgColor }}
           >
-            <span
-              className=" text-xs font-mono uppercase tracking-widest text-nowrap pointer-events-none md:[writing-mode:vertical-rl]"
-            >
-              <span className="hidden md:block">
-                {tab.label}
-              </span>
-              <span className="md:hidden">
-                {tab.icon}
-              </span>
-            </span>
+            <tab.Icon size={20} weight={iconWeight} color={iconColor} />
           </NavLink>
         )
       })}
