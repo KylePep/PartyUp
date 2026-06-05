@@ -10,8 +10,8 @@ interface BinderShellProps {
 
 export function BinderShell({ title, children, footer, footerClassName = '', className = '' }: BinderShellProps) {
   return (
-    <div className={`bg-cyan-900 border-cyan-950/20 border-10 md:border-16 rounded-l-lg rounded-r-4xl pb-4 pt-16 md:pt-4 px-6 flex flex-col items-center justify-between ${className}`}>
-      <h1 className="font-display font-bold text-xl md:text-4xl text-[--color-off-black] bg-[--color-off-white] px-4 py-1 rounded-md">
+    <div className={`binder-frame border-cyan-950/20 border-10 md:border-16 rounded-l-lg rounded-r-4xl pb-4 pt-16 md:pt-4 px-6 flex flex-col items-center justify-between ${className}`}>
+      <h1 className="font-display font-bold text-xl md:text-4xl text-off-black bg-off-white px-4 py-1 rounded-md">
         {title}
       </h1>
       {children}

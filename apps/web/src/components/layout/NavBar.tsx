@@ -51,7 +51,7 @@ export function NavBar({ variant }: NavBarProps) {
           : ''
         }`}
     >
-      <Link to="/home" className="pointer-events-auto font-display font-bold text-[--color-off-black] text-lg tracking-wide">
+      <Link to="/home" className="pointer-events-auto font-display font-bold text-off-black text-lg tracking-wide">
         <span className='hidden md:block'>
           PartyUp
         </span>

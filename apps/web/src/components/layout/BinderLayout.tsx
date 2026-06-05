@@ -26,7 +26,6 @@ export function BinderLayout({
       {/* Binder frame */}
       <main
         className="binder-frame grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-cyan-950/50 border-10 rounded-lg md:rounded-4xl w-full h-full relative z-20"
-        style={{ boxShadow: '0 32px 64px -16px rgba(0,0,0,0.55), 0 8px 24px rgba(0,0,0,0.25)' }}
       >
         {/* Left page — hidden on mobile when right is active */}
         <div
@@ -35,7 +34,7 @@ export function BinderLayout({
         >
           {/* Spine bar */}
           <div
-            className="relative min-w-50 flex md:flex-col items-center md:justify-end md:justify-start min-h-34 px-4 md:pt-12 shrink-0 md:h-full gap-4 md:rounded-l-3xl border-b-8 md:border-b-0 md:border-r-8 border-[--color-off-black]/20"
+            className="relative min-w-50 flex md:flex-col items-center md:justify-end md:justify-start min-h-34 px-4 md:pt-12 shrink-0 md:h-full gap-4 md:rounded-l-3xl border-b-8 md:border-b-0 md:border-r-8 border-slate-900/20"
             style={{ backgroundColor: barColor }}
           >
             <div
@@ -67,11 +66,11 @@ export function BinderLayout({
           <button
             onClick={onToggleSide}
             aria-label="Toggle panel"
-            className="pointer-events-auto col-start-5 flex items-center justify-center w-full h-full bg-[--color-off-black] rounded-b"
+            className="pointer-events-auto col-start-5 flex items-center justify-center w-full h-full bg-off-white rounded-b"
           >
             {activeSide === 'right'
-              ? <ArrowLeft size={16} color="var(--color-off-white)" />
-              : <ArrowRight size={16} color="var(--color-off-white)" />
+              ? <ArrowLeft size={16} color="var(--color-off-black)" />
+              : <ArrowRight size={16} color="var(--color-off-black)" />
             }
           </button>
         </div>

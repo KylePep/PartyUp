@@ -20,9 +20,9 @@
   --color-tab-collection: #51e389;
   --color-tab-settings:   #be4fe3;
 
-  --color-binder-edge:  oklch(30.2% 0.056 230);
+  --color-binder-edge:  oklch(37% 0.087 238);
   --color-binder-page:  oklch(39.1% 0.09 241);
-  --color-binder-spine: oklch(25% 0.045 230);
+  --color-binder-spine: oklch(36% 0.083 235);
 
   --font-display: "Cinzel", serif;
   --font-body: "Inter", sans-serif;
@@ -30,14 +30,18 @@
 }
 
 .binder-frame {
-  background: linear-gradient(
-    to right,
-    var(--color-binder-edge),
-    var(--color-binder-page) 25%,
-    var(--color-binder-spine) 50%,
-    var(--color-binder-page) 75%,
-    var(--color-binder-edge)
-  );
+  background-color: var(--color-binder-page);
+}
+
+@media (min-width: 768px) {
+  .binder-frame {
+    background: linear-gradient(
+      to bottom right,
+      var(--color-binder-page),
+      var(--color-binder-edge)
+    );
+    box-shadow: 0 32px 64px -16px rgba(0,0,0,0.55), 0 8px 24px rgba(0,0,0,0.25);
+  }
 }
 
 html,
