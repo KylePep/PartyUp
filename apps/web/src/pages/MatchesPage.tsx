@@ -28,7 +28,16 @@ export default function MatchesPage() {
         if (targetId) {
           const match = m.find(match => match.matchId === targetId) ?? null
           setSelected(match)
-          if (match) setActiveSide('left')
+          if (match) {
+            setActiveSide('left')
+            if (match.isNew) {
+              markMatchViewed(match.matchId).then(() => {
+                setMatches(prev =>
+                  prev.map(m => m.matchId === match.matchId ? { ...m, isNew: false } : m)
+                )
+              })
+            }
+          }
         }
       })
       .catch(() => setStatus('error'))

@@ -3,7 +3,7 @@ interface NewMatchBadgeProps {
 }
 
 export function NewMatchBadge({ count }: NewMatchBadgeProps) {
-  if (count <= 0) return null;
+  if (!count || count <= 0) return null;
   const label = count > 9 ? "+" : String(count);
   return (
     <span

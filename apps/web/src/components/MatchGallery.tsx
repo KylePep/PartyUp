@@ -57,6 +57,7 @@ export function MatchGallery({ matches: providedMatches, gameId, limit, onSelect
             character={m.theirCharacter}
             gameName={m.gameName}
             matchedAt={m.matchedAt}
+            isNew={m.isNew}
             onSelect={onSelect ? () => onSelect(m) : undefined}
           />
         </div>
