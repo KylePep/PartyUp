@@ -29,6 +29,7 @@ function clearAuth() {
 async function handleResponse<T>(res: Response): Promise<T> {
   if (res.status === 401) {
     clearAuth();
+    window.dispatchEvent(new Event("auth:unauthorized"));
     throw new UnauthorizedError();
   }
 

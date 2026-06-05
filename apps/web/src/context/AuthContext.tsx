@@ -69,6 +69,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => stopConnection();
   }, []);
 
+  useEffect(() => {
+    function handleUnauthorized() {
+      stopConnection();
+      setState({ status: "unauthenticated" });
+    }
+
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+  }, []);
+
   async function login(_email: string, token: string) {
     localStorage.setItem("token", token);
     try {
