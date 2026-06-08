@@ -29,12 +29,12 @@ export function BinderLayout({
       >
         {/* Left page — hidden on mobile when right is active */}
         <div
-          className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row md:border-r-8 border-cyan-950/90 h-full`}
-          style={{ boxShadow: 'inset -12px 0 20px -8px rgba(0,0,0,0.4)' }}
+          className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row md:border-r-8 border-cyan-950/50 h-full`}
+          style={{ boxShadow: 'inset -12px 0 20px -8px rgba(0,0,0,0.1)' }}
         >
           {/* Spine bar */}
           <div
-            className="relative min-w-50 flex md:flex-col items-center md:justify-end md:justify-start min-h-34 px-4 md:pt-12 shrink-0 md:h-full gap-4 md:rounded-l-3xl border-b-8 md:border-b-0 md:border-r-8 border-slate-900/20"
+            className="relative min-w-50 flex md:flex-col items-center md:justify-end md:justify-start min-h-34 px-4 md:pt-18 shrink-0 md:h-full gap-4 md:rounded-l-3xl border-b-8 md:border-b-0 md:border-r-8 border-slate-900/20 shadow"
             style={{ backgroundColor: barColor }}
           >
             <div
@@ -52,7 +52,7 @@ export function BinderLayout({
         {/* Right page — hidden on mobile when left is active */}
         <div
           className={`${activeSide === 'right' ? 'flex' : 'hidden md:flex'} flex-col h-full overflow-y-auto md:overflow-hidden`}
-          style={{ boxShadow: 'inset 12px 0 20px -8px rgba(0,0,0,0.4)' }}
+          style={{ boxShadow: 'inset 12px 0 20px -8px rgba(0,0,0,0.1)' }}
         >
           {rightContent}
         </div>

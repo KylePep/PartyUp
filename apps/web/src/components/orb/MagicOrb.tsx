@@ -19,16 +19,16 @@ interface MagicOrbProps {
 
 const STAR_PARTICLES: { top: string; left: string; size: number; color: string; dur: number; delay: number }[] = [
   { top: '18%', left: '55%', size: 2, color: '#7ee8fa', dur: 1.8, delay: 0.0 },
-  { top: '30%', left: '72%', size: 3, color: '#fff',    dur: 2.4, delay: 0.4 },
+  { top: '30%', left: '72%', size: 3, color: '#fff', dur: 2.4, delay: 0.4 },
   { top: '42%', left: '80%', size: 2, color: '#7ee8fa', dur: 1.6, delay: 0.9 },
   { top: '60%', left: '75%', size: 2, color: '#fb923c', dur: 2.1, delay: 0.2 },
-  { top: '72%', left: '58%', size: 3, color: '#fff',    dur: 1.9, delay: 1.3 },
+  { top: '72%', left: '58%', size: 3, color: '#fff', dur: 1.9, delay: 1.3 },
   { top: '65%', left: '35%', size: 2, color: '#7ee8fa', dur: 2.7, delay: 0.6 },
-  { top: '50%', left: '22%', size: 2, color: '#fff',    dur: 2.0, delay: 1.8 },
+  { top: '50%', left: '22%', size: 2, color: '#fff', dur: 2.0, delay: 1.8 },
   { top: '35%', left: '18%', size: 3, color: '#fb923c', dur: 3.2, delay: 0.3 },
   { top: '22%', left: '35%', size: 2, color: '#7ee8fa', dur: 1.7, delay: 2.1 },
-  { top: '78%', left: '42%', size: 2, color: '#fff',    dur: 2.3, delay: 0.7 },
-  { top: '55%', left: '50%', size: 1, color: '#fff',    dur: 1.5, delay: 1.1 },
+  { top: '78%', left: '42%', size: 2, color: '#fff', dur: 2.3, delay: 0.7 },
+  { top: '55%', left: '50%', size: 1, color: '#fff', dur: 1.5, delay: 1.1 },
   { top: '48%', left: '63%', size: 2, color: '#fb923c', dur: 2.6, delay: 0.5 },
 ]
 
@@ -47,19 +47,19 @@ interface AtmoIcon {
 }
 
 const ATMO_ICONS: AtmoIcon[] = [
-  { Icon: GameController, color: 'rgba(0,210,255,0.9)', left: '15%', top: '40%', dur: 11, delay: 0,   op: 0.72, tx:  '6px', ty:  '-9px', tx2: '12px',  ty2: '-18px' },
-  { Icon: Shield,         color: 'rgba(0,210,255,0.9)', left: '68%', top: '22%', dur:  9, delay: 2,   op: 0.68, tx: '-5px', ty:   '8px', tx2: '-10px', ty2:  '15px' },
-  { Icon: CrosshairSimple,color: 'rgba(0,210,255,0.85)',left: '62%', top: '60%', dur: 13, delay: 4,   op: 0.65, tx: '-7px', ty:  '-6px', tx2: '-14px', ty2: '-12px' },
-  { Icon: Star,           color: 'rgba(251,146,60,0.95)',left:'44%', top: '65%', dur: 10, delay: 1.5, op: 0.78, tx:  '4px', ty: '-10px', tx2:  '8px',  ty2: '-18px' },
-  { Icon: Lightning,      color: 'rgba(251,146,60,0.9)', left: '26%', top: '24%', dur: 12, delay: 5,  op: 0.70, tx:  '8px', ty:   '7px', tx2: '14px',  ty2:  '14px' },
-  { Icon: Crown,          color: 'rgba(251,146,60,0.88)',left: '52%', top: '30%', dur: 14, delay: 3,  op: 0.65, tx: '-6px', ty:   '6px', tx2: '-11px', ty2:  '12px' },
-  { Icon: Sword,          color: 'rgba(100,220,255,0.85)',left:'76%', top: '48%', dur: 10, delay: 6.5,op: 0.60, tx: '-5px', ty:  '-8px', tx2: '-10px', ty2: '-15px' },
+  { Icon: GameController, color: 'rgba(0,210,255,0.9)', left: '15%', top: '40%', dur: 11, delay: 0, op: 0.72, tx: '6px', ty: '-9px', tx2: '12px', ty2: '-18px' },
+  { Icon: Shield, color: 'rgba(0,210,255,0.9)', left: '68%', top: '22%', dur: 9, delay: 2, op: 0.68, tx: '-5px', ty: '8px', tx2: '-10px', ty2: '15px' },
+  { Icon: CrosshairSimple, color: 'rgba(0,210,255,0.85)', left: '62%', top: '60%', dur: 13, delay: 4, op: 0.65, tx: '-7px', ty: '-6px', tx2: '-14px', ty2: '-12px' },
+  { Icon: Star, color: 'rgba(251,146,60,0.95)', left: '44%', top: '65%', dur: 10, delay: 1.5, op: 0.78, tx: '4px', ty: '-10px', tx2: '8px', ty2: '-18px' },
+  { Icon: Lightning, color: 'rgba(251,146,60,0.9)', left: '26%', top: '24%', dur: 12, delay: 5, op: 0.70, tx: '8px', ty: '7px', tx2: '14px', ty2: '14px' },
+  { Icon: Crown, color: 'rgba(251,146,60,0.88)', left: '52%', top: '30%', dur: 14, delay: 3, op: 0.65, tx: '-6px', ty: '6px', tx2: '-11px', ty2: '12px' },
+  { Icon: Sword, color: 'rgba(100,220,255,0.85)', left: '76%', top: '48%', dur: 10, delay: 6.5, op: 0.60, tx: '-5px', ty: '-8px', tx2: '-10px', ty2: '-15px' },
 ]
 
 export function MagicOrb({ className = '', style, focused = false, children }: MagicOrbProps) {
   return (
     <div
-      className={`rounded-full overflow-hidden relative ${className}`}
+      className={`rounded-full overflow-hidden relative border-8 border-black/75 ${className}`}
       style={{ animation: 'orb-breathe 5s ease-in-out infinite', ...style }}
     >
       {/* Layer 1: deep teal background */}

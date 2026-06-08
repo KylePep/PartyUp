@@ -28,10 +28,11 @@ export function NavBar({ variant }: NavBarProps) {
         pointer-events-none 
         z-40 
         w-full 
-        md:w-52
+        md:w-50
         h-9
         md:h-16 
         md:h-screen 
+        md:ms-10
         absolute 
         bottom-0
         md:top-0
@@ -41,20 +42,22 @@ export function NavBar({ variant }: NavBarProps) {
         justify-between
         gap-y-4 
         px-2
-        md:px-12 
-        md:pe-6 
-        md:ps-16 
-        md:pt-6 
-        md:py-10
+        md:px-5
+        md:pe-6  
+        md:pt-8
+        md:pb-8
         ${variant === 'landing'
           ? ''
           : ''
         }`}
     >
       <Link to="/home" className="pointer-events-auto font-display font-bold text-off-black text-lg tracking-wide">
-        <span className='hidden md:block'>
+        <div className='hidden md:flex flex-row gap-3 font-black bg-off-white text-off-black px-3 py-1 rounded-md border-2 border-stone-200 shadow'>
+          <img
+            className='w-7 h-7 border-1 bg-slate-900 border-slate-900 rounded-full'
+            src="/favicon.png" alt="" />
           PartyUp
-        </span>
+        </div>
         <img
           className='w-7 h-7 block md:hidden border-1 bg-slate-900 border-slate-900 rounded-full'
           src="/favicon.png" alt="" />

@@ -5,10 +5,11 @@ import { markMatchViewed } from '../api/endpoints/matchNotifications'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
-import { MatchCharacterDetail } from '../components/cards/MatchCharacterDetail'
 import { Gallery } from '../components/Gallery'
 import { CollectionCard } from '../components/cards/CollectionCard'
 import { TABS } from '../lib/tabs'
+import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
+import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
 
 
 export default function MatchesPage() {
@@ -56,7 +57,7 @@ export default function MatchesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="flex flex-col h-full min-h-0 overflow-y-auto">
+    <div className="flex flex-col flex-1 min-h-0">
       {/* Match header */}
       <div
         className="px-4 py-3 h-[64px] border-b-4 border-cyan-950/50"
@@ -72,11 +73,11 @@ export default function MatchesPage() {
 
       {/* Their character */}
       <div
-        className="px-4 py-4"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
+        className="p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto"
       >
-        <p className="text-xs text-muted uppercase tracking-widest mb-3">Their Character</p>
-        <MatchCharacterDetail character={selected.theirCharacter} />
+        <CharacterDetailCard
+          character={selected.theirCharacter}
+        />
       </div>
 
     </div>
@@ -117,8 +118,15 @@ export default function MatchesPage() {
       barColor={TAB.color}
       barContent={selected ? (
         <>
-          <CharacterMiniCard character={selected.myCharacter} characterId={selected.myCharacter.id} />
-          <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} gameId={selected.gameId} />
+          <CharacterMiniCard
+            character={selected.myCharacter}
+            characterId={selected.myCharacter.id}
+            platform={<UserSquareIcon />}
+          />
+          <GameMiniCard
+            game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }}
+            gameId={selected.gameId}
+            platform={<PlanetIcon />} />
         </>
       ) : undefined}
       activeTab={"Collection"}

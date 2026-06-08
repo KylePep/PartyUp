@@ -168,25 +168,26 @@ export default function SettingsPage() {
       <div className="p-6">
         <h2 className="text-lg font-semibold text-text mb-4">Preferences</h2>
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between opacity-50">
             <div>
               <p className="text-sm text-text">Dark Mode</p>
               <p className="text-xs text-muted">Toggle the app theme</p>
+              <p className="text-xs text-muted">Coming soon</p>
+
             </div>
             <button
               role="switch"
               aria-checked={profile?.preferences.darkMode ?? false}
+              disabled
               onClick={() =>
                 updatePreferences({ darkMode: !(profile?.preferences.darkMode ?? false) })
               }
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                profile?.preferences.darkMode ? "bg-accent" : "bg-surface-raised"
-              }`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${profile?.preferences.darkMode ? "bg-accent" : "bg-surface-raised"
+                }`}
             >
               <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-off-white transition-transform ${
-                  profile?.preferences.darkMode ? "translate-x-6" : "translate-x-1"
-                }`}
+                className={`inline-block h-4 w-4 transform rounded-full bg-off-white transition-transform ${profile?.preferences.darkMode ? "translate-x-6" : "translate-x-1"
+                  }`}
               />
             </button>
           </div>

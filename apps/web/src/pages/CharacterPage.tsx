@@ -11,6 +11,7 @@ import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
 import { CreateCharacterWizard } from '../components/character-wizard/CreateCharacterWizard'
 import { characterToFormData } from '../components/character-wizard/types'
 import { TABS } from '../lib/tabs'
+import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
 
 export default function CharactersPage() {
   const TAB = TABS.find(t => t.label === 'My Cards')!
@@ -110,7 +111,7 @@ export default function CharactersPage() {
           <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
             <h2 className="text-xs font-mono uppercase tracking-widest">Character Card Details</h2>
           </div>
-          <div className='p-2 md:px-4'>
+          <div className='p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto'>
             <CharacterDetailCard
               character={selected}
               onDelete={selected.userGameId ? handleDelete : undefined}
@@ -163,8 +164,13 @@ export default function CharactersPage() {
       barColor={TAB.color}
       barContent={selected ? (
         <>
-          <CharacterMiniCard character={selected} />
-          {selected.gameName && <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }} gameId={selected.gameId} />}
+          <CharacterMiniCard character={selected} platform={<UserSquareIcon />} />
+          {selected.gameName &&
+            <GameMiniCard
+              game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }}
+              gameId={selected.gameId}
+              platform={<PlanetIcon />} />
+          }
         </>
       ) : undefined}
       activeTab={"My Cards"}

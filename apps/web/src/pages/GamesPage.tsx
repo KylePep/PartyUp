@@ -8,7 +8,8 @@ import { LandCard } from '../components/cards/LandCard'
 import { NewMatchBadge } from '../components/ui/NewMatchBadge'
 import { TABS } from '../lib/tabs'
 import DOMPurify from 'dompurify'
-import { PlanetIcon } from '@phosphor-icons/react'
+import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
+import { GameMiniCard } from '../components/cards/GameMiniCard'
 
 export default function GamesPage() {
   const TAB = TABS.find(t => t.label === 'Games')!
@@ -154,7 +155,7 @@ export default function GamesPage() {
               onClick={() => handleSelect(g)}
               className="h-min aspect-3/4 md:aspect-auto md:h-full hover:brightness-110 transition-all"
             >
-              <div className='flex flex-1 items-center justify-center text-7xl'><PlanetIcon /></div>
+              <div className='flex flex-1 items-center justify-center text-7xl'><CubeIcon /></div>
             </LandCard>
           </div>
         )}
@@ -165,6 +166,13 @@ export default function GamesPage() {
   return (
     <BinderLayout
       barColor={TAB.color}
+      barContent={selected ? (
+        <>
+          <GameMiniCard game={{ name: selected.gameName, imageUrl: selected.gameImageUrl ?? undefined }} platform={<PlanetIcon />}
+            gameId={selected.gameId}
+          />
+        </>
+      ) : undefined}
       activeTab={"Games"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}

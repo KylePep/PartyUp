@@ -5,9 +5,10 @@ interface GameMiniCardProps {
   game: { name: string; imageUrl?: string | null }
   gameId?: string
   userGameId?: string
+  platform?: React.ReactNode
 }
 
-export function GameMiniCard({ game, gameId, userGameId }: GameMiniCardProps) {
+export function GameMiniCard({ game, gameId, userGameId, platform }: GameMiniCardProps) {
   const navigate = useNavigate()
 
   const handleClick = gameId
@@ -23,6 +24,7 @@ export function GameMiniCard({ game, gameId, userGameId }: GameMiniCardProps) {
       className="w-20 md:w-40 shrink-0"
       style={{ aspectRatio: '2/3' }}
       onClick={handleClick}
+      platform={platform}
     />
   )
 }

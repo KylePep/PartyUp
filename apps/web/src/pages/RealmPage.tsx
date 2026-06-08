@@ -8,6 +8,7 @@ import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { RealmLeftPage } from '../components/RealmLeftPage'
 import { RealmRightPage } from '../components/RealmRightPage'
 import { Spinner } from '../components/ui'
+import { CubeIcon, UserSquareIcon } from '@phosphor-icons/react'
 
 export default function RealmPage() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -61,12 +62,19 @@ export default function RealmPage() {
           <>
             {character ? (
               <>
-                <CharacterMiniCard character={character} characterId={character.id} />
+                <CharacterMiniCard
+                  character={character}
+                  characterId={character.id}
+                  platform={<UserSquareIcon />}
+                />
               </>
             ) : undefined}
             {userGame ? (
               <>
-                <GameMiniCard game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }} userGameId={userGame.id} />
+                <GameMiniCard
+                  game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }}
+                  userGameId={userGame.id}
+                  platform={<CubeIcon />} />
               </>
             ) : undefined}
           </>

@@ -1,8 +1,6 @@
-import { PlatformIcon } from '../ui'
-
 interface FullArtTcgCardProps {
   name: string
-  platform?: string
+  platform?: React.ReactNode
   imageUrl?: string
   className?: string
   style?: React.CSSProperties
@@ -32,9 +30,13 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, chi
           <span className="font-display text-white text-xs md:text-sm font-bold truncate pointer-event-none"
             style={{ writingMode: 'vertical-lr' }}
           >{name}</span>
-          {platform && <PlatformIcon platform={platform} size={22} />}
         </div>
       </div>
+      {platform && (
+        <div className="absolute top-2 right-2 bg-black p-1 rounded-full">
+          {platform}
+        </div>
+      )}
 
       {/* Bottom overlay for children */}
       {children && (

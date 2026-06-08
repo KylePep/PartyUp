@@ -25,7 +25,7 @@ export function Avatar({ src, fallback, size = 'md', className = '' }: AvatarPro
   }
   return (
     <div
-      className={`rounded-full bg-accent-dim flex items-center justify-center font-mono font-bold text-text uppercase ${sizeClasses[size]} ${className}`}
+      className={`rounded-full bg-accent-dim flex items-center justify-center font-mono font-bold text-text uppercase shadow-xl ${sizeClasses[size]} ${className}`}
       aria-label={fallback}
     >
       {fallback.charAt(0)}

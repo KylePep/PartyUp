@@ -15,7 +15,7 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
         absolute
         left-0
         md:left-auto
-        md:right-1
+        md:right-0
         bottom-2
         md:bottom-auto
         md:top-0
@@ -35,6 +35,7 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
         auto-rows-0
         px-8
         md:px-0
+        md:pe-1.5
         md:py-8
         z-10
       "
@@ -56,7 +57,7 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
             key={tab.label}
             to={tab.to}
             aria-label={tab.label}
-            className="flex justify-center items-center rounded-b md:rounded-r p-1 transition-all"
+            className="flex justify-center items-center rounded-b md:rounded-none md:rounded-r transition-all"
             style={{ backgroundColor: bgColor }}
           >
             <tab.Icon size={20} weight={iconWeight} color={iconColor} />

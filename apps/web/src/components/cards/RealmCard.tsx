@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { type UserGame } from '../../api/endpoints/userGames'
 import { FullArtTcgCard } from './FullArtTcgCard'
 import { NewMatchBadge } from '../ui/NewMatchBadge'
+import { PlanetIcon } from '@phosphor-icons/react'
 
 interface RealmCardProps {
   userGame: UserGame
@@ -18,6 +19,7 @@ export function RealmCard({ userGame }: RealmCardProps) {
       <FullArtTcgCard
         name={userGame.gameName}
         className='h-full aspect-3/4 md:aspect-auto mx-auto'
+        platform={<PlanetIcon />}
         imageUrl={userGame.gameImageUrl ?? undefined}
       />
     </Link>
