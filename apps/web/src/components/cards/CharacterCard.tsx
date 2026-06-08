@@ -40,6 +40,7 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
       <StandardTcgCard
         className={className}
         name={character.name}
+        cardBackgroundColor={character.cardBackgroundColor}
         platform={character.platform}
         imageUrl={character.imageUrl}
         statsLine={statsLine}
