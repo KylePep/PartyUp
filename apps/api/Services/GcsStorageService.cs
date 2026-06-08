@@ -20,4 +20,12 @@ public class GcsStorageService : IGcsStorageService
         await _client.UploadObjectAsync(_bucketName, objectName, contentType, stream);
         return $"https://storage.googleapis.com/{_bucketName}/{objectName}";
     }
+
+    public async Task DeleteByUrlAsync(string url)
+    {
+        var prefix = $"https://storage.googleapis.com/{_bucketName}/";
+        if (!url.StartsWith(prefix, StringComparison.Ordinal)) return;
+        var objectName = url[prefix.Length..];
+        await _client.DeleteObjectAsync(_bucketName, objectName);
+    }
 }

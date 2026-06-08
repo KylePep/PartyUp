@@ -26,6 +26,7 @@ export type Character = {
   gameName?: string;
   gameImageUrl?: string;
   gameFields: CharacterGameField[];
+  hasNewMatch?: boolean;
 };
 
 export type CharacterCreate = {
@@ -76,12 +77,13 @@ export type DiscoverCharacter = {
   gameFields: CharacterGameField[];
 };
 
-export type MatchResponse = {
-  characterAId: string;
-  characterBId: string;
-  isMatch: false;
-  matchId: string;
-  matchedAt: Date;
+export type MatchResultResponse = {
+  isMatch: boolean;
+  matchId?: string;
+  myCharacter?: { id: string; name: string; imageUrl?: string };
+  theirCharacter?: { id: string; name: string; imageUrl?: string };
+  gameName?: string;
+  matchedAt?: string;
 };
 
 export type InteractionType = "Like" | "Dislike";
@@ -98,10 +100,27 @@ export function createCharacter(data: CharacterCreate) {
   return apiPost<Character>("/characters", data);
 }
 
-export function discoverCharacters(gameId: string, filters?: Record<string, string>, platforms?: string[]) {
-  const qs = new URLSearchParams({ gameId, ...filters });
+export type PagedDiscoverResult = {
+  items: DiscoverCharacter[];
+  hasMore: boolean;
+  totalCount: number;
+};
+
+export function discoverCharacters(
+  gameId: string,
+  filters?: Record<string, string>,
+  platforms?: string[],
+  page = 1,
+  pageSize = 20
+) {
+  const qs = new URLSearchParams({
+    gameId,
+    page: String(page),
+    pageSize: String(pageSize),
+    ...filters,
+  });
   platforms?.forEach(p => qs.append('platform', p));
-  return apiGet<DiscoverCharacter[]>(`/characters/discover?${qs.toString()}`);
+  return apiGet<PagedDiscoverResult>(`/characters/discover?${qs.toString()}`);
 }
 
 export function updateCharacter(userGameId: string, characterId: string, data: CharacterUpdate) {
@@ -119,7 +138,7 @@ export function uploadCharacterImage(file: File): Promise<{ url: string }> {
 }
 
 export function interactWithCharacter(fromCharacterId: string, toCharacterId: string, type: InteractionType) {
-  return apiPost<MatchResponse>("/character-interactions", { fromCharacterId, toCharacterId, type });
+  return apiPost<MatchResultResponse>("/character-interactions", { fromCharacterId, toCharacterId, type });
 }
 
 export function getCharacterById(id: string) {

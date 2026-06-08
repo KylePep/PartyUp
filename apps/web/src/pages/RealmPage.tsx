@@ -8,6 +8,7 @@ import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { RealmLeftPage } from '../components/RealmLeftPage'
 import { RealmRightPage } from '../components/RealmRightPage'
 import { Spinner } from '../components/ui'
+import { CubeIcon, UserSquareIcon } from '@phosphor-icons/react'
 
 export default function RealmPage() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -51,22 +52,29 @@ export default function RealmPage() {
   return (
     <>
       {matchBanner && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-white px-6 py-3 rounded-lg font-mono text-sm shadow-lg ">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-success text-off-white px-6 py-3 rounded-lg font-mono text-sm shadow-lg">
           It's a match!
         </div>
       )}
       <BinderLayout
-        barColor="#381b03"
+        barColor="#ea6a01"
         barContent={
           <>
             {character ? (
               <>
-                <CharacterMiniCard character={character} characterId={character.id} />
+                <CharacterMiniCard
+                  character={character}
+                  characterId={character.id}
+                  platform={<UserSquareIcon />}
+                />
               </>
             ) : undefined}
             {userGame ? (
               <>
-                <GameMiniCard game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }} userGameId={userGame.id} />
+                <GameMiniCard
+                  game={{ name: userGame.gameName, imageUrl: userGame.gameImageUrl }}
+                  userGameId={userGame.id}
+                  platform={<CubeIcon />} />
               </>
             ) : undefined}
           </>
@@ -85,7 +93,6 @@ export default function RealmPage() {
         }
         rightContent={
           <>
-            <div className='block md:hidden min-h-24 bg-black'></div>
             <RealmRightPage
               userGame={userGame}
               gameId={gameId!}

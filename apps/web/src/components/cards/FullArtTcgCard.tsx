@@ -1,8 +1,6 @@
-import { PlatformIcon } from '../ui'
-
 interface FullArtTcgCardProps {
   name: string
-  platform?: string
+  platform?: React.ReactNode
   imageUrl?: string
   className?: string
   style?: React.CSSProperties
@@ -27,12 +25,18 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, chi
       )}
 
       {/* Top header overlay */}
-      <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent px-3 py-2">
+      <div className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-black to-transparent px-1 py-2 pe-4 md:pe-16">
         <div className="flex items-center justify-between">
-          <span className="font-display text-white text-sm font-bold truncate">{name}</span>
-          {platform && <PlatformIcon platform={platform} size={22} />}
+          <span className="font-display text-white text-xs md:text-sm font-bold truncate pointer-event-none"
+            style={{ writingMode: 'vertical-lr' }}
+          >{name}</span>
         </div>
       </div>
+      {platform && (
+        <div className="absolute top-2 right-2 bg-black p-1 rounded-full">
+          {platform}
+        </div>
+      )}
 
       {/* Bottom overlay for children */}
       {children && (

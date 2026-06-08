@@ -5,16 +5,41 @@
   --color-surface: #111120;
   --color-surface-raised: #18182c;
   --color-text: #e8e8f0;
-  --color-muted: #6b6b88;
+  --color-muted: oklch(70.4% 0.04 257);
   --color-border: #22223a;
   --color-accent: #7c6fcd;
   --color-accent-dim: #4a4080;
   --color-danger: #e05252;
   --color-success: #52c77a;
 
+  --color-off-white: oklch(97.1% 0.004 56);
+  --color-off-black: oklch(21% 0.034 265);
+
+  --color-tab-games: #409cda;
+  --color-tab-cards: #ee623f;
+  --color-tab-collection: #51e389;
+  --color-tab-settings: #be4fe3;
+
+  --color-binder-edge: oklch(37% 0.087 238);
+  --color-binder-page: oklch(39.1% 0.09 241);
+  --color-binder-spine: oklch(36% 0.083 235);
+
   --font-display: "Cinzel", serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+}
+
+.binder-frame {
+  background-color: var(--color-binder-page);
+}
+
+@media (min-width: 768px) {
+  .binder-frame {
+    background: linear-gradient(to bottom right,
+        var(--color-binder-page),
+        var(--color-binder-edge));
+    box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.55), 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
 }
 
 html,
@@ -26,7 +51,7 @@ body,
 }
 
 body {
-  background-color: #0a0a14;
+  background-color: var(--color-off-black);
   color: #e8e8f0;
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -38,13 +63,16 @@ body {
   width: 4px;
   height: 4px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: 2px;
 }
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
@@ -111,11 +139,157 @@ body {
 }
 
 @keyframes ring {
-  from { stroke-dashoffset: 1081; }
-  to   { stroke-dashoffset: 0; }
+  from {
+    stroke-dashoffset: 1081;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orb-breathe {
+
+  0%,
+  100% {
+    box-shadow:
+      0 0 18px 3px rgba(0, 210, 240, 0.28),
+      0 0 40px 8px rgba(0, 170, 210, 0.12),
+      0 0 10px 2px rgba(249, 115, 22, 0.15),
+      inset 0 -24px 48px rgba(0, 5, 15, 0.6);
+  }
+
+  50% {
+    box-shadow:
+      0 0 24px 5px rgba(0, 210, 240, 0.35),
+      0 0 55px 12px rgba(0, 170, 210, 0.18),
+      0 0 14px 4px rgba(249, 115, 22, 0.22),
+      inset 0 -24px 48px rgba(0, 5, 15, 0.6);
+  }
+}
+
+@keyframes orb-cloud-drift {
+  from {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.8;
+  }
+
+  to {
+    transform: scale(1.06) translate(-5px, 4px);
+    opacity: 1;
+  }
+}
+
+@keyframes orb-cloud-drift-rev {
+  from {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.9;
+  }
+
+  to {
+    transform: scale(1.04) translate(6px, -5px);
+    opacity: 1;
+  }
+}
+
+@keyframes orb-star-twinkle {
+
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+@keyframes orb-icon-drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.75);
+  }
+
+  12% {
+    opacity: var(--icon-op, 0.7);
+  }
+
+  45% {
+    opacity: var(--icon-op, 0.7);
+    transform: translate(var(--icon-tx, 5px), var(--icon-ty, -7px)) scale(1);
+  }
+
+  85% {
+    opacity: var(--icon-op, 0.7);
+    transform: translate(var(--icon-tx2, 10px), var(--icon-ty2, -14px)) scale(0.9);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--icon-tx2, 10px), var(--icon-ty2, -16px)) scale(0.7);
+  }
+}
+
+@keyframes vision-appear {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes planet-bob {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes planet-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes orb-pulse-ring {
+  0% {
+    opacity: 0.8;
+    transform: scale(0.3);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
 }

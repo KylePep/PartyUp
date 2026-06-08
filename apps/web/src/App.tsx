@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { NotificationProvider } from "./context/NotificationContext";
 import { AuthProvider } from "./context/AuthContext";
 import SignedInLayout from "./components/layout/SignedInLayout";
 import LandingPage from "./pages/LandingPage";
@@ -14,20 +15,22 @@ import NotFoundPage from "./pages/NotFoundPage";
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route element={<SignedInLayout />}>
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/realm/:gameId" element={<RealmPage />} />
-            <Route path="/characters" element={<CharactersPage />} />
-            <Route path="/matches" element={<MatchesPage />} />
-            <Route path="/games" element={<GamesPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-          </Route>
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </AuthProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route element={<SignedInLayout />}>
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/realm/:gameId" element={<RealmPage />} />
+              <Route path="/characters" element={<CharactersPage />} />
+              <Route path="/matches" element={<MatchesPage />} />
+              <Route path="/games" element={<GamesPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </AuthProvider>
+      </NotificationProvider>
     </BrowserRouter>
   );
 }

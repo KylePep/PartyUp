@@ -64,7 +64,7 @@ export function CharacterPanel({ gameId, userGame }: CharacterPanelProps) {
           )}
         </div>
       ) : (
-        <CharacterCard character={character} onEdit={handleEdit} onDelete={handleDelete} />
+        <CharacterCard character={character} onEdit={handleEdit} onDelete={handleDelete} className='' />
       )}
     </section>
   )

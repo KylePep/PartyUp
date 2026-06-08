@@ -8,4 +8,5 @@ public class UserGameResponse
   public string GameName { get; set; } = string.Empty;
   public string? GameImageUrl { get; set; }
   public DateTime CreatedAt { get; set; }
+  public int NewMatchCount { get; set; }
 }

@@ -27,7 +27,7 @@ export function StandardTcgCard({
 }: StandardTcgCardProps) {
   return (
     <div
-      className={`rounded-xl overflow-hidden flex flex-col h-full w-full p-2 gap-2${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
+      className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-2 gap-2 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
       style={{ border: '8px solid black', backgroundColor: 'var(--color-surface)' }}
       onClick={onClick}
     >
@@ -51,7 +51,7 @@ export function StandardTcgCard({
 
 
       {/* Image */}
-      <div className="aspect-video w-full overflow-hidden flex-shrink-0" >
+      <div className="aspect-video w-full overflow-hidden" >
         {imageUrl ? (
           <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
         ) : (
@@ -67,7 +67,7 @@ export function StandardTcgCard({
       {/* Stats line: badges, key attributes */}
       {statsLine && (
         <div
-          className="px-3 flex-shrink-0"
+          className="px-3 flex-shrink-0 truncate"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           {statsLine}

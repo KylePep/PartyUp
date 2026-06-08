@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:5288/api";
+export const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:5288/api";
 
 export class UnauthorizedError extends Error {
   constructor() {
@@ -29,6 +29,7 @@ function clearAuth() {
 async function handleResponse<T>(res: Response): Promise<T> {
   if (res.status === 401) {
     clearAuth();
+    window.dispatchEvent(new Event("auth:unauthorized"));
     throw new UnauthorizedError();
   }
 

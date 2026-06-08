@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services;
 using PartyUp.Api.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
+using PartyUp.Api.Hubs;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -40,6 +42,9 @@ builder.Services.AddScoped<IAnthropicService, AnthropicService>();
 builder.Services.AddScoped<IGameFieldDefinitionService, GameFieldDefinitionService>();
 builder.Services.AddScoped<IGameSchemaGenerationService, GameSchemaGenerationService>();
 builder.Services.AddScoped<IGcsStorageService, GcsStorageService>();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IMatchNotificationService, MatchNotificationService>();
+builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
 builder.Services.AddRateLimiter(options =>
 {
@@ -109,6 +114,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                    context.Token = accessToken;
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -121,6 +137,13 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(c =>
 {
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "PartyUp API",
+        Version = "v1",
+        Description = "Swipe-based matchmaking for multiplayer gamers"
+    });
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -178,11 +201,8 @@ if (!string.IsNullOrEmpty(app.Configuration.GetConnectionString("DefaultConnecti
 
 #region Middleware
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PartyUp API v1"));
 
 app.MapGet("/api/health", () =>
 {
@@ -199,6 +219,7 @@ app.UseAuthorization();
 #endregion
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
 

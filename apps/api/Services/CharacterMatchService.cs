@@ -3,16 +3,19 @@ using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.Character;
 using PartyUp.Api.Models.DTOs.CharacterMatch;
+using PartyUp.Api.Services.Interfaces;
 
 namespace PartyUp.Api.Services;
 
 public class CharacterMatchService : ICharacterMatchService
 {
     private readonly AppDbContext _db;
+    private readonly IMatchNotificationService _notifications;
 
-    public CharacterMatchService(AppDbContext db)
+    public CharacterMatchService(AppDbContext db, IMatchNotificationService notifications)
     {
         _db = db;
+        _notifications = notifications;
     }
 
     public async Task<List<CharacterMatchDto>> GetMatchesAsync(Guid userId, Guid? gameId)
@@ -33,6 +36,9 @@ public class CharacterMatchService : ICharacterMatchService
 
         var matches = await query.ToListAsync();
 
+        var matchIds = matches.Select(m => m.Id).ToList();
+        var newMatchIds = await _notifications.GetNewMatchIdsAsync(userId, matchIds);
+
         return matches.Select(m =>
         {
             var isMineA = m.CharacterA.UserGame.UserId == userId;
@@ -47,7 +53,8 @@ public class CharacterMatchService : ICharacterMatchService
                 TheirCharacter = ToProjection(theirs),
                 GameId = mine.UserGame.GameId,
                 GameName = mine.UserGame.Game.Name,
-                GameImageUrl = mine.UserGame.Game.ImageUrl
+                GameImageUrl = mine.UserGame.Game.ImageUrl,
+                IsNew = newMatchIds.Contains(m.Id)
             };
         }).ToList();
     }
@@ -66,7 +73,8 @@ public class CharacterMatchService : ICharacterMatchService
             Key = fv.FieldDefinition.Key,
             Label = fv.FieldDefinition.Label,
             Value = fv.Value,
-            Type = fv.FieldDefinition.Type.ToString()
+            Type = fv.FieldDefinition.Type.ToString(),
+            CommonField = fv.FieldDefinition.CommonField
         }).ToList(),
     };
 
@@ -93,7 +101,8 @@ public class CharacterMatchService : ICharacterMatchService
             Key = fv.FieldDefinition.Key,
             Label = fv.FieldDefinition.Label,
             Value = fv.Value,
-            Type = fv.FieldDefinition.Type.ToString()
+            Type = fv.FieldDefinition.Type.ToString(),
+            CommonField = fv.FieldDefinition.CommonField
         }).ToList(),
     };
 }

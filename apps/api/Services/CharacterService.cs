@@ -2,16 +2,21 @@ using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.Character;
+using PartyUp.Api.Services.Interfaces;
 
 namespace PartyUp.Api.Services;
 
 public class CharacterService : ICharacterService
 {
   private readonly AppDbContext _db;
+  private readonly IGcsStorageService _gcs;
+  private readonly IMatchNotificationService _notifications;
 
-  public CharacterService(AppDbContext db)
+  public CharacterService(AppDbContext db, IGcsStorageService gcs, IMatchNotificationService notifications)
   {
     _db = db;
+    _gcs = gcs;
+    _notifications = notifications;
   }
 
   public async Task<CharacterResponse?> CreateCharacterAsync(
@@ -83,10 +88,18 @@ public class CharacterService : ICharacterService
 
   public async Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId)
   {
-    return await _db.Characters
+    var characters = await _db.Characters
       .Where(c => c.UserGame.UserId == userId)
       .Select(ToProjection())
       .ToListAsync();
+
+    var characterIds = characters.Select(c => c.Id).ToList();
+    var newMatchIds = await _notifications.GetCharacterIdsWithNewMatchAsync(userId, characterIds);
+
+    foreach (var c in characters)
+      c.HasNewMatch = newMatchIds.Contains(c.Id);
+
+    return characters;
   }
 
   public async Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId)
@@ -97,13 +110,17 @@ public class CharacterService : ICharacterService
       .FirstOrDefaultAsync();
   }
 
-  public async Task<List<DiscoverCharacterResponse>> DiscoverCharactersAsync(Guid userId, Guid gameId, Dictionary<string, string>? filters = null, List<string>? platformFilters = null)
+  public async Task<PagedDiscoverResult> DiscoverCharactersAsync(
+    Guid userId, Guid gameId,
+    Dictionary<string, string>? filters = null,
+    List<string>? platformFilters = null,
+    int page = 1, int pageSize = 20)
   {
     var myUserGame = await _db.UserGames
       .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
 
     if (myUserGame == null)
-      return [];
+      return new PagedDiscoverResult();
 
     var myCharacterIds = await _db.Characters
       .Where(c => c.UserGameId == myUserGame.Id)
@@ -111,7 +128,7 @@ public class CharacterService : ICharacterService
       .ToListAsync();
 
     if (myCharacterIds.Count == 0)
-      return [];
+      return new PagedDiscoverResult();
 
     var alreadySeenIds = await _db.CharacterInteractions
       .Where(i => myCharacterIds.Contains(i.FromCharacterId))
@@ -149,7 +166,11 @@ public class CharacterService : ICharacterService
       }
     }
 
-    return await query
+    var totalCount = await query.CountAsync();
+
+    var items = await query
+      .Skip((page - 1) * pageSize)
+      .Take(pageSize)
       .Select(c => new DiscoverCharacterResponse
       {
         Id = c.Id,
@@ -173,6 +194,13 @@ public class CharacterService : ICharacterService
         }).ToList(),
       })
       .ToListAsync();
+
+    return new PagedDiscoverResult
+    {
+      Items = items,
+      HasMore = page * pageSize < totalCount,
+      TotalCount = totalCount
+    };
   }
 
   public async Task<bool> UpdateCharacterAsync(
@@ -234,8 +262,13 @@ public class CharacterService : ICharacterService
     if (character == null)
       return false;
 
+    var imageUrl = character.ImageUrl;
     _db.Characters.Remove(character);
     await _db.SaveChangesAsync();
+
+    if (!string.IsNullOrEmpty(imageUrl))
+      await _gcs.DeleteByUrlAsync(imageUrl);
+
     return true;
   }
 

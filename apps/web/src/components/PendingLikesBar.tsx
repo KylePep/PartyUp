@@ -18,7 +18,7 @@ export function PendingLikesBar({ character, onMatch }: PendingLikesBarProps) {
   const [processing, setProcessing] = useState<string | null>(null)
 
   useEffect(() => {
-    getPendingLikes(character.id).then(setPending).catch(() => {})
+    getPendingLikes(character.id).then(setPending).catch(() => { })
   }, [character.id])
 
   async function handleInteract(toCharacterId: string, type: 'Like' | 'Dislike') {
@@ -37,10 +37,10 @@ export function PendingLikesBar({ character, onMatch }: PendingLikesBarProps) {
   if (pending.length === 0) return null
 
   return (
-    <div className="relative border-t border-border">
+    <div className="relative border-t border-border h-16">
       {open && (
         <div className="absolute bottom-full left-0 right-0 z-50 bg-surface border-t border-border px-4 pt-4 pb-2 shadow-lg">
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             {pending.slice(0, 3).map(c => (
               <PendingLikeCard
                 key={c.id}
