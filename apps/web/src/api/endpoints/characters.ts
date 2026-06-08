@@ -25,6 +25,7 @@ export type Character = {
   additionalNotes?: string;
   gameName?: string;
   gameImageUrl?: string;
+  cardBackgroundColor?: string;
   gameFields: CharacterGameField[];
   hasNewMatch?: boolean;
 };
@@ -41,6 +42,7 @@ export type CharacterCreate = {
   usesVoiceChat?: boolean;
   languages?: string[];
   additionalNotes?: string;
+  cardBackgroundColor?: string;
   gameFields?: CharacterFieldValueCreate[];
 };
 
@@ -60,6 +62,7 @@ export type CharacterUpdate = {
   usesVoiceChat?: boolean;
   languages?: string[];
   additionalNotes?: string;
+  cardBackgroundColor?: string;
   gameFields?: CharacterFieldValueCreate[];
 };
 
@@ -74,6 +77,7 @@ export type DiscoverCharacter = {
   additionalNotes?: string;
   gameName?: string;
   gameImageUrl?: string;
+  cardBackgroundColor?: string;
   gameFields: CharacterGameField[];
 };
 

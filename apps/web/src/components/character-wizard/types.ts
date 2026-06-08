@@ -28,6 +28,7 @@ export interface CharacterFormData {
   usesVoiceChat: boolean | undefined
   languages: string[]
   gameFields: Record<string, string>
+  cardBackgroundColor: string
 }
 
 export const defaultFormData: CharacterFormData = {
@@ -43,6 +44,7 @@ export const defaultFormData: CharacterFormData = {
   usesVoiceChat: undefined,
   languages: [],
   gameFields: {},
+  cardBackgroundColor: '',
 }
 
 export function characterToFormData(c: Character): Partial<CharacterFormData> {
@@ -59,5 +61,6 @@ export function characterToFormData(c: Character): Partial<CharacterFormData> {
     usesVoiceChat: c.usesVoiceChat,
     languages: c.languages ?? [],
     gameFields: Object.fromEntries((c.gameFields ?? []).map(f => [f.fieldDefinitionId, f.value])),
+    cardBackgroundColor: c.cardBackgroundColor ?? '',
   }
 }
