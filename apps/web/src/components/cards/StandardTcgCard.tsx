@@ -10,6 +10,7 @@ interface StandardTcgCardProps {
   bottomStat?: string
   className?: string
   onClick?: () => void
+  cardBackgroundColor?: string
   children?: React.ReactNode
 }
 
@@ -23,12 +24,13 @@ export function StandardTcgCard({
   bottomStat,
   className,
   onClick,
+  cardBackgroundColor,
   children,
 }: StandardTcgCardProps) {
   return (
     <div
       className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-2 gap-2 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
-      style={{ border: '8px solid black', backgroundColor: 'var(--color-surface)' }}
+      style={{ border: '8px solid black', backgroundColor: cardBackgroundColor || 'var(--color-surface)' }}
       onClick={onClick}
     >
       <div>
