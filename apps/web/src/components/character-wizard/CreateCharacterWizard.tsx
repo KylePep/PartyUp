@@ -75,6 +75,7 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
         activeTimes: data.activeTimes.length > 0 ? data.activeTimes : undefined,
         usesVoiceChat: data.usesVoiceChat,
         languages: data.languages.length > 0 ? data.languages : undefined,
+        cardBackgroundColor: data.cardBackgroundColor || undefined,
       }
 
       const validIds = new Set(fieldDefs?.fields.map(f => f.id) ?? [])
