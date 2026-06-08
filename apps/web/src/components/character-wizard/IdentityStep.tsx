@@ -4,6 +4,21 @@ import { ToggleButtonGroup } from '../forms/ToggleButtonGroup'
 import { type CharacterFormData, PLATFORMS, ALL_PLATFORMS } from './types'
 import { compressImageIfNeeded } from '../../utils/imageCompression'
 
+const CARD_COLORS = [
+  '#1a1a2e', // deep navy
+  '#0f3460', // sapphire
+  '#1b4332', // forest green
+  '#3d0a14', // crimson
+  '#2d1b69', // deep violet
+  '#0d2b2b', // teal
+  '#3d2800', // bronze
+  '#2b0d2b', // dark magenta
+  '#1a1a1a', // near black
+  '#0a2a1a', // emerald
+  '#3a1a00', // dark rust
+  '#1a2a3a', // slate blue
+]
+
 interface IdentityStepProps {
   data: CharacterFormData
   onChange: (patch: Partial<CharacterFormData>) => void
@@ -171,6 +186,26 @@ export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
           className="hidden"
           onChange={handleFileChange}
         />
+      </div>
+
+      <div>
+        <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Card Color</p>
+        <div className="flex flex-wrap gap-2">
+          {CARD_COLORS.map(color => (
+            <button
+              key={color}
+              type="button"
+              onClick={() => onChange({ cardBackgroundColor: data.cardBackgroundColor === color ? '' : color })}
+              className={`w-8 h-8 rounded transition-all ${
+                data.cardBackgroundColor === color
+                  ? 'ring-2 ring-white ring-offset-2 ring-offset-surface scale-110'
+                  : 'hover:scale-105'
+              }`}
+              style={{ backgroundColor: color }}
+              title={color}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
