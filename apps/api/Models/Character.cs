@@ -38,6 +38,9 @@ public class Character
   [MaxLength(1000)]
   public string? AdditionalNotes { get; set; }
 
+  [MaxLength(7)]
+  public string? CardBackgroundColor { get; set; }
+
   public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
   public List<CharacterFieldValue> FieldValues { get; set; } = [];
 }
