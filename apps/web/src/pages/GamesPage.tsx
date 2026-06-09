@@ -9,6 +9,7 @@ import { NewMatchBadge } from '../components/ui/NewMatchBadge'
 import { TABS } from '../lib/tabs'
 import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
+import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
 
 export default function GamesPage() {
   const TAB = TABS.find(t => t.label === 'Games')!
@@ -18,6 +19,7 @@ export default function GamesPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<UserGame | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [selectedDetail, setSelectedDetail] = useState<UserGameDetail | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
@@ -62,19 +64,29 @@ export default function GamesPage() {
         return next
       })
       setSelected(null)
+      setConfirmOpen(false)
     } finally {
       setDeleting(false)
     }
   }
 
   const leftContent = selected ? (
-    <GameDetailCard
-      game={selected}
-      detail={selectedDetail}
-      loading={detailLoading}
-      deleting={deleting}
-      onDelete={handleDelete}
-    />
+    <>
+      <GameDetailCard
+        game={selected}
+        detail={selectedDetail}
+        loading={detailLoading}
+        deleting={deleting}
+        onDelete={() => setConfirmOpen(true)}
+      />
+      <ConfirmDeleteModal
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleDelete}
+        itemName={selected.gameName}
+        loading={deleting}
+      />
+    </>
   ) : (
     <div className="flex items-center justify-center h-full">
       <p className="text-muted font-mono text-sm">Select a game</p>
