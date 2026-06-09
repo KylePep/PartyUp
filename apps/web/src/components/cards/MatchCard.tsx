@@ -36,6 +36,7 @@ function MatchFront({ character }: MatchCardProps) {
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}
+      cardBackgroundColor={character.cardBackgroundColor}
       statsLine={statsLine}
       textBody={
         <>

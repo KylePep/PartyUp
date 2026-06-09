@@ -39,6 +39,7 @@ export function CollectionCard({ character, onSelect }: CharacterCardProps) {
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}
+      cardBackgroundColor={character.cardBackgroundColor}
       statsLine={statsLine}
       textBody={
         <>

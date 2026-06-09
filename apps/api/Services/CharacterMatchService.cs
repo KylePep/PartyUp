@@ -92,6 +92,7 @@ public class CharacterMatchService : ICharacterMatchService
         UsesVoiceChat = c.UsesVoiceChat,
         Languages = c.Languages,
         AdditionalNotes = c.AdditionalNotes,
+        CardBackgroundColor = c.CardBackgroundColor,
         GameName = c.UserGame.Game.Name,
         GameImageUrl = c.UserGame.Game.ImageUrl,
         CreatedAt = c.CreatedAt,
