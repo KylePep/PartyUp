@@ -33,6 +33,7 @@ function SwipeFront({ character }: { character: DiscoverCharacter }) {
   return (
     <StandardTcgCard
       name={character.name}
+      cardBackgroundColor={character.cardBackgroundColor}
       platform={character.platform}
       imageUrl={character.imageUrl}
       statsLine={statsLine}
@@ -112,6 +113,7 @@ function SwipeBack({ character }: { character: DiscoverCharacter }) {
 
 export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProps) {
   const [exiting, setExiting] = useState<ExitDirection>(null)
+  const [rotation] = useState(() => (Math.random() * 8 - 4).toFixed(1))
 
   function handle(dir: ExitDirection, action: () => void) {
     setExiting(dir)
@@ -128,23 +130,23 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
 
   return (
     <div
-      className={`absolute inset-0 flex flex-col ${animClass}`}
-      style={{
-        zIndex: isTop ? 2 : 1,
-        transform: isTop ? undefined : 'scale(0.97) translateY(8px)',
-      }}
+      className={`absolute inset-0 ${animClass}`}
+      style={{ zIndex: isTop ? 2 : 1 }}
     >
-      <div className="flex flex-1 items-center justify-center">
-        <div className="h-full aspect-3/4">
-          <FlippableCard
-            front={<SwipeFront character={character} />}
-            back={<SwipeBack character={character} />}
-            className="h-full w-full"
-          />
+      <div
+        className="flex flex-col h-full"
+        style={{ transform: isTop ? undefined : `scale(0.97) rotate(${rotation}deg)` }}
+      >
+        <div className="flex flex-1 items-center justify-center">
+          <div className="h-full aspect-3/4">
+            <FlippableCard
+              front={<SwipeFront character={character} />}
+              back={<SwipeBack character={character} />}
+              className="h-full w-full"
+            />
+          </div>
         </div>
-      </div>
-      {isTop && (
-        <div className="flex gap-3 flex-shrink-0 mt-2">
+        <div className={`flex gap-3 flex-shrink-0 mt-2 ${!isTop ? 'invisible' : ''}`}>
           <Button
             variant="secondary"
             className="flex-1 border-danger/50 text-danger hover:bg-danger hover:text-white hover:border-danger"
@@ -161,7 +163,7 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
             Like
           </Button>
         </div>
-      )}
+      </div>
     </div>
   )
 }
