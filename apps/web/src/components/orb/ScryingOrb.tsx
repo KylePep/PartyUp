@@ -161,7 +161,7 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
         {searchState === 'idle' && (
           <div className="w-full h-full flex flex-col items-center justify-between py-8 px-6">
             <div className="flex-1 flex items-center justify-center w-full">
-              <div className="flex gap-2 items-center w-full md:px-8">
+              <div className="flex gap-2 items-center w-full">
                 <input
                   className="flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
                   placeholder="Search realms…"

@@ -12,7 +12,7 @@ export function RealmCard({ userGame }: RealmCardProps) {
   return (
     <Link
       to={`/realm/${userGame.gameId}`}
-      className="block text-center text-xs font-mono uppercase tracking-widest text-muted hover:border-accent hover:text-accent transition-colors rounded md:w-full relative"
+      className="block text-center text-xs font-mono uppercase tracking-widest text-muted hover:border-accent hover:text-accent transition-colors rounded md:w-full md:max-w-1/4 relative"
       onClick={e => e.stopPropagation()}
     >
       <NewMatchBadge count={userGame.newMatchCount} />

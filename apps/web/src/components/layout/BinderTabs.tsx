@@ -31,7 +31,7 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
         grid-cols-5
         md:grid-cols-1
         grid-rows-1
-        md:grid-rows-5
+        md:grid-rows-4
         auto-rows-0
         px-8
         md:px-0
@@ -61,7 +61,7 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
             style={{ backgroundColor: bgColor }}
           >
             <tab.Icon size={20} weight={iconWeight} color={iconColor} />
-            <span className="font-display text-sm font-black hidden md:block whitespace-nowrap [@media(max-height:600px)]:!hidden"
+            <span className="font-display text-xs uppercase font-black hidden md:block whitespace-nowrap [@media(max-height:600px)]:!hidden"
               style={{ writingMode: 'vertical-lr', color: iconColor }}
             >{tab.label}</span>
           </NavLink>
