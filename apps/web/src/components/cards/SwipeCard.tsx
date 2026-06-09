@@ -40,11 +40,17 @@ function SwipeFront({ character }: { character: DiscoverCharacter }) {
         <>
           <p className="text-xs text-muted mb-2">{topBioContent}</p>
           {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
-          <p className="flex flex-col flex-1 text-xs text-muted items-center justify-end" style={{ opacity: 0.5 }}>↑ tap for more</p>
         </>
       }
-      bottomStat={levelField?.value}
-      className=""
+      bottomStat={
+        <div className="flex w-full justify-between">
+          <span>
+            ↑ Tap for more
+          </span>
+          {levelField?.value}
+        </div>
+      }
+      className="w-full h-full"
     >
 
     </StandardTcgCard>
@@ -129,7 +135,7 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
       }}
     >
       <div className="flex flex-1 items-center justify-center">
-        <div className="h-full aspect-[2/3]">
+        <div className="h-full aspect-3/4">
           <FlippableCard
             front={<SwipeFront character={character} />}
             back={<SwipeBack character={character} />}
