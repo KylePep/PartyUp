@@ -10,6 +10,7 @@ public class DiscoverCharacterResponse
   public bool? UsesVoiceChat { get; set; }
   public string[]? Languages { get; set; }
   public string? AdditionalNotes { get; set; }
+  public string? CardBackgroundColor { get; set; }
   public string? GameName { get; set; }
   public string? GameImageUrl { get; set; }
   public List<CharacterFieldValueDto> GameFields { get; set; } = [];

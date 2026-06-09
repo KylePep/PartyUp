@@ -307,6 +307,87 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         chars!.Should().ContainSingle(c => c.Id == charA && c.HasNewMatch);
     }
 
+    [Fact]
+    public async Task CreateCharacter_WithCardBackgroundColor_RoundtripsValue()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+
+        var response = await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Color Character",
+            platform = "PC",
+            platformHandle = "ColorHandle",
+            userGameId = userGame.Id,
+            cardBackgroundColor = "#1a1a2e"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var all = await client.GetFromJsonAsync<List<CharacterWithColorDto>>("/api/characters");
+        all!.Should().ContainSingle(c =>
+            c.Name == "Color Character" &&
+            c.CardBackgroundColor == "#1a1a2e");
+    }
+
+    [Fact]
+    public async Task UpdateCharacter_WithCardBackgroundColor_PersistsChange()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+        var charResponse = await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Color Char",
+            platform = "PC",
+            platformHandle = "ColorHandle2",
+            userGameId = userGame.Id
+        });
+        var character = (await charResponse.Content.ReadFromJsonAsync<CharacterDto>())!;
+
+        await client.PutAsJsonAsync(
+            $"/api/characters/{userGame.Id}/{character.Id}",
+            new { name = "Color Char", cardBackgroundColor = "#1b4332" });
+
+        var all = await client.GetFromJsonAsync<List<CharacterWithColorDto>>("/api/characters");
+        all!.Should().ContainSingle(c =>
+            c.Name == "Color Char" &&
+            c.CardBackgroundColor == "#1b4332");
+    }
+
+    [Fact]
+    public async Task Discover_ReturnsCardBackgroundColor()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+
+        var sharedExternalId = Interlocked.Increment(ref _gameCounter);
+        var userGameA = await AddGameAsync(clientA, sharedExternalId);
+        var userGameB = await AddGameAsync(clientB, sharedExternalId);
+
+        await clientA.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Discoverer",
+            platform = "PC",
+            platformHandle = "DiscovererHandle",
+            userGameId = userGameA.Id
+        });
+
+        await clientB.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Colorful",
+            platform = "PC",
+            platformHandle = "ColorfulHandle",
+            userGameId = userGameB.Id,
+            cardBackgroundColor = "#3d0a14"
+        });
+
+        var response = await clientA.GetAsync($"/api/characters/discover?gameId={userGameA.GameId}");
+        var paged = await response.Content.ReadFromJsonAsync<PagedDiscoverWithColorDto>();
+        paged!.Items.Should().ContainSingle(c =>
+            c.Name == "Colorful" &&
+            c.CardBackgroundColor == "#3d0a14");
+    }
+
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
@@ -316,4 +397,7 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record CharacterWithNotesDto(Guid Id, string Name, string? AdditionalNotes);
     private record PagedDiscoverDto(List<DiscoveredDto> Items, bool HasMore, int TotalCount);
     private record CharWithFlagDto(Guid Id, bool HasNewMatch);
+    private record CharacterWithColorDto(Guid Id, string Name, string? CardBackgroundColor);
+    private record DiscoveredWithColorDto(string Name, string? CardBackgroundColor);
+    private record PagedDiscoverWithColorDto(List<DiscoveredWithColorDto> Items, bool HasMore, int TotalCount);
 }

@@ -48,6 +48,7 @@ public class CharacterService : ICharacterService
       UsesVoiceChat = request.UsesVoiceChat,
       Languages = request.Languages,
       AdditionalNotes = request.AdditionalNotes,
+      CardBackgroundColor = request.CardBackgroundColor,
     };
 
     _db.Characters.Add(character);
@@ -181,6 +182,7 @@ public class CharacterService : ICharacterService
         UsesVoiceChat = c.UsesVoiceChat,
         Languages = c.Languages,
         AdditionalNotes = c.AdditionalNotes,
+        CardBackgroundColor = c.CardBackgroundColor,
         GameName = c.UserGame.Game.Name,
         GameImageUrl = c.UserGame.Game.ImageUrl,
         GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
@@ -230,6 +232,7 @@ public class CharacterService : ICharacterService
     character.UsesVoiceChat = request.UsesVoiceChat;
     character.Languages = request.Languages;
     character.AdditionalNotes = request.AdditionalNotes;
+    character.CardBackgroundColor = request.CardBackgroundColor;
 
     if (request.GameFields != null)
     {
@@ -288,6 +291,7 @@ public class CharacterService : ICharacterService
       UsesVoiceChat = c.UsesVoiceChat,
       Languages = c.Languages,
       AdditionalNotes = c.AdditionalNotes,
+      CardBackgroundColor = c.CardBackgroundColor,
       GameName = c.UserGame.Game.Name,
       GameImageUrl = c.UserGame.Game.ImageUrl,
       CreatedAt = c.CreatedAt,

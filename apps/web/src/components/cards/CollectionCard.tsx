@@ -39,6 +39,7 @@ export function CollectionCard({ character, onSelect }: CharacterCardProps) {
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}
+      cardBackgroundColor={character.cardBackgroundColor}
       statsLine={statsLine}
       textBody={
         <>
@@ -46,7 +47,11 @@ export function CollectionCard({ character, onSelect }: CharacterCardProps) {
           {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
         </>
       }
-      bottomStat={levelField?.value}
+      bottomStat={
+        <div className="flex w-full justify-end">
+          {levelField?.value}
+        </div>
+      }
       onClick={handleClick}
     />
   )

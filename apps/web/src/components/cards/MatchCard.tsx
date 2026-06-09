@@ -36,15 +36,22 @@ function MatchFront({ character }: MatchCardProps) {
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}
+      cardBackgroundColor={character.cardBackgroundColor}
       statsLine={statsLine}
       textBody={
         <>
           <p className="text-xs text-muted mb-2">{topBioContent}</p>
           {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
-          <p className="text-xs text-muted text-center mt-auto" style={{ opacity: 0.5 }}>↑ tap for more</p>
         </>
       }
-      bottomStat={levelField?.value}
+      bottomStat={
+        <div className="flex w-full justify-between">
+          <span>
+            ↑ Tap for more
+          </span>
+          {levelField?.value}
+        </div>
+      }
       className="h-full w-full"
     >
     </StandardTcgCard>

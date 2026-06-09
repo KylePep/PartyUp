@@ -37,5 +37,8 @@ public class CreateCharacterRequest
     [StringLength(1000)]
     public string? AdditionalNotes { get; set; }
 
+    [StringLength(7)]
+    public string? CardBackgroundColor { get; set; }
+
     public List<CharacterFieldValueRequest> GameFields { get; set; } = [];
 }

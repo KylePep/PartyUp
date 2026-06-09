@@ -40,6 +40,7 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
       <StandardTcgCard
         className={className}
         name={character.name}
+        cardBackgroundColor={character.cardBackgroundColor}
         platform={character.platform}
         imageUrl={character.imageUrl}
         statsLine={statsLine}
@@ -49,7 +50,11 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
             {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
           </>
         }
-        bottomStat={levelField?.value}
+        bottomStat={
+          <div className="flex w-full justify-end">
+            {levelField?.value}
+          </div>
+        }
         onClick={handleClick}
       />
     </div>
