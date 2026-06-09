@@ -12,6 +12,7 @@ import { CreateCharacterWizard } from '../components/character-wizard/CreateChar
 import { characterToFormData } from '../components/character-wizard/types'
 import { TABS } from '../lib/tabs'
 import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
+import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
 
 export default function CharactersPage() {
   const TAB = TABS.find(t => t.label === 'My Cards')!
@@ -21,6 +22,7 @@ export default function CharactersPage() {
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
   const [selected, setSelected] = useState<Character | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [confirmOpen, setConfirmOpen] = useState(false)
   const [userGames, setUserGames] = useState<UserGame[]>([])
   const [editingUserGame, setEditingUserGame] = useState<UserGameDetail | null>(null)
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
@@ -56,6 +58,7 @@ export default function CharactersPage() {
         return next
       })
       setSelected(null)
+      setConfirmOpen(false)
     } finally {
       setDeleting(false)
     }
@@ -114,11 +117,18 @@ export default function CharactersPage() {
           <div className='p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto'>
             <CharacterDetailCard
               character={selected}
-              onDelete={selected.userGameId ? handleDelete : undefined}
+              onDelete={selected.userGameId ? () => setConfirmOpen(true) : undefined}
               onEdit={selected.userGameId ? handleEdit : undefined}
               deleting={deleting}
             />
           </div>
+          <ConfirmDeleteModal
+            isOpen={confirmOpen}
+            onClose={() => setConfirmOpen(false)}
+            onConfirm={handleDelete}
+            itemName={selected.name}
+            loading={deleting}
+          />
         </div>
       )
     }
