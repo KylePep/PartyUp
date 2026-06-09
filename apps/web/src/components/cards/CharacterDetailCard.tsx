@@ -4,10 +4,10 @@ import type { Character } from '../../api/endpoints/characters'
 function StatRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div
-      className="flex items-start gap-4 py-2"
+      className="flex flex-col md:flex-row justify-between gap-4 py-2"
       style={{ borderBottom: '1px solid var(--color-border)' }}
     >
-      <span className="text-xs text-muted uppercase tracking-widest w-28 flex-shrink-0 pt-0.5">
+      <span className="text-xs text-muted uppercase tracking-widest flex-shrink-0 pt-0.5">
         {label}
       </span>
       <div className="flex flex-wrap text-wrap gap-1 min-w-0">{children}</div>
@@ -26,7 +26,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
   return (
     <div
-      className="flex flex-col rounded-xl overflow-hidden"
+      className="flex flex-col rounded-xl overflow-hidden p-4 gap-2"
       style={{
         backgroundColor: character.cardBackgroundColor || 'var(--color-surface)',
         border: '2px solid var(--color-accent)',
@@ -36,18 +36,27 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
       {/* Hero — pinned */}
       <div
-        className="flex flex-col md:flex-row gap-6 p-4 flex-shrink-0"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
+        className="flex flex-col gap-2 flex-shrink-0"
       >
+        <div className="flex justify-between md:items-center gap-6 bg-off-black rounded-sm px-2 py-2 md:py-1">
+          <span className="flex flex-col md:flex-row md:gap-6 md:items-end">
+            <h1 className="font-display font-bold text-2xl text-text">{character.name}</h1>
+            {character.platformHandle && (
+              <p className="font-mono text-muted text-sm">{character.platformHandle}</p>
+            )}
+          </span>
+          <PlatformIcon platform={character.platform} size={22} />
+
+        </div>
         <div
-          className="w-full md:w-40 h-52 rounded-lg overflow-hidden flex-shrink-0"
+          className="w-full h-32 md:h-64 rounded-lg overflow-hidden flex-shrink-0"
           style={{ border: '1px solid var(--color-border)' }}
         >
           {character.imageUrl ? (
             <img
               src={character.imageUrl}
               alt={character.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-center"
             />
           ) : (
             <div
@@ -59,17 +68,15 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h1 className="font-display font-bold text-2xl text-text mb-1">{character.name}</h1>
-          {character.platformHandle && (
-            <p className="font-mono text-muted text-sm mb-1">{character.platformHandle}</p>
-          )}
-          {character.gameName && (
-            <p className="text-xs text-accent font-display mb-0.5">{character.gameName}</p>
-          )}
-          <div className="flex items-center gap-2 mb-3">
-            <PlatformIcon platform={character.platform} size={22} />
-            <span className="text-xs text-muted">{character.platform}</span>
+          <div className='flex justify-between items-end bg-off-black rounded-sm px-2 py-1 mb-2'>
+            {character.gameName && (
+              <p className="text-xs text-off-white font-display">{character.gameName}</p>
+            )}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted">{character.platform}</span>
+            </div>
           </div>
+
           <div className="flex flex-wrap gap-1.5">
             {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
             {character.languages && character.languages.length > 0 && (
@@ -88,15 +95,14 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
       </div>
 
       {/* Scrollable details */}
-      <div className="md:flex-1 md:min-h-0 md:overflow-y-auto">
+      <div className="md:flex-1 md:min-h-0 md:overflow-y-auto bg-off-black rounded-sm rounded-sm">
 
         {/* Game Fields section */}
         {character.gameFields.length > 0 && (
           <div
-            className="px-4 pt-3 pb-1 grid-cols-1 md:grid grid-cols-2"
+            className="px-4 pt-3 pb-1"
             style={{ borderBottom: '1px solid var(--color-border)' }}
           >
-            <h2 className="text-xs text-muted uppercase tracking-widest mb-1 col-span-2">Game Fields</h2>
             {character.gameFields.map(f => (
               <StatRow key={f.key} label={f.label}>
                 <span className="text-sm text-text break-all">{f.value}</span>
@@ -116,25 +122,27 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
       </div>
 
       {/* Action bar — pinned */}
-      <div
-        className="flex items-center justify-between px-4 py-3 flex-shrink-0"
-        style={{ borderTop: '1px solid var(--color-border)' }}
-      >
-        <div>
-          {onEdit && (
-            <Button variant="ghost" size="sm" onClick={onEdit}>
-              Edit Character
-            </Button>
-          )}
+      {onEdit || onDelete ? (
+        <div
+          className="flex items-center justify-between px-4 py-3 flex-shrink-0 bg-off-black rounded-sm"
+          style={{ borderTop: '1px solid var(--color-border)' }}
+        >
+          <div>
+            {onEdit && (
+              <Button variant="secondary" size="sm" onClick={onEdit}>
+                Edit Character
+              </Button>
+            )}
+          </div>
+          <div>
+            {onDelete && (
+              <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
+                {deleting ? 'Deleting...' : 'Delete Character'}
+              </Button>
+            )}
+          </div>
         </div>
-        <div>
-          {onDelete && (
-            <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
-              {deleting ? 'Deleting...' : 'Delete Character'}
-            </Button>
-          )}
-        </div>
-      </div>
+      ) : null}
 
     </div>
   )

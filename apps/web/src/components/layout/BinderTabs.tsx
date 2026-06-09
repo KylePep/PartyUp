@@ -22,11 +22,11 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
         origin-left
         md:translate-x-full
         gap-1
-        md:gap-6
+        md:gap-2
         h-8
         md:h-full
         w-full
-        md:w-8
+        md:w-9
         grid
         grid-cols-5
         md:grid-cols-1
@@ -57,10 +57,13 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
             key={tab.label}
             to={tab.to}
             aria-label={tab.label}
-            className="flex justify-center items-center rounded-b md:rounded-none md:rounded-r transition-all"
+            className="flex md:flex-col gap-2 justify-center md:justify-start pt-1 items-center rounded-b md:rounded-none md:rounded-r transition-all overflow-hidden"
             style={{ backgroundColor: bgColor }}
           >
             <tab.Icon size={20} weight={iconWeight} color={iconColor} />
+            <span className="font-display text-sm font-black hidden md:block whitespace-nowrap [@media(max-height:600px)]:!hidden"
+              style={{ writingMode: 'vertical-lr', color: iconColor }}
+            >{tab.label}</span>
           </NavLink>
         )
       })}

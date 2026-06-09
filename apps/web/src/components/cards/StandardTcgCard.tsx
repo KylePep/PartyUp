@@ -7,7 +7,7 @@ interface StandardTcgCardProps {
   imageUrl?: string
   statsLine?: React.ReactNode
   textBody?: React.ReactNode
-  bottomStat?: string
+  bottomStat?: React.ReactNode
   className?: string
   onClick?: () => void
   cardBackgroundColor?: string
@@ -29,14 +29,14 @@ export function StandardTcgCard({
 }: StandardTcgCardProps) {
   return (
     <div
-      className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-2 gap-2 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
+      className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-2 gap-1 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
       style={{ border: '8px solid black', backgroundColor: cardBackgroundColor || 'var(--color-surface)' }}
       onClick={onClick}
     >
       <div>
         {/* Header: name (left) + platform (right) */}
         <div
-          className="flex items-center justify-between px-1 flex-shrink-0"
+          className="flex items-center justify-between px-1.5 py-1 flex-shrink-0 rounded-sm"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           <span className="font-display font-semibold text-text text-sm truncate">{name}</span>
@@ -53,7 +53,7 @@ export function StandardTcgCard({
 
 
       {/* Image */}
-      <div className="aspect-video w-full overflow-hidden" >
+      <div className="aspect-video w-full overflow-hidden rounded-sm border-off-black border-2 bg-off-black" >
         {imageUrl ? (
           <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
         ) : (
@@ -69,7 +69,7 @@ export function StandardTcgCard({
       {/* Stats line: badges, key attributes */}
       {statsLine && (
         <div
-          className="px-3 flex-shrink-0 truncate"
+          className="px-2 flex-shrink-0 truncate rounded-sm"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           {statsLine}
@@ -78,7 +78,9 @@ export function StandardTcgCard({
 
       {/* Text body: bio (flex-1 so it fills remaining space) */}
       {textBody && (
-        <div className="px-3 py-2 flex flex-col flex-1 overflow-hidden">
+        <div className="px-2 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-hidden rounded-sm"
+          style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
+        >
           {textBody}
         </div>
       )}
@@ -86,7 +88,7 @@ export function StandardTcgCard({
       {/* Bottom stat: rank/level — right-aligned */}
       {bottomStat && (
         <div
-          className="px-3 py-1 flex justify-end flex-shrink-0"
+          className="px-2 py-1 rounded-sm"
           style={{ borderTop: '1px solid var(--color-border)', backgroundColor: 'var(--color-surface-raised)' }}
         >
           <span className="font-mono text-xs text-muted">{bottomStat}</span>

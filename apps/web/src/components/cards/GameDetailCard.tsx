@@ -26,7 +26,7 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
           imageUrl={game.gameImageUrl ?? undefined}
           className="w-full md:h-full"
         >
-          <div className="flex justify-between border-1 border-[--color-off-black] px-2 py-1">
+          <div className="flex justify-between border-1 border-off-black px-2 py-1 rounded-sm">
             {detail && detail.platforms.length > 0 && (
               <p className="text-xs font-mono text-muted">{detail.platforms.join(' • ')}</p>
             )}
@@ -42,7 +42,7 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
             </div>
           ) : detail?.description ? (
             <div
-              className="text-xs font-mono text-muted flex-1 min-h-0 overflow-y-auto border-1 border-[--color-off-black] px-2 py-1"
+              className="text-xs font-mono text-muted flex-1 min-h-0 overflow-y-auto border-1 border-off-black px-2 py-1 rounded-sm"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(detail.description) }}
             />
           ) : null}

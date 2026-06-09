@@ -22,7 +22,7 @@ export function BinderLayout({
   onToggleSide,
 }: BinderLayoutProps) {
   return (
-    <div className="relative flex flex-col md:w-full mx-4 md:mx-8 pt-2 pb-10 md:py-2 h-screen">
+    <div className="relative flex flex-col md:w-full mx-4 md:mx-9 pt-2 pb-10 md:py-2 h-screen">
       {/* Binder frame */}
       <main
         className="binder-frame grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-cyan-950/50 border-10 rounded-lg md:rounded-4xl w-full h-full relative z-20"
