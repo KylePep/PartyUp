@@ -25,7 +25,11 @@ var mode = args.FirstOrDefault() ?? "A";
 
 Console.WriteLine($"Mode: {mode}");
 
-if (mode == "S")
+if (mode == "D")
+{
+  await new DemoSeeder().Seed(db);
+}
+else if (mode == "S")
 {
   var count = args.Length > 1 && int.TryParse(args[1], out var n) ? n : 50;
   await new ScaleSeeder().SeedEso(db, count);
