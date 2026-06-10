@@ -26,10 +26,9 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
   return (
     <div
-      className="flex flex-col rounded-xl overflow-hidden p-4 gap-2"
+      className="flex flex-col rounded-xl overflow-hidden p-4 gap-2 border-4 md:border-8 border-off-black"
       style={{
         backgroundColor: character.cardBackgroundColor || 'var(--color-surface)',
-        border: '2px solid var(--color-accent)',
         boxShadow: '0 0 24px rgba(124, 111, 205, 0.25)',
       }}
     >

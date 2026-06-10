@@ -148,7 +148,7 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
         </div>
         <div className={`flex gap-3 flex-shrink-0 mt-2 ${!isTop ? 'invisible' : ''}`}>
           <Button
-            variant="secondary"
+            variant="danger"
             className="flex-1 border-danger/50 text-danger hover:bg-danger hover:text-white hover:border-danger"
             onClick={() => handle('left', onDislike)}
             disabled={!!exiting}
@@ -156,7 +156,7 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
             Pass
           </Button>
           <Button
-            className="flex-1 bg-success hover:bg-green-800"
+            className="flex-1 bg-success border-green-500 hover:bg-green-800"
             onClick={() => handle('right', onLike)}
             disabled={!!exiting}
           >

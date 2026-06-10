@@ -14,15 +14,25 @@ export default function LandingPage() {
     <div className="h-dvh text-text flex relative md:py-4">
       <NavBar variant="landing" onSignIn={() => setModal('sign-in')} onSignUp={() => setModal('sign-up')} />
 
-      <main className="flex-1 flex flex-col items-center justify-center text-center py-2 mx-4 pb-10 md:pb-0">
+      <main className="flex-1 flex flex-col items-center justify-center text-center py-4 pb-14 md:pb-0">
         <BinderShell
-          title="PartyUp"
+          title="Guildoire"
           className="h-full w-[91%] md:w-1/2 py-4"
-          footer={<>
-            <Button size="lg" onClick={() => setModal('sign-up')}>Get Started</Button>
-            <Button size="lg" variant="secondary" onClick={() => setModal('sign-in')}>Sign In</Button>
+          clasp={<>
+            <div className="md:hidden flex flex-1 flex-col w-full justify-around ">
+              <Button size="sm" onClick={() => setModal('sign-up')}>Get Started</Button>
+              <Button size="sm" variant="secondary" onClick={() => setModal('sign-in')}>Sign In</Button>
+            </div>
+            <div className="hidden md:flex flex-col gap-4">
+              <Button size="lg" onClick={() => setModal('sign-up')}>Get Started</Button>
+              <Button size="lg" variant="secondary" onClick={() => setModal('sign-in')}>Sign In</Button>
+            </div>
           </>}
-          footerClassName="flex flex-col md:flex-row gap-4 justify-around items-center p-4 md:p-8"
+          claspClassName="flex flex-1 flex-col items-center justify-center p-2 md:p-8"
+          footer={<>
+            <p>Find your people. <br /> PartyUp matches multiplayer gamers by the games they play, the characters they build, and the vibe they bring.</p>
+          </>}
+          footerClassName="flex flex-col items-center justify-center mb-20 md:mb-0 h-1/4 md:h-[30%]"
         >
           <CrystalOrb />
         </BinderShell>
