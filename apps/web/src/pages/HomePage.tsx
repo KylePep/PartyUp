@@ -22,9 +22,9 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-1 md:items-center md:justify-center md:py-4 overflow-hidden">
-      <section className="md:h-full w-full mx-4 md:w-1/2 relative py-2 pb-10 md:pb-0">
+      <section className="md:h-full w-full mx-4 md:w-1/2 relative py-4 mx-4 pb-14 md:pb-0">
         <BinderShell
-          title={`${name}'s Binder`}
+          title={`${name}'s Guildoire`}
           className="relative h-full w-full z-20"
           footer={visibleRealms.length === 0 ? (
             <p className="col-span-3 text-xs font-mono text-muted text-center">
@@ -33,7 +33,7 @@ export default function HomePage() {
           ) : (
             visibleRealms.map(g => <RealmCard key={g.id} userGame={g} />)
           )}
-          footerClassName="flex overflow-x-auto gap-x-2 p-2"
+          footerClassName="flex overflow-x-auto gap-x-2 p-2 h-1/3 md:h-[30%]"
         >
           {userGames.status === 'loading' ? (
             <Spinner />
@@ -43,7 +43,6 @@ export default function HomePage() {
               disabled={atLimit}
             />
           )}
-          {/* <h2 className='font-display font-bold text-center'>Recent Realms</h2> */}
         </BinderShell>
         <BinderTabs activeTab='' />
       </section>

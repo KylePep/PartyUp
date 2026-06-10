@@ -1,5 +1,5 @@
+import { GameControllerIcon } from '@phosphor-icons/react'
 import { getPlatformColors } from '../../lib/platforms'
-import { GamepadIcon } from './GamepadIcon'
 
 interface PlatformIconProps {
   platform: string
@@ -15,7 +15,7 @@ export function PlatformIcon({ platform, size = 28 }: PlatformIconProps) {
       aria-label={`${platform} platform`}
       title={platform}
     >
-      <GamepadIcon color={icon} size={Math.round(size * 0.62)} />
+      <GameControllerIcon size={28} weight="fill" color={icon} />
     </div>
   )
 }

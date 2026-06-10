@@ -22,10 +22,10 @@ export function BinderLayout({
   onToggleSide,
 }: BinderLayoutProps) {
   return (
-    <div className="relative flex flex-col md:w-full mx-4 md:mx-9 pt-2 pb-10 md:py-2 h-screen">
+    <div className="relative flex flex-col md:w-full mx-4 md:mx-9 pb-14 md:pb-4 py-4 h-screen">
       {/* Binder frame */}
       <main
-        className="binder-frame grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-cyan-950/50 border-10 rounded-lg md:rounded-4xl w-full h-full relative z-20"
+        className="binder-frame grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-cyan-950/50 border-10 rounded w-full h-full relative z-20"
       >
         {/* Left page — hidden on mobile when right is active */}
         <div
@@ -34,11 +34,11 @@ export function BinderLayout({
         >
           {/* Spine bar */}
           <div
-            className="relative min-w-50 flex md:flex-col items-center md:justify-end md:justify-start min-h-34 px-4 md:pt-18 shrink-0 md:h-full gap-4 md:rounded-l-3xl border-b-8 md:border-b-0 md:border-r-8 border-slate-900/20 shadow"
+            className="relative min-w-50 flex md:flex-col items-center md:justify-end md:justify-start min-h-34 px-4 md:pt-18 shrink-0 md:h-full gap-4 md:rounded-l border-b-8 md:border-b-0 md:border-r-8 border-slate-900/20 shadow"
             style={{ backgroundColor: barColor }}
           >
             <div
-              className="absolute inset-0 pointer-events-none md:rounded-l-3xl"
+              className="absolute inset-0 pointer-events-none md:rounded-l"
               style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.15), transparent 30%, transparent 70%, rgba(0,0,0,0.15))' }}
             />
             {barContent}
@@ -60,9 +60,15 @@ export function BinderLayout({
 
       <BinderTabs activeTab={activeTab} />
 
+      {/* Corner caps */}
+      <span className="absolute rounded top-3 md:top-3 -left-1 md:-left-1 w-10 md:w-20 h-10 md:h-20 border-t-10 md:border-t-20 border-l-10 md:border-l-20 border-cyan-800 pointer-events-none" />
+      <span className="absolute rounded top-3 md:top-3 -right-1 md:-right-1 w-10 md:w-20 h-10 md:h-20 border-t-10 md:border-t-20 border-r-10 md:border-r-20 border-cyan-800 pointer-events-none" />
+      <span className="absolute rounded bottom-13 md:bottom-3 -left-1 md:-left-1 w-10 md:w-20 h-10 md:h-20 border-b-10 md:border-b-20 border-l-10 md:border-l-20 border-cyan-800 pointer-events-none" />
+      <span className="absolute rounded bottom-13 md:bottom-3 -right-1 md:-right-1 w-10 md:w-20 h-10 md:h-20 border-b-10 md:border-b-20 border-r-10 md:border-r-20 border-cyan-800 pointer-events-none" />
+
       {/* Mobile-only toggle button */}
       {onToggleSide && (
-        <div className="pointer-events-none grid grid-cols-5 grid-rows-1 gap-1 md:hidden absolute bottom-2 left-0 right-0 w-full h-9 px-8 z-10">
+        <div className="pointer-events-none grid grid-cols-5 grid-rows-1 gap-1 md:hidden absolute bottom-2 left-0 right-0 w-full h-12 px-8 z-10">
           <button
             onClick={onToggleSide}
             aria-label="Toggle panel"

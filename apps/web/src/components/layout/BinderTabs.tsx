@@ -23,7 +23,7 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
         md:translate-x-full
         gap-1
         md:gap-2
-        h-8
+        h-12
         md:h-full
         w-full
         md:w-9

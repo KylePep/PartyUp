@@ -29,7 +29,7 @@ export function NavBar({ variant }: NavBarProps) {
         z-40 
         w-full 
         md:w-50
-        h-9
+        h-10
         md:h-16 
         md:h-screen 
         md:ms-10

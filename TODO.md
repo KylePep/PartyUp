@@ -1,5 +1,13 @@
 # TODO
 
+## Features
+
+- [ ] **Push notifications for matches**
+  App is installable as a PWA (manifest added). Next step: add Web Push notifications
+  so users get alerted on mutual match. Requires a service worker + backend Web Push
+  API integration (VAPID keys, subscription storage, notification trigger on match).
+  Worth revisiting if/when exploring Flutter as an alternative delivery mechanism.
+
 ## Infrastructure
 
 - [ ] **Replace personal GCS OAuth credentials with a service account key**
