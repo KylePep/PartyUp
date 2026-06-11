@@ -46,8 +46,8 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.GetAsync("/api/user-games");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var games = await response.Content.ReadFromJsonAsync<List<UserGameDto>>();
-        games.Should().ContainSingle();
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
+        result!.Items.Should().ContainSingle();
     }
 
     [Fact]
@@ -68,8 +68,8 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var getResponse = await client.GetAsync("/api/user-games");
-        var games = await getResponse.Content.ReadFromJsonAsync<List<UserGameDto>>();
-        games.Should().BeEmpty();
+        var result = await getResponse.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
+        result!.Items.Should().BeEmpty();
     }
 
     [Fact]
@@ -116,9 +116,9 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
         });
 
         var response = await clientA.GetAsync("/api/user-games");
-        var games = await response.Content.ReadFromJsonAsync<List<UserGameDto>>();
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
 
-        games.Should().ContainSingle();
+        result!.Items.Should().ContainSingle();
     }
 
   [Fact]
@@ -254,8 +254,8 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
   {
       var client = await CreateAuthenticatedClientAsync();
 
-      // Add 10 games
-      for (var i = 0; i < 10; i++)
+      // Add 24 games
+      for (var i = 0; i < 24; i++)
       {
           var id = Interlocked.Increment(ref _gameCounter);
           var r = await client.PostAsJsonAsync("/api/user-games", new
@@ -267,7 +267,7 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
           r.EnsureSuccessStatusCode();
       }
 
-      // 11th game — should be rejected
+      // 25th game — should be rejected
       var eleventh = Interlocked.Increment(ref _gameCounter);
       var response = await client.PostAsJsonAsync("/api/user-games", new
       {
@@ -353,9 +353,65 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
         });
 
         var gamesRes = await clientA.GetAsync("/api/user-games");
-        var games = await gamesRes.Content.ReadFromJsonAsync<List<UserGameWithCountDto>>();
-        games!.Should().ContainSingle(g => g.Id == ugA.Id && g.NewMatchCount == 1);
+        var result = await gamesRes.Content.ReadFromJsonAsync<PagedResultDto<UserGameWithCountDto>>();
+        result!.Items.Should().ContainSingle(g => g.Id == ugA.Id && g.NewMatchCount == 1);
     }
+
+  [Fact]
+  public async Task GetUserGames_ReturnsPaginatedResult()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+
+      // Add 8 games (well within the 24-game realm limit)
+      for (var i = 0; i < 8; i++)
+      {
+          var id = Interlocked.Increment(ref _gameCounter);
+          var r = await client.PostAsJsonAsync("/api/user-games", new
+          {
+              externalId = id,
+              name = $"Game {id}",
+              imageUrl = (string?)null
+          });
+          r.EnsureSuccessStatusCode();
+      }
+
+      var response = await client.GetAsync("/api/user-games?page=1&pageSize=5");
+      response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+      var result = await response.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
+      result!.TotalCount.Should().Be(8);
+      result.Page.Should().Be(1);
+      result.PageSize.Should().Be(5);
+      result.Items.Should().HaveCount(5);
+  }
+
+  [Fact]
+  public async Task GetUserGames_Page2_ReturnsRemainder()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+
+      for (var i = 0; i < 8; i++)
+      {
+          var id = Interlocked.Increment(ref _gameCounter);
+          var r = await client.PostAsJsonAsync("/api/user-games", new
+          {
+              externalId = id,
+              name = $"Game {id}",
+              imageUrl = (string?)null
+          });
+          r.EnsureSuccessStatusCode();
+      }
+
+      var response = await client.GetAsync("/api/user-games?page=2&pageSize=5");
+      response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+      var result = await response.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
+      result!.TotalCount.Should().Be(8);
+      result.Page.Should().Be(2);
+      result.Items.Should().HaveCount(3);
+  }
+
+  private record PagedResultDto<T>(IEnumerable<T> Items, int TotalCount, int Page, int PageSize);
 
   private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
 

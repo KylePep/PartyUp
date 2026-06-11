@@ -24,8 +24,8 @@ public class UserGameService : IUserGameService
     public async Task<AddGameResult> AddGameToUser(Guid userId, AddUserGameRequest request)
     {
         var gameCount = await _db.UserGames.CountAsync(ug => ug.UserId == userId);
-        if (gameCount >= 10)
-            throw new InvalidOperationException("Realm limit of 10 reached.");
+        if (gameCount >= 24)
+            throw new InvalidOperationException("Realm limit of 24 reached.");
 
         var existingSelected = await _gameService.getGameByExternalId(request.ExternalId);
         var isSelectedNew = existingSelected == null;
