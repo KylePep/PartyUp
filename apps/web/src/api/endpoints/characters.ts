@@ -1,4 +1,5 @@
 import { apiDelete, apiGet, apiPost, apiPostForm, apiPut } from "../client";
+import type { PagedResult } from './userGames';
 
 export type CharacterGameField = {
   fieldDefinitionId: string;
@@ -92,8 +93,8 @@ export type MatchResultResponse = {
 
 export type InteractionType = "Like" | "Dislike";
 
-export function getCharacters() {
-  return apiGet<Character[]>("/characters");
+export function getCharacters(page: number, pageSize: number): Promise<PagedResult<Character>> {
+  return apiGet<PagedResult<Character>>(`/characters?page=${page}&pageSize=${pageSize}`)
 }
 
 export function getUserGameCharacters(userGameId: string) {
