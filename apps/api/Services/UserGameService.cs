@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs;
 using PartyUp.Api.Models.DTOs.UserGame;
 using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Infrastructure.Data;
@@ -125,13 +126,20 @@ public class UserGameService : IUserGameService
         };
     }
 
-    public async Task<List<UserGame>> GetUserGames(Guid userId)
+    public async Task<PagedResult<UserGame>> GetUserGames(Guid userId, int page, int pageSize)
     {
-        return await _db.UserGames
+        var query = _db.UserGames
             .Where(ug => ug.UserId == userId)
             .Include(ug => ug.Game)
-            .OrderByDescending(ug => ug.CreatedAt)
+            .OrderByDescending(ug => ug.CreatedAt);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
+
+        return new PagedResult<UserGame>(items, totalCount, page, pageSize);
     }
 
     public async Task<UserGame?> GetUserGameByGameId(Guid userId, Guid gameId)
