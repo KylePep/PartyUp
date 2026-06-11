@@ -28,10 +28,10 @@ export default function CharactersPage() {
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
 
   useEffect(() => {
-    Promise.all([getCharacters(), getUserGames()])
-      .then(([chars, ug]) => {
+    Promise.all([getCharacters(), getUserGames(1, 12)])
+      .then(([chars, ugResult]) => {
         setCharacters(chars)
-        setUserGames(ug)
+        setUserGames(ugResult.items)
         setStatus(chars.length === 0 ? 'empty' : 'ready')
         if (targetId) {
           const match = chars.find(c => c.id === targetId) ?? null
