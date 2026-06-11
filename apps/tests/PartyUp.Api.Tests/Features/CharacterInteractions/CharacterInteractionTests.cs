@@ -148,12 +148,12 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
         });
 
         var matchesA = await (await clientA.GetAsync("/api/character-matches"))
-            .Content.ReadFromJsonAsync<List<MatchItemDto>>();
+            .Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
         var matchesB = await (await clientB.GetAsync("/api/character-matches"))
-            .Content.ReadFromJsonAsync<List<MatchItemDto>>();
+            .Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
 
-        matchesA![0].IsNew.Should().BeTrue();
-        matchesB![0].IsNew.Should().BeTrue();
+        matchesA!.Items[0].IsNew.Should().BeTrue();
+        matchesB!.Items[0].IsNew.Should().BeTrue();
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
@@ -199,6 +199,7 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
         return (await response.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
     }
 
+    private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record UserGameDto(Guid Id, Guid GameId);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterDto(Guid Id);

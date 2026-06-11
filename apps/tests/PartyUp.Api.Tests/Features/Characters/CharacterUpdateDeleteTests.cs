@@ -37,8 +37,8 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
             $"/api/characters/{userGame.Id}/{character.Id}",
             new { name = "Updated Name", bio = "New bio" });
 
-        var all = await client.GetFromJsonAsync<List<CharacterDto>>("/api/characters");
-        all!.Should().ContainSingle(c => c.Name == "Updated Name");
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterDto>>("/api/characters");
+        all!.Items.Should().ContainSingle(c => c.Name == "Updated Name");
     }
 
     [Fact]
@@ -78,8 +78,8 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
 
         await client.DeleteAsync($"/api/characters/{userGame.Id}/{character.Id}");
 
-        var all = await client.GetFromJsonAsync<List<CharacterDto>>("/api/characters");
-        all!.Should().NotContain(c => c.Id == character.Id);
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterDto>>("/api/characters");
+        all!.Items.Should().NotContain(c => c.Id == character.Id);
     }
 
     [Fact]
@@ -103,8 +103,8 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
         var deleteResponse = await client.DeleteAsync($"/api/characters/{userGame.Id}/{character!.Id}");
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
-        var all = await client.GetFromJsonAsync<List<CharacterDto>>("/api/characters");
-        all!.Should().NotContain(c => c.Id == character.Id);
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterDto>>("/api/characters");
+        all!.Items.Should().NotContain(c => c.Id == character.Id);
     }
 
     [Fact]
@@ -163,6 +163,7 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
         return (await response.Content.ReadFromJsonAsync<CharacterDto>())!;
     }
 
+    private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
