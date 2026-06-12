@@ -20,6 +20,8 @@ services:
     restart: always
     env_file:
       - .env
+    volumes:
+      - ./gcs-key.json:/run/gcs/key.json:ro
     depends_on:
       - partyup-db
 
