@@ -102,7 +102,7 @@ export default function MatchesPage() {
         getKey={m => m.matchId}
         emptyMessage="No matches yet — keep swiping!"
         errorMessage="Could not load matches"
-        stickyRows
+        stickyRows={matches.length > 6}
         renderItem={m => (
           <div className={`flex flex-col ${selected?.matchId === m.matchId ? 'ring-2 ring-green-700 rounded-xl' : m.isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
             <CollectionCard

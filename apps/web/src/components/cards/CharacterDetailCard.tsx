@@ -38,7 +38,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
         className="flex flex-col gap-2 flex-shrink-0"
       >
         <div className="flex justify-between md:items-center gap-6 bg-off-black rounded-sm px-2 py-2 md:py-1">
-          <span className="flex flex-col md:flex-row md:gap-6 md:items-end">
+          <span className="flex flex-col md:flex-row md:gap-6 md:items-center">
             <h1 className="font-display font-bold text-2xl text-text">{character.name}</h1>
             {character.platformHandle && (
               <p className="font-mono text-muted text-sm">{character.platformHandle}</p>

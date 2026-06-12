@@ -107,11 +107,10 @@ export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
                         onChange({ platform: p })
                         setShowAllPlatforms(false)
                       }}
-                      className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
-                        data.platform === p
-                          ? 'bg-accent text-white border-accent'
-                          : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
-                      }`}
+                      className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${data.platform === p
+                        ? 'bg-accent text-white border-accent'
+                        : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
+                        }`}
                     >
                       {p}
                     </button>
@@ -196,11 +195,10 @@ export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
               key={color}
               type="button"
               onClick={() => onChange({ cardBackgroundColor: data.cardBackgroundColor === color ? '' : color })}
-              className={`w-8 h-8 rounded transition-all ${
-                data.cardBackgroundColor === color
-                  ? 'ring-2 ring-white ring-offset-2 ring-offset-surface scale-110'
-                  : 'hover:scale-105'
-              }`}
+              className={`w-8 h-8 rounded transition-all ${data.cardBackgroundColor === color
+                ? 'ring-2 ring-white ring-offset-2 ring-offset-surface scale-110'
+                : 'hover:scale-105'
+                }`}
               style={{ backgroundColor: color }}
               title={color}
             />
