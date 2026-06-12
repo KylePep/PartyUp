@@ -4,6 +4,7 @@ import { type UserGame } from '../api/endpoints/userGames'
 import { type PopularGame } from '../api/endpoints/games'
 import { addUserGame as apiAddUserGame } from '../api/endpoints/userGames'
 import { useUserGames } from '../hooks/useUserGames'
+import { usePopularGames } from '../hooks/usePopularGames'
 import { ScryingOrb } from '../components/orb/ScryingOrb'
 import { RealmCard } from '../components/cards/RealmCard'
 import { PopularRealms } from '../components/PopularRealms'
@@ -15,6 +16,7 @@ import { BinderShell } from '../components/layout/BinderShell'
 export default function HomePage() {
   const { state: auth } = useAuth()
   const userGames = useUserGames()
+  const { games: popularGames } = usePopularGames()
   const [pendingRealm, setPendingRealm] = useState<PopularGame | null>(null)
   const [addingRealm, setAddingRealm] = useState(false)
 
@@ -55,7 +57,7 @@ export default function HomePage() {
           ) : (
             visibleRealms.map(g => <RealmCard key={g.id} userGame={g} />)
           )}
-          footerClassName="flex overflow-x-auto gap-x-2 p-2 h-1/3 md:h-[30%]"
+          footerClassName="flex overflow-x-auto overflow-y-visible gap-x-2 p-2 h-1/3"
         >
           {userGames.status === 'loading' ? (
             <div className="flex-1 flex items-center justify-center">
@@ -65,13 +67,14 @@ export default function HomePage() {
             <ScryingOrb
               onAdd={(game: UserGame) => userGames.addUserGame(game)}
               disabled={atLimit}
+              popularGames={popularGames}
             />
           )}
         </BinderShell>
         <BinderTabs activeTab='' />
       </section>
 
-      <PopularRealms onSelect={setPendingRealm} />
+      <PopularRealms games={popularGames} onSelect={setPendingRealm} />
 
       <Modal isOpen={!!pendingRealm} onClose={() => setPendingRealm(null)} title="Add Realm">
         <div className="px-6 py-4 flex flex-col gap-4">
