@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PartyUp.Api.Models.DTOs;
 using PartyUp.Api.Models.DTOs.Character;
 using PartyUp.Api.Services.Interfaces;
 
@@ -19,10 +20,12 @@ public class CharactersController : ControllerBase
   }
 
   [HttpGet]
-  public async Task<IActionResult> GetMyCharacters()
+  public async Task<ActionResult<PagedResult<CharacterResponse>>> GetMyCharacters(
+      [FromQuery] int page = 1,
+      [FromQuery] int pageSize = 12)
   {
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    var result = await _characterService.GetAllCharactersForUserAsync(userId);
+    var result = await _characterService.GetAllCharactersForUserAsync(userId, page, pageSize);
     return Ok(result);
   }
 

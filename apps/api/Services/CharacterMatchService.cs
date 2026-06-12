@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs;
 using PartyUp.Api.Models.DTOs.Character;
 using PartyUp.Api.Models.DTOs.CharacterMatch;
 using PartyUp.Api.Services.Interfaces;
@@ -18,8 +19,11 @@ public class CharacterMatchService : ICharacterMatchService
         _notifications = notifications;
     }
 
-    public async Task<List<CharacterMatchDto>> GetMatchesAsync(Guid userId, Guid? gameId)
+    public async Task<PagedResult<CharacterMatchDto>> GetMatchesAsync(Guid userId, Guid? gameId, int page, int pageSize)
     {
+        page = Math.Max(1, page);
+        pageSize = Math.Clamp(pageSize, 1, 50);
+
         var query = _db.CharacterMatches
             .Include(m => m.CharacterA).ThenInclude(c => c.UserGame).ThenInclude(ug => ug.Game)
             .Include(m => m.CharacterA).ThenInclude(c => c.FieldValues).ThenInclude(fv => fv.FieldDefinition)
@@ -34,12 +38,17 @@ public class CharacterMatchService : ICharacterMatchService
                 (m.CharacterA.UserGame.UserId == userId && m.CharacterA.UserGame.GameId == gameId.Value) ||
                 (m.CharacterB.UserGame.UserId == userId && m.CharacterB.UserGame.GameId == gameId.Value));
 
-        var matches = await query.ToListAsync();
+        var totalCount = await query.CountAsync();
+        var matches = await query
+            .OrderByDescending(m => m.MatchedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
 
         var matchIds = matches.Select(m => m.Id).ToList();
         var newMatchIds = await _notifications.GetNewMatchIdsAsync(userId, matchIds);
 
-        return matches.Select(m =>
+        var items = matches.Select(m =>
         {
             var isMineA = m.CharacterA.UserGame.UserId == userId;
             var mine = isMineA ? m.CharacterA : m.CharacterB;
@@ -57,6 +66,8 @@ public class CharacterMatchService : ICharacterMatchService
                 IsNew = newMatchIds.Contains(m.Id)
             };
         }).ToList();
+
+        return new PagedResult<CharacterMatchDto>(items, totalCount, page, pageSize);
     }
 
     private static CharacterSummaryDto ToSummary(Character c) => new()

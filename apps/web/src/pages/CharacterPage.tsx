@@ -13,6 +13,9 @@ import { characterToFormData } from '../components/character-wizard/types'
 import { TABS } from '../lib/tabs'
 import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
 import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
+import { PaginationControls } from '../components/ui'
+
+const PAGE_SIZE = 12
 
 export default function CharactersPage() {
   const TAB = TABS.find(t => t.label === 'My Cards')!
@@ -20,6 +23,8 @@ export default function CharactersPage() {
   const targetId = searchParams.get('id')
   const [characters, setCharacters] = useState<Character[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
+  const [page, setPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const [selected, setSelected] = useState<Character | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -28,19 +33,20 @@ export default function CharactersPage() {
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
 
   useEffect(() => {
-    Promise.all([getCharacters(), getUserGames(1, 12)])
-      .then(([chars, ugResult]) => {
-        setCharacters(chars)
+    Promise.all([getCharacters(page, PAGE_SIZE), getUserGames(1, 12)])
+      .then(([charsResult, ugResult]) => {
+        setCharacters(charsResult.items)
+        setTotalCount(charsResult.totalCount)
         setUserGames(ugResult.items)
-        setStatus(chars.length === 0 ? 'empty' : 'ready')
-        if (targetId) {
-          const match = chars.find(c => c.id === targetId) ?? null
+        setStatus(charsResult.totalCount === 0 ? 'empty' : 'ready')
+        if (targetId && page === 1) {
+          const match = charsResult.items.find(c => c.id === targetId) ?? null
           setSelected(match)
           if (match) setActiveSide('left')
         }
       })
       .catch(() => setStatus('error'))
-  }, [targetId])
+  }, [targetId, page])
 
   function handleSelect(character: Character) {
     setSelected(character)
@@ -52,13 +58,20 @@ export default function CharactersPage() {
     setDeleting(true)
     try {
       await deleteCharacter(selected.userGameId, selected.id)
-      setCharacters(prev => {
-        const next = prev.filter(c => c.id !== selected.id)
-        if (next.length === 0) setStatus('empty')
-        return next
-      })
+      const newTotal = totalCount - 1
+      setTotalCount(newTotal)
       setSelected(null)
       setConfirmOpen(false)
+      const totalPages = Math.ceil(newTotal / PAGE_SIZE)
+      if (page > totalPages && page > 1) {
+        setPage(p => p - 1)
+      } else {
+        setCharacters(prev => {
+          const next = prev.filter(c => c.id !== selected.id)
+          if (newTotal === 0) setStatus('empty')
+          return next
+        })
+      }
     } finally {
       setDeleting(false)
     }
@@ -77,10 +90,11 @@ export default function CharactersPage() {
   }
 
   async function handleEditSuccess() {
-    const updatedChars = await getCharacters()
-    const updated = updatedChars.find(c => c.id === selected?.id) ?? null
-    setCharacters(updatedChars)
-    setStatus(updatedChars.length === 0 ? 'empty' : 'ready')
+    const result = await getCharacters(page, PAGE_SIZE)
+    const updated = result.items.find(c => c.id === selected?.id) ?? null
+    setCharacters(result.items)
+    setTotalCount(result.totalCount)
+    setStatus(result.totalCount === 0 ? 'empty' : 'ready')
     setSelected(updated)
     setEditingUserGame(null)
   }
@@ -144,15 +158,25 @@ export default function CharactersPage() {
   const rightContent = (
     <>
       <div className="relative flex flex-col flex-1 min-h-0">
-        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent flex items-center justify-between'>
           <h2 className="text-xs font-mono uppercase tracking-widest">My Character Cards</h2>
+          {totalCount > 0 && (
+            <PaginationControls
+              page={page}
+              pageSize={PAGE_SIZE}
+              totalCount={totalCount}
+              onPageChange={setPage}
+            />
+          )}
         </div>
         <Gallery
+          key={page}
           items={characters}
           status={status}
           getKey={c => c.id}
           emptyMessage="You haven't created any characters yet"
           errorMessage="Could not load characters"
+          stickyRows
           renderItem={c => (
             <div
               className="flex flex-col rounded-xl"

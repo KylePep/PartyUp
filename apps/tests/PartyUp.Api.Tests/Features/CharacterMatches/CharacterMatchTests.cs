@@ -21,13 +21,13 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientA.GetAsync("/api/character-matches");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var matches = await response.Content.ReadFromJsonAsync<List<MatchItemDto>>();
-        matches!.Should().HaveCount(1);
-        matches[0].MyCharacter.Id.Should().Be(charA);
-        matches[0].TheirCharacter.Id.Should().Be(charB);
-        matches[0].GameId.Should().Be(gameId);
-        matches[0].GameName.Should().NotBeNullOrEmpty();
-        matches[0].MatchedAt.Should().NotBe(default);
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        result!.Items.Should().HaveCount(1);
+        result.Items[0].MyCharacter.Id.Should().Be(charA);
+        result.Items[0].TheirCharacter.Id.Should().Be(charB);
+        result.Items[0].GameId.Should().Be(gameId);
+        result.Items[0].GameName.Should().NotBeNullOrEmpty();
+        result.Items[0].MatchedAt.Should().NotBe(default);
     }
 
     [Fact]
@@ -38,8 +38,8 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientA.GetAsync($"/api/character-matches?gameId={gameId}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var matches = await response.Content.ReadFromJsonAsync<List<MatchItemDto>>();
-        matches!.Should().HaveCount(1);
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        result!.Items.Should().HaveCount(1);
     }
 
     [Fact]
@@ -50,8 +50,8 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         var response = await clientA.GetAsync($"/api/character-matches?gameId={Guid.NewGuid()}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var matches = await response.Content.ReadFromJsonAsync<List<MatchItemDto>>();
-        matches!.Should().BeEmpty();
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        result!.Items.Should().BeEmpty();
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.GetAsync("/api/character-matches");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var matches = await response.Content.ReadFromJsonAsync<List<MatchItemDto>>();
-        matches!.Should().BeEmpty();
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        result!.Items.Should().BeEmpty();
     }
 
     [Fact]
@@ -72,6 +72,50 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         var response = await Client.GetAsync("/api/character-matches");
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task GetMatches_Pagination_ReturnsTotalCountAndPage()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+
+        // Create 3 mutual matches across 3 separate games
+        for (int i = 0; i < 3; i++)
+        {
+            var externalId = Interlocked.Increment(ref _gameCounter);
+            var ugA = await AddGameAsync(clientA, externalId);
+            var ugB = await AddGameAsync(clientB, externalId);
+            var charA = await CreateCharacterAsync(clientA, ugA.Id);
+            var charB = await CreateCharacterAsync(clientB, ugB.Id);
+
+            await clientA.PostAsJsonAsync("/api/character-interactions", new
+            {
+                fromCharacterId = charA,
+                toCharacterId = charB,
+                type = InteractionType.Like
+            });
+            await clientB.PostAsJsonAsync("/api/character-interactions", new
+            {
+                fromCharacterId = charB,
+                toCharacterId = charA,
+                type = InteractionType.Like
+            });
+        }
+
+        var page1Response = await clientA.GetAsync("/api/character-matches?page=1&pageSize=2");
+        page1Response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var page1 = await page1Response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        page1!.TotalCount.Should().Be(3);
+        page1.Items.Should().HaveCount(2);
+        page1.Page.Should().Be(1);
+        page1.PageSize.Should().Be(2);
+
+        var page2Response = await clientA.GetAsync("/api/character-matches?page=2&pageSize=2");
+        var page2 = await page2Response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        page2!.Items.Should().HaveCount(1);
+        page2.TotalCount.Should().Be(3);
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
@@ -130,6 +174,7 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         return (await response.Content.ReadFromJsonAsync<CharacterIdDto>())!.Id;
     }
 
+    private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record UserGameDto(Guid Id, Guid GameId);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterIdDto(Guid Id);

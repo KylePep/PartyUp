@@ -1,5 +1,6 @@
 import { apiGet } from "../client";
 import type { Character, CharacterGameField } from "./characters";
+import type { PagedResult } from './userGames';
 
 export type CharacterSummary = {
   id: string;
@@ -22,7 +23,8 @@ export type CharacterMatchDto = {
   isNew: boolean;
 };
 
-export function getMatches(gameId?: string): Promise<CharacterMatchDto[]> {
-  const query = gameId ? `?gameId=${gameId}` : "";
-  return apiGet<CharacterMatchDto[]>(`/character-matches${query}`);
+export function getMatches(page: number, pageSize: number, gameId?: string): Promise<PagedResult<CharacterMatchDto>> {
+  const qs = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+  if (gameId) qs.set('gameId', gameId);
+  return apiGet<PagedResult<CharacterMatchDto>>(`/character-matches?${qs.toString()}`);
 }
