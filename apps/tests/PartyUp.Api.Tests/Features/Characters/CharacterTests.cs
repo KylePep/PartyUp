@@ -46,8 +46,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.GetAsync("/api/characters");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var characters = await response.Content.ReadFromJsonAsync<List<CharacterDto>>();
-        characters.Should().ContainSingle(c => c.Name == "My Character");
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<CharacterDto>>();
+        result!.Items.Should().ContainSingle(c => c.Name == "My Character");
     }
 
     [Fact]
@@ -219,8 +219,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         });
 
         var response = await client.GetAsync("/api/characters");
-        var characters = await response.Content.ReadFromJsonAsync<List<CharacterWithGameDto>>();
-        characters.Should().ContainSingle(c => c.GameName == userGame.GameName);
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<CharacterWithGameDto>>();
+        result!.Items.Should().ContainSingle(c => c.GameName == userGame.GameName);
     }
 
     [Fact]
@@ -240,10 +240,43 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var all = await client.GetFromJsonAsync<List<CharacterWithNotesDto>>("/api/characters");
-        all!.Should().ContainSingle(c =>
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterWithNotesDto>>("/api/characters");
+        all!.Items.Should().ContainSingle(c =>
             c.Name == "Notes Character" &&
             c.AdditionalNotes == "Looking for a chill group, play evenings EST.");
+    }
+
+    [Fact]
+    public async Task GetMyCharacters_Pagination_ReturnsTotalCountAndPage()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+
+        // Create 3 characters (user cap) across 3 separate games
+        for (int i = 0; i < 3; i++)
+        {
+            var game = await AddGameAsync(client);
+            await client.PostAsJsonAsync("/api/characters", new
+            {
+                name = $"Paged Character {i}",
+                platform = "PC",
+                platformHandle = $"Handle{i}",
+                userGameId = game.Id
+            });
+        }
+
+        var page1Response = await client.GetAsync("/api/characters?page=1&pageSize=2");
+        page1Response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var page1 = await page1Response.Content.ReadFromJsonAsync<PagedResultDto<CharacterDto>>();
+        page1!.TotalCount.Should().Be(3);
+        page1.Items.Should().HaveCount(2);
+        page1.Page.Should().Be(1);
+        page1.PageSize.Should().Be(2);
+
+        var page2Response = await client.GetAsync("/api/characters?page=2&pageSize=2");
+        var page2 = await page2Response.Content.ReadFromJsonAsync<PagedResultDto<CharacterDto>>();
+        page2!.Items.Should().HaveCount(1);
+        page2.TotalCount.Should().Be(3);
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
@@ -302,9 +335,9 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
             type = "Like"
         });
 
-        var chars = await (await clientA.GetAsync("/api/characters"))
-            .Content.ReadFromJsonAsync<List<CharWithFlagDto>>();
-        chars!.Should().ContainSingle(c => c.Id == charA && c.HasNewMatch);
+        var result = await (await clientA.GetAsync("/api/characters"))
+            .Content.ReadFromJsonAsync<PagedResultDto<CharWithFlagDto>>();
+        result!.Items.Should().ContainSingle(c => c.Id == charA && c.HasNewMatch);
     }
 
     [Fact]
@@ -324,8 +357,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var all = await client.GetFromJsonAsync<List<CharacterWithColorDto>>("/api/characters");
-        all!.Should().ContainSingle(c =>
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterWithColorDto>>("/api/characters");
+        all!.Items.Should().ContainSingle(c =>
             c.Name == "Color Character" &&
             c.CardBackgroundColor == "#1a1a2e");
     }
@@ -348,8 +381,8 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
             $"/api/characters/{userGame.Id}/{character.Id}",
             new { name = "Color Char", cardBackgroundColor = "#1b4332" });
 
-        var all = await client.GetFromJsonAsync<List<CharacterWithColorDto>>("/api/characters");
-        all!.Should().ContainSingle(c =>
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterWithColorDto>>("/api/characters");
+        all!.Items.Should().ContainSingle(c =>
             c.Name == "Color Char" &&
             c.CardBackgroundColor == "#1b4332");
     }
@@ -395,6 +428,7 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record LimitErrorDto(string Message);
     private record CharacterWithGameDto(Guid Id, string Name, string? GameName);
     private record CharacterWithNotesDto(Guid Id, string Name, string? AdditionalNotes);
+    private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record PagedDiscoverDto(List<DiscoveredDto> Items, bool HasMore, int TotalCount);
     private record CharWithFlagDto(Guid Id, bool HasNewMatch);
     private record CharacterWithColorDto(Guid Id, string Name, string? CardBackgroundColor);

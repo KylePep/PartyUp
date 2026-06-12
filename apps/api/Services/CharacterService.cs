@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs;
 using PartyUp.Api.Models.DTOs.Character;
 using PartyUp.Api.Services.Interfaces;
 
@@ -87,10 +88,19 @@ public class CharacterService : ICharacterService
       .ToListAsync();
   }
 
-  public async Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId)
+  public async Task<PagedResult<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId, int page, int pageSize)
   {
-    var characters = await _db.Characters
+    page = Math.Max(1, page);
+    pageSize = Math.Clamp(pageSize, 1, 50);
+
+    var query = _db.Characters
       .Where(c => c.UserGame.UserId == userId)
+      .OrderByDescending(c => c.CreatedAt);
+
+    var totalCount = await query.CountAsync();
+    var characters = await query
+      .Skip((page - 1) * pageSize)
+      .Take(pageSize)
       .Select(ToProjection())
       .ToListAsync();
 
@@ -100,7 +110,7 @@ public class CharacterService : ICharacterService
     foreach (var c in characters)
       c.HasNewMatch = newMatchIds.Contains(c.Id);
 
-    return characters;
+    return new PagedResult<CharacterResponse>(characters, totalCount, page, pageSize);
   }
 
   public async Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId)

@@ -1,10 +1,11 @@
+using PartyUp.Api.Models.DTOs;
 using PartyUp.Api.Models.DTOs.Character;
 
 public interface ICharacterService
 {
   Task<CharacterResponse?> CreateCharacterAsync(Guid userId, Guid userGameId, CreateCharacterRequest request);
   Task<List<CharacterResponse>> GetCharactersForUserGameAsync(Guid userId, Guid userGameId);
-  Task<List<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId);
+  Task<PagedResult<CharacterResponse>> GetAllCharactersForUserAsync(Guid userId, int page, int pageSize);
   Task<CharacterResponse?> GetCharacterByIdAsync(Guid userId, Guid characterId);
   Task<PagedDiscoverResult> DiscoverCharactersAsync(
       Guid userId,

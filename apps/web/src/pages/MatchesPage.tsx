@@ -10,7 +10,9 @@ import { CollectionCard } from '../components/cards/CollectionCard'
 import { TABS } from '../lib/tabs'
 import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
 import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
+import { PaginationControls } from '../components/ui'
 
+const PAGE_SIZE = 12
 
 export default function MatchesPage() {
   const TAB = TABS.find(t => t.label === 'Collection')!
@@ -18,16 +20,19 @@ export default function MatchesPage() {
   const targetId = searchParams.get('id')
   const [matches, setMatches] = useState<CharacterMatchDto[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
+  const [page, setPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const [selected, setSelected] = useState<CharacterMatchDto | null>(null)
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
 
   useEffect(() => {
-    getMatches()
-      .then(m => {
-        setMatches(m)
-        setStatus(m.length === 0 ? 'empty' : 'ready')
-        if (targetId) {
-          const match = m.find(match => match.matchId === targetId) ?? null
+    getMatches(page, PAGE_SIZE)
+      .then(result => {
+        setMatches(result.items)
+        setTotalCount(result.totalCount)
+        setStatus(result.totalCount === 0 ? 'empty' : 'ready')
+        if (targetId && page === 1) {
+          const match = result.items.find(m => m.matchId === targetId) ?? null
           setSelected(match)
           if (match) {
             setActiveSide('left')
@@ -42,7 +47,7 @@ export default function MatchesPage() {
         }
       })
       .catch(() => setStatus('error'))
-  }, [targetId])
+  }, [targetId, page])
 
   function handleSelect(match: CharacterMatchDto) {
     setSelected(match)
@@ -58,10 +63,7 @@ export default function MatchesPage() {
 
   const leftContent = selected ? (
     <div className="flex flex-col md:flex-1 md:min-h-0">
-      {/* Match header */}
-      <div
-        className="px-4 py-3 h-[64px] border-b-4 border-cyan-950/50"
-      >
+      <div className="px-4 py-3 h-[64px] border-b-4 border-cyan-950/50">
         <div className='flex gap-4'>
           <p className="text-xs text-muted uppercase tracking-widest mb-0.5">Match</p>
           <p className="text-xs text-muted">
@@ -70,16 +72,9 @@ export default function MatchesPage() {
         </div>
         <p className="font-display font-bold text-text">{selected.gameName}</p>
       </div>
-
-      {/* Their character */}
-      <div
-        className="p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto"
-      >
-        <CharacterDetailCard
-          character={selected.theirCharacter}
-        />
+      <div className="p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto">
+        <CharacterDetailCard character={selected.theirCharacter} />
       </div>
-
     </div>
   ) : (
     <div className="flex items-center justify-center h-full">
@@ -89,15 +84,25 @@ export default function MatchesPage() {
 
   const rightContent = (
     <div className="md:h-full flex flex-col w-full min-h-0">
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent flex items-center justify-between'>
         <h2 className="text-xs font-mono uppercase tracking-widest">My Collection</h2>
+        {totalCount > 0 && (
+          <PaginationControls
+            page={page}
+            pageSize={PAGE_SIZE}
+            totalCount={totalCount}
+            onPageChange={setPage}
+          />
+        )}
       </div>
       <Gallery
-        items={matches.slice(0, 6)}
+        key={page}
+        items={matches}
         status={status}
         getKey={m => m.matchId}
         emptyMessage="No matches yet — keep swiping!"
         errorMessage="Could not load matches"
+        stickyRows
         renderItem={m => (
           <div className={`flex flex-col ${selected?.matchId === m.matchId ? 'ring-2 ring-green-700 rounded-xl' : m.isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
             <CollectionCard
@@ -126,7 +131,8 @@ export default function MatchesPage() {
           <GameMiniCard
             game={{ name: selected.gameName, imageUrl: selected.gameImageUrl }}
             gameId={selected.gameId}
-            platform={<PlanetIcon />} />
+            platform={<PlanetIcon />}
+          />
         </>
       ) : undefined}
       activeTab={"Collection"}

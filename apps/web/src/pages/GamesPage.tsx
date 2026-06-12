@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, startTransition } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { BinderLayout } from '../components/layout/BinderLayout'
@@ -6,10 +6,13 @@ import { Gallery } from '../components/Gallery'
 import { LandCard } from '../components/cards/LandCard'
 import { GameDetailCard } from '../components/cards/GameDetailCard'
 import { NewMatchBadge } from '../components/ui/NewMatchBadge'
+import { PaginationControls } from '../components/ui'
 import { TABS } from '../lib/tabs'
 import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
+
+const PAGE_SIZE = 12
 
 export default function GamesPage() {
   const TAB = TABS.find(t => t.label === 'Games')!
@@ -17,19 +20,24 @@ export default function GamesPage() {
   const targetId = searchParams.get('id')
   const [games, setGames] = useState<UserGame[]>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading')
+  const [page, setPage] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
   const [selected, setSelected] = useState<UserGame | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [selectedDetail, setSelectedDetail] = useState<UserGameDetail | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
+
   useEffect(() => {
-    getUserGames()
-      .then(gs => {
-        setGames(gs)
-        setStatus(gs.length === 0 ? 'empty' : 'ready')
-        if (targetId) {
-          const match = gs.find(g => g.id === targetId)
+    startTransition(() => setStatus('loading'))
+    getUserGames(page, PAGE_SIZE)
+      .then(result => {
+        setGames(result.items)
+        setTotalCount(result.totalCount)
+        setStatus(result.totalCount === 0 ? 'empty' : 'ready')
+        if (targetId && page === 1) {
+          const match = result.items.find(g => g.id === targetId)
           if (match) {
             setSelected(match)
             setActiveSide('left')
@@ -41,7 +49,7 @@ export default function GamesPage() {
         }
       })
       .catch(() => setStatus('error'))
-  }, [targetId])
+  }, [targetId, page])
 
   function handleSelect(game: UserGame) {
     setActiveSide('left')
@@ -58,13 +66,20 @@ export default function GamesPage() {
     setDeleting(true)
     try {
       await deleteUserGame(selected.id)
-      setGames(prev => {
-        const next = prev.filter(g => g.id !== selected.id)
-        if (next.length === 0) setStatus('empty')
-        return next
-      })
+      const newTotal = totalCount - 1
+      setTotalCount(newTotal)
       setSelected(null)
       setConfirmOpen(false)
+      const totalPages = Math.ceil(newTotal / PAGE_SIZE)
+      if (page > totalPages && page > 1) {
+        setPage(p => p - 1)
+      } else {
+        setGames(prev => {
+          const next = prev.filter(g => g.id !== selected.id)
+          if (newTotal === 0) setStatus('empty')
+          return next
+        })
+      }
     } finally {
       setDeleting(false)
     }
@@ -95,15 +110,25 @@ export default function GamesPage() {
 
   const rightContent = (
     <div className="flex flex-col h-full min-h-0">
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent flex items-center justify-between'>
         <h2 className="text-xs font-mono uppercase tracking-widest">My Game Cards</h2>
+        {totalCount > 0 && (
+          <PaginationControls
+            page={page}
+            pageSize={PAGE_SIZE}
+            totalCount={totalCount}
+            onPageChange={setPage}
+          />
+        )}
       </div>
       <Gallery
+        key={page}
         items={games}
         status={status}
         getKey={(g: UserGame) => g.id}
         emptyMessage="You haven't added any games yet"
         errorMessage="Could not load games"
+        stickyRows
         renderItem={(g: UserGame) => (
           <div className={`relative h-fit md:h-full ${selected?.id === g.id ? 'ring-2 ring-blue-700 rounded-xl' : ''}`}>
             <NewMatchBadge count={g.newMatchCount} />

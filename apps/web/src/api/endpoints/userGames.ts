@@ -34,12 +34,19 @@ export type AddUserGameResult = {
   message: string | null;
 };
 
+export type PagedResult<T> = {
+  items: T[]
+  totalCount: number
+  page: number
+  pageSize: number
+}
+
 export function addUserGame(payload: AddUserGamePayload): Promise<AddUserGameResult> {
   return apiPost<AddUserGameResult>("/user-games", payload);
 }
 
-export function getUserGames(): Promise<UserGame[]> {
-  return apiGet<UserGame[]>("/user-games");
+export function getUserGames(page: number, pageSize: number): Promise<PagedResult<UserGame>> {
+  return apiGet<PagedResult<UserGame>>(`/user-games?page=${page}&pageSize=${pageSize}`)
 }
 
 export function getUserGameByGameId(gameId: string): Promise<UserGameDetail> {

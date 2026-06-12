@@ -36,7 +36,9 @@ export default function HomePage() {
           footerClassName="flex overflow-x-auto gap-x-2 p-2 h-1/3 md:h-[30%]"
         >
           {userGames.status === 'loading' ? (
-            <Spinner />
+            <div className="flex-1 flex items-center justify-center">
+              <Spinner />
+            </div>
           ) : (
             <ScryingOrb
               onAdd={(game: UserGame) => userGames.addUserGame(game)}

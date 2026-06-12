@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.DTOs;
 using PartyUp.Api.Models.DTOs.UserGame;
 using PartyUp.Api.Services.Interfaces;
 
@@ -40,13 +41,18 @@ public class UserGamesController : ControllerBase
   }
 
   [HttpGet]
-  public async Task<IActionResult> GetUserGames()
+  public async Task<IActionResult> GetUserGames([FromQuery] int page = 1, [FromQuery] int pageSize = 12)
   {
+    if (page < 1) page = 1;
+    if (pageSize < 1 || pageSize > 50) pageSize = 12;
+
     var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-    var games = await _service.GetUserGames(userId);
-    var ids = games.Select(g => g.Id).ToList();
+    var result = await _service.GetUserGames(userId, page, pageSize);
+    var ids = result.Items.Select(g => g.Id).ToList();
     var counts = await _matchNotifications.GetNewMatchCountsByUserGameAsync(userId, ids);
-    return Ok(games.Select(g => ToResponse(g, counts.GetValueOrDefault(g.Id, 0))));
+
+    var items = result.Items.Select(g => ToResponse(g, counts.GetValueOrDefault(g.Id, 0)));
+    return Ok(new PagedResult<UserGameResponse>(items, result.TotalCount, result.Page, result.PageSize));
   }
 
   [HttpGet("{gameId}/game")]

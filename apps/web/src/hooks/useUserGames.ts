@@ -3,14 +3,12 @@ import { getUserGames, type UserGame } from "../api/endpoints/userGames";
 
 export function useUserGames() {
   const [games, setGames] = useState<UserGame[]>([]);
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading"
-  );
+  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
   useEffect(() => {
-    getUserGames()
-      .then((data) => {
-        setGames(data);
+    getUserGames(1, 12)
+      .then((result) => {
+        setGames(result.items);
         setStatus("success");
       })
       .catch(() => {
@@ -22,15 +20,9 @@ export function useUserGames() {
     setGames((prev) => [userGame, ...prev]);
   }
 
-function removeGame(userGame: UserGame) {
-  setGames((prev) => prev.filter((g) => g.id !== userGame.id));
-}
+  function removeGame(userGame: UserGame) {
+    setGames((prev) => prev.filter((g) => g.id !== userGame.id));
+  }
 
-  return {
-    status,
-    games,
-    addUserGame,
-    removeGame,
-  };
+  return { status, games, addUserGame, removeGame };
 }
-

@@ -19,20 +19,20 @@ public class MatchNotificationTests : TestBase, IClassFixture<ApiFactory>
         var (_, _, clientA, clientB) = await SetupMutualMatchAsync();
 
         var matchesBeforeA = await (await clientA.GetAsync("/api/character-matches"))
-            .Content.ReadFromJsonAsync<List<MatchItemDto>>();
-        matchesBeforeA![0].IsNew.Should().BeTrue();
+            .Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        matchesBeforeA!.Items[0].IsNew.Should().BeTrue();
 
-        var matchId = matchesBeforeA[0].MatchId;
+        var matchId = matchesBeforeA.Items[0].MatchId;
         var viewedResponse = await clientA.PostAsync($"/api/match-notifications/{matchId}/viewed", null);
         viewedResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         var matchesAfterA = await (await clientA.GetAsync("/api/character-matches"))
-            .Content.ReadFromJsonAsync<List<MatchItemDto>>();
-        matchesAfterA![0].IsNew.Should().BeFalse();
+            .Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        matchesAfterA!.Items[0].IsNew.Should().BeFalse();
 
         var matchesB = await (await clientB.GetAsync("/api/character-matches"))
-            .Content.ReadFromJsonAsync<List<MatchItemDto>>();
-        matchesB![0].IsNew.Should().BeTrue();
+            .Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        matchesB!.Items[0].IsNew.Should().BeTrue();
     }
 
     [Fact]
@@ -97,6 +97,7 @@ public class MatchNotificationTests : TestBase, IClassFixture<ApiFactory>
         return (await response.Content.ReadFromJsonAsync<CharacterIdDto>())!.Id;
     }
 
+    private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record AddGameResult(UserGameDto UserGame, bool Redirected, string? Message);
     private record UserGameDto(Guid Id, Guid GameId);
     private record CharacterIdDto(Guid Id);

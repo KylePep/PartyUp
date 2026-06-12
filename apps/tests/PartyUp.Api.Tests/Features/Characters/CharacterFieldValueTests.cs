@@ -163,8 +163,8 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.GetAsync("/api/characters");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var characters = await response.Content.ReadFromJsonAsync<List<CharacterWithFieldsDto>>();
-        var target = characters!.Single(c => c.Name == "Field Test Character");
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<CharacterWithFieldsDto>>();
+        var target = result!.Items.Single(c => c.Name == "Field Test Character");
         var gameField = target.GameFields.Should().ContainSingle().Subject;
         gameField.Key.Should().Be("class");
         gameField.Value.Should().Be("Mage");
@@ -226,14 +226,15 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.GetAsync("/api/characters");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var characters = await response.Content.ReadFromJsonAsync<List<CharacterWithFieldsDto>>();
-        var target = characters!.Single(c => c.Name == "FFXIV Character");
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<CharacterWithFieldsDto>>();
+        var target = result!.Items.Single(c => c.Name == "FFXIV Character");
         var gameField = target.GameFields.Should().ContainSingle().Subject;
         gameField.Key.Should().Be("job");
         gameField.Value.Should().Be("Paladin");
         gameField.CommonField.Should().Be("class_slot");
     }
 
+    private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record UserGameDto(Guid Id, Guid GameId);
     private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
     private record CharacterResponseDto(Guid Id, string Name);
