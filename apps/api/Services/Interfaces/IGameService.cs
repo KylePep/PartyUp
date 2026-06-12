@@ -16,4 +16,5 @@ public interface IGameService
   /// Used to backfill stale Game records that were persisted before this fix.
   /// </summary>
   Task TryPopulateParentExternalId(Game game);
+  Task<IEnumerable<PopularGameResult>> GetPopularGames(int limit);
 }

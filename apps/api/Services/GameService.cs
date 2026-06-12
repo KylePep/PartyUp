@@ -125,6 +125,35 @@ public class GameService : IGameService
     return game;
   }
 
+  public async Task<IEnumerable<PopularGameResult>> GetPopularGames(int limit)
+  {
+    var topGroups = await _db.UserGames
+        .GroupBy(ug => ug.GameId)
+        .OrderByDescending(g => g.Count())
+        .Take(limit)
+        .Select(g => new { GameId = g.Key, Count = g.Count() })
+        .ToListAsync();
+
+    if (topGroups.Count == 0)
+      return Enumerable.Empty<PopularGameResult>();
+
+    var gameIds = topGroups.Select(g => g.GameId).ToList();
+    var games = await _db.Games
+        .Where(g => gameIds.Contains(g.Id))
+        .ToListAsync();
+
+    return topGroups
+        .Join(games, t => t.GameId, g => g.Id,
+            (t, g) => new PopularGameResult
+            {
+              Id = g.Id,
+              ExternalId = g.ExternalId,
+              Name = g.Name,
+              ImageUrl = g.ImageUrl,
+              UserGameCount = t.Count
+            });
+  }
+
   public async Task TryPopulateParentExternalId(Game game)
   {
     // Already populated — nothing to do.
