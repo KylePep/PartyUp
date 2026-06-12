@@ -88,6 +88,14 @@ public class GamesController : ControllerBase
     return Ok(response);
   }
 
+  [HttpGet("popular")]
+  public async Task<IActionResult> GetPopular([FromQuery] int limit = 6)
+  {
+    if (limit < 1 || limit > 20) limit = 6;
+    var result = await _service.GetPopularGames(limit);
+    return Ok(result);
+  }
+
   [EnableRateLimiting("ai-schema")]
   [Authorize]
   [HttpPost("{id:guid}/regenerate-schema")]

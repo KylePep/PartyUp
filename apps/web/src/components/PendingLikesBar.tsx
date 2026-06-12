@@ -41,7 +41,7 @@ export function PendingLikesBar({ character, onMatch }: PendingLikesBarProps) {
       {open && (
         <div className="absolute bottom-full left-0 right-0 z-50 bg-surface border-t border-border px-4 pt-4 pb-2 shadow-lg">
           <div className="flex gap-4">
-            {pending.slice(0, 3).map(c => (
+            {pending.slice(0, 5).map(c => (
               <PendingLikeCard
                 key={c.id}
                 character={c}

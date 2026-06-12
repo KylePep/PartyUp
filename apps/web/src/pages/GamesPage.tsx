@@ -15,7 +15,7 @@ import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
 const PAGE_SIZE = 12
 
 export default function GamesPage() {
-  const TAB = TABS.find(t => t.label === 'Games')!
+  const TAB = TABS.find(t => t.label === 'Realms')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [games, setGames] = useState<UserGame[]>([])
@@ -156,7 +156,7 @@ export default function GamesPage() {
           />
         </>
       ) : undefined}
-      activeTab={"Games"}
+      activeTab={"Realms"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}
