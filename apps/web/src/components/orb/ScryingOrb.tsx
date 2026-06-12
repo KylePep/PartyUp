@@ -111,13 +111,37 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
               </div>
             </div>
             {popularGames.length > 0 && (
-              <button
-                className="absolute bottom-10 md:hidden text-xs font-mono uppercase tracking-widest text-cyan-400 hover:text-cyan-200 transition-colors disabled:opacity-30"
-                onClick={() => setSearchState('popular')}
-                disabled={disabled}
+              <svg
+                className="absolute inset-0 w-full h-full pointer-events-none md:hidden"
+                aria-hidden
               >
-                Popular realms
-              </button>
+                <defs>
+                  <path
+                    id="orb-popular-arc"
+                    d={`M ${orbSize * 0.14},${orbSize * 0.6} a ${orbSize * 0.43},${orbSize * 0.43} 0 0,1 ${orbSize * 0.72},0`}
+                  />
+                </defs>
+                <text
+                  fontSize="11"
+                  fill={disabled ? 'rgba(0,210,255,0.3)' : '#00d2ff'}
+                  textAnchor="middle"
+                  letterSpacing="1.5"
+                  fontFamily="monospace"
+                  stroke="rgba(0,0,0,0.75)"
+                  strokeWidth="2.5"
+                  paintOrder="stroke fill"
+                  style={{
+                    pointerEvents: disabled ? 'none' : 'all',
+                    cursor: disabled ? 'default' : 'pointer',
+                    textTransform: 'uppercase',
+                  } as CSSProperties}
+                  onClick={disabled ? undefined : () => setSearchState('popular')}
+                >
+                  <textPath href="#orb-popular-arc" startOffset="50%">
+                    Popular Realms
+                  </textPath>
+                </text>
+              </svg>
             )}
             <button
               onClick={() => setListOpen(true)}
