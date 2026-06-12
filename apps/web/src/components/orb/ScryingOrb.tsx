@@ -3,79 +3,7 @@ import { getGames, type Game } from '../../api/endpoints/games'
 import { addUserGame as apiAddUserGame, type UserGame } from '../../api/endpoints/userGames'
 import { MagicOrb } from './MagicOrb'
 import { Modal, Button } from '../ui'
-
-interface GamePlanetProps {
-  game: Game
-  index: number
-  imgSize: number
-  onSelect: (game: Game) => void
-}
-
-function GamePlanet({ game, index, imgSize, onSelect }: GamePlanetProps) {
-  const svgSize = imgSize + 24
-  const bobDur = 3 + (index % 3) * 0.7
-  const bobDelay = Math.min(index * 0.3, 2.1)
-  const appearDelay = index * 0.05
-
-  return (
-    <button
-      onClick={() => onSelect(game)}
-      className="flex flex-col items-center gap-0 bg-transparent border-0 cursor-pointer p-0"
-      aria-label={`Add ${game.name}`}
-      style={{
-        animation: `planet-appear 0.4s ${appearDelay}s ease both, planet-bob ${bobDur}s ${bobDelay}s ease-in-out infinite`,
-      } as CSSProperties}
-    >
-      {/* Circle image + SVG arc label */}
-      {/* Container height = svgSize + 18 to give the label room below the circle */}
-      <div style={{ position: 'relative', width: svgSize, height: svgSize + 18 }}>
-        <img
-          src={game.imageUrl ?? '/placeholder-game.png'}
-          alt={game.name}
-          style={{
-            position: 'absolute',
-            top: 12,
-            left: 12,
-            width: imgSize,
-            height: imgSize,
-            borderRadius: '50%',
-            objectFit: 'cover',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.7)',
-          }}
-        />
-        {/* Arc label — game name curves just outside the bottom of the circle.
-            sweep-flag=1 traces the bottom arc (clockwise in SVG space).
-            Radius is 8px larger than the circle so text sits outside it. */}
-        <svg
-          width={svgSize}
-          height={svgSize + 18}
-          style={{ position: 'absolute', top: 0, left: 0, overflow: 'visible' }}
-          aria-hidden
-        >
-          <defs>
-            <path
-              id={`arc-${index}`}
-              d={`M 4,${svgSize / 2} a ${imgSize / 2 + 8},${imgSize / 2 + 8} 0 0,1 ${imgSize + 16},0`}
-            />
-          </defs>
-          <text
-            fontSize="11"
-            fill="#e8e8f0"
-            textAnchor="middle"
-            letterSpacing="0.8"
-            stroke="rgba(0,0,0,0.75)"
-            strokeWidth="2.5"
-            paintOrder="stroke fill"
-          >
-            <textPath href={`#arc-${index}`} startOffset="50%">
-              {game.name}
-            </textPath>
-          </text>
-        </svg>
-      </div>
-    </button>
-  )
-}
+import { GamePlanet } from './GamePlanet'
 
 interface ScryingOrbProps {
   onAdd: (game: UserGame) => void
@@ -249,7 +177,14 @@ export function ScryingOrb({ onAdd, disabled = false }: ScryingOrbProps) {
               >
                 <div className="grid grid-cols-1 gap-4 justify-items-center">
                   {results.map((game, i) => (
-                    <GamePlanet key={game.externalId} game={game} index={i} imgSize={imgSize} onSelect={setPendingGame} />
+                    <GamePlanet
+                      key={game.externalId}
+                      name={game.name}
+                      imageUrl={game.imageUrl}
+                      index={i}
+                      imgSize={imgSize}
+                      onSelect={() => setPendingGame(game)}
+                    />
                   ))}
                 </div>
               </div>
