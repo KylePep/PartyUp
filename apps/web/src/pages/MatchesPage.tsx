@@ -11,6 +11,7 @@ import { TABS } from '../lib/tabs'
 import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
 import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
 import { PaginationControls } from '../components/ui'
+import { useUserGames } from '../hooks/useUserGames'
 
 const PAGE_SIZE = 12
 
@@ -24,9 +25,19 @@ export default function MatchesPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [selected, setSelected] = useState<CharacterMatchDto | null>(null)
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
+  const [searchInput, setSearchInput] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const { games } = useUserGames()
 
   useEffect(() => {
-    getMatches(page, PAGE_SIZE)
+    const timer = setTimeout(() => setDebouncedSearch(searchInput), 300)
+    return () => clearTimeout(timer)
+  }, [searchInput])
+
+  useEffect(() => {
+    setStatus('loading')
+    getMatches(page, PAGE_SIZE, selectedGameId ?? undefined, debouncedSearch || undefined)
       .then(result => {
         setMatches(result.items)
         setTotalCount(result.totalCount)
@@ -47,7 +58,7 @@ export default function MatchesPage() {
         }
       })
       .catch(() => setStatus('error'))
-  }, [targetId, page])
+  }, [targetId, page, selectedGameId, debouncedSearch])
 
   function handleSelect(match: CharacterMatchDto) {
     setSelected(match)
@@ -59,6 +70,16 @@ export default function MatchesPage() {
         )
       })
     }
+  }
+
+  function handleGameChange(gameId: string | null) {
+    setSelectedGameId(gameId)
+    setPage(1)
+  }
+
+  function handleSearchChange(value: string) {
+    setSearchInput(value)
+    setPage(1)
   }
 
   const leftContent = selected ? (
@@ -84,16 +105,37 @@ export default function MatchesPage() {
 
   const rightContent = (
     <div className="md:h-full flex flex-col w-full min-h-0">
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent flex items-center justify-between'>
-        <h2 className="text-xs font-mono uppercase tracking-widest">My Collection</h2>
-        {totalCount > 0 && (
-          <PaginationControls
-            page={page}
-            pageSize={PAGE_SIZE}
-            totalCount={totalCount}
-            onPageChange={setPage}
+      <div className='px-4 py-3 border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+        <div className="flex items-center justify-between min-h-[28px]">
+          <h2 className="text-xs font-mono uppercase tracking-widest">My Collection</h2>
+          {totalCount > 0 && (
+            <PaginationControls
+              page={page}
+              pageSize={PAGE_SIZE}
+              totalCount={totalCount}
+              onPageChange={setPage}
+            />
+          )}
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 mt-2">
+          <select
+            value={selectedGameId ?? ''}
+            onChange={e => handleGameChange(e.target.value || null)}
+            className="sm:w-40 text-xs font-mono bg-cyan-950/30 border border-cyan-950/50 rounded px-2 py-1 text-text"
+          >
+            <option value="">All Games</option>
+            {games.map(g => (
+              <option key={g.id} value={g.gameId}>{g.gameName}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={searchInput}
+            onChange={e => handleSearchChange(e.target.value)}
+            className="flex-1 text-xs font-mono bg-cyan-950/30 border border-cyan-950/50 rounded px-2 py-1 text-text placeholder:text-muted"
           />
-        )}
+        </div>
       </div>
       <Gallery
         key={page}
