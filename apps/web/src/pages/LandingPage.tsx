@@ -4,6 +4,7 @@ import { BinderShell } from '../components/layout/BinderShell'
 import AuthModal from '../components/modals/AuthModal'
 import { Button } from '../components/ui'
 import { CrystalOrb } from '../components/orb/CrystalOrb'
+import { PopularRealms } from '../components/PopularRealms'
 
 type ModalMode = 'sign-in' | 'sign-up'
 
@@ -37,6 +38,8 @@ export default function LandingPage() {
           <CrystalOrb />
         </BinderShell>
       </main>
+
+      <PopularRealms onSelect={() => setModal('sign-in')} />
 
       {modal && <AuthModal initialMode={modal} onClose={() => setModal(null)} />}
     </div>
