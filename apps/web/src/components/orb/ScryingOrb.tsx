@@ -112,23 +112,25 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
             </div>
             {popularGames.length > 0 && (
               <svg
+                viewBox="0 0 200 200"
                 className="absolute inset-0 w-full h-full pointer-events-none md:hidden"
                 aria-hidden
               >
                 <defs>
+                  {/* Arc centered at orb center (100,100), radius 78, spanning ±65° from bottom */}
                   <path
                     id="orb-popular-arc"
-                    d={`M ${orbSize * 0.14},${orbSize * 0.6} a ${orbSize * 0.43},${orbSize * 0.43} 0 0,1 ${orbSize * 0.72},0`}
+                    d="M 29,133 A 78,78 0 0 1 171,133"
                   />
                 </defs>
                 <text
-                  fontSize="11"
+                  fontSize="13"
                   fill={disabled ? 'rgba(0,210,255,0.3)' : '#00d2ff'}
                   textAnchor="middle"
-                  letterSpacing="1.5"
+                  letterSpacing="2"
                   fontFamily="monospace"
-                  stroke="rgba(0,0,0,0.75)"
-                  strokeWidth="2.5"
+                  stroke="rgba(0,0,0,0.8)"
+                  strokeWidth="3"
                   paintOrder="stroke fill"
                   style={{
                     pointerEvents: disabled ? 'none' : 'all',
