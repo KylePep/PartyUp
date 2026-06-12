@@ -84,6 +84,6 @@ export type PopularGame = {
   userGameCount: number;
 };
 
-export function getPopularGames(limit = 6): Promise<PopularGame[]> {
+export function getPopularGames(limit = 10): Promise<PopularGame[]> {
   return apiGet<PopularGame[]>(`/games/popular?limit=${limit}`);
 }

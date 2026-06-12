@@ -91,7 +91,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
         {/* IDLE STATE */}
         {searchState === 'idle' && (
           <div className="relative w-full h-full flex flex-col items-center justify-between py-8 px-4">
-            <div className="flex-1 flex items-center justify-center w-full">
+            <div className="flex-1 flex items-center justify-center w-full z-100">
               <div className="flex gap-2 items-center w-full">
                 <input
                   className="flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
@@ -113,24 +113,24 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
             {popularGames.length > 0 && (
               <svg
                 viewBox="0 0 200 200"
-                className="absolute inset-0 w-full h-full pointer-events-none md:hidden"
+                className="absolute inset-0 w-full h-full pointer-events-none md:hidden z-10"
                 aria-hidden
               >
                 <defs>
                   {/* Arc centered at orb center (100,100), radius 78, spanning ±65° from bottom */}
                   <path
                     id="orb-popular-arc"
-                    d="M 29,133 A 78,78 0 0 1 171,133"
+                    d="M 29,133 A 78,78 0 0 0 171,133"
                   />
                 </defs>
                 <text
-                  fontSize="13"
+                  fontSize="10"
                   fill={disabled ? 'rgba(0,210,255,0.3)' : '#00d2ff'}
                   textAnchor="middle"
                   letterSpacing="2"
                   fontFamily="monospace"
                   stroke="rgba(0,0,0,0.8)"
-                  strokeWidth="3"
+                  strokeWidth="1"
                   paintOrder="stroke fill"
                   style={{
                     pointerEvents: disabled ? 'none' : 'all',
@@ -322,6 +322,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
                   className="w-8 h-8 rounded object-cover flex-shrink-0"
                 />
                 <span className="flex-1 text-sm text-text truncate">{game.name}</span>
+                <span className="text-xs font-mono text-muted flex-shrink-0">{game.userGameCount}</span>
                 <Button size="sm" onClick={() => { setListOpen(false); setPendingGame(game) }}>
                   Add
                 </Button>

@@ -19,8 +19,15 @@ export function BinderShell({ title, children, clasp, claspClassName = '', foote
       <div className=" absolute top-0 md:center translate-y-1/2 md:translate-y-1/3 w-full h-2/5 md:h-1/2 flex" >
         {children}
       </div>
-      <div className={`border-cyan-950/50 border-8 md:border-10 rounded w-full md:w-3/4 px-3 ${footerClassName}`}>
-        {footer}
+
+
+      <div className="w-full h-full flex flex-col items-center justify-end gap-2">
+        {!clasp && (
+          <span className="w-full md:w-3/4 font-display font-semibold">Recent Realms</span>
+        )}
+        <div className={`relative border-cyan-950/50 border-8 md:border-10 rounded w-full md:w-3/4 px-3 ${footerClassName}`}>
+          {footer}
+        </div>
       </div>
 
       {/* Corner caps */}

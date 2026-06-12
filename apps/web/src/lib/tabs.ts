@@ -9,8 +9,8 @@ export type Tab = {
 }
 
 export const TABS: Tab[] = [
-  { label: "Games",      to: "/games",      color: "var(--color-tab-games)",      Icon: GameController },
-  { label: "My Cards",   to: "/characters", color: "var(--color-tab-cards)",      Icon: Cards },
+  { label: "Realms",      to: "/games",      color: "var(--color-tab-games)",      Icon: GameController },
+  { label: "Characters",   to: "/characters", color: "var(--color-tab-cards)",      Icon: Cards },
   { label: "Collection", to: "/matches",    color: "var(--color-tab-collection)", Icon: BookOpen },
   { label: "Settings",   to: "/settings",   color: "var(--color-tab-settings)",   Icon: GearSix },
 ]

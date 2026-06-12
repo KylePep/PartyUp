@@ -18,7 +18,7 @@ import { PaginationControls } from '../components/ui'
 const PAGE_SIZE = 12
 
 export default function CharactersPage() {
-  const TAB = TABS.find(t => t.label === 'My Cards')!
+  const TAB = TABS.find(t => t.label === 'Characters')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [characters, setCharacters] = useState<Character[]>([])
@@ -207,7 +207,7 @@ export default function CharactersPage() {
           }
         </>
       ) : undefined}
-      activeTab={"My Cards"}
+      activeTab={"Characters"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}

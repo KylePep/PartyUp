@@ -26,26 +26,43 @@ export function GamePlanet({ name, imageUrl, index, imgSize, onSelect, count }: 
       } as CSSProperties}
     >
       <div style={{ position: 'relative', width: svgSize, height: svgSize + 18 }}>
-        <img
-          src={imageUrl ?? '/placeholder-game.png'}
-          alt={name}
-          style={{
-            position: 'absolute',
-            top: 12,
-            left: 12,
-            width: imgSize,
-            height: imgSize,
-            borderRadius: '50%',
-            objectFit: 'cover',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.7)',
-          }}
-        />
+        {imageUrl ? (
+          <img
+            src={imageUrl ?? '/placeholder-game.png'}
+            alt={name}
+            style={{
+              position: 'absolute',
+              top: 12,
+              left: 12,
+              width: imgSize,
+              height: imgSize,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.7)',
+            }}
+          />
+        ) : (
+          <div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              position: 'absolute',
+              top: 12,
+              left: 12,
+              width: imgSize,
+              height: imgSize,
+              borderRadius: '50%',
+              objectFit: 'cover',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.7)',
+            }}>
+            <span className="font-mono text-muted font-bold text-4xl">{name.charAt(0).toUpperCase()}</span>
+          </div>
+        )}
         {count !== undefined && (
           <div
             style={{
               position: 'absolute',
-              top: 8,
-              right: 4,
+              bottom: 28,
+              left: 8,
               background: '#00d2ff',
               color: '#010608',
               borderRadius: '50%',
