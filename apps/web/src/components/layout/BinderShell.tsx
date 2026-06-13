@@ -23,12 +23,12 @@ export function BinderShell({ title, children, clasp, claspClassName = '', clasp
         borderRight: '2px solid #5a7880',
         borderRadius: '3px',
       }}>
-        {['top-1.5 left-1.5', 'top-1.5 right-1.5', 'bottom-1.5 left-1.5', 'bottom-1.5 right-1.5'].map((pos, i) => (
+        {/* {['top-1.5 left-1.5', 'top-1.5 right-1.5', 'bottom-1.5 left-1.5', 'bottom-1.5 right-1.5'].map((pos, i) => (
           <span key={i} className={`absolute ${pos} w-1.5 h-1.5 rounded-full pointer-events-none`} style={{
             background: 'radial-gradient(circle at 36% 30%, #dce8ec, #78909a 56%, #364850)',
             boxShadow: '0 1px 3px rgba(0,0,0,0.5)',
           }} />
-        ))}
+        ))} */}
         <h1 className="font-display font-black text-xl md:text-4xl text-cyan-800/90" style={{
           textShadow: '-1px -1px 0px rgba(7, 7, 7, 0.65)',
           letterSpacing: '0.25em',
@@ -41,12 +41,97 @@ export function BinderShell({ title, children, clasp, claspClassName = '', clasp
       </div>
 
 
-      <div className="w-full h-full flex flex-col items-center justify-end gap-2">
+      <div className="w-full h-full flex flex-col items-center justify-end">
+        {/* Leather label tab */}
         {!clasp && (
-          <span className="w-full md:w-3/4 font-display font-semibold">Recent Realms</span>
+          <div
+            className="flex items-center gap-2 w-full md:w-3/4 px-4 py-1.5"
+            style={{
+              background: 'linear-gradient(160deg, #3e1f0c 0%, #2b1508 45%, #231108 100%)',
+              borderRadius: '3px 3px 0 0',
+              borderTop: '1px solid #1c0e05',
+              borderLeft: '1px solid #1c0e05',
+              borderRight: '1px solid #120802',
+              boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.5)',
+            }}
+          >
+            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to right, transparent, rgba(190,140,60,0.45))' }} />
+            <span
+              className="font-display font-semibold uppercase"
+              style={{
+                fontSize: '0.62rem',
+                color: 'rgba(215,170,82,0.78)',
+                letterSpacing: '0.24em',
+                textShadow: '0 1px 4px rgba(0,0,0,0.9)',
+              }}
+            >
+              Recent Realms
+            </span>
+            <div style={{ flex: 1, height: '1px', background: 'linear-gradient(to left, transparent, rgba(190,140,60,0.45))' }} />
+          </div>
         )}
-        <div className={`relative border-cyan-950/50 border-8 md:border-10 rounded w-full md:w-3/4 px-3 ${footerClassName}`}>
-          {footer}
+
+        {/* Leather display section */}
+        <div
+          className={`relative w-full md:w-3/4 px-3 ${footerClassName}`}
+          style={{
+            background: 'linear-gradient(158deg, #3f1e0b 0%, #2b1508 30%, #1e0e05 55%, #271408 78%, #321b0b 100%)',
+            boxShadow: [
+              'inset 0 4px 16px rgba(0,0,0,0.8)',
+              'inset 0 -2px 5px rgba(255,155,55,0.04)',
+              'inset 2px 0 8px rgba(0,0,0,0.35)',
+              'inset -2px 0 8px rgba(0,0,0,0.35)',
+              '0 8px 20px rgba(0,0,0,0.5)',
+              '0 2px 4px rgba(0,0,0,0.4)',
+            ].join(', '),
+            border: '1px solid #140901',
+            borderRight: '2px solid #0d0601',
+            borderBottom: '3px solid #090401',
+            borderRadius: !clasp ? '0 0 3px 3px' : '3px',
+          }}
+        >
+          {/* Leather grain texture */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E")`,
+              mixBlendMode: 'soft-light',
+              opacity: 0.5,
+            }}
+          />
+          {/* Top specular highlight */}
+          <div
+            className="absolute top-0 left-0 right-0 pointer-events-none"
+            style={{
+              height: '1px',
+              background: 'linear-gradient(to right, transparent 10%, rgba(255,190,100,0.14) 35%, rgba(255,190,100,0.2) 50%, rgba(255,190,100,0.14) 65%, transparent 90%)',
+            }}
+          />
+          {/* Stitching border */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              inset: '6px',
+              border: '1px dashed rgba(188,138,62,0.32)',
+              borderRadius: '2px',
+            }}
+          />
+          {/* Brass corner rivets */}
+          {['top-2 left-2', 'top-2 right-2', 'bottom-2 left-2', 'bottom-2 right-2'].map((pos, i) => (
+            <div
+              key={i}
+              className={`absolute ${pos} w-1.5 h-1.5 rounded-full pointer-events-none`}
+              style={{
+                background: 'radial-gradient(circle at 36% 32%, rgba(225,185,90,0.7), rgba(150,105,40,0.5) 55%, rgba(60,38,10,0.8))',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.65)',
+              }}
+            />
+          ))}
+
+          {/* Footer content */}
+          <div className="relative z-10">
+            {footer}
+          </div>
         </div>
       </div>
 
@@ -74,7 +159,7 @@ export function BinderShell({ title, children, clasp, claspClassName = '', clasp
 
 
       {clasp && (
-        <div className={`absolute -bottom-10 center md:top-1/2 md:-right-10 md:-translate-y-1/2 w-48 md:w-56 h-32 md:h-48 rounded bg-cyan-900 border-cyan-800 border-t-2 border-l-2 shadow-xl rounded-l-full flex flex-1 flex-col items-center justify-center p-2 md:p-6 ${claspClassName}`} >
+        <div className={`absolute -bottom-10 center md:top-1/2 md:-right-10 md:-translate-y-1/2 w-40 md:w-56 h-38 md:h-48 rounded bg-cyan-950 border-cyan-800 border-t-2 border-l-2 shadow-xl rounded-t-full md:rounded-r-none md:rounded-l-full flex flex-1 flex-col items-center justify-center pt-6 md:p-6 ${claspClassName}`} >
           {clasp}
         </div>
       )}
