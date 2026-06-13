@@ -13,28 +13,26 @@ export function PaginationControls({ page, pageSize, totalCount, onPageChange }:
   const end = Math.min(page * pageSize, totalCount)
 
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-xs font-mono text-muted tabular-nums">
+    <div className="flex items-center justify-between gap-3 w-40">
+      <button
+        onClick={() => onPageChange(page - 1)}
+        disabled={page <= 1}
+        className=" rounded text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        aria-label="Previous page"
+      >
+        <CaretLeftIcon size={14} />
+      </button>
+      <span className="text-[0.625rem] font-mono text-muted tabular-nums">
         {totalCount === 0 ? '0 of 0' : `${start}–${end} of ${totalCount}`}
       </span>
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => onPageChange(page - 1)}
-          disabled={page <= 1}
-          className="p-1 rounded text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          aria-label="Previous page"
-        >
-          <CaretLeftIcon size={14} />
-        </button>
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={page >= totalPages}
-          className="p-1 rounded text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          aria-label="Next page"
-        >
-          <CaretRightIcon size={14} />
-        </button>
-      </div>
+      <button
+        onClick={() => onPageChange(page + 1)}
+        disabled={page >= totalPages}
+        className=" rounded text-muted hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        aria-label="Next page"
+      >
+        <CaretRightIcon size={14} />
+      </button>
     </div>
   )
 }
