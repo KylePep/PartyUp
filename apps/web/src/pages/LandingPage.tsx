@@ -74,7 +74,7 @@ export default function LandingPage() {
           footer={<>
             <p>Find your people. <br /> PartyUp matches multiplayer gamers by the games they play, the characters they build, and the vibe they bring.</p>
           </>}
-          footerClassName="flex flex-col items-center justify-center mb-20 md:mb-0 h-1/4 md:h-[30%]"
+          footerClassName="flex flex-col items-center justify-center mb-24 md:mb-0 h-1/4 md:h-[30%]"
         >
           <CrystalOrb />
         </BinderShell>
