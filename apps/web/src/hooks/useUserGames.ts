@@ -6,7 +6,7 @@ export function useUserGames() {
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
   useEffect(() => {
-    getUserGames(1, 12)
+    getUserGames(1, 50)
       .then((result) => {
         setGames(result.items);
         setStatus("success");

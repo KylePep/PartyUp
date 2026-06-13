@@ -18,7 +18,7 @@ import { PaginationControls } from '../components/ui'
 const PAGE_SIZE = 12
 
 export default function CharactersPage() {
-  const TAB = TABS.find(t => t.label === 'My Cards')!
+  const TAB = TABS.find(t => t.label === 'Characters')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [characters, setCharacters] = useState<Character[]>([])
@@ -176,16 +176,16 @@ export default function CharactersPage() {
           getKey={c => c.id}
           emptyMessage="You haven't created any characters yet"
           errorMessage="Could not load characters"
-          stickyRows
+          stickyRows={characters.length > 6}
           renderItem={c => (
             <div
-              className="flex flex-col rounded-xl"
+              className="relative h-fit md:h-full flex flex-col rounded-xl"
               style={{
                 outline: selected?.id === c.id ? '2px solid #991b1b' : '2px solid transparent',
                 outlineOffset: '2px',
               }}
             >
-              <CharacterCard character={c} onSelect={handleSelect} className="" />
+              <CharacterCard character={c} onSelect={handleSelect} className="h-min aspect-3/4 md:aspect-4/5 md:h-full" />
             </div>
           )}
         />
@@ -207,7 +207,7 @@ export default function CharactersPage() {
           }
         </>
       ) : undefined}
-      activeTab={"My Cards"}
+      activeTab={"Characters"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}

@@ -4,11 +4,14 @@ import { BinderShell } from '../components/layout/BinderShell'
 import AuthModal from '../components/modals/AuthModal'
 import { Button } from '../components/ui'
 import { CrystalOrb } from '../components/orb/CrystalOrb'
+import { PopularRealms } from '../components/PopularRealms'
+import { usePopularGames } from '../hooks/usePopularGames'
 
 type ModalMode = 'sign-in' | 'sign-up'
 
 export default function LandingPage() {
   const [modal, setModal] = useState<ModalMode | null>(null)
+  const { games: popularGames } = usePopularGames()
 
   return (
     <div className="h-dvh text-text flex relative md:py-4">
@@ -37,6 +40,8 @@ export default function LandingPage() {
           <CrystalOrb />
         </BinderShell>
       </main>
+
+      <PopularRealms games={popularGames} onSelect={() => setModal('sign-in')} />
 
       {modal && <AuthModal initialMode={modal} onClose={() => setModal(null)} />}
     </div>

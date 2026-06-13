@@ -19,7 +19,7 @@ public class CharacterMatchService : ICharacterMatchService
         _notifications = notifications;
     }
 
-    public async Task<PagedResult<CharacterMatchDto>> GetMatchesAsync(Guid userId, Guid? gameId, int page, int pageSize)
+    public async Task<PagedResult<CharacterMatchDto>> GetMatchesAsync(Guid userId, Guid? gameId, string? search, int page, int pageSize)
     {
         page = Math.Max(1, page);
         pageSize = Math.Clamp(pageSize, 1, 50);
@@ -38,9 +38,20 @@ public class CharacterMatchService : ICharacterMatchService
                 (m.CharacterA.UserGame.UserId == userId && m.CharacterA.UserGame.GameId == gameId.Value) ||
                 (m.CharacterB.UserGame.UserId == userId && m.CharacterB.UserGame.GameId == gameId.Value));
 
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.ToLower();
+            query = query.Where(m =>
+                (m.CharacterA.UserGame.UserId == userId && m.CharacterB.Name.ToLower().Contains(term)) ||
+                (m.CharacterB.UserGame.UserId == userId && m.CharacterA.Name.ToLower().Contains(term)));
+        }
+
         var totalCount = await query.CountAsync();
         var matches = await query
-            .OrderByDescending(m => m.MatchedAt)
+            .OrderBy(m => m.CharacterA.UserGame.UserId == userId
+                ? m.CharacterA.UserGame.Game.Name
+                : m.CharacterB.UserGame.Game.Name)
+            .ThenByDescending(m => m.MatchedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -68,6 +79,38 @@ public class CharacterMatchService : ICharacterMatchService
         }).ToList();
 
         return new PagedResult<CharacterMatchDto>(items, totalCount, page, pageSize);
+    }
+
+    public async Task<CharacterMatchDto?> GetMatchByIdAsync(Guid userId, Guid matchId)
+    {
+        var match = await _db.CharacterMatches
+            .Include(m => m.CharacterA).ThenInclude(c => c.UserGame).ThenInclude(ug => ug.Game)
+            .Include(m => m.CharacterA).ThenInclude(c => c.FieldValues).ThenInclude(fv => fv.FieldDefinition)
+            .Include(m => m.CharacterB).ThenInclude(c => c.UserGame).ThenInclude(ug => ug.Game)
+            .Include(m => m.CharacterB).ThenInclude(c => c.FieldValues).ThenInclude(fv => fv.FieldDefinition)
+            .Where(m => m.Id == matchId && (
+                m.CharacterA.UserGame.UserId == userId ||
+                m.CharacterB.UserGame.UserId == userId))
+            .FirstOrDefaultAsync();
+
+        if (match is null) return null;
+
+        var isMineA = match.CharacterA.UserGame.UserId == userId;
+        var mine = isMineA ? match.CharacterA : match.CharacterB;
+        var theirs = isMineA ? match.CharacterB : match.CharacterA;
+        var isNew = (await _notifications.GetNewMatchIdsAsync(userId, [match.Id])).Contains(match.Id);
+
+        return new CharacterMatchDto
+        {
+            MatchId = match.Id,
+            MatchedAt = match.MatchedAt,
+            MyCharacter = ToSummary(mine),
+            TheirCharacter = ToProjection(theirs),
+            GameId = mine.UserGame.GameId,
+            GameName = mine.UserGame.Game.Name,
+            GameImageUrl = mine.UserGame.Game.ImageUrl,
+            IsNew = isNew
+        };
     }
 
     private static CharacterSummaryDto ToSummary(Character c) => new()

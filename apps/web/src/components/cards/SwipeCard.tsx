@@ -125,8 +125,9 @@ export function SwipeCard({ character, onLike, onDislike, isTop }: SwipeCardProp
       ? '[animation:slide-out-right_0.38s_ease_forwards]'
       : exiting === 'left'
         ? '[animation:slide-out-left_0.38s_ease_forwards]'
-        : '[animation:slide-in-left_0.35s_ease_forwards]'
+        : ''
     : '[animation:card-enter_0.35s_ease_forwards]'
+  // [animation:slide-in-left_0.35s_ease_forwards]
 
   return (
     <div

@@ -114,7 +114,6 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
 
   return (
     <div className="flex flex-col h-full gap-8 overflow-y-auto"
-      style={{ height: 'calc(100vh - 6rem)' }}
     >
       {/* Progress indicator */}
       <div className="flex items-center gap-2">

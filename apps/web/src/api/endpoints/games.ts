@@ -75,3 +75,15 @@ export function getFieldDefinitions(gameId: string): Promise<FieldDefinitionsRes
 export function regenerateSchema(gameId: string): Promise<void> {
   return apiPostEmpty(`/games/${gameId}/regenerate-schema`);
 }
+
+export type PopularGame = {
+  id: string;
+  externalId: number;
+  name: string;
+  imageUrl: string | null;
+  userGameCount: number;
+};
+
+export function getPopularGames(limit = 10): Promise<PopularGame[]> {
+  return apiGet<PopularGame[]>(`/games/popular?limit=${limit}`);
+}

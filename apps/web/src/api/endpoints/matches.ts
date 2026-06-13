@@ -23,8 +23,18 @@ export type CharacterMatchDto = {
   isNew: boolean;
 };
 
-export function getMatches(page: number, pageSize: number, gameId?: string): Promise<PagedResult<CharacterMatchDto>> {
+export function getMatchById(matchId: string): Promise<CharacterMatchDto> {
+  return apiGet<CharacterMatchDto>(`/character-matches/${matchId}`);
+}
+
+export function getMatches(
+  page: number,
+  pageSize: number,
+  gameId?: string,
+  search?: string
+): Promise<PagedResult<CharacterMatchDto>> {
   const qs = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
   if (gameId) qs.set('gameId', gameId);
+  if (search) qs.set('search', search);
   return apiGet<PagedResult<CharacterMatchDto>>(`/character-matches?${qs.toString()}`);
 }

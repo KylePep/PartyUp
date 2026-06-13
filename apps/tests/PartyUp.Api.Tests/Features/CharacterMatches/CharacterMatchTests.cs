@@ -88,19 +88,7 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
             var ugB = await AddGameAsync(clientB, externalId);
             var charA = await CreateCharacterAsync(clientA, ugA.Id);
             var charB = await CreateCharacterAsync(clientB, ugB.Id);
-
-            await clientA.PostAsJsonAsync("/api/character-interactions", new
-            {
-                fromCharacterId = charA,
-                toCharacterId = charB,
-                type = InteractionType.Like
-            });
-            await clientB.PostAsJsonAsync("/api/character-interactions", new
-            {
-                fromCharacterId = charB,
-                toCharacterId = charA,
-                type = InteractionType.Like
-            });
+            await MutualLikeAsync(clientA, charA, clientB, charB);
         }
 
         var page1Response = await clientA.GetAsync("/api/character-matches?page=1&pageSize=2");
@@ -118,6 +106,89 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         page2.TotalCount.Should().Be(3);
     }
 
+    [Fact]
+    public async Task GetMatches_OrderedByGameNameAsc()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+
+        // FakeRawgHandler returns "Game {id}" as the name — use IDs whose names
+        // sort alphabetically in a known order.
+        // extIdEarly is in the 3xxxx range ("Game 3xxxx"), extIdLate adds 50000
+        // to put it in the 8xxxx range ("Game 8xxxx"), which sorts after "Game 3xxxx".
+        var extIdEarly = Interlocked.Increment(ref _gameCounter);
+        var extIdLate = extIdEarly + 50000;
+
+        // Create the "late" match FIRST (reversed order) to prove sort is by name, not insertion
+        var ugALate = await AddGameAsync(clientA, extIdLate);
+        var ugBLate = await AddGameAsync(clientB, extIdLate);
+        var charALate = await CreateCharacterAsync(clientA, ugALate.Id);
+        var charBLate = await CreateCharacterAsync(clientB, ugBLate.Id);
+        await MutualLikeAsync(clientA, charALate, clientB, charBLate);
+
+        // Create the "early" match SECOND
+        var ugAEarly = await AddGameAsync(clientA, extIdEarly);
+        var ugBEarly = await AddGameAsync(clientB, extIdEarly);
+        var charAEarly = await CreateCharacterAsync(clientA, ugAEarly.Id);
+        var charBEarly = await CreateCharacterAsync(clientB, ugBEarly.Id);
+        await MutualLikeAsync(clientA, charAEarly, clientB, charBEarly);
+
+        var response = await clientA.GetAsync("/api/character-matches");
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+
+        result!.Items.Should().HaveCount(2);
+        result.Items[0].GameName.Should().Be($"Game {extIdEarly}");
+        result.Items[1].GameName.Should().Be($"Game {extIdLate}");
+    }
+
+    [Fact]
+    public async Task GetMatches_WithSearchFilter_ReturnsByTheirCharacterName()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var extId = Interlocked.Increment(ref _gameCounter);
+        var ugA = await AddGameAsync(clientA, extId);
+        var ugB = await AddGameAsync(clientB, extId);
+        var charA = await CreateCharacterAsync(clientA, ugA.Id);
+        var charB = await CreateCharacterAsync(clientB, ugB.Id, name: "Swordmaster");
+        await MutualLikeAsync(clientA, charA, clientB, charB);
+
+        var response = await clientA.GetAsync("/api/character-matches?search=sword");
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+
+        result!.Items.Should().HaveCount(1);
+        result.Items[0].TheirCharacter.Id.Should().Be(charB);
+    }
+
+    [Fact]
+    public async Task GetMatches_WithSearchFilter_IsCaseInsensitive()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var clientB = await CreateAuthenticatedClientAsync();
+        var extId = Interlocked.Increment(ref _gameCounter);
+        var ugA = await AddGameAsync(clientA, extId);
+        var ugB = await AddGameAsync(clientB, extId);
+        var charA = await CreateCharacterAsync(clientA, ugA.Id);
+        var charB = await CreateCharacterAsync(clientB, ugB.Id, name: "Swordmaster");
+        await MutualLikeAsync(clientA, charA, clientB, charB);
+
+        var response = await clientA.GetAsync("/api/character-matches?search=SWORD");
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+
+        result!.Items.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task GetMatches_WithSearchFilter_NoMatch_ReturnsEmpty()
+    {
+        var (_, _, clientA, _, _) = await SetupMutualMatchAsync();
+
+        var response = await clientA.GetAsync("/api/character-matches?search=xyznomatch999");
+        var result = await response.Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+
+        result!.Items.Should().BeEmpty();
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<(Guid CharA, Guid CharB, HttpClient ClientA, HttpClient ClientB, Guid GameId)>
@@ -132,7 +203,13 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
 
         var charA = await CreateCharacterAsync(clientA, ugA.Id);
         var charB = await CreateCharacterAsync(clientB, ugB.Id);
+        await MutualLikeAsync(clientA, charA, clientB, charB);
 
+        return (charA, charB, clientA, clientB, ugA.GameId);
+    }
+
+    private async Task MutualLikeAsync(HttpClient clientA, Guid charA, HttpClient clientB, Guid charB)
+    {
         await clientA.PostAsJsonAsync("/api/character-interactions", new
         {
             fromCharacterId = charA,
@@ -145,8 +222,6 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
             toCharacterId = charA,
             type = InteractionType.Like
         });
-
-        return (charA, charB, clientA, clientB, ugA.GameId);
     }
 
     private async Task<UserGameDto> AddGameAsync(HttpClient client, int externalId)
@@ -161,11 +236,11 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
         return (await response.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
     }
 
-    private async Task<Guid> CreateCharacterAsync(HttpClient client, Guid userGameId)
+    private async Task<Guid> CreateCharacterAsync(HttpClient client, Guid userGameId, string name = "TestCharacter")
     {
         var response = await client.PostAsJsonAsync("/api/characters", new
         {
-            name = "TestCharacter",
+            name,
             platform = "PC",
             platformHandle = "TestHandle",
             userGameId

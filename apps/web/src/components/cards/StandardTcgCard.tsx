@@ -39,7 +39,7 @@ export function StandardTcgCard({
           className="flex items-center justify-between px-1.5 py-1 flex-shrink-0 rounded-sm"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
-          <span className="font-display font-semibold text-text text-sm truncate">{name}</span>
+          <span className="font-display font-semibold text-text text-xs truncate">{name}</span>
           <span>{platform && <PlatformIcon platform={platform} size={22} />} </span>
         </div>
 
@@ -69,7 +69,8 @@ export function StandardTcgCard({
       {/* Stats line: badges, key attributes */}
       {statsLine && (
         <div
-          className="px-2 flex-shrink-0 truncate rounded-sm"
+          className="px-2 flex-shrink-0 truncate rounded-sm 
+          "
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           {statsLine}

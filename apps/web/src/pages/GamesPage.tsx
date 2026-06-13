@@ -15,7 +15,7 @@ import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
 const PAGE_SIZE = 12
 
 export default function GamesPage() {
-  const TAB = TABS.find(t => t.label === 'Games')!
+  const TAB = TABS.find(t => t.label === 'Realms')!
   const [searchParams] = useSearchParams()
   const targetId = searchParams.get('id')
   const [games, setGames] = useState<UserGame[]>([])
@@ -128,7 +128,7 @@ export default function GamesPage() {
         getKey={(g: UserGame) => g.id}
         emptyMessage="You haven't added any games yet"
         errorMessage="Could not load games"
-        stickyRows
+        stickyRows={games.length > 6}
         renderItem={(g: UserGame) => (
           <div className={`relative h-fit md:h-full ${selected?.id === g.id ? 'ring-2 ring-blue-700 rounded-xl' : ''}`}>
             <NewMatchBadge count={g.newMatchCount} />
@@ -156,7 +156,7 @@ export default function GamesPage() {
           />
         </>
       ) : undefined}
-      activeTab={"Games"}
+      activeTab={"Realms"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
       leftContent={leftContent}

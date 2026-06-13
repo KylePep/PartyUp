@@ -53,7 +53,7 @@ const ATMO_ICONS: AtmoIcon[] = [
   { Icon: Star, color: 'rgba(251,146,60,0.95)', left: '44%', top: '65%', dur: 10, delay: 1.5, op: 0.78, tx: '4px', ty: '-10px', tx2: '8px', ty2: '-18px' },
   { Icon: Lightning, color: 'rgba(251,146,60,0.9)', left: '26%', top: '24%', dur: 12, delay: 5, op: 0.70, tx: '8px', ty: '7px', tx2: '14px', ty2: '14px' },
   { Icon: Crown, color: 'rgba(251,146,60,0.88)', left: '52%', top: '30%', dur: 14, delay: 3, op: 0.65, tx: '-6px', ty: '6px', tx2: '-11px', ty2: '12px' },
-  { Icon: Sword, color: 'rgba(100,220,255,0.85)', left: '76%', top: '48%', dur: 10, delay: 6.5, op: 0.60, tx: '-5px', ty: '-8px', tx2: '-10px', ty2: '-15px' },
+  { Icon: Sword, color: 'rgba(100,220,255,0.85)', left: '80%', top: '54%', dur: 10, delay: 6.5, op: 0.60, tx: '-5px', ty: '-8px', tx2: '-10px', ty2: '-15px' },
 ]
 
 export function MagicOrb({ className = '', style, focused = false, children }: MagicOrbProps) {

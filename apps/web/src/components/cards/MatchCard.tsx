@@ -10,6 +10,7 @@ interface MatchCardProps {
   matchedAt: string
   matchId: string
   isNew?: boolean
+  className?: string
   onSelect?: (character: Character) => void
 }
 
@@ -26,7 +27,7 @@ function MatchFront({ character }: MatchCardProps) {
 
   const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
   const statsLine = statsContent ? (
-    <span className="text-xs text-muted font-semibold">{statsContent}</span>
+    <span className="text-[0.625rem] text-muted font-semibold">{statsContent}</span>
   ) : undefined
 
   const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')
@@ -40,12 +41,12 @@ function MatchFront({ character }: MatchCardProps) {
       statsLine={statsLine}
       textBody={
         <>
-          <p className="text-xs text-muted mb-2">{topBioContent}</p>
-          {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+          <p className="text-[0.625rem] text-muted mb-2">{topBioContent}</p>
+          {character.bio ? <p className="text-[0.625rem] text-muted line-clamp-3">{character.bio}</p> : undefined}
         </>
       }
       bottomStat={
-        <div className="flex w-full justify-between">
+        <div className="flex w-full justify-between text-[0.625rem]">
           <span>
             ↑ Tap for more
           </span>
@@ -107,14 +108,14 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
   )
 }
 
-export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSelect }: MatchCardProps) {
+export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSelect, className }: MatchCardProps) {
   return (
-    <div className={`relative flex flex-col flex-1 min-h-0 ${isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
+    <div className={`${className} ${isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
       <FlippableCard
+        className="h-min aspect-3/4 md:aspect-4/5 md:h-full"
         front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         onFrontClick={onSelect ? () => onSelect(character) : undefined}
-        className="h-full w-full aspect-3/4"
       />
     </div>
   )
