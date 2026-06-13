@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { getMatches, type CharacterMatchDto } from '../api/endpoints/matches'
+import { getMatches, getMatchById, type CharacterMatchDto } from '../api/endpoints/matches'
 import { markMatchViewed } from '../api/endpoints/matchNotifications'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { CharacterMiniCard } from '../components/cards/CharacterMiniCard'
@@ -44,8 +44,8 @@ export default function MatchesPage() {
         setStatus(result.totalCount === 0 ? 'empty' : 'ready')
         if (targetId && page === 1) {
           const match = result.items.find(m => m.matchId === targetId) ?? null
-          setSelected(match)
           if (match) {
+            setSelected(match)
             setActiveSide('left')
             if (match.isNew) {
               markMatchViewed(match.matchId).then(() => {
@@ -54,6 +54,16 @@ export default function MatchesPage() {
                 )
               })
             }
+          } else {
+            getMatchById(targetId)
+              .then(fetched => {
+                setSelected(fetched)
+                setActiveSide('left')
+                if (fetched.isNew) {
+                  markMatchViewed(fetched.matchId)
+                }
+              })
+              .catch(() => {})
           }
         }
       })
