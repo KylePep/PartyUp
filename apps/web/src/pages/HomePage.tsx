@@ -48,7 +48,8 @@ export default function HomePage() {
     <main className="flex flex-1 md:items-center md:justify-center md:py-4 overflow-hidden relative">
       <section className="md:h-full w-full mx-4 md:w-1/2 relative py-4 mx-4 pb-14 md:pb-0">
         <BinderShell
-          title={`${name}'s Guildoire`}
+          // title={`${name}'s Guildoire`}
+          title="PartyUp"
           className="relative h-full w-full z-20"
           footer={visibleRealms.length === 0 ? (
             <p className="col-span-3 text-xs font-mono text-muted text-center">
