@@ -23,6 +23,10 @@ export type CharacterMatchDto = {
   isNew: boolean;
 };
 
+export function getMatchById(matchId: string): Promise<CharacterMatchDto> {
+  return apiGet<CharacterMatchDto>(`/character-matches/${matchId}`);
+}
+
 export function getMatches(
   page: number,
   pageSize: number,
