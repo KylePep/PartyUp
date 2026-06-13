@@ -55,13 +55,14 @@ export function RealmRightPage({ gameId }: RealmRightPageProps) {
         errorMessage="Could not load matches"
         stickyRows={matches.length > 6}
         renderItem={m => (
-          <div className="flex flex-col flex-1">
+          <div className="relative h-fit md:h-full">
             <MatchCard
               matchId={m.matchId}
               character={m.theirCharacter}
               gameName={m.gameName}
               matchedAt={m.matchedAt}
               isNew={m.isNew}
+              className=""
             />
           </div>
         )}

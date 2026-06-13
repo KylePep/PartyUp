@@ -19,7 +19,7 @@ public class CharacterMatchService : ICharacterMatchService
         _notifications = notifications;
     }
 
-    public async Task<PagedResult<CharacterMatchDto>> GetMatchesAsync(Guid userId, Guid? gameId, int page, int pageSize)
+    public async Task<PagedResult<CharacterMatchDto>> GetMatchesAsync(Guid userId, Guid? gameId, string? search, int page, int pageSize)
     {
         page = Math.Max(1, page);
         pageSize = Math.Clamp(pageSize, 1, 50);
@@ -38,9 +38,20 @@ public class CharacterMatchService : ICharacterMatchService
                 (m.CharacterA.UserGame.UserId == userId && m.CharacterA.UserGame.GameId == gameId.Value) ||
                 (m.CharacterB.UserGame.UserId == userId && m.CharacterB.UserGame.GameId == gameId.Value));
 
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var term = search.ToLower();
+            query = query.Where(m =>
+                (m.CharacterA.UserGame.UserId == userId && m.CharacterB.Name.ToLower().Contains(term)) ||
+                (m.CharacterB.UserGame.UserId == userId && m.CharacterA.Name.ToLower().Contains(term)));
+        }
+
         var totalCount = await query.CountAsync();
         var matches = await query
-            .OrderByDescending(m => m.MatchedAt)
+            .OrderBy(m => m.CharacterA.UserGame.UserId == userId
+                ? m.CharacterA.UserGame.Game.Name
+                : m.CharacterB.UserGame.Game.Name)
+            .ThenByDescending(m => m.MatchedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

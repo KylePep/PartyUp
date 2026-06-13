@@ -10,6 +10,7 @@ interface MatchCardProps {
   matchedAt: string
   matchId: string
   isNew?: boolean
+  className?: string
   onSelect?: (character: Character) => void
 }
 
@@ -107,14 +108,14 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
   )
 }
 
-export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSelect }: MatchCardProps) {
+export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSelect, className }: MatchCardProps) {
   return (
-    <div className={`relative flex flex-col flex-1 min-h-0 ${isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
+    <div className={`${className} ${isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
       <FlippableCard
+        className="h-min aspect-3/4 md:aspect-4/5 md:h-full"
         front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         onFrontClick={onSelect ? () => onSelect(character) : undefined}
-        className="h-full w-full aspect-3/4"
       />
     </div>
   )

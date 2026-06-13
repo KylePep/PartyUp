@@ -7,11 +7,12 @@ interface CharacterCardProps {
   gameName: string
   matchedAt: string
   matchId: string
+  className?: string
   // onDelete?: (character: Character) => void
   onSelect?: (character: Character) => void
 }
 
-export function CollectionCard({ character, onSelect }: CharacterCardProps) {
+export function CollectionCard({ character, onSelect, className }: CharacterCardProps) {
   const navigate = useNavigate()
 
   function handleClick() {
@@ -36,6 +37,7 @@ export function CollectionCard({ character, onSelect }: CharacterCardProps) {
 
   return (
     <StandardTcgCard
+      className={className}
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}
