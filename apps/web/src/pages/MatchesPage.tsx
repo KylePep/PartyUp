@@ -153,6 +153,7 @@ export default function MatchesPage() {
               gameName={m.gameName}
               matchedAt={m.matchedAt}
               onSelect={() => handleSelect(m)}
+              className="h-min aspect-3/4 md:aspect-4/5 md:h-full"
             />
           </div>
         )}

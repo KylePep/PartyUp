@@ -179,13 +179,13 @@ export default function CharactersPage() {
           stickyRows={characters.length > 6}
           renderItem={c => (
             <div
-              className="flex flex-col rounded-xl"
+              className="relative h-fit md:h-full flex flex-col rounded-xl"
               style={{
                 outline: selected?.id === c.id ? '2px solid #991b1b' : '2px solid transparent',
                 outlineOffset: '2px',
               }}
             >
-              <CharacterCard character={c} onSelect={handleSelect} className="" />
+              <CharacterCard character={c} onSelect={handleSelect} className="h-min aspect-3/4 md:aspect-4/5 md:h-full" />
             </div>
           )}
         />
