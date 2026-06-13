@@ -44,7 +44,7 @@ export function NavBar({ variant }: NavBarProps) {
         px-2
         md:px-5
         md:pe-6  
-        md:pt-8
+        md:pt-10
         md:pb-8
         ${variant === 'landing'
           ? ''
