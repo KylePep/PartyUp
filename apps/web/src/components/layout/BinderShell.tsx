@@ -14,6 +14,13 @@ interface BinderShellProps {
 export function BinderShell({ title, children, clasp, claspClassName = '', claspStyle, footer, footerClassName = '', className = '' }: BinderShellProps) {
   return (
     <div className={`relative binder-frame border-[#1a0c04] border-10 md:border-16 rounded py-8 md:py-4 px-6 flex flex-col md:gap-4 items-center justify-between ${className}`}>
+      {/* Gold thread stitching around full binder */}
+      <div className="absolute pointer-events-none rounded" style={{
+        inset: '6px',
+        border: '1.5px dashed rgba(188,138,62,0.3)',
+        borderRadius: '3px',
+        zIndex: 0,
+      }} />
 
       {/* Gold nameplate */}
       <div className="relative mt-8 md:mt-2 px-7 py-2 md:px-10 md:py-3 w-3/4 md:w-1/2 max-w-3/4" style={{
@@ -34,7 +41,7 @@ export function BinderShell({ title, children, clasp, claspClassName = '', clasp
             boxShadow: '0 1px 2px rgba(0,0,0,0.7)',
           }} />
         ))}
-        <h1 className="font-display font-black text-xl md:text-4xl" style={{
+        <h1 className="font-display font-black text-xl md:text-4xl text-center" style={{
           color: 'rgba(45,20,0,0.88)',
           textShadow: '0 1px 2px rgba(0,0,0,0.6), 0 -1px 0 rgba(255,225,90,0.35)',
           letterSpacing: '0.25em',
@@ -117,29 +124,29 @@ export function BinderShell({ title, children, clasp, claspClassName = '', clasp
               boxShadow: '0 1px 2px rgba(0,0,0,0.65)',
             }} />
           ))}
-          <div className="relative z-10">{footer}</div>
+          {footer}
         </div>
       </div>
 
       {/* Corner caps — leather L-brackets */}
       <span className="absolute rounded -top-3 md:-top-5 -left-3 md:-left-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none" style={{
         clipPath: 'polygon(0 0, 100% 0, 100% 25%, 25% 25%, 25% 100%, 0 100%)',
-        background: 'linear-gradient(135deg, #6c3418 0%, #4a2010 35%, #5c2c14 60%, #3a1a08 100%)',
+        background: 'linear-gradient(135deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
         filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.6))',
       }} />
       <span className="absolute rounded -top-3 md:-top-5 -right-3 md:-right-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none" style={{
         clipPath: 'polygon(0 0, 100% 0, 100% 100%, 75% 100%, 75% 25%, 0 25%)',
-        background: 'linear-gradient(225deg, #6c3418 0%, #4a2010 35%, #5c2c14 60%, #3a1a08 100%)',
+        background: 'linear-gradient(135deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
         filter: 'drop-shadow(-2px 2px 4px rgba(0,0,0,0.6))',
       }} />
       <span className="absolute rounded -bottom-3 md:-bottom-5 -left-3 md:-left-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none" style={{
         clipPath: 'polygon(0 0, 25% 0, 25% 75%, 100% 75%, 100% 100%, 0 100%)',
-        background: 'linear-gradient(45deg, #6c3418 0%, #4a2010 35%, #5c2c14 60%, #3a1a08 100%)',
+        background: 'linear-gradient(135deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
         filter: 'drop-shadow(2px -2px 4px rgba(0,0,0,0.6))',
       }} />
       <span className="absolute rounded -bottom-3 md:-bottom-5 -right-3 md:-right-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none" style={{
         clipPath: 'polygon(75% 0, 100% 0, 100% 100%, 0 100%, 0 75%, 75% 75%)',
-        background: 'linear-gradient(315deg, #6c3418 0%, #4a2010 35%, #5c2c14 60%, #3a1a08 100%)',
+        background: 'linear-gradient(135deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
         filter: 'drop-shadow(-2px -2px 4px rgba(0,0,0,0.6))',
       }} />
 
