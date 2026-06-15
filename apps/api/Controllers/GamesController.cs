@@ -96,6 +96,17 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
+  [Authorize]
+  [EnableRateLimiting("game-search")]
+  [HttpGet("parent-preview")]
+  public async Task<IActionResult> GetParentPreview([FromQuery] int externalId)
+  {
+    var result = await _service.GetParentPreview(externalId);
+    if (result == null)
+      return NotFound();
+    return Ok(result);
+  }
+
   [EnableRateLimiting("ai-schema")]
   [Authorize]
   [HttpPost("{id:guid}/regenerate-schema")]
