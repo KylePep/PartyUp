@@ -17,7 +17,8 @@
       "Bash(dotnet add *)",
       "Bash(dotnet build *)",
       "Bash(dotnet clean *)",
-      "Bash(dotnet ef *)"
+      "Bash(dotnet ef *)",
+      "Read(//c/Users/kaize/.claude/plugins/cache/claude-plugins-official/superpowers/5.1.0/skills/brainstorming/**)"
     ]
   }
 }

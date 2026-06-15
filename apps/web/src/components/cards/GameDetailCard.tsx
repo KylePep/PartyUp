@@ -17,7 +17,7 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
 
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div className="px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent">
+      <div className="px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent">
         <h2 className="text-xs font-mono uppercase tracking-widest">Game Card Details</h2>
       </div>
       <div className="overflow-y-auto overflow-x-hidden flex flex-col flex-1 min-h-0 w-full p-2 md:p-4">

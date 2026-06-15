@@ -63,7 +63,7 @@ export default function MatchesPage() {
                   markMatchViewed(fetched.matchId)
                 }
               })
-              .catch(() => {})
+              .catch(() => { })
           }
         }
       })
@@ -94,7 +94,7 @@ export default function MatchesPage() {
 
   const leftContent = selected ? (
     <div className="flex flex-col md:flex-1 md:min-h-0">
-      <div className="px-4 py-3 md:min-h-[76px] md:h-[76px] md:max-h-[76px] border-b-4 border-cyan-950/50">
+      <div className="px-4 py-3 md:min-h-[76px] md:h-[76px] md:max-h-[76px] border-b-4 border-orange-950/50">
         <div className='flex gap-4'>
           <p className="text-xs text-muted uppercase tracking-widest mb-0.5">Match</p>
           <p className="text-xs text-muted">
@@ -115,7 +115,7 @@ export default function MatchesPage() {
 
   const rightContent = (
     <div className="md:h-full flex flex-col w-full min-h-0">
-      <div className='flex flex-col gap-4 md:gap-0 px-4 py-3 md:min-h-[76px] md:h-[76px] md:max-h-[76px] text-[0.625rem] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+      <div className='flex flex-col gap-4 md:gap-0 px-4 py-3 md:min-h-[76px] md:h-[76px] md:max-h-[76px] text-[0.625rem] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent'>
         <div className="flex items-center justify-between ">
           <h2 className="font-mono uppercase tracking-widest mb-0">My Collection</h2>
           {totalCount > 0 && (
@@ -131,7 +131,7 @@ export default function MatchesPage() {
           <select
             value={selectedGameId ?? ''}
             onChange={e => handleGameChange(e.target.value || null)}
-            className="sm:w-60  font-mono bg-cyan-950/30 border border-cyan-950/50 rounded px-2"
+            className="sm:w-60  font-mono bg-orange-950/30 border border-orange-950/50 rounded px-2"
           >
             <option className="bg-black" value="" >All Games</option>
             {games.map(g => (
@@ -143,7 +143,7 @@ export default function MatchesPage() {
             placeholder="Search by name..."
             value={searchInput}
             onChange={e => handleSearchChange(e.target.value)}
-            className="flex-1 text-xs font-mono bg-cyan-950/30 border border-cyan-950/50 rounded px-2 py-1 text-text placeholder:text-muted"
+            className="flex-1 text-xs font-mono bg-orange-950/30 border border-orange-950/50 rounded px-2 py-1 text-text placeholder:text-muted"
           />
         </div>
       </div>
