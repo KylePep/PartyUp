@@ -219,6 +219,26 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
   }
 
   [Fact]
+  public async Task AddGame_WithSkipParentRedirect_DoesNotRedirect()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+
+      // 91001 has parent 91000, but skipParentRedirect=true means we add 91001 directly
+      var response = await client.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId = 91001,
+          name = "Game 91001",
+          imageUrl = (string?)null,
+          skipParentRedirect = true
+      });
+
+      response.StatusCode.Should().Be(HttpStatusCode.OK);
+      var result = await response.Content.ReadFromJsonAsync<AddGameResultDto>();
+      result!.Redirected.Should().BeFalse();
+      result.UserGame.GameName.Should().Be("Game 91001");
+  }
+
+  [Fact]
   public async Task AddGame_TwoUsersSelectDifferentEditions_BothInParentPool()
   {
       var clientA = await CreateAuthenticatedClientAsync();

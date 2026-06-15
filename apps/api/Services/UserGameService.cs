@@ -47,7 +47,7 @@ public class UserGameService : IUserGameService
         bool triggerSchemaGen;
         Guid schemaGenGameId;
 
-        if (selectedGame.ParentExternalId.HasValue)
+        if (!request.SkipParentRedirect && selectedGame.ParentExternalId.HasValue)
         {
             var existingParent = await _gameService.getGameByExternalId(selectedGame.ParentExternalId.Value);
             var isParentNew = existingParent == null;
