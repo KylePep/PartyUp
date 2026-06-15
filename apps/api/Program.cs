@@ -204,11 +204,27 @@ if (!string.IsNullOrEmpty(app.Configuration.GetConnectionString("DefaultConnecti
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PartyUp API v1"));
 
-app.MapGet("/api/health", () =>
+app.MapGet("/api/health", () => Results.Ok(new { status = "healthy" }));
+
+app.UseExceptionHandler(exceptionHandlerApp =>
 {
-    return Results.Ok(new
+    exceptionHandlerApp.Run(async context =>
     {
-        status = "healthy"
+        var logger = context.RequestServices
+            .GetRequiredService<ILogger<Program>>();
+        var exceptionFeature = context.Features
+            .Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        if (exceptionFeature != null)
+            logger.LogError(exceptionFeature.Error, "Unhandled exception");
+
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/problem+json";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            type = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+            title = "An unexpected error occurred.",
+            status = 500
+        });
     });
 });
 
