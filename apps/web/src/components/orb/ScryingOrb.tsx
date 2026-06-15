@@ -83,7 +83,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
   const imgSize = Math.max(60, Math.floor(orbSize * 0.4))
 
   return (
-    <div ref={containerRef} className="flex-1 min-h-0 w-full flex items-center justify-center py-2">
+    <div ref={containerRef} className="flex-1 min-h-0 w-full flex items-center justify-center py-3">
       {orbSize > 0 && <MagicOrb
         style={{ width: orbSize, height: orbSize }}
         focused={searchState === 'results' || searchState === 'popular'}
@@ -94,7 +94,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
             <div className="flex-1 flex items-center justify-center w-full z-100">
               <div className="flex gap-2 items-center w-full">
                 <input
-                  className="flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
+                  className="w-3/4 md:flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
                   placeholder="Search realms…"
                   value={query}
                   onChange={e => setQuery(e.target.value)}

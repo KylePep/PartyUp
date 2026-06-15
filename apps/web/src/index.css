@@ -30,15 +30,13 @@
 }
 
 .binder-frame {
-  background-color: var(--color-binder-page);
+  background: #1c0e06;
 }
 
 @media (min-width: 768px) {
   .binder-frame {
-    background: linear-gradient(to bottom right,
-        var(--color-binder-page),
-        var(--color-binder-edge));
-    box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.55), 0 8px 24px rgba(0, 0, 0, 0.25);
+    background: linear-gradient(to bottom right, #231208, #1a0c05, #100804);
+    box-shadow: 0 32px 64px -16px rgba(0, 0, 0, 0.65), 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 }
 

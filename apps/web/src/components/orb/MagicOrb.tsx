@@ -59,8 +59,8 @@ const ATMO_ICONS: AtmoIcon[] = [
 export function MagicOrb({ className = '', style, focused = false, children }: MagicOrbProps) {
   return (
     <div
-      className={`rounded-full overflow-hidden relative border-8 border-black/75 ${className}`}
-      style={{ animation: 'orb-breathe 5s ease-in-out infinite', ...style }}
+      className={`rounded-full overflow-hidden relative border-6 border-amber-500 ${className}`}
+      style={{ animation: ' 5s ease-in-out infinite', ...style }}
     >
       {/* Layer 1: deep teal background */}
       <div
