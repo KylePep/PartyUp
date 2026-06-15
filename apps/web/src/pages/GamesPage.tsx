@@ -110,7 +110,7 @@ export default function GamesPage() {
 
   const rightContent = (
     <div className="flex flex-col h-full min-h-0">
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent flex items-center justify-between'>
+      <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent flex items-center justify-between'>
         <h2 className="text-xs font-mono uppercase tracking-widest">My Game Cards</h2>
         {totalCount > 0 && (
           <PaginationControls

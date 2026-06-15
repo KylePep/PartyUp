@@ -87,3 +87,19 @@ export type PopularGame = {
 export function getPopularGames(limit = 10): Promise<PopularGame[]> {
   return apiGet<PopularGame[]>(`/games/popular?limit=${limit}`);
 }
+
+export type GamePreviewDto = {
+  externalId: number;
+  name: string;
+  imageUrl: string | null;
+  realmCount: number;
+};
+
+export type ParentPreviewResponse = {
+  selectedGame: GamePreviewDto;
+  parentGame: GamePreviewDto | null;
+};
+
+export function getParentPreview(externalId: number): Promise<ParentPreviewResponse> {
+  return apiGet<ParentPreviewResponse>(`/games/parent-preview?externalId=${externalId}`);
+}

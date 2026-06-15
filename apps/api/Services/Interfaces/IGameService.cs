@@ -17,4 +17,5 @@ public interface IGameService
   /// </summary>
   Task TryPopulateParentExternalId(Game game);
   Task<IEnumerable<PopularGameResult>> GetPopularGames(int limit);
+  Task<ParentPreviewResponse?> GetParentPreview(int externalId);
 }

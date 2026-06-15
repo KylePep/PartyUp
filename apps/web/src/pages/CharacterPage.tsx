@@ -125,7 +125,7 @@ export default function CharactersPage() {
     if (selected) {
       return (
         <div className="flex flex-col md:min-h-0">
-          <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+          <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent'>
             <h2 className="text-xs font-mono uppercase tracking-widest">Character Card Details</h2>
           </div>
           <div className='p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto'>
@@ -148,7 +148,7 @@ export default function CharactersPage() {
     }
     return (
       <div className="flex flex-col md:min-h-0">
-        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent'>
+        <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent'>
           <h2 className="text-xs font-mono uppercase tracking-widest">Select A Character</h2>
         </div>
       </div>
@@ -158,7 +158,7 @@ export default function CharactersPage() {
   const rightContent = (
     <>
       <div className="relative flex flex-col flex-1 min-h-0">
-        <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 bg-gradient-to-r from-cyan-950/25 via-transparent to-transparent flex items-center justify-between'>
+        <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent flex items-center justify-between'>
           <h2 className="text-xs font-mono uppercase tracking-widest">My Character Cards</h2>
           {totalCount > 0 && (
             <PaginationControls

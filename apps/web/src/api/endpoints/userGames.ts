@@ -4,6 +4,7 @@ export type AddUserGamePayload = {
   externalId: number;
   name: string;
   imageUrl: string | null;
+  skipParentRedirect?: boolean;
 };
 
 export type UserGame = {

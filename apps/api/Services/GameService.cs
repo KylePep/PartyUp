@@ -169,4 +169,48 @@ public class GameService : IGameService
     game.ParentExternalId = parentId;
     await _db.SaveChangesAsync();
   }
+
+  public async Task<ParentPreviewResponse?> GetParentPreview(int externalId)
+  {
+    var existingSelected = await getGameByExternalId(externalId);
+    if (existingSelected != null && !existingSelected.ParentExternalId.HasValue)
+      await TryPopulateParentExternalId(existingSelected);
+
+    var selectedGame = existingSelected ?? await GetAndPersistGameDetails(externalId);
+    if (selectedGame == null)
+      return null;
+
+    var selectedCount = await _db.UserGames.CountAsync(ug => ug.GameId == selectedGame.Id);
+
+    var selectedDto = new GamePreviewDto
+    {
+      ExternalId = selectedGame.ExternalId,
+      Name = selectedGame.Name,
+      ImageUrl = selectedGame.ImageUrl,
+      RealmCount = selectedCount
+    };
+
+    if (!selectedGame.ParentExternalId.HasValue)
+      return new ParentPreviewResponse { SelectedGame = selectedDto, ParentGame = null };
+
+    var existingParent = await getGameByExternalId(selectedGame.ParentExternalId.Value);
+    var parentGame = existingParent ?? await GetAndPersistGameDetails(selectedGame.ParentExternalId.Value);
+
+    if (parentGame == null)
+      return new ParentPreviewResponse { SelectedGame = selectedDto, ParentGame = null };
+
+    var parentCount = await _db.UserGames.CountAsync(ug => ug.GameId == parentGame.Id);
+
+    return new ParentPreviewResponse
+    {
+      SelectedGame = selectedDto,
+      ParentGame = new GamePreviewDto
+      {
+        ExternalId = parentGame.ExternalId,
+        Name = parentGame.Name,
+        ImageUrl = parentGame.ImageUrl,
+        RealmCount = parentCount
+      }
+    };
+  }
 }

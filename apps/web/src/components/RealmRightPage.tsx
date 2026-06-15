@@ -35,7 +35,7 @@ export function RealmRightPage({ gameId }: RealmRightPageProps) {
 
   return (
     <div className='flex flex-col h-full overflow-x-hidden'>
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-cyan-950/50 flex items-center justify-between'>
+      <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 flex items-center justify-between'>
         <h2 className="text-xs font-mono uppercase tracking-widest">Matches</h2>
         {totalCount > 0 && (
           <PaginationControls

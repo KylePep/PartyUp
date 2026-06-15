@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect, type CSSProperties } from 'react'
-import { getGames, type Game, type PopularGame } from '../../api/endpoints/games'
+import { getGames, getParentPreview, type Game, type PopularGame, type GamePreviewDto, type ParentPreviewResponse } from '../../api/endpoints/games'
 import { addUserGame as apiAddUserGame, type UserGame } from '../../api/endpoints/userGames'
 import { MagicOrb } from './MagicOrb'
 import { Modal, Button } from '../ui'
 import { GamePlanet } from './GamePlanet'
+import { ParentChoiceModal } from '../ParentChoiceModal'
 
 type PendingGame = { externalId: number; name: string; imageUrl: string | null }
 
@@ -21,6 +22,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
   const [results, setResults] = useState<Game[]>([])
   const [pendingGame, setPendingGame] = useState<PendingGame | null>(null)
   const [adding, setAdding] = useState(false)
+  const [parentPreview, setParentPreview] = useState<ParentPreviewResponse | null>(null)
   const [listOpen, setListOpen] = useState(false)
   const searchGen = useRef(0)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -63,18 +65,41 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
     searchGen.current++
   }
 
+  async function doAddGame(externalId: number, name: string, imageUrl: string | null, skipParentRedirect: boolean) {
+    const result = await apiAddUserGame({ externalId, name, imageUrl, skipParentRedirect })
+    onAdd(result.userGame)
+    setParentPreview(null)
+    setPendingGame(null)
+    handleClear()
+  }
+
   async function confirmAdd() {
     if (!pendingGame) return
     setAdding(true)
     try {
-      const result = await apiAddUserGame({
-        externalId: pendingGame.externalId,
-        name: pendingGame.name,
-        imageUrl: pendingGame.imageUrl,
-      })
-      onAdd(result.userGame)
-      setPendingGame(null)
-      handleClear()
+      let preview: ParentPreviewResponse | null = null
+      try {
+        preview = await getParentPreview(pendingGame.externalId)
+      } catch {
+        // Preview fetch failed (RAWG unreachable) — proceed without modal
+      }
+
+      if (preview?.parentGame) {
+        setPendingGame(null)
+        setParentPreview(preview)
+        return
+      }
+
+      await doAddGame(pendingGame.externalId, pendingGame.name, pendingGame.imageUrl, false)
+    } finally {
+      setAdding(false)
+    }
+  }
+
+  async function handleParentChoice(choice: GamePreviewDto) {
+    setAdding(true)
+    try {
+      await doAddGame(choice.externalId, choice.name, choice.imageUrl, true)
     } finally {
       setAdding(false)
     }
@@ -83,7 +108,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
   const imgSize = Math.max(60, Math.floor(orbSize * 0.4))
 
   return (
-    <div ref={containerRef} className="flex-1 min-h-0 w-full flex items-center justify-center py-2">
+    <div ref={containerRef} className="flex-1 min-h-0 w-full flex items-center justify-center py-3">
       {orbSize > 0 && <MagicOrb
         style={{ width: orbSize, height: orbSize }}
         focused={searchState === 'results' || searchState === 'popular'}
@@ -94,7 +119,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
             <div className="flex-1 flex items-center justify-center w-full z-100">
               <div className="flex gap-2 items-center w-full">
                 <input
-                  className="flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
+                  className="w-3/4 md:flex-1 bg-transparent border-b border-cyan-400/50 text-off-white text-sm font-mono placeholder:text-muted/50 outline-none pb-1 caret-cyan-400"
                   placeholder="Search realms…"
                   value={query}
                   onChange={e => setQuery(e.target.value)}
@@ -305,6 +330,16 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
           </div>
         </div>
       </Modal>
+
+      {parentPreview?.parentGame && (
+        <ParentChoiceModal
+          selectedGame={parentPreview.selectedGame}
+          parentGame={parentPreview.parentGame}
+          onChoose={handleParentChoice}
+          onDismiss={() => setParentPreview(null)}
+          adding={adding}
+        />
+      )}
 
       {/* List view modal — shows search results or popular realms depending on state */}
       <Modal
