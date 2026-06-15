@@ -25,11 +25,11 @@ export function BinderLayout({
     <div className="relative flex flex-col md:w-full mx-4 md:mx-9 pb-14 md:pb-4 py-4 h-screen">
       {/* Binder frame */}
       <main
-        className="binder-frame grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-cyan-950/50 border-10 rounded w-full h-full relative z-20"
+        className="binder-frame grid grid-cols-1 md:grid-cols-2 grid-rows-1 border-orange-950/50 border-10 rounded w-full h-full relative z-20"
       >
         {/* Left page — hidden on mobile when right is active */}
         <div
-          className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row md:border-r-8 border-cyan-950/50 h-full`}
+          className={`${activeSide === 'left' ? 'flex' : 'hidden md:flex'} flex-col md:flex-row md:border-r-8 border-orange-950/50 h-full`}
           style={{ boxShadow: 'inset -12px 0 20px -8px rgba(0,0,0,0.1)' }}
         >
           {/* Spine bar */}
@@ -61,10 +61,10 @@ export function BinderLayout({
       <BinderTabs activeTab={activeTab} />
 
       {/* Corner caps */}
-      <span className="absolute rounded top-3 md:top-3 -left-1 md:-left-1 w-10 md:w-20 h-10 md:h-20 border-t-10 md:border-t-20 border-l-10 md:border-l-20 border-cyan-800 pointer-events-none" />
-      <span className="absolute rounded top-3 md:top-3 -right-1 md:-right-1 w-10 md:w-20 h-10 md:h-20 border-t-10 md:border-t-20 border-r-10 md:border-r-20 border-cyan-800 pointer-events-none" />
-      <span className="absolute rounded bottom-13 md:bottom-3 -left-1 md:-left-1 w-10 md:w-20 h-10 md:h-20 border-b-10 md:border-b-20 border-l-10 md:border-l-20 border-cyan-800 pointer-events-none" />
-      <span className="absolute rounded bottom-13 md:bottom-3 -right-1 md:-right-1 w-10 md:w-20 h-10 md:h-20 border-b-10 md:border-b-20 border-r-10 md:border-r-20 border-cyan-800 pointer-events-none" />
+      <span className="absolute rounded top-3 md:top-3 -left-1 md:-left-1 w-10 md:w-20 h-10 md:h-20 border-t-10 md:border-t-20 border-l-10 md:border-l-20 border-amber-600 pointer-events-none" />
+      <span className="absolute rounded top-3 md:top-3 -right-1 md:-right-1 w-10 md:w-20 h-10 md:h-20 border-t-10 md:border-t-20 border-r-10 md:border-r-20 border-amber-600 pointer-events-none" />
+      <span className="absolute rounded bottom-13 md:bottom-3 -left-1 md:-left-1 w-10 md:w-20 h-10 md:h-20 border-b-10 md:border-b-20 border-l-10 md:border-l-20 border-amber-600 pointer-events-none" />
+      <span className="absolute rounded bottom-13 md:bottom-3 -right-1 md:-right-1 w-10 md:w-20 h-10 md:h-20 border-b-10 md:border-b-20 border-r-10 md:border-r-20 border-amber-600 pointer-events-none" />
 
       {/* Mobile-only toggle button */}
       {onToggleSide && (

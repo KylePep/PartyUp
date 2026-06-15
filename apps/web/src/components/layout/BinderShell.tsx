@@ -129,12 +129,12 @@ export function BinderShell({ title, children, clasp, claspClassName = '', clasp
       </div>
 
       {/* Corner caps — leather L-brackets */}
-      <span className="absolute rounded -top-3 md:-top-5 -left-3 md:-left-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none" style={{
+      <span className="absolute rounded -top-3 md:-top-5 -left-3 md:-left-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none shadow-xl" style={{
         clipPath: 'polygon(0 0, 100% 0, 100% 25%, 25% 25%, 25% 100%, 0 100%)',
-        background: 'linear-gradient(135deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
+        background: 'linear-gradient(315deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
         filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.6))',
       }} />
-      <span className="absolute rounded -top-3 md:-top-5 -right-3 md:-right-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none" style={{
+      <span className="absolute rounded -top-3 md:-top-5 -right-3 md:-right-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none shadow-xl" style={{
         clipPath: 'polygon(0 0, 100% 0, 100% 100%, 75% 100%, 75% 25%, 0 25%)',
         background: 'linear-gradient(135deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
         filter: 'drop-shadow(-2px 2px 4px rgba(0,0,0,0.6))',
@@ -146,7 +146,7 @@ export function BinderShell({ title, children, clasp, claspClassName = '', clasp
       }} />
       <span className="absolute rounded -bottom-3 md:-bottom-5 -right-3 md:-right-5 w-10 md:w-20 h-10 md:h-20 pointer-events-none" style={{
         clipPath: 'polygon(75% 0, 100% 0, 100% 100%, 0 100%, 0 75%, 75% 75%)',
-        background: 'linear-gradient(135deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
+        background: 'linear-gradient(315deg, #c89018 0%, #6a4404 35%, #c89018 60%, #6a4404 100%)',
         filter: 'drop-shadow(-2px -2px 4px rgba(0,0,0,0.6))',
       }} />
 
