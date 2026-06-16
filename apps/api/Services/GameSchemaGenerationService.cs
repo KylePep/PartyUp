@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PartyUp.Api.Infrastructure.Data;
+using PartyUp.Api.Models;
 using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Services.Interfaces;
 
@@ -26,17 +27,18 @@ public class GameSchemaGenerationService : IGameSchemaGenerationService
 
     public async Task GenerateForGameAsync(Guid gameId, bool force = false)
     {
-        var game = await _db.Games.FindAsync(gameId);
-        if (game == null) return;
-        if (!force && game.SchemaStatus != SchemaStatus.Pending) return;
-
-        game.SchemaStatus = SchemaStatus.Generating;
-        var stale = _db.GameFieldDefinitions.Where(d => d.GameId == gameId);
-        _db.GameFieldDefinitions.RemoveRange(stale);
-        await _db.SaveChangesAsync();
-
+        Game? game = null;
         try
         {
+            game = await _db.Games.FindAsync(gameId);
+            if (game == null) return;
+            if (!force && game.SchemaStatus != SchemaStatus.Pending) return;
+
+            game.SchemaStatus = SchemaStatus.Generating;
+            var stale = _db.GameFieldDefinitions.Where(d => d.GameId == gameId);
+            _db.GameFieldDefinitions.RemoveRange(stale);
+            await _db.SaveChangesAsync();
+
             var dtos = await _anthropic.GenerateFieldDefinitionsAsync(game);
             await _fieldDefinitions.SaveDefinitionsAsync(gameId, dtos);
             game.SchemaStatus = SchemaStatus.Generated;
@@ -44,9 +46,12 @@ public class GameSchemaGenerationService : IGameSchemaGenerationService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to generate schema for game {GameId} ({GameName})", gameId, game.Name);
-            game.SchemaStatus = SchemaStatus.Failed;
-            await _db.SaveChangesAsync();
+            _logger.LogError(ex, "Failed to generate schema for game {GameId} ({GameName})", gameId, game?.Name ?? "unknown");
+            if (game != null)
+            {
+                game.SchemaStatus = SchemaStatus.Failed;
+                await _db.SaveChangesAsync();
+            }
         }
     }
 }
