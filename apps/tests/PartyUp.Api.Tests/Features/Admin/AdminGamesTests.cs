@@ -85,5 +85,38 @@ public class AdminGamesTests : TestBase, IClassFixture<ApiFactory>
         entry.FieldDefinitionCount.Should().Be(1);
     }
 
+    [Fact]
+    public async Task RegenerateSchema_AsAdmin_Returns202()
+    {
+        var game = new Game
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = 88003,
+            Name = "Failed Game",
+            SchemaStatus = SchemaStatus.Failed
+        };
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            db.Games.Add(game);
+            await db.SaveChangesAsync();
+        }
+
+        var client = await CreateAdminClientAsync();
+        var response = await client.PostAsync($"/api/admin/games/{game.Id}/regenerate-schema", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+    }
+
+    [Fact]
+    public async Task RegenerateSchema_AsAdmin_Returns404_WhenGameNotFound()
+    {
+        var client = await CreateAdminClientAsync();
+        var response = await client.PostAsync($"/api/admin/games/{Guid.NewGuid()}/regenerate-schema", null);
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
     private record AdminGameDto(Guid Id, string Name, string? ImageUrl, string SchemaStatus, int FieldDefinitionCount);
 }
