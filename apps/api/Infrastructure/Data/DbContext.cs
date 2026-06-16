@@ -95,6 +95,31 @@ namespace PartyUp.Api.Infrastructure.Data
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<Character>(e =>
+            {
+                e.Property(c => c.CreatedAt).HasDefaultValueSql("NOW()");
+            });
+
+            modelBuilder.Entity<CharacterInteraction>(e =>
+            {
+                e.HasIndex(i => i.FromCharacterId);
+                e.HasIndex(i => i.ToCharacterId);
+                e.HasIndex(i => new { i.ToCharacterId, i.Type });
+            });
+
+            modelBuilder.Entity<CharacterMatch>(e =>
+            {
+                e.HasIndex(m => m.CharacterAId);
+                e.HasIndex(m => m.CharacterBId);
+                e.HasIndex(m => new { m.CharacterAId, m.CharacterBId }).IsUnique();
+            });
+
+            modelBuilder.Entity<CharacterFieldValue>(e =>
+            {
+                e.HasIndex(fv => fv.CharacterId);
+                e.HasIndex(fv => fv.FieldDefinitionId);
+            });
+
             modelBuilder.Entity<UserProfile>(e =>
             {
                 e.HasOne(p => p.User)

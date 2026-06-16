@@ -37,4 +37,11 @@ public class GameSecurityTests : TestBase, IClassFixture<ApiFactory>
         var response = await Client.GetAsync($"/api/games/{Guid.NewGuid()}/field-definitions");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
+
+    [Fact]
+    public async Task PopularGames_WithoutAuth_Returns401()
+    {
+        var response = await Client.GetAsync("/api/games/popular");
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
 }

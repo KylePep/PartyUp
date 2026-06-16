@@ -13,13 +13,6 @@ public class PopularGamesTests : TestBase, IClassFixture<ApiFactory>
     public PopularGamesTests(ApiFactory factory) : base(factory) { }
 
     [Fact]
-    public async Task Popular_IsPublic_Returns200WithoutAuth()
-    {
-        var response = await Client.GetAsync("/api/games/popular");
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-    }
-
-    [Fact]
     public async Task Popular_ReturnsGamesOrderedByUserGameCount()
     {
         var clientA = await CreateAuthenticatedClientAsync();
@@ -33,7 +26,7 @@ public class PopularGamesTests : TestBase, IClassFixture<ApiFactory>
         await clientB.PostAsJsonAsync("/api/user-games", new { externalId = gameAId, name = $"Game {gameAId}", imageUrl = (string?)null });
         await clientC.PostAsJsonAsync("/api/user-games", new { externalId = gameBId, name = $"Game {gameBId}", imageUrl = (string?)null });
 
-        var response = await Client.GetAsync("/api/games/popular");
+        var response = await clientA.GetAsync("/api/games/popular");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadFromJsonAsync<List<PopularGameDto>>();
@@ -46,6 +39,7 @@ public class PopularGamesTests : TestBase, IClassFixture<ApiFactory>
     [Fact]
     public async Task Popular_LimitParam_CapsResults()
     {
+        var authClient = await CreateAuthenticatedClientAsync();
         for (int i = 0; i < 8; i++)
         {
             var client = await CreateAuthenticatedClientAsync();
@@ -53,7 +47,7 @@ public class PopularGamesTests : TestBase, IClassFixture<ApiFactory>
             await client.PostAsJsonAsync("/api/user-games", new { externalId = id, name = $"Game {id}", imageUrl = (string?)null });
         }
 
-        var response = await Client.GetAsync("/api/games/popular?limit=6");
+        var response = await authClient.GetAsync("/api/games/popular?limit=6");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var result = await response.Content.ReadFromJsonAsync<List<PopularGameDto>>();

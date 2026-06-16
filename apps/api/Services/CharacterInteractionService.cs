@@ -5,6 +5,7 @@ using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.Character;
 using PartyUp.Api.Models.DTOs.CharacterInteraction;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Services.Interfaces;
 
 public class CharacterInteractionService : ICharacterInteractionService

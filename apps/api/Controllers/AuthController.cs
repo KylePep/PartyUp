@@ -19,21 +19,21 @@ public class AuthController : ControllerBase
 
   [EnableRateLimiting("auth")]
   [HttpPost("register")]
-  public async Task<IActionResult> Register(RegisterRequest request, IConfiguration config)
+  public async Task<IActionResult> Register(RegisterRequest request)
   {
     var user = await _auth.Register(request.Email, request.Password);
     if (user == null)
       return BadRequest("Email already registered");
 
-    var token = await _auth.Login(request.Email, request.Password, config);
+    var token = await _auth.Login(request.Email, request.Password);
     return Ok(new AuthResponse { Token = token!, Email = user.Email });
   }
 
   [EnableRateLimiting("auth")]
   [HttpPost("login")]
-  public async Task<IActionResult> Login(LoginRequest request, IConfiguration config)
+  public async Task<IActionResult> Login(LoginRequest request)
   {
-    var token = await _auth.Login(request.Email, request.Password, config);
+    var token = await _auth.Login(request.Email, request.Password);
     if (token == null)
       return Unauthorized();
 

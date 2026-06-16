@@ -41,7 +41,7 @@ builder.Services.AddScoped<ICharacterMatchService, CharacterMatchService>();
 builder.Services.AddScoped<IAnthropicService, AnthropicService>();
 builder.Services.AddScoped<IGameFieldDefinitionService, GameFieldDefinitionService>();
 builder.Services.AddScoped<IGameSchemaGenerationService, GameSchemaGenerationService>();
-builder.Services.AddScoped<IGcsStorageService, GcsStorageService>();
+builder.Services.AddSingleton<IGcsStorageService, GcsStorageService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IMatchNotificationService, MatchNotificationService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
@@ -181,9 +181,16 @@ builder.Services.AddCors(options =>
             var origins = builder.Configuration
                 .GetSection("AllowedOrigins")
                 .Get<string[]>() ?? [];
+
+            if (origins.Length == 0)
+                throw new InvalidOperationException(
+                    "AllowedOrigins configuration is missing or empty. " +
+                    "Add it to appsettings or environment variables.");
+
             policy.WithOrigins(origins)
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 

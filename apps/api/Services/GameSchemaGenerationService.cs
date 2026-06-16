@@ -40,13 +40,13 @@ public class GameSchemaGenerationService : IGameSchemaGenerationService
             var dtos = await _anthropic.GenerateFieldDefinitionsAsync(game);
             await _fieldDefinitions.SaveDefinitionsAsync(gameId, dtos);
             game.SchemaStatus = SchemaStatus.Generated;
+            await _db.SaveChangesAsync();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to generate schema for game {GameId} ({GameName})", gameId, game.Name);
             game.SchemaStatus = SchemaStatus.Failed;
+            await _db.SaveChangesAsync();
         }
-
-        await _db.SaveChangesAsync();
     }
 }
