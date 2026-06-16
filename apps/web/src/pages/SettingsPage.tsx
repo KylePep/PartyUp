@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { BinderLayout } from "../components/layout/BinderLayout";
 import { useProfile } from "../hooks/useProfile";
 import { useAuth } from "../context/AuthContext";
@@ -10,6 +11,7 @@ import { Button } from "../components/ui";
 export default function SettingsPage() {
   const TAB = TABS.find(t => t.label === 'Settings')!
   const { state } = useAuth();
+  const navigate = useNavigate();
   const { profile, isLoading, updateProfile, updatePreferences } = useProfile();
 
   const currentEmail =
@@ -160,6 +162,15 @@ export default function SettingsPage() {
           </Button>
         </form>
       </section>
+
+      {state.status === "authenticated" && state.user.isAdmin && (
+        <section>
+          <h2 className="text-lg font-semibold text-text mb-4">Admin</h2>
+          <Button variant="secondary" onClick={() => navigate("/admin")}>
+            Admin Panel
+          </Button>
+        </section>
+      )}
     </div>
   );
 
