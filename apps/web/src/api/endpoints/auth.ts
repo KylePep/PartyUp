@@ -13,6 +13,7 @@ export type UserProfileData = {
 export type CurrentUser = {
   id: string;
   email: string;
+  isAdmin: boolean;
   profile: UserProfileData;
 };
 
