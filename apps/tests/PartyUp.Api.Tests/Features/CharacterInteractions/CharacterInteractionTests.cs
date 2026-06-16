@@ -156,6 +156,24 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
         matchesB!.Items[0].IsNew.Should().BeTrue();
     }
 
+    [Fact]
+    public async Task RecordInteraction_WithInvalidToCharacterId_Returns404()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var sharedExternalId = Interlocked.Increment(ref _gameCounter);
+        var ugA = await AddGameAsync(clientA, sharedExternalId);
+        var charA = await CreateCharacterAsync(clientA, ugA.Id);
+
+        var response = await clientA.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charA,
+            toCharacterId = Guid.NewGuid(),
+            type = InteractionType.Like
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<(Guid CharA, Guid CharB, HttpClient ClientA, HttpClient ClientB)>

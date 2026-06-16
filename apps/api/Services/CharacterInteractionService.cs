@@ -37,7 +37,10 @@ public class CharacterInteractionService : ICharacterInteractionService
 
         var toChar = await _db.Characters
             .Include(c => c.UserGame)
-            .FirstAsync(c => c.Id == request.ToCharacterId);
+            .FirstOrDefaultAsync(c => c.Id == request.ToCharacterId);
+
+        if (toChar == null)
+            throw new KeyNotFoundException($"Character {request.ToCharacterId} not found");
 
         var recipientUserId = toChar.UserGame.UserId;
 

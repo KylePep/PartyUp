@@ -25,6 +25,10 @@ public class CharacterInteractionController : ControllerBase
             var result = await _service.RecordInteractionAsync(request, userId);
             return Ok(result);
         }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
         catch (UnauthorizedAccessException)
         {
             return Forbid();
