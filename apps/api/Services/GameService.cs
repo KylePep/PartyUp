@@ -172,45 +172,81 @@ public class GameService : IGameService
 
   public async Task<ParentPreviewResponse?> GetParentPreview(int externalId)
   {
+    // Read-only: never persist games here — persistence happens in AddGameToUser
+    // after the user makes their choice, so triggerSchemaGen fires correctly.
+
     var existingSelected = await getGameByExternalId(externalId);
     if (existingSelected != null && !existingSelected.ParentExternalId.HasValue)
       await TryPopulateParentExternalId(existingSelected);
 
-    var selectedGame = existingSelected ?? await GetAndPersistGameDetails(externalId);
-    if (selectedGame == null)
-      return null;
+    GamePreviewDto selectedDto;
+    int? parentExternalId;
 
-    var selectedCount = await _db.UserGames.CountAsync(ug => ug.GameId == selectedGame.Id);
-
-    var selectedDto = new GamePreviewDto
+    if (existingSelected != null)
     {
-      ExternalId = selectedGame.ExternalId,
-      Name = selectedGame.Name,
-      ImageUrl = selectedGame.ImageUrl,
-      RealmCount = selectedCount
-    };
-
-    if (!selectedGame.ParentExternalId.HasValue)
-      return new ParentPreviewResponse { SelectedGame = selectedDto, ParentGame = null };
-
-    var existingParent = await getGameByExternalId(selectedGame.ParentExternalId.Value);
-    var parentGame = existingParent ?? await GetAndPersistGameDetails(selectedGame.ParentExternalId.Value);
-
-    if (parentGame == null)
-      return new ParentPreviewResponse { SelectedGame = selectedDto, ParentGame = null };
-
-    var parentCount = await _db.UserGames.CountAsync(ug => ug.GameId == parentGame.Id);
-
-    return new ParentPreviewResponse
-    {
-      SelectedGame = selectedDto,
-      ParentGame = new GamePreviewDto
+      var count = await _db.UserGames.CountAsync(ug => ug.GameId == existingSelected.Id);
+      selectedDto = new GamePreviewDto
       {
-        ExternalId = parentGame.ExternalId,
-        Name = parentGame.Name,
-        ImageUrl = parentGame.ImageUrl,
-        RealmCount = parentCount
+        ExternalId = existingSelected.ExternalId,
+        Name = existingSelected.Name,
+        ImageUrl = existingSelected.ImageUrl,
+        RealmCount = count
+      };
+      parentExternalId = existingSelected.ParentExternalId;
+    }
+    else
+    {
+      var rawg = await _rawg.GetGameById(externalId);
+      if (rawg == null) return null;
+
+      parentExternalId = null;
+      if (rawg.Parents_Count > 0)
+      {
+        var parents = await _rawg.GetParentGames(externalId);
+        parentExternalId = parents?.Results.FirstOrDefault()?.Id;
       }
-    };
+
+      selectedDto = new GamePreviewDto
+      {
+        ExternalId = rawg.Id,
+        Name = rawg.Name,
+        ImageUrl = rawg.Background_Image,
+        RealmCount = 0
+      };
+    }
+
+    if (!parentExternalId.HasValue)
+      return new ParentPreviewResponse { SelectedGame = selectedDto, ParentGame = null };
+
+    var existingParent = await getGameByExternalId(parentExternalId.Value);
+
+    GamePreviewDto parentDto;
+    if (existingParent != null)
+    {
+      var count = await _db.UserGames.CountAsync(ug => ug.GameId == existingParent.Id);
+      parentDto = new GamePreviewDto
+      {
+        ExternalId = existingParent.ExternalId,
+        Name = existingParent.Name,
+        ImageUrl = existingParent.ImageUrl,
+        RealmCount = count
+      };
+    }
+    else
+    {
+      var rawgParent = await _rawg.GetGameById(parentExternalId.Value);
+      if (rawgParent == null)
+        return new ParentPreviewResponse { SelectedGame = selectedDto, ParentGame = null };
+
+      parentDto = new GamePreviewDto
+      {
+        ExternalId = rawgParent.Id,
+        Name = rawgParent.Name,
+        ImageUrl = rawgParent.Background_Image,
+        RealmCount = 0
+      };
+    }
+
+    return new ParentPreviewResponse { SelectedGame = selectedDto, ParentGame = parentDto };
   }
 }

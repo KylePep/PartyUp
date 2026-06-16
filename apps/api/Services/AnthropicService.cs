@@ -16,8 +16,9 @@ public class AnthropicService : IAnthropicService
     public AnthropicService(IHttpClientFactory httpClientFactory, IConfiguration config)
     {
         _http = httpClientFactory.CreateClient("anthropic");
-        _apiKey = config["Anthropic:ApiKey"]
-            ?? throw new InvalidOperationException("Anthropic:ApiKey is not configured.");
+        _apiKey = config["Anthropic:ApiKey"];
+        if (string.IsNullOrEmpty(_apiKey))
+            throw new InvalidOperationException("Anthropic:ApiKey is not configured.");
         _model = config["Anthropic:Model"] ?? "claude-haiku-4-5-20251001";
     }
 

@@ -60,19 +60,19 @@ public class UserGameService : IUserGameService
             if (redirected)
             {
                 message = $"{selectedGame.Name} is an expansion — we've added you to {canonicalGame.Name} instead.";
-                triggerSchemaGen = isParentNew;
+                triggerSchemaGen = isParentNew || canonicalGame.SchemaStatus == SchemaStatus.Pending;
                 schemaGenGameId = canonicalGame.Id;
             }
             else
             {
-                triggerSchemaGen = isSelectedNew;
+                triggerSchemaGen = isSelectedNew || canonicalGame.SchemaStatus == SchemaStatus.Pending;
                 schemaGenGameId = selectedGame.Id;
             }
         }
         else
         {
             canonicalGame = selectedGame;
-            triggerSchemaGen = isSelectedNew;
+            triggerSchemaGen = isSelectedNew || canonicalGame.SchemaStatus == SchemaStatus.Pending;
             schemaGenGameId = selectedGame.Id;
         }
 
@@ -99,8 +99,15 @@ public class UserGameService : IUserGameService
             _ = Task.Run(async () =>
             {
                 await using var scope = _scopeFactory.CreateAsyncScope();
-                var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
-                await generator.GenerateForGameAsync(gameId);
+                try
+                {
+                    var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
+                    await generator.GenerateForGameAsync(gameId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Schema generation task failed for game {GameId}", gameId);
+                }
             });
         }
 

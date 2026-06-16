@@ -118,8 +118,16 @@ public class GamesController : ControllerBase
     _ = Task.Run(async () =>
     {
       await using var scope = scopeFactory.CreateAsyncScope();
-      var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
-      await generator.GenerateForGameAsync(id, force: true);
+      try
+      {
+        var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
+        await generator.GenerateForGameAsync(id, force: true);
+      }
+      catch (Exception ex)
+      {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<GamesController>>();
+        logger.LogError(ex, "Schema generation task failed for game {GameId}", id);
+      }
     });
 
     return Accepted();
