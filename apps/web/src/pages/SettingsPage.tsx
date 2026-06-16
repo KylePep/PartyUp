@@ -84,7 +84,7 @@ export default function SettingsPage() {
   }
 
   const leftContent = (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 overflow-y-auto">
       <section>
         <h2 className="text-lg font-semibold text-text mb-4">Account</h2>
         <form onSubmit={handleAccountSave} className="space-y-4">
