@@ -18,7 +18,7 @@ public class ProfileController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetProfile()
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         var profile = await _profileService.GetProfileAsync(userId);
         if (profile == null) return NotFound();
         return Ok(profile);
@@ -27,7 +27,7 @@ public class ProfileController : ControllerBase
     [HttpPatch]
     public async Task<IActionResult> UpdateProfile(UpdateProfileRequest request)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         var (profile, emailConflict) = await _profileService.UpdateProfileAsync(userId, request);
         if (emailConflict) return BadRequest("Email already registered");
         if (profile == null) return NotFound();
@@ -37,7 +37,7 @@ public class ProfileController : ControllerBase
     [HttpPatch("preferences")]
     public async Task<IActionResult> UpdatePreferences(UpdatePreferencesRequest request)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         var preferences = await _profileService.UpdatePreferencesAsync(userId, request);
         if (preferences == null) return NotFound();
         return Ok(preferences);

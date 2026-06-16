@@ -19,7 +19,7 @@ public class CharacterInteractionController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<MatchResultResponse>> RecordInteraction([FromBody] CharacterInteractionRequest request)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         try
         {
             var result = await _service.RecordInteractionAsync(request, userId);
@@ -38,7 +38,7 @@ public class CharacterInteractionController : ControllerBase
     [HttpGet("pending")]
     public async Task<ActionResult<List<DiscoverCharacterResponse>>> GetPendingLikes([FromQuery] Guid characterId)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         try
         {
             var result = await _service.GetPendingLikesAsync(characterId, userId);

@@ -23,7 +23,7 @@ public class UserGamesController : ControllerBase
   [HttpPost]
   public async Task<IActionResult> AddGame([FromBody] AddUserGameRequest request)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     try
     {
       var result = await _service.AddGameToUser(userId, request);
@@ -46,7 +46,7 @@ public class UserGamesController : ControllerBase
     if (page < 1) page = 1;
     if (pageSize < 1 || pageSize > 50) pageSize = 12;
 
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var result = await _service.GetUserGames(userId, page, pageSize);
     var ids = result.Items.Select(g => g.Id).ToList();
     var counts = await _matchNotifications.GetNewMatchCountsByUserGameAsync(userId, ids);
@@ -58,7 +58,7 @@ public class UserGamesController : ControllerBase
   [HttpGet("{gameId}/game")]
   public async Task<IActionResult> GetUserGameByGameId(Guid gameId)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var userGame = await _service.GetUserGameByGameId(userId, gameId);
     if (userGame == null)
       return NotFound();
@@ -68,7 +68,7 @@ public class UserGamesController : ControllerBase
   [HttpDelete("{id}")]
   public async Task<IActionResult> DeleteUserGame(Guid id)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var deleted = await _service.DeleteUserGame(id, userId);
     if (!deleted)
       return NotFound();
