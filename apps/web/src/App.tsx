@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { NotificationProvider } from "./context/NotificationContext";
 import { AuthProvider } from "./context/AuthContext";
 import SignedInLayout from "./components/layout/SignedInLayout";
+import AdminRoute from "./components/layout/AdminRoute";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import RealmPage from "./pages/RealmPage";
@@ -11,6 +12,7 @@ import MatchesPage from "./pages/MatchesPage";
 import GamesPage from "./pages/GamesPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AdminPage from "./pages/AdminPage";
 
 export default function App() {
   return (
@@ -26,6 +28,9 @@ export default function App() {
               <Route path="/matches" element={<MatchesPage />} />
               <Route path="/games" element={<GamesPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminPage />} />
+              </Route>
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

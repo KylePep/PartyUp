@@ -106,30 +106,4 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
-  [EnableRateLimiting("ai-schema")]
-  [Authorize]
-  [HttpPost("{id:guid}/regenerate-schema")]
-  public async Task<IActionResult> RegenerateSchema(Guid id, [FromServices] IServiceScopeFactory scopeFactory)
-  {
-    var game = await _service.GetGameByDbId(id);
-    if (game == null)
-      return NotFound();
-
-    _ = Task.Run(async () =>
-    {
-      await using var scope = scopeFactory.CreateAsyncScope();
-      try
-      {
-        var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
-        await generator.GenerateForGameAsync(id, force: true);
-      }
-      catch (Exception ex)
-      {
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<GamesController>>();
-        logger.LogError(ex, "Schema generation task failed for game {GameId}", id);
-      }
-    });
-
-    return Accepted();
-  }
 }

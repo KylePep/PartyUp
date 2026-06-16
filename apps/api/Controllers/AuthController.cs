@@ -49,7 +49,7 @@ public class AuthController : ControllerBase
     if (user == null) return Unauthorized();
 
     var profile = await _profileService.GetProfileAsync(userId);
-    return Ok(new { id = user.Id, email = user.Email, profile });
+    return Ok(new { id = user.Id, email = user.Email, isAdmin = user.IsAdmin, profile });
   }
 
   [Authorize]
