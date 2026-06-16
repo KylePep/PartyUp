@@ -24,7 +24,7 @@ public class CharactersController : ControllerBase
       [FromQuery] int page = 1,
       [FromQuery] int pageSize = 12)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var result = await _characterService.GetAllCharactersForUserAsync(userId, page, pageSize);
     return Ok(result);
   }
@@ -32,7 +32,7 @@ public class CharactersController : ControllerBase
   [HttpGet("{userGameId}/userGame")]
   public async Task<IActionResult> GetMyCharacterByUserGameId(Guid userGameId)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var result = await _characterService.GetCharactersForUserGameAsync(userId, userGameId);
     return Ok(result);
   }
@@ -40,7 +40,7 @@ public class CharactersController : ControllerBase
   [HttpGet("{id}")]
   public async Task<IActionResult> GetMyCharacterById(Guid id)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var result = await _characterService.GetCharacterByIdAsync(userId, id);
     return result is null ? NotFound() : Ok(result);
   }
@@ -48,7 +48,7 @@ public class CharactersController : ControllerBase
   [HttpPost]
   public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterRequest request)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     try
     {
       var result = await _characterService.CreateCharacterAsync(userId, request.UserGameId, request);
@@ -90,7 +90,7 @@ public class CharactersController : ControllerBase
   [HttpPut("{userGameId}/{id}")]
   public async Task<IActionResult> UpdateCharacter(Guid userGameId, Guid id, [FromBody] UpdateCharacterRequest request)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var updated = await _characterService.UpdateCharacterAsync(userId, userGameId, id, request);
     return updated ? NoContent() : NotFound();
   }
@@ -98,7 +98,7 @@ public class CharactersController : ControllerBase
   [HttpDelete("{userGameId}/{id}")]
   public async Task<IActionResult> DeleteCharacter(Guid userGameId, Guid id)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var deleted = await _characterService.DeleteCharacterAsync(userId, userGameId, id);
     return deleted ? NoContent() : NotFound();
   }
@@ -109,7 +109,7 @@ public class CharactersController : ControllerBase
     [FromQuery] int page = 1,
     [FromQuery] int pageSize = 20)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var platformFilters = Request.Query["platform"]
       .Where(v => v != null).Select(v => v!).ToList();
     var filters = Request.Query

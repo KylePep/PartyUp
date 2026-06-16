@@ -5,6 +5,7 @@ using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.Character;
 using PartyUp.Api.Models.DTOs.CharacterInteraction;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Services.Interfaces;
 
 public class CharacterInteractionService : ICharacterInteractionService
@@ -37,7 +38,10 @@ public class CharacterInteractionService : ICharacterInteractionService
 
         var toChar = await _db.Characters
             .Include(c => c.UserGame)
-            .FirstAsync(c => c.Id == request.ToCharacterId);
+            .FirstOrDefaultAsync(c => c.Id == request.ToCharacterId);
+
+        if (toChar == null)
+            throw new KeyNotFoundException($"Character {request.ToCharacterId} not found");
 
         var recipientUserId = toChar.UserGame.UserId;
 

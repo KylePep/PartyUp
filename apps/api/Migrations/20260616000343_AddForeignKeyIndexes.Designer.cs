@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PartyUp.Api.Infrastructure.Data;
@@ -11,9 +12,11 @@ using PartyUp.Api.Infrastructure.Data;
 namespace PartyUp.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260616000343_AddForeignKeyIndexes")]
+    partial class AddForeignKeyIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,9 +47,7 @@ namespace PartyUp.Api.Migrations
                         .HasColumnType("character varying(7)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
@@ -293,9 +294,6 @@ namespace PartyUp.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -357,7 +355,7 @@ namespace PartyUp.Api.Migrations
             modelBuilder.Entity("PartyUp.Api.Models.Character", b =>
                 {
                     b.HasOne("PartyUp.Api.Models.UserGame", "UserGame")
-                        .WithMany("Characters")
+                        .WithMany()
                         .HasForeignKey("UserGameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -478,11 +476,6 @@ namespace PartyUp.Api.Migrations
             modelBuilder.Entity("PartyUp.Api.Models.Game", b =>
                 {
                     b.Navigation("FieldDefinitions");
-                });
-
-            modelBuilder.Entity("PartyUp.Api.Models.UserGame", b =>
-                {
-                    b.Navigation("Characters");
                 });
 #pragma warning restore 612, 618
         }

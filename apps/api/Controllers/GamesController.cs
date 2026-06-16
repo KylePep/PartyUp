@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models.DTOs.Game;
-using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Services.Interfaces;
 
 [ApiController]
@@ -88,6 +86,7 @@ public class GamesController : ControllerBase
     return Ok(response);
   }
 
+  [Authorize]
   [HttpGet("popular")]
   public async Task<IActionResult> GetPopular([FromQuery] int limit = 6)
   {
@@ -107,36 +106,4 @@ public class GamesController : ControllerBase
     return Ok(result);
   }
 
-  [EnableRateLimiting("ai-schema")]
-  [Authorize]
-  [HttpPost("{id:guid}/regenerate-schema")]
-  public async Task<IActionResult> RegenerateSchema(Guid id, [FromServices] IServiceScopeFactory scopeFactory)
-  {
-    var game = await _service.GetGameByDbId(id);
-    if (game == null)
-      return NotFound();
-
-    _ = Task.Run(async () =>
-    {
-      await using var scope = scopeFactory.CreateAsyncScope();
-      try
-      {
-        var generator = scope.ServiceProvider.GetRequiredService<IGameSchemaGenerationService>();
-        await generator.GenerateForGameAsync(id, force: true);
-      }
-      catch (Exception ex)
-      {
-        _logger.LogError(ex, "Regenerate-schema failed for game {GameId} — marking as Failed", id);
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var g = await db.Games.FindAsync(id);
-        if (g != null)
-        {
-          g.SchemaStatus = SchemaStatus.Failed;
-          await db.SaveChangesAsync();
-        }
-      }
-    });
-
-    return Accepted();
-  }
 }

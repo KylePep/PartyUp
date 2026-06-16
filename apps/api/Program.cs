@@ -41,7 +41,7 @@ builder.Services.AddScoped<ICharacterMatchService, CharacterMatchService>();
 builder.Services.AddScoped<IAnthropicService, AnthropicService>();
 builder.Services.AddScoped<IGameFieldDefinitionService, GameFieldDefinitionService>();
 builder.Services.AddScoped<IGameSchemaGenerationService, GameSchemaGenerationService>();
-builder.Services.AddScoped<IGcsStorageService, GcsStorageService>();
+builder.Services.AddSingleton<IGcsStorageService, GcsStorageService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IMatchNotificationService, MatchNotificationService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
@@ -181,9 +181,16 @@ builder.Services.AddCors(options =>
             var origins = builder.Configuration
                 .GetSection("AllowedOrigins")
                 .Get<string[]>() ?? [];
+
+            if (origins.Length == 0)
+                throw new InvalidOperationException(
+                    "AllowedOrigins configuration is missing or empty. " +
+                    "Add it to appsettings or environment variables.");
+
             policy.WithOrigins(origins)
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
@@ -204,11 +211,27 @@ if (!string.IsNullOrEmpty(app.Configuration.GetConnectionString("DefaultConnecti
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PartyUp API v1"));
 
-app.MapGet("/api/health", () =>
+app.MapGet("/api/health", () => Results.Ok(new { status = "healthy" }));
+
+app.UseExceptionHandler(exceptionHandlerApp =>
 {
-    return Results.Ok(new
+    exceptionHandlerApp.Run(async context =>
     {
-        status = "healthy"
+        var logger = context.RequestServices
+            .GetRequiredService<ILogger<Program>>();
+        var exceptionFeature = context.Features
+            .Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        if (exceptionFeature != null)
+            logger.LogError(exceptionFeature.Error, "Unhandled exception");
+
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/problem+json";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            type = "https://tools.ietf.org/html/rfc9110#section-15.6.1",
+            title = "An unexpected error occurred.",
+            status = 500
+        });
     });
 });
 

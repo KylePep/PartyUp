@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Tests.Factories;
 using PartyUp.Api.Tests.Infrastructure;
 

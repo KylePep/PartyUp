@@ -26,7 +26,8 @@ public class ApiFactory : WebApplicationFactory<Program>
                 ["GoogleCloudStorage:BucketName"] = "test-bucket",
                 ["Jwt:Issuer"] = "partyup-api",
                 ["Jwt:Audience"] = "partyup-client",
-                ["RateLimit:AuthPermitLimit"] = "1000"
+                ["RateLimit:AuthPermitLimit"] = "1000",
+                ["AllowedOrigins:0"] = "http://localhost:5173"
             });
         });
 

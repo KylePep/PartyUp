@@ -20,6 +20,8 @@ public class RawgClient
       string q, int page, List<int>? genres, bool? exclude_additions, List<string>? tags)
   {
     var key = _config["Rawg:ApiKey"];
+    if (string.IsNullOrEmpty(key))
+      throw new InvalidOperationException("RAWG API key missing");
 
     var qs = HttpUtility.ParseQueryString(string.Empty);
 
@@ -37,7 +39,7 @@ public class RawgClient
       qs["genres"] = string.Join(",", genres);
 
     if (exclude_additions == true)
-      qs["exclude_additions"] = string.Join(",", exclude_additions);
+      qs["exclude_additions"] = "true";
 
     var url = $"https://api.rawg.io/api/games?{qs}";
 

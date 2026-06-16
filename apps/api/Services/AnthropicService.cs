@@ -10,13 +10,16 @@ public class AnthropicService : IAnthropicService
 {
     private readonly HttpClient _http;
     private readonly string _apiKey;
+    private readonly string _model;
     private static readonly JsonSerializerOptions JsonOpts = new() { PropertyNameCaseInsensitive = true };
 
     public AnthropicService(IHttpClientFactory httpClientFactory, IConfiguration config)
     {
         _http = httpClientFactory.CreateClient("anthropic");
-        _apiKey = config["Anthropic:ApiKey"]
-            ?? throw new InvalidOperationException("Anthropic:ApiKey is not configured.");
+        _apiKey = config["Anthropic:ApiKey"];
+        if (string.IsNullOrEmpty(_apiKey))
+            throw new InvalidOperationException("Anthropic:ApiKey is not configured.");
+        _model = config["Anthropic:Model"] ?? "claude-haiku-4-5-20251001";
     }
 
     public async Task<List<GameFieldDefinitionDto>> GenerateFieldDefinitionsAsync(Game game)
@@ -70,7 +73,7 @@ public class AnthropicService : IAnthropicService
 
         var body = new
         {
-            model = "claude-haiku-4-5-20251001",
+            model = _model,
             max_tokens = 4096,
             system = systemPrompt,
             messages = new[] { new { role = "user", content = userPrompt } }
