@@ -19,21 +19,21 @@ public class AuthController : ControllerBase
 
   [EnableRateLimiting("auth")]
   [HttpPost("register")]
-  public async Task<IActionResult> Register(RegisterRequest request, IConfiguration config)
+  public async Task<IActionResult> Register(RegisterRequest request)
   {
     var user = await _auth.Register(request.Email, request.Password);
     if (user == null)
       return BadRequest("Email already registered");
 
-    var token = await _auth.Login(request.Email, request.Password, config);
+    var token = await _auth.Login(request.Email, request.Password);
     return Ok(new AuthResponse { Token = token!, Email = user.Email });
   }
 
   [EnableRateLimiting("auth")]
   [HttpPost("login")]
-  public async Task<IActionResult> Login(LoginRequest request, IConfiguration config)
+  public async Task<IActionResult> Login(LoginRequest request)
   {
-    var token = await _auth.Login(request.Email, request.Password, config);
+    var token = await _auth.Login(request.Email, request.Password);
     if (token == null)
       return Unauthorized();
 
@@ -44,10 +44,7 @@ public class AuthController : ControllerBase
   [HttpGet("me")]
   public async Task<IActionResult> Me()
   {
-    var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (idClaim == null) return Unauthorized();
-
-    var userId = Guid.Parse(idClaim);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var user = await _auth.GetByIdAsync(userId);
     if (user == null) return Unauthorized();
 
@@ -60,7 +57,7 @@ public class AuthController : ControllerBase
   [HttpPut("password")]
   public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
   {
-    var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    if (this.GetUserId() is not Guid userId) return Unauthorized();
     var success = await _auth.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword);
     if (!success)
       return BadRequest("Current password is incorrect");

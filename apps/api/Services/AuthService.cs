@@ -9,10 +9,12 @@ using PartyUp.Api.Infrastructure.Data;
 public class AuthService : IAuthService
 {
   private readonly AppDbContext _context;
+  private readonly IConfiguration _config;
 
-  public AuthService(AppDbContext context)
+  public AuthService(AppDbContext context, IConfiguration config)
   {
     _context = context;
+    _config = config;
   }
 
   public async Task<User?> Register(string email, string password)
@@ -36,7 +38,7 @@ public class AuthService : IAuthService
     return user;
   }
 
-  public async Task<string?> Login(string email, string password, IConfiguration config)
+  public async Task<string?> Login(string email, string password)
   {
     var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
     if (user == null) return null;
@@ -44,7 +46,7 @@ public class AuthService : IAuthService
     var valid = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
     if (!valid) return null;
 
-    return GenerateJwt(user, config);
+    return GenerateJwt(user);
   }
 
   public async Task<User?> GetByIdAsync(Guid userId)
@@ -65,10 +67,10 @@ public class AuthService : IAuthService
     return true;
   }
 
-  private string GenerateJwt(User user, IConfiguration config)
+  private string GenerateJwt(User user)
   {
     var key = new SymmetricSecurityKey(
-      Encoding.UTF8.GetBytes(config["Jwt:key"]!)
+      Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
     );
 
     var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -80,8 +82,8 @@ public class AuthService : IAuthService
     };
 
     var token = new JwtSecurityToken(
-      issuer: config["Jwt:Issuer"],
-      audience: config["Jwt:Audience"],
+      issuer: _config["Jwt:Issuer"],
+      audience: _config["Jwt:Audience"],
       claims: claims,
       expires: DateTime.UtcNow.AddHours(2),
       signingCredentials: creds

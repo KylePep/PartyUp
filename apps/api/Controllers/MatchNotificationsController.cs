@@ -18,7 +18,7 @@ public class MatchNotificationsController : ControllerBase
     [HttpPost("{matchId}/viewed")]
     public async Task<IActionResult> MarkViewed(Guid matchId)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         await _service.MarkViewedAsync(matchId, userId);
         return NoContent();
     }

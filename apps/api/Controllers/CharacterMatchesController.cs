@@ -19,7 +19,7 @@ public class CharacterMatchesController : ControllerBase
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CharacterMatchDto>> GetMatchById(Guid id)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         var match = await _service.GetMatchByIdAsync(userId, id);
         return match is null ? NotFound() : Ok(match);
     }
@@ -31,7 +31,7 @@ public class CharacterMatchesController : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 12)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
         var result = await _service.GetMatchesAsync(userId, gameId, search, page, pageSize);
         return Ok(result);
     }

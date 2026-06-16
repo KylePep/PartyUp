@@ -10,4 +10,5 @@ public class UserGame
   public DateTime CreatedAt { get; set; }
 
   public Game Game { get; set; } = null!;
+  public List<Character> Characters { get; set; } = [];
 }

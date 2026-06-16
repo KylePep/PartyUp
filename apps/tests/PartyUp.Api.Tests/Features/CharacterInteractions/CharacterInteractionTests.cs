@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using PartyUp.Api.Models;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Tests.Factories;
 using PartyUp.Api.Tests.Infrastructure;
 
@@ -154,6 +155,24 @@ public class CharacterInteractionTests : TestBase, IClassFixture<ApiFactory>
 
         matchesA!.Items[0].IsNew.Should().BeTrue();
         matchesB!.Items[0].IsNew.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task RecordInteraction_WithInvalidToCharacterId_Returns404()
+    {
+        var clientA = await CreateAuthenticatedClientAsync();
+        var sharedExternalId = Interlocked.Increment(ref _gameCounter);
+        var ugA = await AddGameAsync(clientA, sharedExternalId);
+        var charA = await CreateCharacterAsync(clientA, ugA.Id);
+
+        var response = await clientA.PostAsJsonAsync("/api/character-interactions", new
+        {
+            fromCharacterId = charA,
+            toCharacterId = Guid.NewGuid(),
+            type = InteractionType.Like
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────

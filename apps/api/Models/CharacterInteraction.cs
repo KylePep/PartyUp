@@ -1,3 +1,5 @@
+using PartyUp.Api.Models.Enums;
+
 namespace PartyUp.Api.Models;
 
 public class CharacterInteraction
@@ -13,10 +15,4 @@ public class CharacterInteraction
   public InteractionType Type { get; set; }
 
   public DateTime CreatedAt { get; set; }
-}
-
-public enum InteractionType
-{
-  Like = 1,
-  Dislike = 2
 }

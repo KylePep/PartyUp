@@ -60,19 +60,19 @@ public class UserGameService : IUserGameService
             if (redirected)
             {
                 message = $"{selectedGame.Name} is an expansion — we've added you to {canonicalGame.Name} instead.";
-                triggerSchemaGen = isParentNew;
+                triggerSchemaGen = isParentNew || canonicalGame.SchemaStatus == SchemaStatus.Pending;
                 schemaGenGameId = canonicalGame.Id;
             }
             else
             {
-                triggerSchemaGen = isSelectedNew;
+                triggerSchemaGen = isSelectedNew || canonicalGame.SchemaStatus == SchemaStatus.Pending;
                 schemaGenGameId = selectedGame.Id;
             }
         }
         else
         {
             canonicalGame = selectedGame;
-            triggerSchemaGen = isSelectedNew;
+            triggerSchemaGen = isSelectedNew || canonicalGame.SchemaStatus == SchemaStatus.Pending;
             schemaGenGameId = selectedGame.Id;
         }
 
@@ -106,14 +106,7 @@ public class UserGameService : IUserGameService
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Schema generation failed for game {GameId} — marking as Failed", gameId);
-                    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    var g = await db.Games.FindAsync(gameId);
-                    if (g != null && g.SchemaStatus == SchemaStatus.Pending)
-                    {
-                        g.SchemaStatus = SchemaStatus.Failed;
-                        await db.SaveChangesAsync();
-                    }
+                    _logger.LogError(ex, "Schema generation task failed for game {GameId}", gameId);
                 }
             });
         }
@@ -126,7 +119,7 @@ public class UserGameService : IUserGameService
         };
     }
 
-    public async Task<PagedResult<UserGame>> GetUserGames(Guid userId, int page, int pageSize)
+    public async Task<PagedResult<UserGameResponse>> GetUserGames(Guid userId, int page, int pageSize)
     {
         var query = _db.UserGames
             .Where(ug => ug.UserId == userId)
@@ -137,16 +130,41 @@ public class UserGameService : IUserGameService
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .Select(ug => new UserGameResponse
+            {
+                Id = ug.Id,
+                UserId = ug.UserId,
+                GameId = ug.GameId,
+                GameName = ug.Game.Name,
+                GameImageUrl = ug.Game.ImageUrl,
+                CreatedAt = ug.CreatedAt,
+                NewMatchCount = 0
+            })
             .ToListAsync();
 
-        return new PagedResult<UserGame>(items, totalCount, page, pageSize);
+        return new PagedResult<UserGameResponse>(items, totalCount, page, pageSize);
     }
 
-    public async Task<UserGame?> GetUserGameByGameId(Guid userId, Guid gameId)
+    public async Task<UserGameDetailResponse?> GetUserGameByGameId(Guid userId, Guid gameId)
     {
-        return await _db.UserGames
+        var ug = await _db.UserGames
             .Include(ug => ug.Game)
             .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GameId == gameId);
+
+        if (ug == null) return null;
+
+        return new UserGameDetailResponse
+        {
+            Id = ug.Id,
+            UserId = ug.UserId,
+            GameId = ug.GameId,
+            GameName = ug.Game.Name,
+            GameImageUrl = ug.Game.ImageUrl,
+            Description = ug.Game.Description,
+            Website = ug.Game.Website,
+            Rating = ug.Game.Rating,
+            Platforms = ug.Game.Platforms
+        };
     }
 
     public async Task<bool> DeleteUserGame(Guid id, Guid userId)
