@@ -105,8 +105,7 @@ export default function GamesPage() {
     </>
   ) : (
     <div className="flex flex-col md:flex-1 md:min-h-0">
-      <BinderHeader title=''></BinderHeader>
-      <p className="text-muted font-mono text-sm flex flex-1 items-center justify-center">Select a game</p>
+      <BinderHeader title='Select A Game' className='flex flex-col justify-center'></BinderHeader>
     </div>
   )
 

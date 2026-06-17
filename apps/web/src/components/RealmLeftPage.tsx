@@ -7,6 +7,7 @@ import { DiscoveryFilterMenu } from './DiscoveryFilterMenu'
 import { PendingLikesBar } from './PendingLikesBar'
 import { useFieldDefinitions } from '../hooks/useFieldDefinitions'
 import { Button } from './ui'
+import { BinderHeader } from './layout/BinderHeader'
 
 type Zone = 'prompt' | 'wizard' | 'discovery'
 
@@ -34,6 +35,10 @@ export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated,
     }
   }, [character, zone])
 
+  function handleCreateCancel() {
+    setZone('prompt')
+  }
+
   function handleFilterChange(key: string, value: string) {
     setFilters(prev => {
       const next = { ...prev }
@@ -44,10 +49,10 @@ export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated,
   }
 
   return (
-    <div className="flex flex-col h-full overflow-x-hidden">
+    <div className="flex flex-col h-full overflow-x-hidden gap-2">
       {/* Filter bar — only in discovery mode */}
       {zone === 'discovery' && (
-        <div className="px-4 py-3 border-b-4 border-orange-950/50 min-h-[64px]">
+        <BinderHeader title=''>
           <DiscoveryFilterMenu
             fields={fields}
             gamePlatforms={gamePlatforms}
@@ -56,24 +61,43 @@ export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated,
             onChange={handleFilterChange}
             onPlatformChange={setActivePlatforms}
           />
-        </div>
+        </BinderHeader>
       )}
 
       {/* Main zone — grows to fill available space */}
-      <div className="h-full p-6 overflow-y-auto overflow-hidden">
+      <div className="h-full overflow-y-auto overflow-hidden">
         {zone === 'prompt' && (
-          <div className="flex flex-col items-start gap-3">
-            <Button onClick={() => setZone('wizard')}>Create Character</Button>
+          <div className="flex flex-col md:flex-1 md:min-h-0 h-full">
+            <BinderHeader title='Create a character to get started'
+              className='flex items-center justify-between'
+            />
+            <div className='flex flex-col flex-1 items-center py-16'>
+              <Button onClick={() => setZone('wizard')}>Create Character</Button>
+            </div>
           </div>
         )}
 
         {zone === 'wizard' && (
-          <CreateCharacterWizard
-            userGameId={userGame.id}
-            gameId={gameId}
-            platforms={gamePlatforms}
-            onSuccess={onCharacterCreated}
-          />
+          <>
+            <div className='flex flex-1 w-full mb-4 sticky top-0'>
+              <BinderHeader title='Create a Character' className='flex items-center justify-between '>
+                <button
+                  type="button"
+                  onClick={handleCreateCancel}
+                  className=" text-xs font-mono text-off-white hover:text-muted "
+                >
+                  ← Cancel
+                </button>
+              </BinderHeader>
+            </div>
+
+            <CreateCharacterWizard
+              userGameId={userGame.id}
+              gameId={gameId}
+              platforms={gamePlatforms}
+              onSuccess={onCharacterCreated}
+            />
+          </>
         )}
 
         {zone === 'discovery' && character && (

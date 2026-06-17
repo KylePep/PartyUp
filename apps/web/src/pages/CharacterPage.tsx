@@ -104,11 +104,11 @@ export default function CharactersPage() {
     if (editingUserGame && selected) {
       return (
         <>
-          <BinderHeader title='' className='flex flex-col justify-center'>
+          <BinderHeader title='Edit Character' className='flex justify-between items-center'>
             <button
               type="button"
               onClick={handleEditCancel}
-              className="text-xs font-mono text-off-white hover:text-text self-start"
+              className=" text-xs font-mono text-off-white hover:text-text self-start"
             >
               ← Cancel
             </button>

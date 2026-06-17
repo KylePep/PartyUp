@@ -110,8 +110,7 @@ export default function MatchesPage() {
     </div>
   ) : (
     <div className="flex flex-col md:flex-1 md:min-h-0">
-      <BinderHeader title='' heightClassName='md:min-h-[76px] md:h-[76px] md:max-h-[76px]'></BinderHeader>
-      <p className="text-muted font-mono text-sm flex flex-1 items-center justify-center">Select a match</p>
+      <BinderHeader title='Select A Match' heightClassName='md:min-h-[76px] md:h-[76px] md:max-h-[76px] ' className='flex flex-col justify-center'></BinderHeader>
     </div>
   )
 

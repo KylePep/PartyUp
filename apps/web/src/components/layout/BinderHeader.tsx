@@ -9,7 +9,7 @@ interface BinderHeaderProps {
 
 export function BinderHeader({ title, children, className, heightClassName }: BinderHeaderProps) {
   return (
-    <div className={` border-b-2 border-black/50 bg-orange-950/50 p-1 ${heightClassName ? heightClassName : 'min-h-[64px]'}`}
+    <div className={`w-full border-b-2 border-black/50 bg-orange-950/50 p-1 ${heightClassName ?? 'min-h-[64px]'}`}
       style={{ background: 'linear-gradient(158deg, #3f1e0b 0%, #2b1508 30%, #1e0e05 55%, #271408 78%, #321b0b 100%)' }}
     >
       <div

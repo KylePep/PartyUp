@@ -7,6 +7,7 @@ import { GameplayStep } from './GameplayStep'
 import { AvailabilityStep } from './AvailabilityStep'
 import { AboutStep } from './AboutStep'
 import { defaultFormData, type CharacterFormData } from './types'
+import { BinderHeader } from '../layout/BinderHeader'
 
 interface CreateCharacterWizardProps {
   userGameId: string
