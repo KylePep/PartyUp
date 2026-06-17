@@ -11,7 +11,7 @@ interface FullArtTcgCardProps {
 export function FullArtTcgCard({ name, platform, imageUrl, className, style, children, onClick }: FullArtTcgCardProps) {
   return (
     <div
-      className={`relative overflow-hidden border-4 border-black rounded-xl${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
+      className={`relative overflow-hidden border-4 border-black rounded-xl shadow  ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
       style={style}
       onClick={onClick}
     >

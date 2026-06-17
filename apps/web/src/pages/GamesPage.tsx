@@ -11,6 +11,7 @@ import { TABS } from '../lib/tabs'
 import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
+import { BinderHeader } from '../components/layout/BinderHeader'
 
 const PAGE_SIZE = 12
 
@@ -103,15 +104,15 @@ export default function GamesPage() {
       />
     </>
   ) : (
-    <div className="flex items-center justify-center h-full">
-      <p className="text-muted font-mono text-sm">Select a game</p>
+    <div className="flex flex-col md:flex-1 md:min-h-0">
+      <BinderHeader title=''></BinderHeader>
+      <p className="text-muted font-mono text-sm flex flex-1 items-center justify-center">Select a game</p>
     </div>
   )
 
   const rightContent = (
     <div className="flex flex-col h-full min-h-0">
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent flex items-center justify-between'>
-        <h2 className="text-xs font-mono uppercase tracking-widest">My Game Cards</h2>
+      <BinderHeader title='My Game Cards' className='flex items-center justify-between'>
         {totalCount > 0 && (
           <PaginationControls
             page={page}
@@ -120,7 +121,7 @@ export default function GamesPage() {
             onPageChange={setPage}
           />
         )}
-      </div>
+      </BinderHeader>
       <Gallery
         key={page}
         items={games}
