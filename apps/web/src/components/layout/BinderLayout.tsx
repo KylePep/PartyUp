@@ -10,6 +10,7 @@ interface BinderLayoutProps {
   activeTab: string
   activeSide?: 'left' | 'right'
   onToggleSide?: () => void
+  hasSelection?: boolean
 }
 
 export function BinderLayout({
@@ -20,6 +21,7 @@ export function BinderLayout({
   activeTab,
   activeSide = 'right',
   onToggleSide,
+  hasSelection = true,
 }: BinderLayoutProps) {
   return (
     <div className="relative flex flex-col md:w-full mx-4 md:mx-9 pb-14 md:pb-4 py-4 h-screen">
@@ -79,7 +81,7 @@ export function BinderLayout({
       <span className="absolute rounded bottom-13 md:bottom-3 -right-1 md:-right-1 w-10 md:w-20 h-10 md:h-20 border-b-10 md:border-b-20 border-r-10 md:border-r-20 border-amber-600 pointer-events-none" />
 
       {/* Mobile-only toggle button */}
-      {onToggleSide && (
+      {onToggleSide && hasSelection && (
         <div className="pointer-events-none grid grid-cols-5 grid-rows-1 gap-1 md:hidden absolute bottom-2 left-0 right-0 w-full h-12 px-8 z-10">
           <button
             onClick={onToggleSide}

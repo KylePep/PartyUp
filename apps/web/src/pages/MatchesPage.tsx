@@ -193,6 +193,7 @@ export default function MatchesPage() {
       activeTab={"Collection"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
+      hasSelection={!!selected}
       leftContent={leftContent}
       rightContent={rightContent}
     />

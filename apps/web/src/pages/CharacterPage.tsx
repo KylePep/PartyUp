@@ -62,6 +62,7 @@ export default function CharactersPage() {
       const newTotal = totalCount - 1
       setTotalCount(newTotal)
       setSelected(null)
+      setActiveSide('right')
       setConfirmOpen(false)
       const totalPages = Math.ceil(newTotal / PAGE_SIZE)
       if (page > totalPages && page > 1) {
@@ -210,6 +211,7 @@ export default function CharactersPage() {
       activeTab={"Characters"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
+      hasSelection={!!selected}
       leftContent={leftContent}
       rightContent={rightContent}
     />
