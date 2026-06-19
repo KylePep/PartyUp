@@ -23,6 +23,7 @@ namespace PartyUp.Api.Infrastructure.Data
         public DbSet<MatchNotification> MatchNotifications { get; set; }
         public DbSet<GameFieldDefinition> GameFieldDefinitions { get; set; }
         public DbSet<CharacterFieldValue> CharacterFieldValues { get; set; }
+        public DbSet<StickerMessage> StickerMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -112,6 +113,19 @@ namespace PartyUp.Api.Infrastructure.Data
                 e.HasIndex(m => m.CharacterAId);
                 e.HasIndex(m => m.CharacterBId);
                 e.HasIndex(m => new { m.CharacterAId, m.CharacterBId }).IsUnique();
+            });
+
+            modelBuilder.Entity<StickerMessage>(e =>
+            {
+                e.HasIndex(s => s.MatchId);
+                e.HasOne(s => s.Match)
+                    .WithMany()
+                    .HasForeignKey(s => s.MatchId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                e.HasOne(s => s.SenderCharacter)
+                    .WithMany()
+                    .HasForeignKey(s => s.SenderCharacterId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<CharacterFieldValue>(e =>
