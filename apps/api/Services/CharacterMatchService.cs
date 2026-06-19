@@ -59,6 +59,19 @@ public class CharacterMatchService : ICharacterMatchService
         var matchIds = matches.Select(m => m.Id).ToList();
         var newMatchIds = await _notifications.GetNewMatchIdsAsync(userId, matchIds);
 
+        // For each match, determine which character is "theirs" so we can filter stickers they sent.
+        var matchToTheirCharacterId = matches.ToDictionary(
+            m => m.Id,
+            m => m.CharacterA.UserGame.UserId == userId ? m.CharacterB.Id : m.CharacterA.Id);
+
+        var theirCharacterIds = matchToTheirCharacterId.Values.ToHashSet();
+
+        var lastStickers = await _db.StickerMessages
+            .Where(s => matchIds.Contains(s.MatchId) && theirCharacterIds.Contains(s.SenderCharacterId))
+            .GroupBy(s => s.MatchId)
+            .Select(g => new { MatchId = g.Key, Emoji = g.OrderByDescending(s => s.SentAt).First().Emoji })
+            .ToDictionaryAsync(x => x.MatchId, x => x.Emoji);
+
         var items = matches.Select(m =>
         {
             var isMineA = m.CharacterA.UserGame.UserId == userId;
@@ -74,7 +87,8 @@ public class CharacterMatchService : ICharacterMatchService
                 GameId = mine.UserGame.GameId,
                 GameName = mine.UserGame.Game.Name,
                 GameImageUrl = mine.UserGame.Game.ImageUrl,
-                IsNew = newMatchIds.Contains(m.Id)
+                IsNew = newMatchIds.Contains(m.Id),
+                LastReceivedSticker = lastStickers.GetValueOrDefault(m.Id)
             };
         }).ToList();
 
@@ -100,6 +114,12 @@ public class CharacterMatchService : ICharacterMatchService
         var theirs = isMineA ? match.CharacterB : match.CharacterA;
         var isNew = (await _notifications.GetNewMatchIdsAsync(userId, [match.Id])).Contains(match.Id);
 
+        var lastReceivedSticker = await _db.StickerMessages
+            .Where(s => s.MatchId == match.Id && s.SenderCharacterId == theirs.Id)
+            .OrderByDescending(s => s.SentAt)
+            .Select(s => s.Emoji)
+            .FirstOrDefaultAsync();
+
         return new CharacterMatchDto
         {
             MatchId = match.Id,
@@ -109,7 +129,8 @@ public class CharacterMatchService : ICharacterMatchService
             GameId = mine.UserGame.GameId,
             GameName = mine.UserGame.Game.Name,
             GameImageUrl = mine.UserGame.Game.ImageUrl,
-            IsNew = isNew
+            IsNew = isNew,
+            LastReceivedSticker = lastReceivedSticker
         };
     }
 

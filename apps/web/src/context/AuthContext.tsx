@@ -66,15 +66,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
+    let cancelled = false;
     const token = localStorage.getItem("token");
     if (!token) return;
 
     getMe()
       .then((user) => {
+        if (cancelled) return;
         setState({ status: "authenticated", user });
         startConnection(token);
       })
       .catch((err) => {
+        if (cancelled) return;
         if (err instanceof UnauthorizedError) {
           setState({ status: "unauthenticated" });
         } else {
@@ -82,7 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       });
 
-    return () => stopConnection();
+    return () => {
+      cancelled = true;
+      stopConnection();
+    };
   }, []);
 
   useEffect(() => {

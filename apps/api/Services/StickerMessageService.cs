@@ -4,6 +4,7 @@ using PartyUp.Api.Hubs;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Models;
 using PartyUp.Api.Models.DTOs.StickerMessage;
+using PartyUp.Api.Models.Enums;
 using PartyUp.Api.Services.Interfaces;
 
 namespace PartyUp.Api.Services;
@@ -74,6 +75,27 @@ public class StickerMessageService : IStickerMessageService
         };
 
         _db.StickerMessages.Add(message);
+
+        var notification = await _db.MatchNotifications
+            .FirstOrDefaultAsync(n => n.MatchId == matchId && n.UserId == recipientUserId);
+
+        if (notification is not null)
+        {
+            notification.Type = NotificationType.NewMessage;
+            notification.ViewedAt = null;
+        }
+        else
+        {
+            _db.MatchNotifications.Add(new MatchNotification
+            {
+                Id = Guid.NewGuid(),
+                UserId = recipientUserId,
+                MatchId = matchId,
+                Type = NotificationType.NewMessage,
+                CreatedAt = DateTime.UtcNow
+            });
+        }
+
         await _db.SaveChangesAsync();
 
         var dto = new StickerMessageDto

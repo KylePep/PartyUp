@@ -13,6 +13,16 @@ interface StandardTcgCardProps {
   cardBackgroundColor?: string
   children?: React.ReactNode
   isNew?: boolean
+  stickerEmoji?: string
+  stickerSeed?: string
+}
+
+function stableRotation(seed: string): number {
+  let h = 5381
+  for (let i = 0; i < seed.length; i++) {
+    h = ((h << 5) + h + seed.charCodeAt(i)) >>> 0
+  }
+  return (h % 29) - 14
 }
 
 export function StandardTcgCard({
@@ -28,6 +38,8 @@ export function StandardTcgCard({
   cardBackgroundColor,
   children,
   isNew,
+  stickerEmoji,
+  stickerSeed = '',
 }: StandardTcgCardProps) {
   return (
     <div
@@ -68,7 +80,7 @@ export function StandardTcgCard({
 
 
       {/* Image */}
-      <div className="aspect-video w-full overflow-hidden rounded-sm border-off-black border-2 bg-off-black" >
+      <div className="relative aspect-video w-full overflow-hidden rounded-sm border-off-black border-2 bg-off-black">
         {imageUrl ? (
           <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
         ) : (
@@ -78,6 +90,14 @@ export function StandardTcgCard({
           >
             {name.charAt(0).toUpperCase()}
           </div>
+        )}
+        {stickerEmoji && (
+          <span
+            className="absolute top-1 left-1 text-2xl leading-none pointer-events-none select-none drop-shadow-md"
+            style={{ transform: `rotate(${stableRotation(stickerSeed || stickerEmoji)}deg)` }}
+          >
+            {stickerEmoji}
+          </span>
         )}
       </div>
 

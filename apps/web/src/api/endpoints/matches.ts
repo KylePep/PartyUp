@@ -21,6 +21,7 @@ export type CharacterMatchDto = {
   gameName: string;
   gameImageUrl?: string;
   isNew: boolean;
+  lastReceivedSticker?: string;
 };
 
 export function getMatchById(matchId: string): Promise<CharacterMatchDto> {

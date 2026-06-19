@@ -4,6 +4,7 @@ import {
   send as sendApi,
   type StickerMessageDto,
 } from "../api/endpoints/stickerMessages";
+import { markMatchViewed } from "../api/endpoints/matchNotifications";
 import { useStickerContext } from "../context/StickerContext";
 
 export function useStickerMessages(matchId: string) {
@@ -30,6 +31,7 @@ export function useStickerMessages(matchId: string) {
       .filter(s => s.matchId === matchId);
     if (newOnes.length > 0) {
       setMessages(prev => [...prev, ...newOnes]);
+      markMatchViewed(matchId);
     }
     processedCountRef.current = incomingStickers.length;
   }, [incomingStickers, matchId]);

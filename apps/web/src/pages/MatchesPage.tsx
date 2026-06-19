@@ -14,6 +14,7 @@ import { StickerChatView } from '../components/stickers/StickerChatView'
 import { PaginationControls } from '../components/ui'
 import { useUserGames } from '../hooks/useUserGames'
 import { BinderHeader } from '../components/layout/BinderHeader'
+import { Button } from '../components/ui'
 
 const PAGE_SIZE = 12
 
@@ -97,28 +98,38 @@ export default function MatchesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="flex flex-col md:flex-1 md:min-h-0">
-      <BinderHeader title='' heightClassName='md:min-h-[76px] md:h-[76px] md:max-h-[76px]' className=''>
-        <div className='flex items-center justify-between'>
+    <div className="flex flex-col flex-1 min-h-0">
+      <BinderHeader title='' heightClassName='md:min-h-[76px] md:h-[76px] md:max-h-[76px]' className='flex justify-between'>
+        <div className='flex flex-col justify-start'>
           <div className='flex gap-4'>
             <p className="text-xs text-muted uppercase tracking-widest mb-0.5">Match</p>
-            <p className="text-xs text-muted">
+            <p className="text-xs text-muted mb-0.5">
               - {new Date(selected.matchedAt).toLocaleDateString()}
             </p>
           </div>
-          <button
-            onClick={() => setView(v => v === 'detail' ? 'chat' : 'detail')}
-            className="p-1 rounded hover:bg-white/10 transition-colors text-muted hover:text-text"
-            aria-label={view === 'detail' ? 'Open sticker chat' : 'Back to character'}
-            title={view === 'detail' ? 'Sticker Chat' : 'Character Detail'}
-          >
-            <ChatCircleIcon size={18} weight={view === 'chat' ? 'fill' : 'regular'} />
-          </button>
+          <p className="font-display font-bold text-text">{selected.gameName}</p>
         </div>
-        <p className="font-display font-bold text-text">{selected.gameName}</p>
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => {
+            const next = view === 'detail' ? 'chat' : 'detail'
+            setView(next)
+            if (next === 'chat' && selected?.isNew) {
+              markMatchViewed(selected.matchId).then(() => {
+                setMatches(prev => prev.map(m => m.matchId === selected.matchId ? { ...m, isNew: false } : m))
+                setSelected(s => s ? { ...s, isNew: false } : null)
+              })
+            }
+          }}
+          aria-label={view === 'detail' ? 'Open sticker chat' : 'Back to character'}
+          title={view === 'detail' ? 'Sticker Chat' : 'Character Detail'}
+        >
+          <ChatCircleIcon size={18} weight={view === 'chat' ? 'fill' : 'regular'} />
+        </Button>
       </BinderHeader>
       {view === 'detail' ? (
-        <div className="p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto">
+        <div className="p-2 md:px-4 flex flex-col flex-1 min-h-0 overflow-y-auto">
           <CharacterDetailCard character={selected.theirCharacter} />
         </div>
       ) : (
@@ -129,7 +140,7 @@ export default function MatchesPage() {
       )}
     </div>
   ) : (
-    <div className="flex flex-col md:flex-1 md:min-h-0">
+    <div className="flex flex-col flex-1 min-h-0">
       <BinderHeader title='Select A Match' heightClassName='md:min-h-[76px] md:h-[76px] md:max-h-[76px] ' className='flex flex-col justify-center'></BinderHeader>
     </div>
   )
@@ -185,6 +196,7 @@ export default function MatchesPage() {
               gameName={m.gameName}
               matchedAt={m.matchedAt}
               isNew={m.isNew}
+              lastReceivedSticker={m.lastReceivedSticker}
               onSelect={() => handleSelect(m)}
               className="h-min aspect-3/4 md:aspect-4/5 md:h-full"
             />
