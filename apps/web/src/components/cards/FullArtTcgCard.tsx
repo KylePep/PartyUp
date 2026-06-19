@@ -11,10 +11,19 @@ interface FullArtTcgCardProps {
 export function FullArtTcgCard({ name, platform, imageUrl, className, style, children, onClick }: FullArtTcgCardProps) {
   return (
     <div
-      className={`relative overflow-hidden border-4 border-black rounded-xl${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
+      className={`relative overflow-hidden border-4 border-black rounded-xl shadow  ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
       style={style}
       onClick={onClick}
     >
+
+      {/* Top header overlay */}
+      <div className="absolute top-0 left-0 bottom-0 bg-surface/90 border-1 border-off-black px-1 py-2 z-10 rounded m-1 overflow-hidden">
+        <span className="font-display text-white text-xxs md:text-sm font-bold truncate pointer-event-none"
+          style={{ writingMode: 'vertical-lr' }}
+        >{name}</span>
+        <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-surface from-30% to-transparent"></div>
+      </div>
+
       {/* Background image */}
       {imageUrl ? (
         <img src={imageUrl} alt={name} className="absolute inset-0 w-full h-full object-cover" />
@@ -24,14 +33,7 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, chi
         </div>
       )}
 
-      {/* Top header overlay */}
-      <div className="absolute top-0 left-0 bottom-0 bg-gradient-to-r from-black to-transparent px-1 py-2 pe-4 md:pe-16">
-        <div className="flex items-center justify-between">
-          <span className="font-display text-white text-xs md:text-sm font-bold truncate pointer-event-none"
-            style={{ writingMode: 'vertical-lr' }}
-          >{name}</span>
-        </div>
-      </div>
+
       {platform && (
         <div className="absolute top-1 right-1 bg-black p-1 rounded-full">
           {platform}

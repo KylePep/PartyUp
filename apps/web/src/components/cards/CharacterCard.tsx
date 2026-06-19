@@ -29,7 +29,7 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
 
   const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
   const statsLine = statsContent ? (
-    <span className="text-xs text-muted font-semibold">{statsContent}</span>
+    <span className="">{statsContent}</span>
   ) : undefined
 
   const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')
@@ -46,8 +46,8 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
         statsLine={statsLine}
         textBody={
           <>
-            <p className="text-xs text-muted mb-2">{topBioContent}</p>
-            {character.bio ? <p className="text-xs text-muted line-clamp-3">{character.bio}</p> : undefined}
+            {topBioContent ? <p className="text-xs text-muted mb-2">{topBioContent}</p> : undefined}
+            {character.bio ? <p className="text-muted line-clamp-3">{character.bio}</p> : undefined}
           </>
         }
         bottomStat={

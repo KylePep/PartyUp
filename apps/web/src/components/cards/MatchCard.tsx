@@ -46,10 +46,10 @@ function MatchFront({ character }: MatchCardProps) {
         </>
       }
       bottomStat={
-        <div className="flex w-full justify-between text-[0.625rem]">
-          <span>
+        <div className="flex w-full justify-end text-[0.625rem]">
+          {/* <span>
             ↑ Tap for more
-          </span>
+          </span> */}
           {levelField?.value}
         </div>
       }
@@ -66,39 +66,28 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
     <div
       className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black bg-black/80 border-[6px]"
     >
-      <div className="px-4 py-3 overflow-y-auto overflow-x-hidden">
-        <p className="font-display font-bold text-text text-lg">{character.platformHandle}</p>
-        <p className="text-sm text-muted mb-1">{character.name}</p>
-        <p className="text-sm text-muted mb-1">{gameName}</p>
-        <p className="text-sm text-muted mb-1">{character.platform}</p>
-        {character.gameFields.length > 0 && (
-          <div className="mb-3">
-            <span className="text-xs text-muted block mb-1">Game Fields</span>
-            <div className="grid grid-cols-1 gap-1">
-              {character.gameFields.map(f => (
-                <div key={f.key} className="text-xs">
-                  <span className="text-muted">{f.label}: </span>
-                  <span className="text-text">{f.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+      <div className="h-full px-4 py-3 mb-1 md:mb-2 overflow-y-auto overflow-x-hidden">
+        <p className="font-display font-bold text-text text-sm md:text-lg">{character.name}</p>
+        <p className="text-xxs md:text-sm text-muted mb-1">{character.platformHandle}</p>
+        <p className="text-xxs md:text-sm text-muted mb-1">{gameName}</p>
+        <p className="text-xxs md:text-sm text-muted mb-1">{character.platform}</p>
+
         {character.bio && (
           <div className="mb-3">
-            <span className="text-xs text-muted block mb-1">Bio</span>
-            <p className="text-sm text-text leading-relaxed">{character.bio}</p>
+            <span className="text-xxs md:text-xs mb-1">Bio</span>
+            <p className="text-xs md:text-sm text-muted leading-relaxed">{character.bio}</p>
           </div>
         )}
+
         {character.additionalNotes && (
           <div className="mb-3">
-            <span className="text-xs text-muted block mb-1">Notes</span>
-            <p className="text-sm text-text leading-relaxed">{character.additionalNotes}</p>
+            <span className="text-xxs md:text-xs mb-1">Notes</span>
+            <p className="text-xs md:text-sm text-muted leading-relaxed">{character.additionalNotes}</p>
           </div>
         )}
         <p className="text-xs text-muted mt-3">Matched {date}</p>
       </div>
-      <div className="px-4 pb-2 flex justify-end" style={{ position: 'relative', zIndex: 20 }}>
+      <div className="px-4 pb-2 flex justify-center" style={{ position: 'relative', zIndex: 20 }}>
         <Button size="sm" variant="primary" onClick={() => navigate(`/matches?id=${matchId}`)}>
           View Match →
         </Button>

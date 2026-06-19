@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom'
 import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type UserGameDetail } from '../api/endpoints/userGames'
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Gallery } from '../components/Gallery'
-import { LandCard } from '../components/cards/LandCard'
 import { GameDetailCard } from '../components/cards/GameDetailCard'
 import { NewMatchBadge } from '../components/ui/NewMatchBadge'
 import { PaginationControls } from '../components/ui'
@@ -11,6 +10,8 @@ import { TABS } from '../lib/tabs'
 import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
+import { BinderHeader } from '../components/layout/BinderHeader'
+import { FullArtTcgCard } from '../components/cards/FullArtTcgCard'
 
 const PAGE_SIZE = 12
 
@@ -69,6 +70,7 @@ export default function GamesPage() {
       const newTotal = totalCount - 1
       setTotalCount(newTotal)
       setSelected(null)
+      setActiveSide('right')
       setConfirmOpen(false)
       const totalPages = Math.ceil(newTotal / PAGE_SIZE)
       if (page > totalPages && page > 1) {
@@ -103,15 +105,14 @@ export default function GamesPage() {
       />
     </>
   ) : (
-    <div className="flex items-center justify-center h-full">
-      <p className="text-muted font-mono text-sm">Select a game</p>
+    <div className="flex flex-col md:flex-1 md:min-h-0">
+      <BinderHeader title='Select A Game' className='flex flex-col justify-center'></BinderHeader>
     </div>
   )
 
   const rightContent = (
     <div className="flex flex-col h-full min-h-0">
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent flex items-center justify-between'>
-        <h2 className="text-xs font-mono uppercase tracking-widest">My Game Cards</h2>
+      <BinderHeader title='My Game Cards' className='flex items-center justify-between'>
         {totalCount > 0 && (
           <PaginationControls
             page={page}
@@ -120,7 +121,7 @@ export default function GamesPage() {
             onPageChange={setPage}
           />
         )}
-      </div>
+      </BinderHeader>
       <Gallery
         key={page}
         items={games}
@@ -132,14 +133,14 @@ export default function GamesPage() {
         renderItem={(g: UserGame) => (
           <div className={`relative h-fit md:h-full ${selected?.id === g.id ? 'ring-2 ring-blue-700 rounded-xl' : ''}`}>
             <NewMatchBadge count={g.newMatchCount} />
-            <LandCard
+            <FullArtTcgCard
               name={g.gameName}
               imageUrl={g.gameImageUrl ?? undefined}
               onClick={() => handleSelect(g)}
-              className="h-min aspect-3/4 md:aspect-auto md:h-full hover:brightness-110 transition-all"
+              className="h-min aspect-4/5 md:aspect-aut md:h-full hover:brightness-110 transition-all"
+              platform={<CubeIcon />}
             >
-              <div className='flex flex-1 items-center justify-center text-7xl'><CubeIcon /></div>
-            </LandCard>
+            </FullArtTcgCard>
           </div>
         )}
       />
@@ -159,6 +160,7 @@ export default function GamesPage() {
       activeTab={"Realms"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
+      hasSelection={!!selected}
       leftContent={leftContent}
       rightContent={rightContent}
     />

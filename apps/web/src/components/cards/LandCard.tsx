@@ -1,24 +1,30 @@
 interface LandCardProps {
   name: string
+  icon?: React.ReactNode
   imageUrl?: string
   className?: string
   onClick?: () => void
   children?: React.ReactNode
 }
 
-export function LandCard({ name, imageUrl, className, onClick, children }: LandCardProps) {
+export function LandCard({ name, imageUrl, icon, className, onClick, children }: LandCardProps) {
   return (
     <div
-      className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col p-2 gap-2 ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
+      className={`h-full md:aspect-3/4 rounded-xl overflow-hidden flex flex-col p-2 gap-2 ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
       style={{ border: '8px solid black', backgroundColor: 'var(--color-surface)' }}
       onClick={onClick}
     >
       {/* Header */}
       <div
-        className="px-3 py-2 flex-shrink-0 rounded-sm"
+        className="relative px-3 py-2 flex-shrink-0 rounded-sm"
         style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
       >
         <span className="font-display font-semibold text-text text-xs md:text-sm truncate block">{name}</span>
+        {icon && (
+          <div className="absolute top-1 right-1 bg-black p-1 rounded-full">
+            {icon}
+          </div>
+        )}
       </div>
 
       {/* Image */}
@@ -34,7 +40,7 @@ export function LandCard({ name, imageUrl, className, onClick, children }: LandC
       {/* Footer: children (Enter button etc.) + player count */}
       {(children != null) && (
         <div
-          className=" py-2 flex flex-col gap-2 flex-1 min-h-0 justify-between"
+          className="flex flex-col gap-2 flex-1 min-h-0 justify-between"
         >
           {children}
 

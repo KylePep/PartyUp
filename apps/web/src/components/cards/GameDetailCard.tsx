@@ -3,6 +3,8 @@ import DOMPurify from 'dompurify'
 import { LandCard } from './LandCard'
 import { Button } from '../ui'
 import type { UserGame, UserGameDetail } from '../../api/endpoints/userGames'
+import { BinderHeader } from '../layout/BinderHeader'
+import { CubeIcon } from '@phosphor-icons/react'
 
 interface GameDetailCardProps {
   game: UserGame
@@ -17,13 +19,12 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
 
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div className="px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent">
-        <h2 className="text-xs font-mono uppercase tracking-widest">Game Card Details</h2>
-      </div>
+      <BinderHeader title='Game Card Details' className='flex items-center justify-between' />
       <div className="overflow-y-auto overflow-x-hidden flex flex-col flex-1 min-h-0 w-full p-2 md:p-4">
         <LandCard
           name={game.gameName}
           imageUrl={game.gameImageUrl ?? undefined}
+          icon={<CubeIcon />}
           className="w-full md:h-full"
         >
           <div className="flex justify-between border-1 border-off-black px-2 py-1 rounded-sm">
@@ -58,12 +59,13 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
                 {detail.website}
               </a>
             )}
-            <p className="text-xs font-mono text-muted text-nowrap">
-              Added {new Date(game.createdAt).toLocaleDateString()}
-            </p>
+
           </div>
 
           <div className="flex gap-2 justify-end">
+            <p className="text-xs font-mono text-muted text-nowrap me-auto">
+              Added {new Date(game.createdAt).toLocaleDateString()}
+            </p>
             <Button onClick={() => navigate(`/realm/${game.gameId}`)}>Enter</Button>
             <Button variant="danger" disabled={deleting} onClick={onDelete}>
               {deleting ? 'Deleting...' : 'Delete'}

@@ -32,7 +32,7 @@ export function NavBar({ variant }: NavBarProps) {
         h-10
         md:h-16 
         md:h-screen 
-        md:ms-10
+        md:ms-12
         absolute 
         bottom-0
         md:top-0
@@ -45,14 +45,17 @@ export function NavBar({ variant }: NavBarProps) {
         md:px-5
         md:pe-6  
         md:pt-10
-        md:pb-8
+        md:pb-9
         ${variant === 'landing'
           ? ''
           : ''
         }`}
     >
       <Link to="/home" className="pointer-events-auto font-display font-bold text-off-black text-lg tracking-wide">
-        <div className='hidden md:flex flex-row gap-3 font-black bg-off-white text-off-black px-3 py-1 rounded-md border-2 border-stone-200 shadow'>
+        <div className='hidden md:flex flex-row gap-3 font-black text-off-black px-3 py-1 rounded-md border-2 border-orange-950 shadow'
+          style={{
+            background: 'linear-gradient(175deg, #e8b830 0%, #f5d060 18%, #c89018 38%, #eabc2c 55%, #b07808 72%, #d4a020 88%, #a06808 100%)',
+          }}>
           <img
             className='w-7 h-7 border-1 bg-slate-900 border-slate-900 rounded-full'
             src="/favicon.png" alt="" />

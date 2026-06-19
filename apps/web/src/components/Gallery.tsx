@@ -29,29 +29,42 @@ export function Gallery<T>({
     for (let i = 0; i < items.length; i += 3) {
       rows.push(items.slice(i, i + 3))
     }
-    return (
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        {rows.map((row, rowIndex) => (
-          <div
-            key={rowIndex}
-            className="lg:sticky lg:top-0 bg-background"
-            style={{ zIndex: rowIndex + 1 }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 px-4 py-2">
-              {row.map(item => (
-                <React.Fragment key={getKey(item)}>
-                  {renderItem(item)}
-                </React.Fragment>
-              ))}
-            </div>
+    const mobileRows: T[][] = []
+    for (let i = 0; i < items.length; i += 2) {
+      mobileRows.push(items.slice(i, i + 2))
+    }
+
+    const renderRows = (chunkedRows: T[][], cols: number) =>
+      chunkedRows.map((row, rowIndex) => (
+        <div
+          key={rowIndex}
+          className="lg:sticky lg:top-0 bg-background"
+          style={{ zIndex: rowIndex + 1 }}
+        >
+          <div className={`grid grid-cols-${cols} gap-2 md:gap-4 px-2 md:px-4 py-1 md:py-2`}>
+            {row.map(item => (
+              <React.Fragment key={getKey(item)}>
+                {renderItem(item)}
+              </React.Fragment>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))
+
+    return (
+      <>
+        <div className="hidden md:block flex-1 min-h-0 overflow-y-auto">
+          {renderRows(rows, 3)}
+        </div>
+        <div className="block md:hidden flex-1 min-h-0 overflow-y-auto">
+          {renderRows(mobileRows, 2)}
+        </div>
+      </>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 grid-rows-auto lg:grid-rows-2 gap-4 flex-1 min-h-0 p-4 overflow-hidden overflow-y-auto">
+    <div className="grid grid-cols-2 lg:grid-cols-3 grid-rows-3 lg:grid-rows-2 gap-2 md:gap-4 flex-1 min-h-0  p-1 md:p-4 overflow-hidden overflow-y-auto">
       {items.map(item => (
         <React.Fragment key={getKey(item)}>
           {renderItem(item)}

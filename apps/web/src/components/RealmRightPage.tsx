@@ -4,6 +4,7 @@ import { getMatches, type CharacterMatchDto } from '../api/endpoints/matches'
 import { Gallery } from './Gallery'
 import { MatchCard } from './cards/MatchCard'
 import { PaginationControls } from './ui'
+import { BinderHeader } from './layout/BinderHeader'
 
 interface RealmRightPageProps {
   userGame: UserGameDetail
@@ -35,8 +36,7 @@ export function RealmRightPage({ gameId }: RealmRightPageProps) {
 
   return (
     <div className='flex flex-col h-full overflow-x-hidden'>
-      <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 flex items-center justify-between'>
-        <h2 className="text-xs font-mono uppercase tracking-widest">Matches</h2>
+      <BinderHeader title='Matches' className='flex items-center justify-between'>
         {totalCount > 0 && (
           <PaginationControls
             page={page}
@@ -45,7 +45,7 @@ export function RealmRightPage({ gameId }: RealmRightPageProps) {
             onPageChange={setPage}
           />
         )}
-      </div>
+      </BinderHeader>
       <Gallery
         key={page}
         items={matches}

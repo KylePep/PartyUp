@@ -4,10 +4,10 @@ import type { Character } from '../../api/endpoints/characters'
 function StatRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div
-      className="flex flex-col md:flex-row justify-between gap-4 py-2"
+      className="flex flex-col md:flex-row justify-between gap-1 md:gap-2 py-2"
       style={{ borderBottom: '1px solid var(--color-border)' }}
     >
-      <span className="text-xs text-muted uppercase tracking-widest flex-shrink-0 pt-0.5">
+      <span className="text-xxs md:text-xs text-muted uppercase tracking-widest flex-shrink-0 md:pt-0.5">
         {label}
       </span>
       <div className="flex flex-wrap text-wrap gap-1 min-w-0">{children}</div>
@@ -26,29 +26,31 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
   return (
     <div
-      className="flex flex-col rounded-xl overflow-hidden p-4 gap-2 border-4 md:border-8 border-off-black"
+      className="flex flex-col rounded-xl overflow-hidden p-2 md:p-4 gap-1 md:gap-2 border-4 md:border-8 border-off-black"
       style={{
-        backgroundColor: character.cardBackgroundColor || 'var(--color-surface)',
-        boxShadow: '0 0 24px rgba(124, 111, 205, 0.25)',
+        backgroundColor: character.cardBackgroundColor || 'var(--color-surface)'
       }}
     >
 
       {/* Hero — pinned */}
       <div
-        className="flex flex-col gap-2 flex-shrink-0"
+        className="flex flex-col gap-1 md:gap-2 flex-shrink-0"
       >
-        <div className="flex justify-between md:items-center gap-6 bg-off-black rounded-sm px-2 py-2 md:py-1">
-          <span className="flex flex-col md:flex-row md:gap-6 md:items-center">
-            <h1 className="font-display font-bold text-2xl text-text">{character.name}</h1>
+        <div className='flex flex-col gap-1'>
+          <div className="flex justify-between md:items-center bg-off-black rounded-sm px-2 py-1">
+            <h1 className="font-display font-bold text-normal md:text-2xl text-text">{character.name}</h1>
+            <span className="w-6 h-6 [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-[22px] md:[&_svg]:h-[22px]">
+              {character.platform && <PlatformIcon platform={character.platform} />}
+            </span>
+          </div>
+          <div className="flex justify-between md:items-center gap-6 bg-off-black/90 rounded-sm px-2 py-1">
             {character.platformHandle && (
-              <p className="font-mono text-muted text-sm">{character.platformHandle}</p>
+              <p className="font-mono text-text text-xxs md:text-xs">{character.platformHandle}</p>
             )}
-          </span>
-          <PlatformIcon platform={character.platform} size={22} />
-
+          </div>
         </div>
         <div
-          className="w-full h-32 md:h-64 rounded-lg overflow-hidden flex-shrink-0"
+          className="w-full h-32 md:h-48 rounded-lg overflow-hidden flex-shrink-0"
           style={{ border: '1px solid var(--color-border)' }}
         >
           {character.imageUrl ? (
@@ -67,16 +69,16 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div className='flex justify-between items-end bg-off-black rounded-sm px-2 py-1 mb-2'>
+          <div className='flex flex-col md:flex-row justify-start md:justify-between bg-off-black rounded-sm px-2 py-1 mb-1 md:mb-2'>
             {character.gameName && (
               <p className="text-xs text-off-white font-display">{character.gameName}</p>
             )}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center">
               <span className="text-xs text-muted">{character.platform}</span>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1.5 bg-off-black rounded-sm px-2 py-1">
             {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
             {character.languages && character.languages.length > 0 && (
               <>
@@ -95,48 +97,49 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
       {/* Scrollable details */}
       <div className="md:flex-1 md:min-h-0 md:overflow-y-auto bg-off-black rounded-sm rounded-sm">
+        {/* Bio section */}
+        {character.bio && (
+          <div
+            className="px-2 md:px-4 pt-3 pb-1"
+            style={{ borderBottom: '1px solid var(--color-border)' }}
+          >
+            <h2 className="text-xxs md:text-xs text-muted uppercase tracking-widest">Bio</h2>
+            <p className="text-xs md:text-sm text-text leading-relaxed">{character.bio}</p>
+          </div>
+        )}
 
         {/* Game Fields section */}
         {character.gameFields.length > 0 && (
           <div
-            className="px-4 pt-3 pb-1"
+            className="px-2 md:px-4 pb-1"
             style={{ borderBottom: '1px solid var(--color-border)' }}
           >
             {character.gameFields.map(f => (
               <StatRow key={f.key} label={f.label}>
-                <span className="text-sm text-text break-all">{f.value}</span>
+                <span className="text-xs md:text-sm text-text break-all">{f.value}</span>
               </StatRow>
             ))}
           </div>
         )}
 
-        {/* Bio section */}
-        {character.bio && (
-          <div className="px-4 py-3">
-            <h2 className="text-xs text-muted uppercase tracking-widest mb-2">Bio</h2>
-            <p className="text-sm text-text leading-relaxed">{character.bio}</p>
-          </div>
-        )}
+
 
       </div>
 
       {/* Action bar — pinned */}
       {onEdit || onDelete ? (
         <div
-          className="flex items-center justify-between px-4 py-3 flex-shrink-0 bg-off-black rounded-sm"
-          style={{ borderTop: '1px solid var(--color-border)' }}
+          className="flex items-center justify-end  flex-shrink-0"
         >
-          <div>
+          <div className='flex gap-3 md:gap-4 px-3 md:px-4 py-2 md:py-3 rounded-sm bg-off-black '>
             {onEdit && (
-              <Button variant="secondary" size="sm" onClick={onEdit}>
-                Edit Character
+              <Button variant="primary" size="sm" onClick={onEdit}>
+                Edit
               </Button>
             )}
-          </div>
-          <div>
             {onDelete && (
               <Button variant="danger" size="sm" disabled={deleting} onClick={onDelete}>
-                {deleting ? 'Deleting...' : 'Delete Character'}
+                {deleting ? 'Deleting...' : 'Delete'}
               </Button>
             )}
           </div>

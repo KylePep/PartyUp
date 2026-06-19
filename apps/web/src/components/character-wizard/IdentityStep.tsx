@@ -5,18 +5,18 @@ import { type CharacterFormData, PLATFORMS, ALL_PLATFORMS } from './types'
 import { compressImageIfNeeded } from '../../utils/imageCompression'
 
 const CARD_COLORS = [
-  '#1a1a2e', // deep navy
-  '#0f3460', // sapphire
-  '#1b4332', // forest green
-  '#3d0a14', // crimson
-  '#2d1b69', // deep violet
-  '#0d2b2b', // teal
-  '#3d2800', // bronze
-  '#2b0d2b', // dark magenta
-  '#1a1a1a', // near black
-  '#0a2a1a', // emerald
-  '#3a1a00', // dark rust
-  '#1a2a3a', // slate blue
+  '#2251cc', // deep navy
+  '#1a6fd4', // sapphire
+  '#1e9e52', // forest green
+  '#cc1a2e', // crimson
+  '#7c3dd6', // deep violet
+  '#0fb8b8', // teal
+  '#d47c00', // bronze
+  '#cc1acc', // dark magenta
+  '#555555', // near black
+  '#1acc70', // emerald
+  '#d44400', // dark rust
+  '#3a72cc', // slate blue
 ]
 
 interface IdentityStepProps {

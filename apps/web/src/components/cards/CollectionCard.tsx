@@ -30,7 +30,7 @@ export function CollectionCard({ character, onSelect, className }: CharacterCard
 
   const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
   const statsLine = statsContent ? (
-    <span className="text-xs text-muted font-semibold">{statsContent}</span>
+    <span>{statsContent}</span>
   ) : undefined
 
   const topBioContent = [roleField?.value, factionField?.value, buildField?.value, serverField?.value, playstyleField?.value].filter(Boolean).join(' · ')

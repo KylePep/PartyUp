@@ -14,6 +14,7 @@ import { TABS } from '../lib/tabs'
 import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
 import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
 import { PaginationControls } from '../components/ui'
+import { BinderHeader } from '../components/layout/BinderHeader'
 
 const PAGE_SIZE = 12
 
@@ -61,6 +62,7 @@ export default function CharactersPage() {
       const newTotal = totalCount - 1
       setTotalCount(newTotal)
       setSelected(null)
+      setActiveSide('right')
       setConfirmOpen(false)
       const totalPages = Math.ceil(newTotal / PAGE_SIZE)
       if (page > totalPages && page > 1) {
@@ -102,32 +104,34 @@ export default function CharactersPage() {
   const leftContent = (() => {
     if (editingUserGame && selected) {
       return (
-        <div className="flex flex-col flex-1 min-h-0 p-4 overflow-y-auto">
-          <button
-            type="button"
-            onClick={handleEditCancel}
-            className="text-xs font-mono text-muted hover:text-text mb-4 self-start"
-          >
-            ← Cancel
-          </button>
-          <CreateCharacterWizard
-            userGameId={editingUserGame.id}
-            gameId={editingUserGame.gameId}
-            platforms={editingUserGame.platforms}
-            mode="edit"
-            characterId={selected.id}
-            initialData={characterToFormData(selected)}
-            onSuccess={handleEditSuccess}
-          />
-        </div>
+        <>
+          <BinderHeader title='Edit Character' className='flex justify-between items-center'>
+            <button
+              type="button"
+              onClick={handleEditCancel}
+              className=" text-xs font-mono text-off-white hover:text-text self-start"
+            >
+              ← Cancel
+            </button>
+          </BinderHeader>
+          <div className="flex flex-col flex-1 min-h-0 p-4 overflow-y-auto">
+            <CreateCharacterWizard
+              userGameId={editingUserGame.id}
+              gameId={editingUserGame.gameId}
+              platforms={editingUserGame.platforms}
+              mode="edit"
+              characterId={selected.id}
+              initialData={characterToFormData(selected)}
+              onSuccess={handleEditSuccess}
+            />
+          </div>
+        </>
       )
     }
     if (selected) {
       return (
         <div className="flex flex-col md:min-h-0">
-          <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent'>
-            <h2 className="text-xs font-mono uppercase tracking-widest">Character Card Details</h2>
-          </div>
+          <BinderHeader title='Character Card Details' className='flex flex-col justify-center'></BinderHeader>
           <div className='p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto'>
             <CharacterDetailCard
               character={selected}
@@ -148,9 +152,7 @@ export default function CharactersPage() {
     }
     return (
       <div className="flex flex-col md:min-h-0">
-        <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent'>
-          <h2 className="text-xs font-mono uppercase tracking-widest">Select A Character</h2>
-        </div>
+        <BinderHeader title='Select A Character' className='flex flex-col justify-center'></BinderHeader>
       </div>
     )
   })()
@@ -158,8 +160,7 @@ export default function CharactersPage() {
   const rightContent = (
     <>
       <div className="relative flex flex-col flex-1 min-h-0">
-        <div className='px-4 py-3 min-h-[64px] border-b-4 border-orange-950/50 bg-gradient-to-r from-orange-950/25 via-transparent to-transparent flex items-center justify-between'>
-          <h2 className="text-xs font-mono uppercase tracking-widest">My Character Cards</h2>
+        <BinderHeader title='My Character Cards' className='flex items-center justify-between'>
           {totalCount > 0 && (
             <PaginationControls
               page={page}
@@ -168,7 +169,7 @@ export default function CharactersPage() {
               onPageChange={setPage}
             />
           )}
-        </div>
+        </BinderHeader>
         <Gallery
           key={page}
           items={characters}
@@ -210,6 +211,7 @@ export default function CharactersPage() {
       activeTab={"Characters"}
       activeSide={activeSide}
       onToggleSide={() => setActiveSide(s => s === 'left' ? 'right' : 'left')}
+      hasSelection={!!selected}
       leftContent={leftContent}
       rightContent={rightContent}
     />
