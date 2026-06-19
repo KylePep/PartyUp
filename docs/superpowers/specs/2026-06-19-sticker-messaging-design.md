@@ -97,7 +97,7 @@ Payload shape (matches `StickerMessageDto` plus `matchId`):
 **`StickerContext`** (new, follows `NotificationContext` pattern)
 - Stores incoming real-time sticker payloads keyed by `matchId`.
 - Exposes `pushSticker(payload)` called by `AuthContext` when `"NewSticker"` SignalR event fires.
-- Exposes `consumeStickers(matchId)` used by the sticker chat hook to drain and clear buffered incoming stickers for the current match.
+- Exposes `incomingStickers: StickerMessageDto[]` — a flat list of all real-time stickers received this session. The sticker chat hook filters this by `matchId` reactively via `useEffect`.
 
 **`AuthContext` change**
 Register a `"NewSticker"` handler alongside the existing `"NewMatch"` handler:
@@ -116,7 +116,7 @@ send(matchId: string, emoji: string): Promise<StickerMessageDto>
 ### Hook: `useStickerMessages(matchId)`
 
 - On mount: fetches history via `getByMatch`.
-- Subscribes to `StickerContext` for incoming real-time stickers for this `matchId`; appends them to local state.
+- Watches `StickerContext.incomingStickers` via `useEffect`; when a new entry arrives for this `matchId`, appends it to local message state.
 - `send(emoji)`: calls `stickerMessages.send()`, appends the returned DTO to local state on success.
 - Returns `{ messages, send, loading }`.
 
