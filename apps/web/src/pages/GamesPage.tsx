@@ -129,7 +129,7 @@ export default function GamesPage() {
         getKey={(g: UserGame) => g.id}
         emptyMessage="You haven't added any games yet"
         errorMessage="Could not load games"
-        stickyRows={games.length > 6}
+        stickyRows={true}
         renderItem={(g: UserGame) => (
           <div className={`relative h-fit md:h-full ${selected?.id === g.id ? 'ring-2 ring-blue-700 rounded-xl' : ''}`}>
             <NewMatchBadge count={g.newMatchCount} />
