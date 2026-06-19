@@ -53,7 +53,7 @@ export function RealmRightPage({ gameId }: RealmRightPageProps) {
         getKey={m => m.matchId}
         emptyMessage="No matches yet — keep swiping!"
         errorMessage="Could not load matches"
-        stickyRows={matches.length > 6}
+        stickyRows={true}
         renderItem={m => (
           <div className="relative h-fit md:h-full">
             <MatchCard

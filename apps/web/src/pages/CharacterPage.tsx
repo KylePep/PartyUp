@@ -177,7 +177,7 @@ export default function CharactersPage() {
           getKey={c => c.id}
           emptyMessage="You haven't created any characters yet"
           errorMessage="Could not load characters"
-          stickyRows={characters.length > 6}
+          stickyRows={true}
           renderItem={c => (
             <div
               className="relative h-fit md:h-full flex flex-col rounded-xl"
