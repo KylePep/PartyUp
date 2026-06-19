@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login, register } from '../../api/endpoints/auth'
+import { HttpError, UnauthorizedError } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
 import { Modal, Input, Button } from '../ui'
 
@@ -24,6 +25,10 @@ export default function AuthModal({ initialMode, onClose }: AuthModalProps) {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!email.trim() || !password.trim()) {
+      setError('Email and password are required.')
+      return
+    }
     setError(null)
     setLoading(true)
     try {
@@ -35,7 +40,13 @@ export default function AuthModal({ initialMode, onClose }: AuthModalProps) {
       setSuccess(true)
       setTimeout(() => navigate('/home'), 800)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Try again.')
+      if (err instanceof UnauthorizedError) {
+        setError('Incorrect email or password.')
+      } else if (err instanceof HttpError && err.status === 429) {
+        setError('Too many attempts. Please wait a moment and try again.')
+      } else {
+        setError(err instanceof Error ? err.message : 'Something went wrong. Try again.')
+      }
     } finally {
       setLoading(false)
     }
