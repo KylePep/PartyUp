@@ -19,7 +19,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const HUB_URL = API_BASE.replace("/api", "") + "/hubs/notifications";
+const HUB_URL = API_BASE.replace(/\/api$/, "") + "/hubs/notifications";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(() =>
