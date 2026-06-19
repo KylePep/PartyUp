@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import type { Character } from '../../api/endpoints/characters'
 import { StandardTcgCard } from './StandardTcgCard'
-import { NewMatchDot } from '../ui/NewMatchDot'
 
 interface CharacterCardProps {
   character: Character
@@ -36,12 +35,12 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
 
   return (
     <div className="relative flex flex-col flex-1 min-h-0">
-      {character.hasNewMatch && <NewMatchDot />}
       <StandardTcgCard
         className={className}
         name={character.name}
         cardBackgroundColor={character.cardBackgroundColor}
         platform={character.platform}
+        isNew={character.hasNewMatch}
         imageUrl={character.imageUrl}
         statsLine={statsLine}
         textBody={

@@ -15,7 +15,7 @@ export function ConfirmDeleteModal({ isOpen, onClose, onConfirm, itemName, loadi
       <div className="px-6 py-4">
         <p className="text-sm text-muted font-mono">This action cannot be undone.</p>
       </div>
-      <div className="flex justify-end gap-3 px-6 py-4 border-t border-border">
+      <div className="flex justify-end gap-3 px-6 py-4" style={{ borderTop: '1px solid rgba(188,138,62,0.2)' }}>
         <Button variant="secondary" onClick={onClose} disabled={loading}>
           Cancel
         </Button>

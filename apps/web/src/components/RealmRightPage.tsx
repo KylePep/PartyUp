@@ -62,6 +62,7 @@ export function RealmRightPage({ gameId }: RealmRightPageProps) {
               gameName={m.gameName}
               matchedAt={m.matchedAt}
               isNew={m.isNew}
+              lastReceivedSticker={m.lastReceivedSticker}
               className=""
             />
           </div>

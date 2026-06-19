@@ -8,11 +8,12 @@ interface CharacterCardProps {
   matchedAt: string
   matchId: string
   className?: string
-  // onDelete?: (character: Character) => void
+  isNew?: boolean
+  lastReceivedSticker?: string
   onSelect?: (character: Character) => void
 }
 
-export function CollectionCard({ character, onSelect, className }: CharacterCardProps) {
+export function CollectionCard({ character, onSelect, className, isNew, lastReceivedSticker, matchId }: CharacterCardProps) {
   const navigate = useNavigate()
 
   function handleClick() {
@@ -40,8 +41,11 @@ export function CollectionCard({ character, onSelect, className }: CharacterCard
       className={className}
       name={character.name}
       platform={character.platform}
+      isNew={isNew}
       imageUrl={character.imageUrl}
       cardBackgroundColor={character.cardBackgroundColor}
+      stickerEmoji={lastReceivedSticker}
+      stickerSeed={matchId}
       statsLine={statsLine}
       textBody={
         <>

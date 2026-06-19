@@ -26,22 +26,26 @@ public class MatchNotificationService : IMatchNotificationService
 
     public async Task MarkViewedAsync(Guid matchId, Guid userId)
     {
-        var notification = await _db.MatchNotifications
-            .FirstOrDefaultAsync(n => n.MatchId == matchId && n.UserId == userId && n.ViewedAt == null);
+        var notifications = await _db.MatchNotifications
+            .Where(n => n.MatchId == matchId && n.UserId == userId && n.ViewedAt == null)
+            .ToListAsync();
 
-        if (notification != null)
-        {
-            notification.ViewedAt = DateTime.UtcNow;
-            await _db.SaveChangesAsync();
-        }
+        if (notifications.Count == 0) return;
+
+        var now = DateTime.UtcNow;
+        foreach (var n in notifications)
+            n.ViewedAt = now;
+
+        await _db.SaveChangesAsync();
     }
 
     public async Task<Dictionary<Guid, int>> GetNewMatchCountsByUserGameAsync(Guid userId, IEnumerable<Guid> userGameIds)
     {
         var ids = userGameIds.ToList();
         var newMatchIds = await _db.MatchNotifications
-            .Where(n => n.UserId == userId && n.ViewedAt == null && n.Type == NotificationType.NewMatch)
+            .Where(n => n.UserId == userId && n.ViewedAt == null)
             .Select(n => n.MatchId)
+            .Distinct()
             .ToListAsync();
 
         return await _db.CharacterMatches
@@ -62,8 +66,9 @@ public class MatchNotificationService : IMatchNotificationService
     {
         var ids = characterIds.ToList();
         var newMatchIds = await _db.MatchNotifications
-            .Where(n => n.UserId == userId && n.ViewedAt == null && n.Type == NotificationType.NewMatch)
+            .Where(n => n.UserId == userId && n.ViewedAt == null)
             .Select(n => n.MatchId)
+            .Distinct()
             .ToListAsync();
 
         var result = await _db.CharacterMatches
@@ -88,9 +93,9 @@ public class MatchNotificationService : IMatchNotificationService
             .Where(n =>
                 n.UserId == userId &&
                 n.ViewedAt == null &&
-                n.Type == NotificationType.NewMatch &&
                 ids.Contains(n.MatchId))
             .Select(n => n.MatchId)
+            .Distinct()
             .ToListAsync();
         return result.ToHashSet();
     }

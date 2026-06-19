@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createCharacter, updateCharacter, uploadCharacterImage } from '../../api/endpoints/characters'
 import { useFieldDefinitions } from '../../hooks/useFieldDefinitions'
 import { Button } from '../ui'
@@ -27,6 +27,18 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
   const [data, setData] = useState<CharacterFormData>({ ...defaultFormData, ...initialData })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const rootRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    let el: HTMLElement | null = rootRef.current?.parentElement ?? null
+    while (el) {
+      if (el.scrollHeight > el.clientHeight) {
+        el.scrollTo({ top: 0, behavior: 'instant' })
+        break
+      }
+      el = el.parentElement
+    }
+  }, [step])
 
   function patch(update: Partial<CharacterFormData>) {
     setData(prev => ({ ...prev, ...update }))
@@ -113,8 +125,7 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
   }
 
   return (
-    <div className="flex flex-col h-full gap-8 overflow-y-auto px-2"
-    >
+    <div ref={rootRef} className="flex flex-col gap-8 px-2">
       {/* Progress indicator */}
       <div className="flex items-center gap-2">
         {STEPS.map((label, i) => (

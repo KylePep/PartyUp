@@ -3,6 +3,7 @@ import * as signalR from "@microsoft/signalr";
 import { getMe, type CurrentUser } from "../api/endpoints/auth";
 import { UnauthorizedError, API_BASE } from "../api/client";
 import { useNotifications, type MatchNotificationPayload } from "./NotificationContext";
+import { useStickerContext, type StickerNotificationPayload } from "./StickerContext";
 
 type AuthState =
   | { status: "loading" }
@@ -26,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const { push } = useNotifications();
+  const { pushSticker, pushToast } = useStickerContext();
 
   function startConnection(token: string) {
     const connection = new signalR.HubConnectionBuilder()
@@ -35,6 +37,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     connection.on("NewMatch", (payload: MatchNotificationPayload) => {
       push(payload);
+    });
+
+    connection.on("NewSticker", (payload: StickerNotificationPayload) => {
+      pushSticker({
+        id: payload.id,
+        matchId: payload.matchId,
+        senderCharacterId: payload.senderCharacterId,
+        emoji: payload.emoji,
+        sentAt: payload.sentAt,
+      });
+      pushToast({
+        senderCharacterName: payload.senderCharacterName,
+        emoji: payload.emoji,
+      });
     });
 
     connection.start().catch(() => {
@@ -50,15 +66,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   useEffect(() => {
+    let cancelled = false;
     const token = localStorage.getItem("token");
     if (!token) return;
 
     getMe()
       .then((user) => {
+        if (cancelled) return;
         setState({ status: "authenticated", user });
         startConnection(token);
       })
       .catch((err) => {
+        if (cancelled) return;
         if (err instanceof UnauthorizedError) {
           setState({ status: "unauthenticated" });
         } else {
@@ -66,7 +85,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       });
 
-    return () => stopConnection();
+    return () => {
+      cancelled = true;
+      stopConnection();
+    };
   }, []);
 
   useEffect(() => {

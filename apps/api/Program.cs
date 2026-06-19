@@ -44,6 +44,7 @@ builder.Services.AddScoped<IGameSchemaGenerationService, GameSchemaGenerationSer
 builder.Services.AddSingleton<IGcsStorageService, GcsStorageService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IMatchNotificationService, MatchNotificationService>();
+builder.Services.AddScoped<IStickerMessageService, StickerMessageService>();
 builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
 builder.Services.AddRateLimiter(options =>

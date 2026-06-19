@@ -4,7 +4,6 @@ import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type 
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Gallery } from '../components/Gallery'
 import { GameDetailCard } from '../components/cards/GameDetailCard'
-import { NewMatchBadge } from '../components/ui/NewMatchBadge'
 import { PaginationControls } from '../components/ui'
 import { TABS } from '../lib/tabs'
 import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
@@ -132,15 +131,22 @@ export default function GamesPage() {
         stickyRows={true}
         renderItem={(g: UserGame) => (
           <div className={`relative h-fit md:h-full ${selected?.id === g.id ? 'ring-2 ring-blue-700 rounded-xl' : ''}`}>
-            <NewMatchBadge count={g.newMatchCount} />
             <FullArtTcgCard
               name={g.gameName}
               imageUrl={g.gameImageUrl ?? undefined}
               onClick={() => handleSelect(g)}
               className="h-min aspect-4/5 md:aspect-aut md:h-full hover:brightness-110 transition-all"
-              platform={<CubeIcon />}
-            >
-            </FullArtTcgCard>
+              platform={
+                g.newMatchCount > 0 ? (
+                  <span className="relative flex">
+                    <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-75" />
+                    <CubeIcon className="relative text-success" />
+                  </span>
+                ) : (
+                  <CubeIcon />
+                )
+              }
+            />
           </div>
         )}
       />

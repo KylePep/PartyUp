@@ -12,6 +12,7 @@ public class CharacterMatchDto
     public string GameName { get; set; } = default!;
     public string? GameImageUrl { get; set; }
     public bool IsNew { get; set; }
+    public string? LastReceivedSticker { get; set; }
 }
 
 public class CharacterSummaryDto
