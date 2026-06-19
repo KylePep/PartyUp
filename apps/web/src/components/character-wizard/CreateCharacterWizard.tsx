@@ -72,8 +72,15 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
       let imageUrl = data.imageUrl.trim() || undefined
 
       if (data.imageFile) {
-        const uploaded = await uploadCharacterImage(data.imageFile)
-        imageUrl = uploaded.url
+        try {
+          const uploaded = await uploadCharacterImage(data.imageFile)
+          imageUrl = uploaded.url
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : 'Unknown error'
+          setError(`Image upload failed: ${msg}`)
+          setSubmitting(false)
+          return
+        }
       }
 
       const payload = {
@@ -101,8 +108,9 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
         await createCharacter({ userGameId, ...payload, gameFields })
       }
       onSuccess()
-    } catch {
-      setError(`Failed to ${mode === 'edit' ? 'update' : 'create'} character. Please try again.`)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Something went wrong.'
+      setError(`Failed to ${mode === 'edit' ? 'update' : 'create'} character: ${msg}`)
       setSubmitting(false)
     }
   }
