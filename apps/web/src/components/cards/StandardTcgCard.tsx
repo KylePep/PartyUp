@@ -12,6 +12,7 @@ interface StandardTcgCardProps {
   onClick?: () => void
   cardBackgroundColor?: string
   children?: React.ReactNode
+  isNew?: boolean
 }
 
 export function StandardTcgCard({
@@ -26,6 +27,7 @@ export function StandardTcgCard({
   onClick,
   cardBackgroundColor,
   children,
+  isNew,
 }: StandardTcgCardProps) {
   return (
     <div
@@ -41,7 +43,18 @@ export function StandardTcgCard({
         >
           <span className="font-display font-semibold text-text text-xxs md:text-xs truncate">{name}</span>
           <span className="w-4 md:w-6 h-4 md:h-6 [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-[22px] md:[&_svg]:h-[22px]">
-            {platform && <PlatformIcon platform={platform} />}
+            {platform && (
+              isNew ? (
+                <span className="relative flex w-full h-full">
+                  <span className="absolute inset-0 rounded-full bg-success animate-ping opacity-75" />
+                  <span className="relative w-full h-full">
+                    <PlatformIcon platform={platform} />
+                  </span>
+                </span>
+              ) : (
+                <PlatformIcon platform={platform} />
+              )
+            )}
           </span>
         </div>
 

@@ -158,12 +158,13 @@ export default function MatchesPage() {
         errorMessage="Could not load matches"
         stickyRows={true}
         renderItem={m => (
-          <div className={`flex flex-col ${selected?.matchId === m.matchId ? 'ring-2 ring-green-700 rounded-xl' : m.isNew ? 'ring-2 ring-green-500 rounded-xl' : ''}`}>
+          <div className={`flex flex-col ${selected?.matchId === m.matchId ? 'ring-2 ring-green-700 rounded-xl' : ''}`}>
             <CollectionCard
               matchId={m.matchId}
               character={m.theirCharacter}
               gameName={m.gameName}
               matchedAt={m.matchedAt}
+              isNew={m.isNew}
               onSelect={() => handleSelect(m)}
               className="h-min aspect-3/4 md:aspect-4/5 md:h-full"
             />

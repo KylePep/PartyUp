@@ -3,6 +3,7 @@ import { DiscoveryFilters } from './DiscoveryFilters'
 import { useClickOutside } from '../hooks/useClickOutside'
 import { useEscapeKey } from '../hooks/useEscapeKey'
 import type { GameFieldDefinition } from '../api/endpoints/games'
+import { Button } from './ui'
 
 interface DiscoveryFilterMenuProps {
   fields: GameFieldDefinition[]
@@ -38,16 +39,12 @@ export function DiscoveryFilterMenu({
 
   return (
     <div className={`relative ${className}`} ref={dropdownRef}>
-      <button
-        type="button"
+      <Button
         onClick={() => setOpen(o => !o)}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono border transition-colors ${activeCount > 0
-          ? 'border-accent text-accent bg-accent/10'
-          : 'border-border text-muted bg-off-black/50 hover:border-accent hover:text-text'
-          }`}
+        size='sm'
       >
         {activeCount > 0 ? `Filters · ${activeCount}` : 'Filters'}
-      </button>
+      </Button>
 
       {open && (
         <div

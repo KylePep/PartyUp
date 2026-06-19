@@ -60,7 +60,7 @@ export default function AuthModal({ initialMode, onClose }: AuthModalProps) {
               {mode === 'sign-in' ? 'Sign in to continue your adventure.' : 'Create your account and begin your quest.'}
             </p>
 
-            <div className="flex border-b border-border mb-6">
+            <div className="flex mb-6" style={{ borderBottom: '1px solid rgba(188,138,62,0.2)' }}>
               {(['sign-in', 'sign-up'] as Mode[]).map(m => (
                 <button
                   key={m}
