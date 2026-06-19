@@ -10,12 +10,13 @@ interface MatchCardProps {
   matchedAt: string
   matchId: string
   isNew?: boolean
+  lastReceivedSticker?: string
   className?: string
   onSelect?: (character: Character) => void
 }
 
 
-function MatchFront({ character, isNew }: MatchCardProps) {
+function MatchFront({ character, isNew, lastReceivedSticker, matchId }: MatchCardProps) {
 
   const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
   const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
@@ -39,6 +40,8 @@ function MatchFront({ character, isNew }: MatchCardProps) {
       imageUrl={character.imageUrl}
       cardBackgroundColor={character.cardBackgroundColor}
       isNew={isNew}
+      stickerEmoji={lastReceivedSticker}
+      stickerSeed={matchId}
       statsLine={statsLine}
       textBody={
         <>
@@ -95,12 +98,12 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
   )
 }
 
-export function MatchCard({ character, gameName, matchedAt, matchId, isNew, onSelect, className }: MatchCardProps) {
+export function MatchCard({ character, gameName, matchedAt, matchId, isNew, lastReceivedSticker, onSelect, className }: MatchCardProps) {
   return (
     <div className={className}>
       <FlippableCard
         className="h-min aspect-3/4 md:aspect-4/5 md:h-full"
-        front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} isNew={isNew} />}
+        front={<MatchFront character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} isNew={isNew} lastReceivedSticker={lastReceivedSticker} />}
         back={<MatchBack character={character} gameName={gameName} matchedAt={matchedAt} matchId={matchId} />}
         onFrontClick={onSelect ? () => onSelect(character) : undefined}
       />

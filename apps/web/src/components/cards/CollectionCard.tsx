@@ -9,10 +9,11 @@ interface CharacterCardProps {
   matchId: string
   className?: string
   isNew?: boolean
+  lastReceivedSticker?: string
   onSelect?: (character: Character) => void
 }
 
-export function CollectionCard({ character, onSelect, className, isNew }: CharacterCardProps) {
+export function CollectionCard({ character, onSelect, className, isNew, lastReceivedSticker, matchId }: CharacterCardProps) {
   const navigate = useNavigate()
 
   function handleClick() {
@@ -43,6 +44,8 @@ export function CollectionCard({ character, onSelect, className, isNew }: Charac
       isNew={isNew}
       imageUrl={character.imageUrl}
       cardBackgroundColor={character.cardBackgroundColor}
+      stickerEmoji={lastReceivedSticker}
+      stickerSeed={matchId}
       statsLine={statsLine}
       textBody={
         <>

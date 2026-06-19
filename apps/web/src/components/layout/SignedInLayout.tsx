@@ -4,6 +4,7 @@ import { NavBar } from './NavBar'
 // import { BottomTray } from './BottomTray'
 import { Spinner } from '../ui'
 import { MatchNotificationToast } from '../notifications/MatchNotificationToast'
+import { StickerToast } from '../stickers/StickerToast'
 
 export default function SignedInLayout() {
   const { state } = useAuth()
@@ -23,6 +24,7 @@ export default function SignedInLayout() {
   return (
     <>
       <MatchNotificationToast />
+      <StickerToast />
       <div className="min-h-screen max-h-screen flex flex-col md:flex-row relative overflow-hidden">
         <NavBar variant="app" />
         <Outlet />

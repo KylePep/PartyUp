@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { NotificationProvider } from "./context/NotificationContext";
+import { StickerProvider } from "./context/StickerContext";
 import { AuthProvider } from "./context/AuthContext";
 import SignedInLayout from "./components/layout/SignedInLayout";
 import AdminRoute from "./components/layout/AdminRoute";
@@ -18,6 +19,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <NotificationProvider>
+        <StickerProvider>
         <AuthProvider>
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -35,6 +37,7 @@ export default function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </AuthProvider>
+        </StickerProvider>
       </NotificationProvider>
     </BrowserRouter>
   );
