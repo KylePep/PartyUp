@@ -29,7 +29,7 @@ export function StandardTcgCard({
 }: StandardTcgCardProps) {
   return (
     <div
-      className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-2 gap-1 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
+      className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-1 md:p-2 gap-0.5 md:gap-1 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
       style={{ border: '8px solid black', backgroundColor: cardBackgroundColor || 'var(--color-surface)' }}
       onClick={onClick}
     >
@@ -39,14 +39,16 @@ export function StandardTcgCard({
           className="flex items-center justify-between px-1.5 py-1 flex-shrink-0 rounded-sm"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
-          <span className="font-display font-semibold text-text text-xs truncate">{name}</span>
-          <span>{platform && <PlatformIcon platform={platform} size={22} />} </span>
+          <span className="font-display font-semibold text-text text-xxs md:text-xs truncate">{name}</span>
+          <span className="w-4 md:w-6 h-4 md:h-6 [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-[22px] md:[&_svg]:h-[22px]">
+            {platform && <PlatformIcon platform={platform} />}
+          </span>
         </div>
 
         {/* Subtitle: region · language */}
         {subtitle && (
           <div className="px-1 flex-shrink-0 flex justify-between">
-            <span className="text-xs text-muted italic">{subtitle}  </span>
+            <span className="text-xxs md:text-xs text-muted italic">{subtitle}  </span>
           </div>
         )}
       </div>
@@ -69,8 +71,7 @@ export function StandardTcgCard({
       {/* Stats line: badges, key attributes */}
       {statsLine && (
         <div
-          className="px-2 flex-shrink-0 truncate rounded-sm 
-          "
+          className="px-2 flex-shrink-0 truncate rounded-sm text-xxs md:text-xs"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           {statsLine}
@@ -79,7 +80,7 @@ export function StandardTcgCard({
 
       {/* Text body: bio (flex-1 so it fills remaining space) */}
       {textBody && (
-        <div className="px-2 py-2 flex flex-col flex-1 overflow-y-auto overflow-x-hidden rounded-sm"
+        <div className="p-1 md:p-2 flex flex-col flex-1 overflow-y-auto overflow-x-hidden rounded-sm text-xxs md:text-xs"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           {textBody}

@@ -12,7 +12,7 @@ interface ParentChoiceModalProps {
 
 export function ParentChoiceModal({ selectedGame, parentGame, onChoose, onDismiss, adding }: ParentChoiceModalProps) {
   function realmLabel(count: number) {
-    return count === 0 ? 'No realm yet' : `${count} players`
+    return count === 0 ? 'No users' : `${count} users`
   }
 
   return (
@@ -29,11 +29,11 @@ export function ParentChoiceModal({ selectedGame, parentGame, onChoose, onDismis
               name={selectedGame.name}
               imageUrl={selectedGame.imageUrl ?? undefined}
               platform={
-                <span className="font-mono text-xs text-white">
+                <span className="font-mono text-xs text-white px-1">
                   {realmLabel(selectedGame.realmCount)}
                 </span>
               }
-              className="h-64"
+              className="h-48 md:h-64"
             />
             <Button onClick={() => onChoose(selectedGame)} disabled={adding}>
               Join this realm
@@ -44,11 +44,11 @@ export function ParentChoiceModal({ selectedGame, parentGame, onChoose, onDismis
               name={parentGame.name}
               imageUrl={parentGame.imageUrl ?? undefined}
               platform={
-                <span className="font-mono text-xs text-white">
+                <span className="font-mono text-xs text-white px-1">
                   {realmLabel(parentGame.realmCount)}
                 </span>
               }
-              className="h-64"
+              className="h-48 md:h-64"
             />
             <Button onClick={() => onChoose(parentGame)} disabled={adding}>
               Join this realm

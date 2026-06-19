@@ -58,7 +58,21 @@ export function BinderTabs({ activeTab }: BinderTabsProps) {
             to={tab.to}
             aria-label={tab.label}
             className="flex md:flex-col gap-2 justify-center md:justify-start pt-1 items-center rounded-b md:rounded-none md:rounded-r transition-all overflow-hidden"
-            style={{ backgroundColor: bgColor }}
+            style={
+              bgColor != "transparent"
+                ? {
+                  background: `
+                    linear-gradient(
+                      0deg,
+                      rgba(34, 120, 195, 0.35) 10%,
+                      rgba(182, 189, 94, 0.1) 35%,
+                      rgba(205, 228, 233, 0.15) 80%
+                    ),
+                    ${bgColor}
+                  `
+                }
+                : {}
+            }
           >
             <tab.Icon size={20} weight={iconWeight} color={iconColor} />
             <span className="font-display text-xs uppercase font-black hidden md:block whitespace-nowrap [@media(max-height:600px)]:!hidden"

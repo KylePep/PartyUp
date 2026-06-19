@@ -13,7 +13,7 @@ interface BinderShellProps {
 
 export function BinderShell({ title, children, clasp, claspClassName = '', claspStyle, footer, footerClassName = '', className = '' }: BinderShellProps) {
   return (
-    <div className={`relative binder-frame border-[#1a0c04] border-10 md:border-16 rounded py-8 md:py-4 px-6 flex flex-col md:gap-4 items-center justify-between ${className}`}>
+    <div className={`relative binder-frame border-[#1a0c04] border-10 md:border-16 rounded py-8 md:py-4 px-6 flex flex-col md:gap-4 items-center justify-between shadow-lg ${className}`}>
       {/* Gold thread stitching around full binder */}
       <div className="absolute pointer-events-none rounded" style={{
         inset: '6px',

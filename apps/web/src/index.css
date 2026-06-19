@@ -27,6 +27,9 @@
   --font-display: "Cinzel", serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+
+  --text-xxs: 0.625rem;
+  --text-xxs--line-height: 0.875rem;
 }
 
 .binder-frame {

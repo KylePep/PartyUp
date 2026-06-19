@@ -12,6 +12,7 @@ import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
 import { ConfirmDeleteModal } from '../components/modals/ConfirmDeleteModal'
 import { BinderHeader } from '../components/layout/BinderHeader'
+import { FullArtTcgCard } from '../components/cards/FullArtTcgCard'
 
 const PAGE_SIZE = 12
 
@@ -133,14 +134,14 @@ export default function GamesPage() {
         renderItem={(g: UserGame) => (
           <div className={`relative h-fit md:h-full ${selected?.id === g.id ? 'ring-2 ring-blue-700 rounded-xl' : ''}`}>
             <NewMatchBadge count={g.newMatchCount} />
-            <LandCard
+            <FullArtTcgCard
               name={g.gameName}
               imageUrl={g.gameImageUrl ?? undefined}
               onClick={() => handleSelect(g)}
-              className="h-min aspect-3/4 md:aspect-auto md:h-full hover:brightness-110 transition-all"
+              className="h-min aspect-4/5 md:aspect-aut md:h-full hover:brightness-110 transition-all"
+              platform={<CubeIcon />}
             >
-              <div className='flex flex-1 items-center justify-center text-7xl'><CubeIcon /></div>
-            </LandCard>
+            </FullArtTcgCard>
           </div>
         )}
       />

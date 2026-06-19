@@ -25,7 +25,7 @@ export default function LandingPage() {
             <div className="flex flex-col items-center justify-center flex-1 w-full">
               {/* Top half — Sign Up */}
               <button
-                className="cursor-pointer w-32 md:w-36 h-16 md:h-[4.5rem] flex items-end justify-center pb-2 md:pb-3 font-mono text-xs tracking-widest uppercase transition-all active:brightness-75 hover:brightness-110"
+                className="cursor-pointer w-28 md:w-36 h-14 md:h-[4.5rem] flex items-end justify-center pb-2 md:pb-3 font-mono text-xs tracking-widest uppercase transition-all active:brightness-75 hover:brightness-110"
                 onClick={() => setModal('sign-up')}
                 style={{
                   background: 'radial-gradient(ellipse at 50% 85%, #f5d060 0%, #d4980c 35%, #b07808 65%, #885a04 100%)',
@@ -48,7 +48,7 @@ export default function LandingPage() {
 
               {/* Bottom half — Sign In */}
               <button
-                className="cursor-pointer w-32 md:w-36 h-16 md:h-[4.5rem] flex items-start justify-center pt-2 md:pt-3 font-mono text-xs tracking-widest uppercase transition-all active:brightness-75 hover:brightness-110"
+                className="cursor-pointer w-28 md:w-36 h-14 md:h-[4.5rem] flex items-start justify-center pt-2 md:pt-3 font-mono text-xs tracking-widest uppercase transition-all active:brightness-75 hover:brightness-110"
                 onClick={() => setModal('sign-in')}
                 style={{
                   background: 'radial-gradient(ellipse at 50% 15%, #d4980c 0%, #b07808 30%, #885a04 58%, #6a4402 80%, #4c3002 100%)',
@@ -72,7 +72,7 @@ export default function LandingPage() {
           </>
           }
           footer={<>
-            <p>Find your people. <br /> PartyUp matches multiplayer gamers by the games they play, the characters they build, and the vibe they bring.</p>
+            <p className='text-xs md:text-normal'>Find your people. <br /> PartyUp matches multiplayer gamers by the games they play, the characters they build, and the vibe they bring.</p>
           </>}
           footerClassName="flex flex-col items-center justify-center mb-24 md:mb-0 h-1/4 md:h-[30%]"
         >
