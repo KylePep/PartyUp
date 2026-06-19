@@ -9,7 +9,8 @@ import { Gallery } from '../components/Gallery'
 import { CollectionCard } from '../components/cards/CollectionCard'
 import { TABS } from '../lib/tabs'
 import { CharacterDetailCard } from '../components/cards/CharacterDetailCard'
-import { PlanetIcon, UserSquareIcon } from '@phosphor-icons/react'
+import { PlanetIcon, UserSquareIcon, ChatCircleIcon } from '@phosphor-icons/react'
+import { StickerChatView } from '../components/stickers/StickerChatView'
 import { PaginationControls } from '../components/ui'
 import { useUserGames } from '../hooks/useUserGames'
 import { BinderHeader } from '../components/layout/BinderHeader'
@@ -26,6 +27,7 @@ export default function MatchesPage() {
   const [totalCount, setTotalCount] = useState(0)
   const [selected, setSelected] = useState<CharacterMatchDto | null>(null)
   const [activeSide, setActiveSide] = useState<'left' | 'right'>('right')
+  const [view, setView] = useState<'detail' | 'chat'>('detail')
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -72,6 +74,7 @@ export default function MatchesPage() {
   }, [targetId, page, selectedGameId, debouncedSearch])
 
   function handleSelect(match: CharacterMatchDto) {
+    setView('detail')
     setSelected(match)
     setActiveSide('left')
     if (match.isNew) {
@@ -96,17 +99,34 @@ export default function MatchesPage() {
   const leftContent = selected ? (
     <div className="flex flex-col md:flex-1 md:min-h-0">
       <BinderHeader title='' heightClassName='md:min-h-[76px] md:h-[76px] md:max-h-[76px]' className=''>
-        <div className='flex gap-4'>
-          <p className="text-xs text-muted uppercase tracking-widest mb-0.5">Match</p>
-          <p className="text-xs text-muted">
-            - {new Date(selected.matchedAt).toLocaleDateString()}
-          </p>
+        <div className='flex items-center justify-between'>
+          <div className='flex gap-4'>
+            <p className="text-xs text-muted uppercase tracking-widest mb-0.5">Match</p>
+            <p className="text-xs text-muted">
+              - {new Date(selected.matchedAt).toLocaleDateString()}
+            </p>
+          </div>
+          <button
+            onClick={() => setView(v => v === 'detail' ? 'chat' : 'detail')}
+            className="p-1 rounded hover:bg-white/10 transition-colors text-muted hover:text-text"
+            aria-label={view === 'detail' ? 'Open sticker chat' : 'Back to character'}
+            title={view === 'detail' ? 'Sticker Chat' : 'Character Detail'}
+          >
+            <ChatCircleIcon size={18} weight={view === 'chat' ? 'fill' : 'regular'} />
+          </button>
         </div>
         <p className="font-display font-bold text-text">{selected.gameName}</p>
       </BinderHeader>
-      <div className="p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto">
-        <CharacterDetailCard character={selected.theirCharacter} />
-      </div>
+      {view === 'detail' ? (
+        <div className="p-2 md:px-4 flex flex-col min-h-0 overflow-y-auto">
+          <CharacterDetailCard character={selected.theirCharacter} />
+        </div>
+      ) : (
+        <StickerChatView
+          matchId={selected.matchId}
+          myCharacterId={selected.myCharacter.id}
+        />
+      )}
     </div>
   ) : (
     <div className="flex flex-col md:flex-1 md:min-h-0">
