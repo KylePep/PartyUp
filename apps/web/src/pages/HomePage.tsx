@@ -22,9 +22,6 @@ export default function HomePage() {
 
   if (auth.status !== 'authenticated') return null
 
-  // const { email } = auth.user
-  // const displayName = auth.user.profile?.displayName
-  // const name = displayName ?? email.split('@')[0]
   const visibleRealms = userGames.games.slice(0, 4)
   const atLimit = userGames.games.length >= USER_GAME_LIMIT
 
@@ -48,7 +45,6 @@ export default function HomePage() {
     <main className="flex flex-1 md:items-center md:justify-center md:py-4 overflow-hidden relative">
       <section className="md:h-full w-full mx-4 md:w-1/2 relative py-4 mx-4 pb-14 md:pb-0">
         <BinderShell
-          // title={`${name}'s Guildoire`}
           title="PartyUp"
           className="relative h-full w-full z-20"
           footer={visibleRealms.length === 0 ? (
@@ -84,7 +80,7 @@ export default function HomePage() {
           </p>
           <div className="flex gap-3 justify-end">
             <Button variant="ghost" onClick={() => setPendingRealm(null)}>Cancel</Button>
-            <Button onClick={confirmAddRealm} disabled={addingRealm}>
+            <Button variant="success" onClick={confirmAddRealm} disabled={addingRealm}>
               {addingRealm ? 'Adding…' : 'Add Realm'}
             </Button>
           </div>

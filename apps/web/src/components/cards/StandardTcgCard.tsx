@@ -25,6 +25,20 @@ function stableRotation(seed: string): number {
   return (h % 29) - 14
 }
 
+function stableCardShine(seed: string): string {
+  let h = 5381
+  for (let i = 0; i < seed.length; i++) {
+    h = ((h << 5) + h + seed.charCodeAt(i)) >>> 0
+  }
+  const shineAngle = ((h & 0xFF) % 120) + 90
+  const shinePos = (((h >> 8) & 0xFF) % 50) + 20
+  const baseAngle = (((h >> 16) & 0xFF) % 80) + 110
+  return [
+    `linear-gradient(${shineAngle}deg, transparent ${shinePos - 25}%, rgba(255,255,255,0.42) ${shinePos}%, rgba(255,255,255,0.18) ${shinePos + 8}%, transparent ${shinePos + 20}%)`,
+    `linear-gradient(${baseAngle}deg, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.28) 100%)`,
+  ].join(', ')
+}
+
 export function StandardTcgCard({
   name,
   platform,
@@ -44,7 +58,12 @@ export function StandardTcgCard({
   return (
     <div
       className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-1 md:p-2 gap-0.5 md:gap-1 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
-      style={{ border: '8px solid black', backgroundColor: cardBackgroundColor || 'var(--color-surface)' }}
+      style={{
+        border: '8px solid black',
+        backgroundColor: cardBackgroundColor || 'var(--color-surface)',
+        backgroundImage: cardBackgroundColor ? stableCardShine(name) : undefined,
+        backgroundBlendMode: cardBackgroundColor ? 'soft-light, overlay' : undefined,
+      }}
       onClick={onClick}
     >
       <div>

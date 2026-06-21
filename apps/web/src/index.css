@@ -25,6 +25,7 @@
   --color-binder-spine: oklch(36% 0.083 235);
 
   --font-display: "Cinzel", serif;
+  --font-orbitron: "Orbitron", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
@@ -57,6 +58,36 @@ body {
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Brass button — darken text + ring on interaction, leave background untouched */
+.group:hover .btn-inner-darken,
+.group:focus-visible .btn-inner-darken {
+  filter: brightness(0.6);
+}
+
+.group:active .btn-inner-darken {
+  filter: brightness(0.4);
+}
+
+/* Brass button — etched text treatment */
+.btn-etched {
+  /* fallback: readable text with a simple drop shadow */
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+@supports (-webkit-text-stroke: 1px transparent) {
+  .btn-etched {
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 1px 0 rgba(255, 235, 130, 0.4);
+  }
+
+  /* Ghost: transparent fill, stroke-only outline. Fallback is the Tailwind text color. */
+  .btn-etched-ghost {
+    color: rgb(255, 255, 255);
+    -webkit-text-stroke: 1px rgb(2, 1, 0);
+    text-shadow: none;
+  }
 }
 
 /* Minimal scrollbar — prevents scrollbar from overlapping card content */

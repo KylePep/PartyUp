@@ -324,7 +324,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
           </p>
           <div className="flex gap-3 justify-end">
             <Button variant="ghost" onClick={() => setPendingGame(null)}>Cancel</Button>
-            <Button onClick={confirmAdd} disabled={adding}>
+            <Button variant="success" onClick={confirmAdd} disabled={adding}>
               {adding ? 'Adding…' : 'Add Realm'}
             </Button>
           </div>

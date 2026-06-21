@@ -4,7 +4,7 @@ import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type 
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Gallery } from '../components/Gallery'
 import { GameDetailCard } from '../components/cards/GameDetailCard'
-import { PaginationControls } from '../components/ui'
+import { Button, PaginationControls } from '../components/ui'
 import { TABS } from '../lib/tabs'
 import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
@@ -135,7 +135,7 @@ export default function GamesPage() {
               name={g.gameName}
               imageUrl={g.gameImageUrl ?? undefined}
               onClick={() => handleSelect(g)}
-              className="h-min aspect-4/5 md:aspect-aut md:h-full hover:brightness-110 transition-all"
+              className="h-min aspect-4/5 md:aspect-aut md:h-full hover:brightness-110 transition-all text-xxs md:text-sm"
               platform={
                 g.newMatchCount > 0 ? (
                   <span className="relative flex">
