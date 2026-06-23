@@ -37,9 +37,7 @@ public class UserGamesController : ControllerBase
           GameImageUrl = ug.Game.ImageUrl,
           CreatedAt = ug.CreatedAt,
           NewMatchCount = 0
-        },
-        redirected = result.Redirected,
-        message = result.Message
+        }
       });
     }
     catch (InvalidOperationException ex)

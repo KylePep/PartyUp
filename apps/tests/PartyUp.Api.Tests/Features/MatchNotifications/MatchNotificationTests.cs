@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using PartyUp.Api.Models;
@@ -99,7 +99,7 @@ public class MatchNotificationTests : TestBase, IClassFixture<ApiFactory>
     }
 
     private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
-    private record AddGameResult(UserGameDto UserGame, bool Redirected, string? Message);
+    private record AddGameResult(UserGameDto UserGame);
     private record UserGameDto(Guid Id, Guid GameId);
     private record CharacterIdDto(Guid Id);
     private record MatchItemDto(Guid MatchId, DateTime MatchedAt, bool IsNew);

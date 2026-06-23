@@ -145,131 +145,6 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
   }
 
   [Fact]
-  public async Task AddGame_Addition_RedirectsToParent()
-  {
-      var client = await CreateAuthenticatedClientAsync();
-
-      // 91001 is wired in FakeRawgHandler to have parent_game = 91000
-      var response = await client.PostAsJsonAsync("/api/user-games", new
-      {
-          externalId = 91001,
-          name = "Game 91001",
-          imageUrl = (string?)null
-      });
-
-      response.StatusCode.Should().Be(HttpStatusCode.OK);
-      var result = await response.Content.ReadFromJsonAsync<AddGameResultDto>();
-      result!.Redirected.Should().BeTrue();
-      result.Message.Should().Contain("Game 91001");
-      result.Message.Should().Contain("Game 91000");
-      result.UserGame.GameName.Should().Be("Game 91000");
-  }
-
-  [Fact]
-  public async Task AddGame_StaleRecord_StillRedirectsToParent()
-  {
-      // Arrange: two independent users so we can add 91001 twice
-      var clientA = await CreateAuthenticatedClientAsync();
-      var clientB = await CreateAuthenticatedClientAsync();
-
-      // clientA adds the addition first — this persists the Game record for 91001
-      // in the DB (with ParentExternalId correctly set via the parent-games endpoint)
-      // and creates a UserGame pointing at the parent 91000.
-      var firstAdd = await clientA.PostAsJsonAsync("/api/user-games", new
-      {
-          externalId = 91001,
-          name = "Game 91001",
-          imageUrl = (string?)null
-      });
-      firstAdd.EnsureSuccessStatusCode();
-
-      // clientB now adds the same DLC — the Game row for 91001 is already in the
-      // DB. TryPopulateParentExternalId should handle the stale-record path and
-      // the redirect to 91000 should still occur.
-      var secondAdd = await clientB.PostAsJsonAsync("/api/user-games", new
-      {
-          externalId = 91001,
-          name = "Game 91001",
-          imageUrl = (string?)null
-      });
-
-      secondAdd.StatusCode.Should().Be(HttpStatusCode.OK);
-      var result = await secondAdd.Content.ReadFromJsonAsync<AddGameResultDto>();
-      result!.Redirected.Should().BeTrue();
-      result.UserGame.GameName.Should().Be("Game 91000");
-  }
-
-  [Fact]
-  public async Task AddGame_CanonicalGame_NotRedirected()
-  {
-      var client = await CreateAuthenticatedClientAsync();
-      var id = Interlocked.Increment(ref _gameCounter);
-
-      var response = await client.PostAsJsonAsync("/api/user-games", new
-      {
-          externalId = id,
-          name = $"Game {id}",
-          imageUrl = (string?)null
-      });
-
-      response.StatusCode.Should().Be(HttpStatusCode.OK);
-      var result = await response.Content.ReadFromJsonAsync<AddGameResultDto>();
-      result!.Redirected.Should().BeFalse();
-      result.Message.Should().BeNull();
-  }
-
-  [Fact]
-  public async Task AddGame_WithSkipParentRedirect_DoesNotRedirect()
-  {
-      var client = await CreateAuthenticatedClientAsync();
-
-      // 91001 has parent 91000, but skipParentRedirect=true means we add 91001 directly
-      var response = await client.PostAsJsonAsync("/api/user-games", new
-      {
-          externalId = 91001,
-          name = "Game 91001",
-          imageUrl = (string?)null,
-          skipParentRedirect = true
-      });
-
-      response.StatusCode.Should().Be(HttpStatusCode.OK);
-      var result = await response.Content.ReadFromJsonAsync<AddGameResultDto>();
-      result!.Redirected.Should().BeFalse();
-      result.UserGame.GameName.Should().Be("Game 91001");
-  }
-
-  [Fact]
-  public async Task AddGame_TwoUsersSelectDifferentEditions_BothInParentPool()
-  {
-      var clientA = await CreateAuthenticatedClientAsync();
-      var clientB = await CreateAuthenticatedClientAsync();
-
-      // clientA selects the addition (91001), clientB selects the canonical (91000)
-      var responseA = await clientA.PostAsJsonAsync("/api/user-games", new
-      {
-          externalId = 91001,
-          name = "Game 91001",
-          imageUrl = (string?)null
-      });
-      var responseB = await clientB.PostAsJsonAsync("/api/user-games", new
-      {
-          externalId = 91000,
-          name = "Game 91000",
-          imageUrl = (string?)null
-      });
-
-      responseA.StatusCode.Should().Be(HttpStatusCode.OK);
-      responseB.StatusCode.Should().Be(HttpStatusCode.OK);
-
-      var resultA = await responseA.Content.ReadFromJsonAsync<AddGameResultDto>();
-      var resultB = await responseB.Content.ReadFromJsonAsync<AddGameResultDto>();
-
-      // Both should be enrolled in the same game (91000)
-      resultA!.UserGame.GameName.Should().Be("Game 91000");
-      resultB!.UserGame.GameName.Should().Be("Game 91000");
-  }
-
-  [Fact]
   public async Task AddGame_AtLimit_ReturnsConflict()
   {
       var client = await CreateAuthenticatedClientAsync();
@@ -435,8 +310,8 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
 
   private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
 
-  private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
-  private record AddCountResultDto(bool Redirected, string? Message, UserGameWithCountDto UserGame);
+  private record AddGameResultDto(UserGameDto UserGame);
+  private record AddCountResultDto(UserGameWithCountDto UserGame);
   private record UserGameWithCountDto(Guid Id, Guid GameId, string GameName, int NewMatchCount);
   private record CharIdDto(Guid Id);
 

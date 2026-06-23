@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using PartyUp.Api.Models;
@@ -252,7 +252,7 @@ public class CharacterMatchTests : TestBase, IClassFixture<ApiFactory>
 
     private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record UserGameDto(Guid Id, Guid GameId);
-    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+    private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterIdDto(Guid Id);
     private record CharacterSummaryDto(Guid Id, string Name);
     private record MatchItemDto(Guid MatchId, DateTime MatchedAt, CharacterSummaryDto MyCharacter, CharacterSummaryDto TheirCharacter, Guid GameId, string GameName);

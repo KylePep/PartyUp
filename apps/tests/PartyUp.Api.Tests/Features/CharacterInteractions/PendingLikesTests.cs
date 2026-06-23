@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using PartyUp.Api.Models;
@@ -148,7 +148,7 @@ public class PendingLikesTests : TestBase, IClassFixture<ApiFactory>
     }
 
     private record UserGameDto(Guid Id, Guid GameId);
-    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+    private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterIdDto(Guid Id);
     private record PendingCharacterDto(Guid Id, string Name);
 }
