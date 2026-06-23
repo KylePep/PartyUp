@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using PartyUp.Api.Models.Enums;
@@ -182,6 +182,6 @@ public class StickerMessageTests : TestBase, IClassFixture<ApiFactory>
     private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record MatchItem(Guid MatchId);
     private record UserGameDto(Guid Id, Guid GameId);
-    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+    private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterIdDto(Guid Id);
 }

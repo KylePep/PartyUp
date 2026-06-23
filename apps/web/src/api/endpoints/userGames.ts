@@ -4,7 +4,6 @@ export type AddUserGamePayload = {
   externalId: number;
   name: string;
   imageUrl: string | null;
-  skipParentRedirect?: boolean;
 };
 
 export type UserGame = {
@@ -31,8 +30,6 @@ export type UserGameDetail = {
 
 export type AddUserGameResult = {
   userGame: UserGame;
-  redirected: boolean;
-  message: string | null;
 };
 
 export type PagedResult<T> = {

@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -300,7 +300,7 @@ public class DiscoverFilterTests : TestBase, IClassFixture<ApiFactory>
     }
 
     private record UserGameDto(Guid Id, Guid GameId);
-    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+    private record AddGameResultDto(UserGameDto UserGame);
     private record DiscoveredCharacterDto(Guid Id, string Name);
     private record PagedResult(List<DiscoveredCharacterDto> Items, bool HasMore, int TotalCount);
 }
