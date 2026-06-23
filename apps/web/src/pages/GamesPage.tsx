@@ -4,7 +4,7 @@ import { getUserGames, deleteUserGame, getUserGameByGameId, type UserGame, type 
 import { BinderLayout } from '../components/layout/BinderLayout'
 import { Gallery } from '../components/Gallery'
 import { GameDetailCard } from '../components/cards/GameDetailCard'
-import { Button, PaginationControls } from '../components/ui'
+import { PaginationControls } from '../components/ui'
 import { TABS } from '../lib/tabs'
 import { CubeIcon, PlanetIcon } from '@phosphor-icons/react'
 import { GameMiniCard } from '../components/cards/GameMiniCard'
