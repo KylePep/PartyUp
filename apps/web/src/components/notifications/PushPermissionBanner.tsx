@@ -40,10 +40,10 @@ export function PushPermissionBanner() {
 
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 z-40 p-4 flex flex-col gap-2"
+      className="fixed top-0 left-0 right-0 z-50 p-4 flex flex-col gap-2"
       style={{
         background: 'var(--color-surface)',
-        borderTop: '1px solid var(--color-border)',
+        borderBottom: '1px solid var(--color-border)',
       }}
     >
       {iosNotInstalled ? (
