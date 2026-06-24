@@ -15,6 +15,14 @@ public class MatchNotificationsController : ControllerBase
         _service = service;
     }
 
+    [HttpGet("has-unread")]
+    public async Task<IActionResult> HasUnread()
+    {
+        if (this.GetUserId() is not Guid userId) return Unauthorized();
+        var hasUnread = await _service.HasUnreadAsync(userId);
+        return Ok(new { hasUnread });
+    }
+
     [HttpPost("{matchId}/viewed")]
     public async Task<IActionResult> MarkViewed(Guid matchId)
     {

@@ -5,6 +5,7 @@ import { NavBar } from './NavBar'
 import { Spinner } from '../ui'
 import { MatchNotificationToast } from '../notifications/MatchNotificationToast'
 import { StickerToast } from '../stickers/StickerToast'
+import { PushPermissionBanner } from '../notifications/PushPermissionBanner'
 
 export default function SignedInLayout() {
   const { state } = useAuth()
@@ -25,6 +26,7 @@ export default function SignedInLayout() {
     <>
       <MatchNotificationToast />
       <StickerToast />
+      <PushPermissionBanner />
       <div className="min-h-screen max-h-screen flex flex-col md:flex-row relative overflow-hidden">
         <NavBar variant="app" />
         <Outlet />

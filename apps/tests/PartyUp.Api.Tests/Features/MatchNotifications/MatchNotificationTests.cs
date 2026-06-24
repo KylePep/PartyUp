@@ -43,6 +43,51 @@ public class MatchNotificationTests : TestBase, IClassFixture<ApiFactory>
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
+    [Fact]
+    public async Task HasUnread_Unauthenticated_Returns401()
+    {
+        var response = await Client.GetAsync("/api/match-notifications/has-unread");
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task HasUnread_NoNotifications_ReturnsFalse()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+
+        var response = await client.GetAsync("/api/match-notifications/has-unread");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = await response.Content.ReadFromJsonAsync<HasUnreadResponse>();
+        body!.HasUnread.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task HasUnread_AfterMatch_ReturnsTrue()
+    {
+        var (_, _, _, clientB) = await SetupMutualMatchAsync();
+
+        var response = await clientB.GetAsync("/api/match-notifications/has-unread");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var body = await response.Content.ReadFromJsonAsync<HasUnreadResponse>();
+        body!.HasUnread.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task HasUnread_AfterViewing_ReturnsFalse()
+    {
+        var (_, _, _, clientB) = await SetupMutualMatchAsync();
+
+        var matches = await (await clientB.GetAsync("/api/character-matches"))
+            .Content.ReadFromJsonAsync<PagedResultDto<MatchItemDto>>();
+        await clientB.PostAsync($"/api/match-notifications/{matches!.Items[0].MatchId}/viewed", null);
+
+        var response = await clientB.GetAsync("/api/match-notifications/has-unread");
+        var body = await response.Content.ReadFromJsonAsync<HasUnreadResponse>();
+        body!.HasUnread.Should().BeFalse();
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private async Task<(Guid CharA, Guid CharB, HttpClient ClientA, HttpClient ClientB)>
@@ -103,4 +148,5 @@ public class MatchNotificationTests : TestBase, IClassFixture<ApiFactory>
     private record UserGameDto(Guid Id, Guid GameId);
     private record CharacterIdDto(Guid Id);
     private record MatchItemDto(Guid MatchId, DateTime MatchedAt, bool IsNew);
+    private record HasUnreadResponse(bool HasUnread);
 }

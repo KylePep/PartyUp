@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import * as signalR from "@microsoft/signalr";
 import { getMe, type CurrentUser } from "../api/endpoints/auth";
 import { UnauthorizedError, API_BASE } from "../api/client";
+import { hasUnreadNotifications } from "../api/endpoints/matchNotifications";
 import { useNotifications, type MatchNotificationPayload } from "./NotificationContext";
 import { useStickerContext, type StickerNotificationPayload } from "./StickerContext";
 
@@ -28,6 +29,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const { push } = useNotifications();
   const { pushSticker, pushToast } = useStickerContext();
+
+  async function syncBadge() {
+    if (!('setAppBadge' in navigator)) return;
+    try {
+      const hasUnread = await hasUnreadNotifications();
+      if (hasUnread) {
+        navigator.setAppBadge(1);
+      } else {
+        navigator.clearAppBadge();
+      }
+    } catch {
+      // non-fatal
+    }
+  }
 
   function startConnection(token: string) {
     const connection = new signalR.HubConnectionBuilder()
@@ -75,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         setState({ status: "authenticated", user });
         startConnection(token);
+        syncBadge();
       })
       .catch((err) => {
         if (cancelled) return;
@@ -101,12 +117,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, []);
 
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.visibilityState === "visible") syncBadge();
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
   async function login(_email: string, token: string) {
     localStorage.setItem("token", token);
     try {
       const user = await getMe();
       setState({ status: "authenticated", user });
       startConnection(token);
+      syncBadge();
     } catch (err) {
       localStorage.removeItem("token");
       throw err;
@@ -117,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("token");
     setState({ status: "unauthenticated" });
     stopConnection();
+    if ('clearAppBadge' in navigator) navigator.clearAppBadge();
   }
 
   return (
