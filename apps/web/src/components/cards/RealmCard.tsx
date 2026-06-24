@@ -18,7 +18,7 @@ export function RealmCard({ userGame }: RealmCardProps) {
     >
       <FullArtTcgCard
         name={userGame.gameName}
-        className='h-full aspect-3/4 md:aspect-auto mx-auto'
+        className='h-full aspect-3/4 md:aspect-auto mx-auto text-xxs'
         imageUrl={userGame.gameImageUrl ?? undefined}
         platform={
           hasNewMatches ? (

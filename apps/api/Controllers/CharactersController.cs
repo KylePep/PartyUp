@@ -112,8 +112,9 @@ public class CharactersController : ControllerBase
     if (this.GetUserId() is not Guid userId) return Unauthorized();
     var platformFilters = Request.Query["platform"]
       .Where(v => v != null).Select(v => v!).ToList();
+    var knownKeys = new HashSet<string> { "gameId", "platform", "page", "pageSize" };
     var filters = Request.Query
-      .Where(kv => kv.Key != "gameId" && kv.Key != "platform" && kv.Key != "page" && kv.Key != "pageSize")
+      .Where(kv => !knownKeys.Contains(kv.Key))
       .ToDictionary(kv => kv.Key, kv => kv.Value.ToString());
     var result = await _characterService.DiscoverCharactersAsync(userId, gameId, filters, platformFilters, page, pageSize);
     return Ok(result);

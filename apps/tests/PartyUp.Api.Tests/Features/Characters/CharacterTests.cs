@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using PartyUp.Api.Tests.Factories;
@@ -422,7 +422,7 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     }
 
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
-    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+    private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
     private record DiscoveredDto(Guid Id, string Name);
     private record LimitErrorDto(string Message);

@@ -3,34 +3,34 @@ import { type ButtonHTMLAttributes, type CSSProperties } from 'react'
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success'
 type Size = 'sm' | 'md' | 'lg'
 
-const variantClasses: Record<Variant, string> = {
-  primary: 'border-2 border-orange-950 text-off-black font-bold shadow hover:brightness-105 active:brightness-95',
-  secondary: 'border-2 border-orange-950/50 text-orange-100 font-medium shadow-sm hover:brightness-110 active:brightness-90',
-  ghost: 'border border-orange-200/30 text-orange-200 hover:bg-orange-200/10',
-  danger: 'border-2 border-red-950 text-off-white font-bold shadow hover:brightness-110 active:brightness-90',
-  success: 'border-2 border-green-950 text-off-white font-bold shadow hover:brightness-110 active:brightness-90',
+const variantRingClasses: Record<Variant, string> = {
+  primary: 'ring-3 ring-amber-800/50',
+  secondary: 'ring-3 ring-stone-600',
+  ghost: 'ring-3 ring-white/0',
+  danger: 'ring-3 ring-red-600',
+  success: 'ring-3 ring-emerald-600',
 }
 
-const variantStyles: Record<Variant, CSSProperties> = {
-  primary: {
-    background: 'linear-gradient(175deg, #e8b830 0%, #f5d060 18%, #c89018 38%, #eabc2c 55%, #b07808 72%, #d4a020 88%, #a06808 100%)',
-  },
-  secondary: {
-    background: 'linear-gradient(175deg, #9a7030 0%, #b08040 18%, #7a5820 38%, #906820 55%, #6a4810 72%, #805820 88%, #5a3808 100%)',
-  },
+const variantInnerStyles: Record<Variant, CSSProperties> = {
+  primary: {},
+  secondary: {},
   ghost: {},
-  danger: {
-    background: 'linear-gradient(175deg, #c82828 0%, #e04040 18%, #a01818 38%, #c02020 55%, #901010 72%, #b01818 88%, #800808 100%)',
-  },
-  success: {
-    background: 'linear-gradient(175deg, #286028 0%, #3a7c3a 18%, #1c501c 38%, #2e6e2e 55%, #144814 72%, #245c24 88%, #0e3e0e 100%)',
-  },
+  danger: {},
+  success: {},
+}
+
+const variantTextClasses: Record<Variant, string> = {
+  primary: 'text-amber-900',
+  secondary: 'text-stone-700',
+  ghost: 'text-stone-800',
+  danger: 'text-red-900',
+  success: 'text-emerald-900',
 }
 
 const sizeClasses: Record<Size, string> = {
-  sm: 'px-1 md:px-3 py-0.5 md:py-1.5 text-xs',
-  md: 'px-2 md:px-4 py-1 md:py-2 text-sm',
-  lg: 'px-6 py-3 text-base',
+  sm: 'px-1 md:px-3 py-0 text-xs',
+  md: 'px-2 md:px-4 py-0 text-sm',
+  lg: 'px-4 py-1 text-lg',
 }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -38,14 +38,28 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size
 }
 
-export function Button({ variant = 'primary', size = 'md', className = '', style, ...props }: ButtonProps) {
+export function Button({ variant = 'primary', size = 'md', className = '', style, children, ...props }: ButtonProps) {
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-md font-mono font-medium
-        transition-all disabled:opacity-50 disabled:cursor-not-allowed
-        ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
-      style={{ ...variantStyles[variant], ...style }}
+      className={`group inline-flex items-center justify-center gap-2 rounded-full border-2 border-black
+        transition-all disabled:opacity-50 disabled:cursor-not-allowed px-1.5 py-1.5
+        font-bold shadow focus:outline-none ${className}`}
+      style={{
+        background: 'linear-gradient(175deg, #e8b830 0%, #f5d060 18%, #c89018 38%, #eabc2c 55%, #b07808 72%, #d4a020 88%, #a06808 100%)',
+        ...style,
+      }}
       {...props}
-    />
+    >
+      <div
+        className={`border-1 border-black rounded-full font-orbitron font-black tracking-widest
+          outline-1 outline-black outline-offset-3 btn-etched btn-inner-darken transition-[filter] duration-150 uppercase
+          w-full
+          ${variant === 'ghost' ? 'btn-etched-ghost' : ''}
+          ${variantRingClasses[variant]} ${variantTextClasses[variant]} ${sizeClasses[size]}`}
+        style={{ ...variantInnerStyles[variant] }}
+      >
+        {children}
+      </div>
+    </button>
   )
 }

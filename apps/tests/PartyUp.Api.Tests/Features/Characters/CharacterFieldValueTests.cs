@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -236,7 +236,7 @@ public class CharacterFieldValueTests : TestBase, IClassFixture<ApiFactory>
 
     private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
     private record UserGameDto(Guid Id, Guid GameId);
-    private record AddGameResultDto(bool Redirected, string? Message, UserGameDto UserGame);
+    private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterResponseDto(Guid Id, string Name);
     private record GameFieldDto(Guid FieldDefinitionId, string Key, string Label, string Value, string Type, string? CommonField = null);
     private record CharacterWithFieldsDto(Guid Id, string Name, List<GameFieldDto> GameFields);

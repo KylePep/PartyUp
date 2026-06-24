@@ -66,8 +66,8 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
             <p className="text-xs font-mono text-muted text-nowrap me-auto">
               Added {new Date(game.createdAt).toLocaleDateString()}
             </p>
-            <Button onClick={() => navigate(`/realm/${game.gameId}`)}>Enter</Button>
-            <Button variant="danger" disabled={deleting} onClick={onDelete}>
+            <Button variant='primary' size='sm' onClick={() => navigate(`/realm/${game.gameId}`)}>Enter</Button>
+            <Button variant="danger" size='sm' disabled={deleting} onClick={onDelete}>
               {deleting ? 'Deleting...' : 'Delete'}
             </Button>
           </div>

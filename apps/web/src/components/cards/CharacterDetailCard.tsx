@@ -1,6 +1,20 @@
 import { Badge, Button, PlatformIcon } from '../ui'
 import type { Character } from '../../api/endpoints/characters'
 
+function stableCardShine(seed: string): string {
+  let h = 5381
+  for (let i = 0; i < seed.length; i++) {
+    h = ((h << 5) + h + seed.charCodeAt(i)) >>> 0
+  }
+  const shineAngle = ((h & 0xFF) % 120) + 90
+  const shinePos = (((h >> 8) & 0xFF) % 50) + 20
+  const baseAngle = (((h >> 16) & 0xFF) % 80) + 110
+  return [
+    `linear-gradient(${shineAngle}deg, transparent ${shinePos - 25}%, rgba(255,255,255,0.42) ${shinePos}%, rgba(255,255,255,0.18) ${shinePos + 8}%, transparent ${shinePos + 20}%)`,
+    `linear-gradient(${baseAngle}deg, rgba(255,255,255,0.12) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.28) 100%)`,
+  ].join(', ')
+}
+
 function StatRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div
@@ -28,7 +42,9 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
     <div
       className="flex flex-col rounded-xl overflow-hidden p-2 md:p-4 gap-1 md:gap-2 border-4 md:border-8 border-off-black"
       style={{
-        backgroundColor: character.cardBackgroundColor || 'var(--color-surface)'
+        backgroundColor: character.cardBackgroundColor || 'var(--color-surface)',
+        backgroundImage: character.cardBackgroundColor ? stableCardShine(character.name) : undefined,
+        backgroundBlendMode: character.cardBackgroundColor ? 'soft-light, overlay' : undefined,
       }}
     >
 
@@ -131,7 +147,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
         <div
           className="flex items-center justify-end  flex-shrink-0"
         >
-          <div className='flex gap-3 md:gap-4 px-3 md:px-4 py-2 md:py-3 rounded-sm bg-off-black '>
+          <div className='flex gap-3 md:gap-4  rounded-sm '>
             {onEdit && (
               <Button variant="primary" size="sm" onClick={onEdit}>
                 Edit

@@ -18,7 +18,7 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, chi
 
       {/* Top header overlay */}
       <div className="absolute top-0 left-0 bottom-0 bg-surface/90 border-1 border-off-black px-1 py-2 z-10 rounded m-1 overflow-hidden">
-        <span className="font-display text-white text-xxs md:text-sm font-bold truncate pointer-event-none"
+        <span className="font-display text-white font-bold truncate pointer-event-none"
           style={{ writingMode: 'vertical-lr' }}
         >{name}</span>
         <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-surface from-30% to-transparent"></div>

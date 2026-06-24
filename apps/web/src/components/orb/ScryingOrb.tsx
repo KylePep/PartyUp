@@ -65,8 +65,8 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
     searchGen.current++
   }
 
-  async function doAddGame(externalId: number, name: string, imageUrl: string | null, skipParentRedirect: boolean) {
-    const result = await apiAddUserGame({ externalId, name, imageUrl, skipParentRedirect })
+  async function doAddGame(externalId: number, name: string, imageUrl: string | null) {
+    const result = await apiAddUserGame({ externalId, name, imageUrl })
     onAdd(result.userGame)
     setParentPreview(null)
     setPendingGame(null)
@@ -90,7 +90,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
         return
       }
 
-      await doAddGame(pendingGame.externalId, pendingGame.name, pendingGame.imageUrl, false)
+      await doAddGame(pendingGame.externalId, pendingGame.name, pendingGame.imageUrl)
     } finally {
       setAdding(false)
     }
@@ -99,7 +99,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
   async function handleParentChoice(choice: GamePreviewDto) {
     setAdding(true)
     try {
-      await doAddGame(choice.externalId, choice.name, choice.imageUrl, true)
+      await doAddGame(choice.externalId, choice.name, choice.imageUrl)
     } finally {
       setAdding(false)
     }
@@ -324,7 +324,7 @@ export function ScryingOrb({ onAdd, disabled = false, popularGames = [] }: Scryi
           </p>
           <div className="flex gap-3 justify-end">
             <Button variant="ghost" onClick={() => setPendingGame(null)}>Cancel</Button>
-            <Button onClick={confirmAdd} disabled={adding}>
+            <Button variant="success" onClick={confirmAdd} disabled={adding}>
               {adding ? 'Adding…' : 'Add Realm'}
             </Button>
           </div>

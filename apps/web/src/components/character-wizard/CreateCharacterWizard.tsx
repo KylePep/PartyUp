@@ -180,6 +180,9 @@ export function CreateCharacterWizard({ userGameId, gameId, platforms, onSuccess
         <Button
           onClick={handleNext}
           disabled={!canAdvance() || submitting}
+          variant={isLast
+            ? 'success'
+            : 'primary'}
         >
           {submitting
             ? (mode === 'edit' ? 'Saving...' : 'Creating...')
