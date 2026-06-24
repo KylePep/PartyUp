@@ -48,7 +48,7 @@ public class ParentPreviewTests : TestBase, IClassFixture<ApiFactory>
         var clientA = await CreateAuthenticatedClientAsync();
         var clientB = await CreateAuthenticatedClientAsync();
 
-        // clientA adds 91001 → redirected to 91000; clientB adds 91000 directly
+        // clientA adds 91001 directly; clientB adds 91000 directly
         await clientA.PostAsJsonAsync("/api/user-games", new
         {
             externalId = 91001,
@@ -66,8 +66,8 @@ public class ParentPreviewTests : TestBase, IClassFixture<ApiFactory>
         var response = await client.GetAsync("/api/games/parent-preview?externalId=91001");
         var result = await response.Content.ReadFromJsonAsync<ParentPreviewDto>();
 
-        result!.SelectedGame.RealmCount.Should().Be(0); // no one in 91001 directly
-        result.ParentGame!.RealmCount.Should().Be(2);   // clientA + clientB in 91000
+        result!.SelectedGame.RealmCount.Should().Be(1); // clientA added 91001
+        result.ParentGame!.RealmCount.Should().Be(1);   // clientB added 91000
     }
 
     [Fact]
