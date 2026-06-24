@@ -24,6 +24,7 @@ namespace PartyUp.Api.Infrastructure.Data
         public DbSet<GameFieldDefinition> GameFieldDefinitions { get; set; }
         public DbSet<CharacterFieldValue> CharacterFieldValues { get; set; }
         public DbSet<StickerMessage> StickerMessages { get; set; }
+        public DbSet<UserPushSubscription> UserPushSubscriptions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -151,6 +152,15 @@ namespace PartyUp.Api.Infrastructure.Data
                         v => JsonSerializer.Deserialize<UserPreferences>(v, (JsonSerializerOptions?)null) ?? new UserPreferences())
                     .HasColumnType("jsonb")
                     .Metadata.SetValueComparer(preferencesComparer);
+            });
+
+            modelBuilder.Entity<UserPushSubscription>(e =>
+            {
+                e.HasIndex(s => s.UserId);
+                e.HasOne(s => s.User)
+                    .WithMany()
+                    .HasForeignKey(s => s.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
