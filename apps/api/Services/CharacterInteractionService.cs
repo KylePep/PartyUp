@@ -13,15 +13,18 @@ public class CharacterInteractionService : ICharacterInteractionService
     private readonly AppDbContext _db;
     private readonly IMatchNotificationService _notifications;
     private readonly IHubContext<NotificationHub> _hub;
+    private readonly IPushNotificationService _push;
 
     public CharacterInteractionService(
         AppDbContext db,
         IMatchNotificationService notifications,
-        IHubContext<NotificationHub> hub)
+        IHubContext<NotificationHub> hub,
+        IPushNotificationService push)
     {
         _db = db;
         _notifications = notifications;
         _hub = hub;
+        _push = push;
     }
 
     public async Task<MatchResultResponse> RecordInteractionAsync(CharacterInteractionRequest request, Guid userId)
@@ -95,6 +98,11 @@ public class CharacterInteractionService : ICharacterInteractionService
         var recipientPayload = BuildRecipientPayload(match.Id, fromChar, toChar, fromChar.UserGame.Game.Name, match.MatchedAt);
         await _hub.Clients.User(recipientUserId.ToString())
             .SendAsync("NewMatch", recipientPayload);
+
+        await _push.SendToUserAsync(
+            recipientUserId,
+            "It's a Match! 🎮",
+            $"{toChar.Name} matched with {fromChar.Name} in {fromChar.UserGame.Game.Name}");
 
         return BuildSenderPayload(match.Id, fromChar, toChar, fromChar.UserGame.Game.Name, match.MatchedAt);
     }

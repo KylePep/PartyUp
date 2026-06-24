@@ -13,11 +13,13 @@ public class StickerMessageService : IStickerMessageService
 {
     private readonly AppDbContext _db;
     private readonly IHubContext<NotificationHub> _hub;
+    private readonly IPushNotificationService _push;
 
-    public StickerMessageService(AppDbContext db, IHubContext<NotificationHub> hub)
+    public StickerMessageService(AppDbContext db, IHubContext<NotificationHub> hub, IPushNotificationService push)
     {
         _db = db;
         _hub = hub;
+        _push = push;
     }
 
     public async Task<List<StickerMessageDto>> GetByMatchAsync(Guid matchId, Guid userId)
@@ -117,6 +119,11 @@ public class StickerMessageService : IStickerMessageService
                 emoji = dto.Emoji,
                 sentAt = dto.SentAt
             });
+
+        await _push.SendToUserAsync(
+            recipientUserId,
+            $"New sticker from {senderCharacterName}",
+            dto.Emoji);
 
         return dto;
     }

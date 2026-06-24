@@ -9,3 +9,13 @@ export async function markMatchViewed(matchId: string): Promise<void> {
     },
   });
 }
+
+export async function hasUnreadNotifications(): Promise<boolean> {
+  const token = localStorage.getItem("token");
+  const res = await fetch(`${API_BASE}/match-notifications/has-unread`, {
+    headers: { Authorization: `Bearer ${token ?? ""}` },
+  });
+  if (!res.ok) return false;
+  const data = await res.json();
+  return data.hasUnread;
+}
