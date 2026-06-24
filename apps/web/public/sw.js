@@ -12,7 +12,9 @@ self.addEventListener('push', event => {
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
       const appFocused = clients.some(c => c.focused);
       if (appFocused) return;
-      return self.registration.showNotification(title, options);
+      const tasks = [self.registration.showNotification(title, options)];
+      if (navigator.setAppBadge) tasks.push(navigator.setAppBadge(1));
+      return Promise.all(tasks);
     })
   );
 });
