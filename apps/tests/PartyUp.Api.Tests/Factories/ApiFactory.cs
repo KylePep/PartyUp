@@ -7,6 +7,7 @@ using PartyUp.Api.Infrastructure.Clients;
 using PartyUp.Api.Infrastructure.Data;
 using PartyUp.Api.Services.Interfaces;
 using PartyUp.Api.Tests.Infrastructure;
+using PartyUp.Api.Services;
 
 namespace PartyUp.Api.Tests.Factories;
 
@@ -27,7 +28,10 @@ public class ApiFactory : WebApplicationFactory<Program>
                 ["Jwt:Issuer"] = "partyup-api",
                 ["Jwt:Audience"] = "partyup-client",
                 ["RateLimit:AuthPermitLimit"] = "1000",
-                ["AllowedOrigins:0"] = "http://localhost:5173"
+                ["AllowedOrigins:0"] = "http://localhost:5173",
+                ["Vapid:PublicKey"] = "test-public-key",
+                ["Vapid:PrivateKey"] = "test-private-key",
+                ["Vapid:Subject"] = "mailto:test@test.com"
             });
         });
 
@@ -58,6 +62,12 @@ public class ApiFactory : WebApplicationFactory<Program>
             if (schemaDescriptor != null)
                 services.Remove(schemaDescriptor);
             services.AddScoped<IGameSchemaGenerationService, NoOpGameSchemaGenerationService>();
+
+            var pushDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IPushNotificationService));
+            if (pushDescriptor != null)
+                services.Remove(pushDescriptor);
+            services.AddScoped<IPushNotificationService, NoOpPushNotificationService>();
         });
     }
 }
