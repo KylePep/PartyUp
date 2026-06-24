@@ -34,6 +34,8 @@ export function Gallery<T>({
       mobileRows.push(items.slice(i, i + 2))
     }
 
+    const colsClass: Record<number, string> = { 2: 'grid-cols-2', 3: 'grid-cols-3' }
+
     const renderRows = (chunkedRows: T[][], cols: number) =>
       chunkedRows.map((row, rowIndex) => (
         <div
@@ -41,7 +43,7 @@ export function Gallery<T>({
           className="lg:sticky lg:top-0 bg-background"
           style={{ zIndex: rowIndex + 1 }}
         >
-          <div className={`grid grid-cols-${cols} gap-2 md:gap-4 px-2 md:px-4 py-1 md:py-2`}>
+          <div className={`grid ${colsClass[cols]} gap-2 md:gap-4 px-2 md:px-4 py-1 md:py-2`}>
             {row.map(item => (
               <React.Fragment key={getKey(item)}>
                 {renderItem(item)}
