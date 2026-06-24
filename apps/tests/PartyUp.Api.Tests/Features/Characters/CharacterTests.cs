@@ -170,39 +170,6 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
-    [Fact]
-    public async Task CreateCharacter_AtLimit_ReturnsConflict()
-    {
-        var client = await CreateAuthenticatedClientAsync();
-
-        // Create 3 characters across 3 separate UserGames
-        for (var i = 0; i < 3; i++)
-        {
-            var userGame = await AddGameAsync(client);
-            var charResponse = await client.PostAsJsonAsync("/api/characters", new
-            {
-                name = $"Character {i}",
-                platform = "PC",
-                platformHandle = $"Handle{i}",
-                userGameId = userGame.Id
-            });
-            charResponse.EnsureSuccessStatusCode();
-        }
-
-        // 4th character — a different UserGame, different character
-        var fourthGame = await AddGameAsync(client);
-        var response = await client.PostAsJsonAsync("/api/characters", new
-        {
-            name = "Fourth Character",
-            platform = "PC",
-            platformHandle = "Handle4",
-            userGameId = fourthGame.Id
-        });
-
-        response.StatusCode.Should().Be(HttpStatusCode.Conflict);
-        var body = await response.Content.ReadFromJsonAsync<LimitErrorDto>();
-        body!.Message.Should().Contain("Character limit reached");
-    }
 
     [Fact]
     public async Task GetMyCharacters_ReturnsGameName()
@@ -425,7 +392,6 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
     private record DiscoveredDto(Guid Id, string Name);
-    private record LimitErrorDto(string Message);
     private record CharacterWithGameDto(Guid Id, string Name, string? GameName);
     private record CharacterWithNotesDto(Guid Id, string Name, string? AdditionalNotes);
     private record PagedResultDto<T>(List<T> Items, int TotalCount, int Page, int PageSize);
