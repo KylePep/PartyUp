@@ -99,4 +99,7 @@ public class MatchNotificationService : IMatchNotificationService
             .ToListAsync();
         return result.ToHashSet();
     }
+
+    public async Task<bool> HasUnreadAsync(Guid userId) =>
+        await _db.MatchNotifications.AnyAsync(n => n.UserId == userId && n.ViewedAt == null);
 }
