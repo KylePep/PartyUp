@@ -59,7 +59,7 @@ export function StandardTcgCard({
     <div
       className={`aspect-3/4 rounded-xl overflow-hidden flex flex-col flex-1 min-h-0 p-1 md:p-2 gap-0.5 md:gap-1 ${onClick ? ' cursor-pointer hover:brightness-110 transition-all' : ''}${className ? ' ' + className : ''}`}
       style={{
-        border: '8px solid black',
+        border: '4px solid black',
         backgroundColor: cardBackgroundColor || 'var(--color-surface)',
         backgroundImage: cardBackgroundColor ? stableCardShine(name) : undefined,
         backgroundBlendMode: cardBackgroundColor ? 'soft-light, overlay' : undefined,
