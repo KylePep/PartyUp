@@ -21,8 +21,9 @@ export function GameMiniCard({ game, gameId, userGameId, platform }: GameMiniCar
     <FullArtTcgCard
       name={game.name}
       imageUrl={game.imageUrl ?? undefined}
-      className="w-20 md:w-40 shrink-0 text-xxs md:text-xs"
-      style={{ aspectRatio: '2/3' }}
+      className="h-full md:h-40 shrink-0 text-xxs md:text-xs"
+      style={{ aspectRatio: '3/2' }}
+      location='bar'
       onClick={handleClick}
       platform={platform}
     />

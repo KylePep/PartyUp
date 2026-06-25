@@ -36,13 +36,13 @@ export function BinderLayout({
         >
           {/* Spine bar */}
           <div
-            className="relative min-w-50  min-h-34  shrink-0 md:h-full p-1 rounded-t-sm md:rounded-t-none  md:rounded-l shadow ring-2 ring-black/25 ring-inset"
+            className="relative min-w-50  min-h-24  shrink-0 md:h-full p-1 rounded-t-sm md:rounded-t-none  md:rounded-l shadow ring-2 ring-black/25 ring-inset"
             style={{
               backgroundColor: barColor
 
             }}
           >
-            <div className='w-full h-full px-4 py-1 md:pt-18 flex md:flex-col items-center md:justify-end md:justify-start gap-4'
+            <div className='w-full h-full md:px-4 py-1 md:pt-18 flex md:flex-col items-center justify-around md:justify-end md:justify-start md:gap-4'
               style={{
                 border: '1px dashed rgba(25, 24, 24, 0.5)',
                 borderRadius: '2px',

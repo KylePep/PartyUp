@@ -15,8 +15,9 @@ export function CharacterMiniCard({ character, characterId, platform }: Characte
       name={character.name}
       imageUrl={character.imageUrl}
       platform={platform}
-      className="w-20 md:w-40 shrink-0"
-      style={{ aspectRatio: '2/3' }}
+      className="h-full md:h-40 shrink-0 text-xxs md:text-xs"
+      style={{ aspectRatio: '3/2' }}
+      location='bar'
       onClick={characterId ? () => navigate(`/characters?id=${characterId}`) : undefined}
     />
   )

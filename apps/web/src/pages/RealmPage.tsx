@@ -9,6 +9,7 @@ import { RealmLeftPage } from '../components/RealmLeftPage'
 import { RealmRightPage } from '../components/RealmRightPage'
 import { Spinner } from '../components/ui'
 import { CubeIcon, UserSquareIcon } from '@phosphor-icons/react'
+import { FullArtTcgCard } from '../components/cards/FullArtTcgCard'
 
 export default function RealmPage() {
   const { gameId } = useParams<{ gameId: string }>()
@@ -60,15 +61,6 @@ export default function RealmPage() {
         barColor="#ea6a01"
         barContent={
           <>
-            {character ? (
-              <>
-                <CharacterMiniCard
-                  character={character}
-                  characterId={character.id}
-                  platform={<UserSquareIcon />}
-                />
-              </>
-            ) : undefined}
             {userGame ? (
               <>
                 <GameMiniCard
@@ -77,6 +69,43 @@ export default function RealmPage() {
                   platform={<CubeIcon />} />
               </>
             ) : undefined}
+
+            <>
+              <FullArtTcgCard
+                name="partyUp"
+                imageUrl=""
+                platform=""
+                className="md:hidden h-full md:h-40 shrink-0 text-xxs md:text-xs"
+                style={{ aspectRatio: '2/3' }}
+                location='bar'
+              >
+                <div className='text-green-500'>
+                  6
+                </div>
+              </FullArtTcgCard>
+            </>
+            {character ? (
+              <>
+                <CharacterMiniCard
+                  character={character}
+                  characterId={character.id}
+                  platform={<UserSquareIcon />}
+                />
+              </>
+
+            ) : undefined}
+            <>
+              <FullArtTcgCard
+                name="realm"
+                imageUrl=""
+                platform="p"
+                className="hidden md:block h-20 md:h-40 shrink-0 text-xxs md:text-xs"
+                style={{ aspectRatio: '3/2' }}
+                location='bar'
+              >
+
+              </FullArtTcgCard>
+            </>
           </>
         }
         activeTab=""
