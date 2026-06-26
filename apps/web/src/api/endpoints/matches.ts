@@ -1,17 +1,27 @@
 import { apiGet } from "../client";
-import type { Character } from "./characters";
+import type { Character, CharacterGameField } from "./characters";
 import type { PagedResult } from './userGames';
 
-export type CharacterSummary = {
+export type MyCharacterSummary = {
   id: string;
   name: string;
   imageUrl?: string;
 };
 
+export type CharacterSummary = {
+  id: string;
+  name: string;
+  imageUrl?: string;
+  bio?: string;
+  additionalNotes?: string;
+  platformHandle: string;
+  gameFields: CharacterGameField[];
+};
+
 export type CharacterMatchDto = {
   matchId: string;
   matchedAt: string;
-  myCharacter: CharacterSummary;
+  myCharacter: MyCharacterSummary;
   theirCharacter: Character;
   gameId: string;
   gameName: string;
