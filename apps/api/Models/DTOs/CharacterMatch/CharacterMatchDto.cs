@@ -20,8 +20,4 @@ public class CharacterSummaryDto
     public Guid Id { get; set; }
     public string Name { get; set; } = default!;
     public string? ImageUrl { get; set; }
-    public string? Bio { get; set; }
-    public string? AdditionalNotes { get; set; }
-    public string PlatformHandle { get; set; } = default!;
-    public List<CharacterFieldValueDto> GameFields { get; set; } = [];
 }
