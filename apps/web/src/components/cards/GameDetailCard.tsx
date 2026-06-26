@@ -19,7 +19,7 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
 
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <BinderHeader title='Game Card Details' className='flex items-center justify-between' />
+      <BinderHeader title='Game Card Details' className='flex items-center justify-between' heightClassName='min-h-[24px]' />
       <div className="overflow-y-auto overflow-x-hidden flex flex-col flex-1 min-h-0 w-full p-2 md:p-4">
         <LandCard
           name={game.gameName}
@@ -63,13 +63,17 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
           </div>
 
           <div className="flex gap-2 justify-end">
-            <p className="text-xs font-mono text-muted text-nowrap me-auto">
+            <p className="text-xs font-mono text-muted md:text-nowrap me-auto order-1">
               Added {new Date(game.createdAt).toLocaleDateString()}
             </p>
-            <Button variant='primary' size='sm' onClick={() => navigate(`/realm/${game.gameId}`)}>Enter</Button>
-            <Button variant="danger" size='sm' disabled={deleting} onClick={onDelete}>
-              {deleting ? 'Deleting...' : 'Delete'}
-            </Button>
+            <div className='order-3 md:order-2'>
+              <Button variant='primary' size='sm' onClick={() => navigate(`/realm/${game.gameId}`)}>Enter</Button>
+            </div>
+            <div className='order-2 md:order-3'>
+              <Button variant="danger" size='sm' disabled={deleting} onClick={onDelete}>
+                {deleting ? 'Deleting...' : 'Delete'}
+              </Button>
+            </div>
           </div>
         </LandCard>
       </div>

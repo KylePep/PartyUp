@@ -98,7 +98,7 @@ export default function MatchesPage() {
   }
 
   const leftContent = selected ? (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="flex flex-col flex-1 md:min-h-0">
       <BinderHeader title='' heightClassName='md:min-h-[76px] md:h-[76px] md:max-h-[76px]' className='flex justify-between items-center'>
         <div className='flex flex-col justify-start'>
           <div className='flex gap-4'>
