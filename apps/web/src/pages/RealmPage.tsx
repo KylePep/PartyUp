@@ -87,9 +87,8 @@ export default function RealmPage() {
               pendingCount={pendingCount}
               characterCreatedAt={character?.createdAt ?? null}
               lastMatchedAt={lastMatchedAt}
-              gameImageUrl={userGame.gameImageUrl ?? undefined}
               gameName={userGame.gameName}
-              className="h-full md:h-40 shrink-0 text-xxs md:text-xs"
+              className="h-full md:hidden md:h-40 shrink-0 text-xxs md:text-xs"
             />
             {character && (
               <CharacterMiniCard
@@ -98,6 +97,14 @@ export default function RealmPage() {
                 platform={<UserSquareIcon />}
               />
             )}
+            <RealmInfoCard
+              matchCount={matchCount}
+              pendingCount={pendingCount}
+              characterCreatedAt={character?.createdAt ?? null}
+              lastMatchedAt={lastMatchedAt}
+              gameName={userGame.gameName}
+              className="h-full hidden md:block md:h-40 shrink-0 text-xxs md:text-xs"
+            />
           </>
         }
         activeTab=""
