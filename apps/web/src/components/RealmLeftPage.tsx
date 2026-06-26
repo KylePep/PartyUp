@@ -17,9 +17,10 @@ interface RealmLeftPageProps {
   character: Character | null
   onCharacterCreated: () => void
   onMatch: () => void
+  onPendingCountChange?: (count: number) => void
 }
 
-export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated, onMatch }: RealmLeftPageProps) {
+export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated, onMatch, onPendingCountChange }: RealmLeftPageProps) {
   const [zone, setZone] = useState<Zone>(character ? 'discovery' : 'prompt')
   const [filters, setFilters] = useState<Record<string, string>>({})
   const [activePlatforms, setActivePlatforms] = useState<string[]>([])
@@ -113,7 +114,7 @@ export function RealmLeftPage({ gameId, userGame, character, onCharacterCreated,
 
       {/* Pending likes tray — pinned to bottom in discovery mode */}
       {zone === 'discovery' && character && (
-        <PendingLikesBar character={character} onMatch={onMatch} />
+        <PendingLikesBar character={character} onMatch={onMatch} onCountChange={onPendingCountChange} />
       )}
     </div>
   )

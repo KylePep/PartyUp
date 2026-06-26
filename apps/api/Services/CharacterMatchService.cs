@@ -139,18 +139,6 @@ public class CharacterMatchService : ICharacterMatchService
         Id = c.Id,
         Name = c.Name,
         ImageUrl = c.ImageUrl,
-        Bio = c.Bio,
-        AdditionalNotes = c.AdditionalNotes,
-        PlatformHandle = c.PlatformHandle,
-        GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
-        {
-            FieldDefinitionId = fv.FieldDefinitionId,
-            Key = fv.FieldDefinition.Key,
-            Label = fv.FieldDefinition.Label,
-            Value = fv.Value,
-            Type = fv.FieldDefinition.Type.ToString(),
-            CommonField = fv.FieldDefinition.CommonField
-        }).ToList(),
     };
 
     private static CharacterResponse ToProjection(Character c) => new()

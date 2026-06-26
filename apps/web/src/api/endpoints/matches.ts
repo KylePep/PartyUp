@@ -2,6 +2,12 @@ import { apiGet } from "../client";
 import type { Character, CharacterGameField } from "./characters";
 import type { PagedResult } from './userGames';
 
+export type MyCharacterSummary = {
+  id: string;
+  name: string;
+  imageUrl?: string;
+};
+
 export type CharacterSummary = {
   id: string;
   name: string;
@@ -15,7 +21,7 @@ export type CharacterSummary = {
 export type CharacterMatchDto = {
   matchId: string;
   matchedAt: string;
-  myCharacter: CharacterSummary;
+  myCharacter: MyCharacterSummary;
   theirCharacter: Character;
   gameId: string;
   gameName: string;

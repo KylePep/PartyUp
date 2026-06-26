@@ -32,7 +32,7 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, loc
         <img src={imageUrl} alt={name} className="absolute inset-0 w-full h-full object-cover" />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: 'var(--color-surface-raised)' }}>
-          <span className="font-mono text-muted font-bold text-4xl">{name.charAt(0).toUpperCase()}</span>
+          <span className="font-mono text-muted font-bold text-4xl">{name ? name.charAt(0).toUpperCase() : ''}</span>
         </div>
       )}
 
