@@ -29,6 +29,7 @@ export type Character = {
   cardBackgroundColor?: string;
   gameFields: CharacterGameField[];
   hasNewMatch?: boolean;
+  createdAt?: string;
 };
 
 export type CharacterCreate = {

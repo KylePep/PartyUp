@@ -10,9 +10,10 @@ import { PendingLikeCard } from './cards/PendingLikeCard'
 interface PendingLikesBarProps {
   character: Character
   onMatch: () => void
+  onCountChange?: (count: number) => void
 }
 
-export function PendingLikesBar({ character, onMatch }: PendingLikesBarProps) {
+export function PendingLikesBar({ character, onMatch, onCountChange }: PendingLikesBarProps) {
   const [open, setOpen] = useState(false)
   const [pending, setPending] = useState<DiscoverCharacter[]>([])
   const [processing, setProcessing] = useState<string | null>(null)
@@ -20,6 +21,10 @@ export function PendingLikesBar({ character, onMatch }: PendingLikesBarProps) {
   useEffect(() => {
     getPendingLikes(character.id).then(setPending).catch(() => { })
   }, [character.id])
+
+  useEffect(() => {
+    onCountChange?.(pending.length)
+  }, [pending.length, onCountChange])
 
   async function handleInteract(toCharacterId: string, type: 'Like' | 'Dislike') {
     if (processing === toCharacterId) return
