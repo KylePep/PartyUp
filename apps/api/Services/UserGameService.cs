@@ -77,16 +77,9 @@ public class UserGameService : IUserGameService
 
     public async Task<PagedResult<UserGameResponse>> GetUserGames(Guid userId, int page, int pageSize)
     {
-        var query = _db.UserGames
+        var rawItems = await _db.UserGames
             .Where(ug => ug.UserId == userId)
-            .Include(ug => ug.Game)
-            .OrderByDescending(ug => ug.CreatedAt);
-
-        var totalCount = await query.CountAsync();
-        var items = await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(ug => new UserGameResponse
+            .Select(ug => new
             {
                 Id = ug.Id,
                 UserId = ug.UserId,
@@ -94,9 +87,57 @@ public class UserGameService : IUserGameService
                 GameName = ug.Game.Name,
                 GameImageUrl = ug.Game.ImageUrl,
                 CreatedAt = ug.CreatedAt,
-                NewMatchCount = 0
+                LatestInteraction = _db.CharacterInteractions
+                    .Where(ci => _db.Characters
+                        .Where(c => c.UserGameId == ug.Id)
+                        .Select(c => c.Id)
+                        .Contains(ci.FromCharacterId))
+                    .Select(ci => (DateTime?)ci.CreatedAt)
+                    .Max(),
+                LatestMatch = _db.CharacterMatches
+                    .Where(cm =>
+                        _db.Characters.Where(c => c.UserGameId == ug.Id).Select(c => c.Id).Contains(cm.CharacterAId) ||
+                        _db.Characters.Where(c => c.UserGameId == ug.Id).Select(c => c.Id).Contains(cm.CharacterBId))
+                    .Select(cm => (DateTime?)cm.MatchedAt)
+                    .Max(),
+                LatestMessage = _db.StickerMessages
+                    .Where(sm => _db.CharacterMatches
+                        .Where(cm =>
+                            _db.Characters.Where(c => c.UserGameId == ug.Id).Select(c => c.Id).Contains(cm.CharacterAId) ||
+                            _db.Characters.Where(c => c.UserGameId == ug.Id).Select(c => c.Id).Contains(cm.CharacterBId))
+                        .Select(cm => cm.Id)
+                        .Contains(sm.MatchId))
+                    .Select(sm => (DateTime?)sm.SentAt)
+                    .Max()
             })
             .ToListAsync();
+
+        var totalCount = rawItems.Count;
+
+        var items = rawItems
+            .Select(x =>
+            {
+                var lastActivityAt = new[] { x.LatestInteraction, x.LatestMatch, x.LatestMessage }
+                    .Where(d => d.HasValue)
+                    .Select(d => d!.Value)
+                    .Append(x.CreatedAt)
+                    .Max();
+                return (Item: x, LastActivityAt: lastActivityAt);
+            })
+            .OrderByDescending(x => x.LastActivityAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(x => new UserGameResponse
+            {
+                Id = x.Item.Id,
+                UserId = x.Item.UserId,
+                GameId = x.Item.GameId,
+                GameName = x.Item.GameName,
+                GameImageUrl = x.Item.GameImageUrl,
+                CreatedAt = x.Item.CreatedAt,
+                NewMatchCount = 0
+            })
+            .ToList();
 
         return new PagedResult<UserGameResponse>(items, totalCount, page, pageSize);
     }
