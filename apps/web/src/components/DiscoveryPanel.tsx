@@ -113,7 +113,7 @@ export function DiscoveryPanel({
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full gap-4">
+    <div className="flex-1 flex flex-col h-full gap-4 p-2">
       {status === 'loading' && (
         <div className="flex justify-center py-10"><Spinner label="Scanning the realm..." /></div>
       )}

@@ -36,7 +36,7 @@ export function BinderLayout({
         >
           {/* Spine bar */}
           <div
-            className="relative min-w-50  min-h-24  shrink-0 md:h-full p-1 rounded-t-sm md:rounded-t-none  md:rounded-l shadow ring-2 ring-black/25 ring-inset"
+            className="relative min-w-70  min-h-24  shrink-0 md:h-full p-1 rounded-t-sm md:rounded-t-none  md:rounded-l shadow ring-2 ring-black/25 ring-inset"
             style={{
               backgroundColor: barColor
 

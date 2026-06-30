@@ -48,9 +48,8 @@ export function DiscoveryFilterMenu({
 
       {open && (
         <div
-          className="absolute top-full left-0 mt-1 z-50 rounded-lg p-4 shadow-xl"
+          className="absolute top-full left-0 mt-1 z-50 rounded-lg p-4 shadow-xl max-h-[300px] md:max-h-[500px] overflow-y-auto bg-off-black"
           style={{
-            backgroundColor: 'var(--color-surface)',
             border: '1px solid var(--color-border)',
             minWidth: '280px',
           }}

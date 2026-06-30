@@ -145,7 +145,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
       {/* Action bar — pinned */}
       {onEdit || onDelete ? (
         <div
-          className="flex items-center justify-end  flex-shrink-0"
+          className="flex items-center justify-end  flex-shrink-0 bg-off-black rounded-sm py-0.5 px-1"
         >
           <div className='flex gap-3 md:gap-4  rounded-sm '>
             {onEdit && (
