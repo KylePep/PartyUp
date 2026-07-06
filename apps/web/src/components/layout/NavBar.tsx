@@ -64,7 +64,7 @@ export function NavBar({ variant }: NavBarProps) {
           group-hover:outline-cyan-700
           transition duration-150 py-0.5'>
             <img
-              className='absolute top-1 left-1 w-6 h-6 border-1 bg-slate-900 border-slate-900 rounded-full'
+              className='absolute top-1 left-1 w-6 h-6 rounded-full'
               src="/apple-touch-icon.png" alt="" />
             PartyUp
 
