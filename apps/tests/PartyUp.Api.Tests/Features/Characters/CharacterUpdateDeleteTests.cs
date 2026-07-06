@@ -42,6 +42,24 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task UpdateCharacter_WithImageFocalPoint_PersistsChange()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+        var character = await CreateCharacterAsync(client, userGame.Id);
+
+        await client.PutAsJsonAsync(
+            $"/api/characters/{userGame.Id}/{character.Id}",
+            new { name = "Focal Update", imageFocalX = 100, imageFocalY = 0 });
+
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterWithFocalDto>>("/api/characters");
+        all!.Items.Should().ContainSingle(c =>
+            c.Name == "Focal Update" &&
+            c.ImageFocalX == 100 &&
+            c.ImageFocalY == 0);
+    }
+
+    [Fact]
     public async Task UpdateCharacter_OnAnotherUsersCharacter_ReturnsNotFound()
     {
         var clientA = await CreateAuthenticatedClientAsync();
@@ -167,4 +185,5 @@ public class CharacterUpdateDeleteTests : TestBase, IClassFixture<ApiFactory>
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
     private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
+    private record CharacterWithFocalDto(Guid Id, string Name, int? ImageFocalX, int? ImageFocalY);
 }

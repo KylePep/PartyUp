@@ -39,6 +39,8 @@ function MatchFront({ character, isNew, lastReceivedSticker, matchId }: MatchCar
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}
+      imageFocalX={character.imageFocalX}
+      imageFocalY={character.imageFocalY}
       cardBackgroundColor={character.cardBackgroundColor}
       isNew={isNew}
       stickerEmoji={lastReceivedSticker}

@@ -35,5 +35,11 @@ public class UpdateCharacterRequest
   [StringLength(7)]
   public string? CardBackgroundColor { get; set; }
 
+  [Range(0, 100)]
+  public int? ImageFocalX { get; set; }
+
+  [Range(0, 100)]
+  public int? ImageFocalY { get; set; }
+
   public List<CharacterFieldValueRequest>? GameFields { get; set; }
 }

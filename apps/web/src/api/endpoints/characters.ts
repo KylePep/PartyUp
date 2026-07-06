@@ -27,6 +27,8 @@ export type Character = {
   gameName?: string;
   gameImageUrl?: string;
   cardBackgroundColor?: string;
+  imageFocalX?: number;
+  imageFocalY?: number;
   gameFields: CharacterGameField[];
   hasNewMatch?: boolean;
   createdAt?: string;
@@ -45,6 +47,8 @@ export type CharacterCreate = {
   languages?: string[];
   additionalNotes?: string;
   cardBackgroundColor?: string;
+  imageFocalX?: number;
+  imageFocalY?: number;
   gameFields?: CharacterFieldValueCreate[];
 };
 
@@ -65,6 +69,8 @@ export type CharacterUpdate = {
   languages?: string[];
   additionalNotes?: string;
   cardBackgroundColor?: string;
+  imageFocalX?: number;
+  imageFocalY?: number;
   gameFields?: CharacterFieldValueCreate[];
 };
 
@@ -80,6 +86,8 @@ export type DiscoverCharacter = {
   gameName?: string;
   gameImageUrl?: string;
   cardBackgroundColor?: string;
+  imageFocalX?: number;
+  imageFocalY?: number;
   gameFields: CharacterGameField[];
 };
 

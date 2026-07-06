@@ -36,6 +36,8 @@ function SwipeFront({ character }: { character: DiscoverCharacter }) {
       cardBackgroundColor={character.cardBackgroundColor}
       platform={character.platform}
       imageUrl={character.imageUrl}
+      imageFocalX={character.imageFocalX}
+      imageFocalY={character.imageFocalY}
       statsLine={statsLine}
       textBody={
         <>

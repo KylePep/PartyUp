@@ -20,4 +20,6 @@ public class CharacterSummaryDto
     public Guid Id { get; set; }
     public string Name { get; set; } = default!;
     public string? ImageUrl { get; set; }
+    public int? ImageFocalX { get; set; }
+    public int? ImageFocalY { get; set; }
 }
