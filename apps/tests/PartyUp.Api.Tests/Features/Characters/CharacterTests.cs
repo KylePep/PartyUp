@@ -388,6 +388,52 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
             c.CardBackgroundColor == "#3d0a14");
     }
 
+    [Fact]
+    public async Task CreateCharacter_WithImageFocalPoint_RoundtripsValue()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+
+        var response = await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Focal Character",
+            platform = "PC",
+            platformHandle = "FocalHandle",
+            userGameId = userGame.Id,
+            imageFocalX = 0,
+            imageFocalY = 100
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterWithFocalDto>>("/api/characters");
+        all!.Items.Should().ContainSingle(c =>
+            c.Name == "Focal Character" &&
+            c.ImageFocalX == 0 &&
+            c.ImageFocalY == 100);
+    }
+
+    [Fact]
+    public async Task CreateCharacter_WithoutImageFocalPoint_ReturnsNull()
+    {
+        var client = await CreateAuthenticatedClientAsync();
+        var userGame = await AddGameAsync(client);
+
+        await client.PostAsJsonAsync("/api/characters", new
+        {
+            name = "Default Focal Character",
+            platform = "PC",
+            platformHandle = "DefaultFocalHandle",
+            userGameId = userGame.Id
+        });
+
+        var all = await client.GetFromJsonAsync<PagedResultDto<CharacterWithFocalDto>>("/api/characters");
+        all!.Items.Should().ContainSingle(c =>
+            c.Name == "Default Focal Character" &&
+            c.ImageFocalX == null &&
+            c.ImageFocalY == null);
+    }
+
     private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
     private record AddGameResultDto(UserGameDto UserGame);
     private record CharacterDto(Guid Id, string Name, Guid UserGameId);
@@ -400,4 +446,5 @@ public class CharacterTests : TestBase, IClassFixture<ApiFactory>
     private record CharacterWithColorDto(Guid Id, string Name, string? CardBackgroundColor);
     private record DiscoveredWithColorDto(string Name, string? CardBackgroundColor);
     private record PagedDiscoverWithColorDto(List<DiscoveredWithColorDto> Items, bool HasMore, int TotalCount);
+    private record CharacterWithFocalDto(Guid Id, string Name, int? ImageFocalX, int? ImageFocalY);
 }

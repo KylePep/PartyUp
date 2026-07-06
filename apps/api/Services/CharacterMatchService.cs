@@ -139,6 +139,8 @@ public class CharacterMatchService : ICharacterMatchService
         Id = c.Id,
         Name = c.Name,
         ImageUrl = c.ImageUrl,
+        ImageFocalX = c.ImageFocalX,
+        ImageFocalY = c.ImageFocalY,
     };
 
     private static CharacterResponse ToProjection(Character c) => new()
@@ -156,6 +158,8 @@ public class CharacterMatchService : ICharacterMatchService
         Languages = c.Languages,
         AdditionalNotes = c.AdditionalNotes,
         CardBackgroundColor = c.CardBackgroundColor,
+        ImageFocalX = c.ImageFocalX,
+        ImageFocalY = c.ImageFocalY,
         GameName = c.UserGame.Game.Name,
         GameImageUrl = c.UserGame.Game.ImageUrl,
         CreatedAt = c.CreatedAt,
