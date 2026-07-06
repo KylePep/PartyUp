@@ -42,7 +42,7 @@ export function BinderLayout({
 
             }}
           >
-            <div className='w-full h-full md:px-4 py-1 md:pt-18 flex md:flex-col items-center justify-around md:justify-end md:justify-start md:gap-4'
+            <div className='w-full h-full md:px-4 py-1 md:pt-18 flex md:flex-col items-center justify-between md:justify-end md:justify-start md:gap-4'
               style={{
                 border: '1px dashed rgba(25, 24, 24, 0.5)',
                 borderRadius: '2px',

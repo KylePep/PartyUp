@@ -8,6 +8,14 @@
   API integration (VAPID keys, subscription storage, notification trigger on match).
   Worth revisiting if/when exploring Flutter as an alternative delivery mechanism.
 
+## Performance
+
+- [ ] **Fix `DiscoverCharactersAsync` — materialize `alreadySeenIds` too early**
+  `CharacterService.DiscoverCharactersAsync` calls `.ToListAsync()` on the seen-character
+  query before composing the main discover query. At scale this sends thousands of GUIDs
+  as `NOT IN` parameters to Postgres. Fix: remove `.ToListAsync()`, keep it as `IQueryable`
+  so EF composes it as a SQL subquery instead.
+
 ## Infrastructure
 
 - [ ] **Replace personal GCS OAuth credentials with a service account key**

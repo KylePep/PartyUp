@@ -18,10 +18,10 @@ function stableCardShine(seed: string): string {
 function StatRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div
-      className="flex flex-col md:flex-row justify-between gap-1 md:gap-2 py-2"
+      className="flex flex-col justify-between gap-1 py-2"
       style={{ borderBottom: '1px solid var(--color-border)' }}
     >
-      <span className="text-xxs md:text-xs text-muted uppercase tracking-widest flex-shrink-0 md:pt-0.5">
+      <span className="text-xxs md:text-xs text-muted uppercase tracking-widest flex-shrink-0">
         {label}
       </span>
       <div className="flex flex-wrap text-wrap gap-1 min-w-0">{children}</div>
@@ -40,7 +40,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
   return (
     <div
-      className="flex flex-col rounded-xl overflow-hidden p-2 md:p-4 gap-1 md:gap-2 border-4 md:border-8 border-off-black"
+      className="flex flex-col rounded-xl overflow-hidden p-2 md:p-4 gap-1 border-4 md:border-8 border-off-black"
       style={{
         backgroundColor: character.cardBackgroundColor || 'var(--color-surface)',
         backgroundImage: character.cardBackgroundColor ? stableCardShine(character.name) : undefined,
@@ -50,7 +50,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
 
       {/* Hero — pinned */}
       <div
-        className="flex flex-col gap-1 md:gap-2 flex-shrink-0"
+        className="flex flex-col gap-1 flex-shrink-0"
       >
         <div className='flex flex-col gap-1'>
           <div className="flex justify-between md:items-center bg-off-black rounded-sm px-2 py-1">
@@ -59,15 +59,15 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
               {character.platform && <PlatformIcon platform={character.platform} />}
             </span>
           </div>
-          <div className="flex justify-between md:items-center gap-6 bg-off-black/90 rounded-sm px-2 py-1">
+          <div className="flex justify-between md:items-center gap-6 bg-off-black rounded-sm px-2 py-1">
             {character.platformHandle && (
               <p className="font-mono text-text text-xxs md:text-xs">{character.platformHandle}</p>
             )}
           </div>
         </div>
         <div
-          className="w-full h-32 md:h-48 rounded-lg overflow-hidden flex-shrink-0"
-          style={{ border: '1px solid var(--color-border)' }}
+          className="w-full h-32 md:h-40 rounded-lg overflow-hidden flex-shrink-0"
+          style={{ border: '2px solid var(--color-border)' }}
         >
           {character.imageUrl ? (
             <img
@@ -85,29 +85,31 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div className='flex flex-col md:flex-row justify-start md:justify-between bg-off-black rounded-sm px-2 py-1 mb-1 md:mb-2'>
+          <div className='flex flex-col md:flex-row justify-start md:justify-between bg-off-black rounded-sm px-2 py-1 mb-1'>
             {character.gameName && (
-              <p className="text-xs text-off-white font-display">{character.gameName}</p>
+              <p className="text-xs text-off-white">{character.gameName}</p>
             )}
             <div className="flex items-center">
               <span className="text-xs text-muted">{character.platform}</span>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-1.5 bg-off-black rounded-sm px-2 py-1">
-            {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
-            {character.languages && character.languages.length > 0 && (
-              <>
-                {character.languages.map(l => <Badge key={l}>{l + " "}</Badge>)}
-              </>
-            )}
-            {character.timeZone && <Badge variant="region">{character.timeZone}</Badge>}
-            {character.activeTimes && character.activeTimes.length > 0 && (
-              <>
-                {character.activeTimes.map(l => <Badge variant='rank' key={l}>{l + " "}</Badge>)}
-              </>
-            )}
-          </div>
+          {(character.usesVoiceChat || (character.languages && character.languages.length > 0) || character.timeZone || (character.activeTimes && character.activeTimes.length > 0)) && (
+            <div className="flex flex-nowrap gap-1.5 bg-off-black rounded-sm px-2 py-1 overflow-x-auto">
+              {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
+              {character.languages && character.languages.length > 0 && (
+                <>
+                  {character.languages.map(l => <Badge key={l}>{l + " "}</Badge>)}
+                </>
+              )}
+              {character.timeZone && <Badge variant="region">{character.timeZone}</Badge>}
+              {character.activeTimes && character.activeTimes.length > 0 && (
+                <>
+                  {character.activeTimes.map(l => <Badge variant='rank' key={l}>{l + " "}</Badge>)}
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -120,7 +122,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
             style={{ borderBottom: '1px solid var(--color-border)' }}
           >
             <h2 className="text-xxs md:text-xs text-muted uppercase tracking-widest">Bio</h2>
-            <p className="text-xs md:text-sm text-text leading-relaxed">{character.bio}</p>
+            <p className="text-xs md:text-xs text-text leading-relaxed">{character.bio}</p>
           </div>
         )}
 
@@ -132,7 +134,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           >
             {character.gameFields.map(f => (
               <StatRow key={f.key} label={f.label}>
-                <span className="text-xs md:text-sm text-text break-all">{f.value}</span>
+                <span className="text-xs md:text-xs text-text break-all">{f.value}</span>
               </StatRow>
             ))}
           </div>

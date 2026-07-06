@@ -69,11 +69,11 @@ export function StandardTcgCard({
       <div>
         {/* Header: name (left) + platform (right) */}
         <div
-          className="flex items-center justify-between px-1.5 py-1 flex-shrink-0 rounded-sm"
+          className="flex items-center justify-between ps-1.5 pe-1 py-0.5 flex-shrink-0 rounded-sm"
           style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
         >
           <span className="font-display font-semibold text-text text-xxs md:text-xs truncate">{name}</span>
-          <span className="w-4 md:w-6 h-4 md:h-6 [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-[22px] md:[&_svg]:h-[22px]">
+          <span className="w-4 h-4 [&_svg]:w-6 [&_svg]:h-6 md:[&_svg]:w-[14px] md:[&_svg]:h-[14px]">
             {platform && (
               isNew ? (
                 <span className="relative flex w-full h-full">
@@ -99,7 +99,7 @@ export function StandardTcgCard({
 
 
       {/* Image */}
-      <div className="relative aspect-video w-full overflow-hidden rounded-sm border-off-black border-2 bg-off-black">
+      <div className="relative aspect-4/2 w-full overflow-hidden rounded-sm border-off-black border-2 bg-off-black">
         {imageUrl ? (
           <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
         ) : (

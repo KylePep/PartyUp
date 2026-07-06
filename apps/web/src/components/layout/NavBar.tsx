@@ -60,11 +60,11 @@ export function NavBar({ variant }: NavBarProps) {
             background: 'linear-gradient(175deg, #e8b830 0%, #f5d060 18%, #c89018 38%, #eabc2c 55%, #b07808 72%, #d4a020 88%, #a06808 100%)',
           }}>
           <div className=' w-full rounded-xs relative text-center
-          border-2 border-orange-950 outline-3 outline-cyan-500 ring-2 ring-offset-2 ring-orange-950 
+          border-1 border-orange-950 outline-2 outline-cyan-500 ring-1 ring-offset-2 ring-orange-950 
           group-hover:outline-cyan-700
-          transition duration-150'>
+          transition duration-150 py-0.5'>
             <img
-              className='absolute top-0.5 left-1 w-6 h-6 border-1 bg-slate-900 border-slate-900 rounded-full'
+              className='absolute top-1 left-1 w-6 h-6 border-1 bg-slate-900 border-slate-900 rounded-full'
               src="/favicon.png" alt="" />
             PartyUp
 
