@@ -88,7 +88,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div className='flex flex-col md:flex-row justify-start md:justify-between bg-off-black rounded-sm px-2 py-1 mb-1'>
+          <div className='flex flex-row justify-between bg-off-black rounded-sm px-2 py-1 mb-1'>
             {character.gameName && (
               <p className="text-xs text-off-white">{character.gameName}</p>
             )}
@@ -98,7 +98,7 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
           </div>
 
           {(character.usesVoiceChat || (character.languages && character.languages.length > 0) || character.timeZone || (character.activeTimes && character.activeTimes.length > 0)) && (
-            <div className="flex flex-nowrap gap-1.5 bg-off-black rounded-sm px-2 py-1 overflow-x-auto">
+            <div className="flex flex-nowrap gap-1.5 bg-off-black rounded-sm px-1 py-1 overflow-x-auto">
               {character.usesVoiceChat && <Badge variant="role">{character.usesVoiceChat ? 'Voice Chat' : 'No Voice Chat'}</Badge>}
               {character.languages && character.languages.length > 0 && (
                 <>
@@ -128,13 +128,6 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
             <span className="text-xs md:text-xs text-text leading-relaxed">{character.bio}</span>
           </div>
         )}
-
-        {/* <div>
-        <span className="text-xxs md:text-xs text-muted uppercase tracking-widest flex-shrink-0 mr-2">
-          {label} -
-        </span>
-        <span className="text-wrap gap-1 min-w-0">{children}</span>
-      </div> */}
 
         {/* Game Fields section */}
         {character.gameFields.length > 0 && (

@@ -27,12 +27,12 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
           icon={<CubeIcon />}
           className="w-full md:h-full"
         >
-          <div className="flex justify-between border-1 border-off-black px-2 py-1 rounded-sm">
+          <div className="grid grid-cols-[4fr_1fr] gap-3 border-1 border-off-black px-2 py-1 rounded-sm bg-off-black/20 text-off-black">
             {detail && detail.platforms.length > 0 && (
-              <p className="text-xs font-mono text-muted">{detail.platforms.join(' • ')}</p>
+              <span className="text-xs font-mono text-nowrap overflow-x-auto">{detail.platforms.join(' • ')}</span>
             )}
             {detail && detail.rating > 0 && (
-              <p className="text-xs font-mono text-muted">★ {detail.rating.toFixed(1)}</p>
+              <span className="text-xs font-mono">★ {detail.rating.toFixed(1)}</span>
             )}
           </div>
 
@@ -43,7 +43,7 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
             </div>
           ) : detail?.description ? (
             <div
-              className="text-xs font-mono text-muted flex-1 min-h-0 overflow-y-auto border-1 border-off-black px-2 py-1 rounded-sm"
+              className="text-xs font-mono flex-1 min-h-0 overflow-y-auto border-1 border-off-black px-2 py-1 rounded-sm bg-off-black/20 text-off-black"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(detail.description) }}
             />
           ) : null}
@@ -54,7 +54,7 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
                 href={detail.website}
                 target="_blank"
                 rel="noreferrer"
-                className="text-xs font-mono text-blue-400 hover:underline truncate block"
+                className="text-xs font-mono text-blue-900 font-bold hover:underline truncate block"
               >
                 {detail.website}
               </a>
@@ -63,7 +63,7 @@ export function GameDetailCard({ game, detail, loading, deleting, onDelete }: Ga
           </div>
 
           <div className="flex gap-2 justify-end">
-            <p className="text-xs font-mono text-muted md:text-nowrap me-auto order-1">
+            <p className="text-xs font-mono text-off-black md:text-nowrap me-auto order-1">
               Added {new Date(game.createdAt).toLocaleDateString()}
             </p>
             <div className='order-3 md:order-2'>
