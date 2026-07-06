@@ -18,7 +18,7 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
     else navigate(`/characters/${character.id}`)
   }
 
-  const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
+  // const classField = character.gameFields.find(gf => gf.commonField === 'class_slot')
   const levelField = character.gameFields.find(gf => gf.commonField === 'level_slot')
   const roleField = character.gameFields.find(gf => gf.commonField === 'role_slot')
   const factionField = character.gameFields.find(gf => gf.commonField === 'faction_slot')
@@ -26,7 +26,8 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
   const serverField = character.gameFields.find(gf => gf.commonField === 'server_slot')
   const playstyleField = character.gameFields.find(gf => gf.commonField === 'playstyle_slot')
 
-  const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
+  // const statsContent = [character.gameName, classField?.value].filter(Boolean).join(' · ')
+  const statsContent = character.gameName
   const statsLine = statsContent ? (
     <span className="">{statsContent}</span>
   ) : undefined
@@ -42,6 +43,8 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
         platform={character.platform}
         isNew={character.hasNewMatch}
         imageUrl={character.imageUrl}
+        imageFocalX={character.imageFocalX}
+        imageFocalY={character.imageFocalY}
         statsLine={statsLine}
         textBody={
           <>

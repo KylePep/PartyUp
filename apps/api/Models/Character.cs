@@ -41,6 +41,9 @@ public class Character
   [MaxLength(7)]
   public string? CardBackgroundColor { get; set; }
 
+  public int? ImageFocalX { get; set; }
+  public int? ImageFocalY { get; set; }
+
   public DateTime CreatedAt { get; set; }
   public List<CharacterFieldValue> FieldValues { get; set; } = [];
 }

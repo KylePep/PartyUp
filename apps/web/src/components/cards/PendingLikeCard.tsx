@@ -20,6 +20,8 @@ export function PendingLikeCard({ character, onLike, onDislike }: PendingLikeCar
       <FullArtTcgCard
         name={character.name}
         imageUrl={character.imageUrl}
+        imageFocalX={character.imageFocalX}
+        imageFocalY={character.imageFocalY}
         style={{ width: '80px', aspectRatio: '2/3' }}
         className="shrink-0"
       >

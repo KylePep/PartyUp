@@ -306,6 +306,140 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
       result.Items.Should().HaveCount(3);
   }
 
+  [Fact]
+  public async Task GetUserGames_RealmWithRecentInteraction_SortsFirst()
+  {
+      var client = await CreateAuthenticatedClientAsync();
+      var otherClient = await CreateAuthenticatedClientAsync();
+
+      // Realm A created first (older CreatedAt)
+      var idA = Interlocked.Increment(ref _gameCounter);
+      var ugA = await AddRealmAsync(client, idA);
+
+      // Realm B created second (newer CreatedAt — would normally sort first)
+      var idB = Interlocked.Increment(ref _gameCounter);
+      _ = await AddRealmAsync(client, idB);
+
+      // Give realm A a character to like against, owned by another user on the same game
+      var ugOther = await AddRealmAsync(otherClient, idA);
+      var charOther = await CreateCharacterAsync(otherClient, ugOther.Id);
+
+      // Add a character to realm A and swipe — this makes realm A's LastActivityAt newer than B's CreatedAt
+      var charA = await CreateCharacterAsync(client, ugA.Id);
+      await client.PostAsJsonAsync("/api/character-interactions", new
+      {
+          fromCharacterId = charA,
+          toCharacterId = charOther,
+          type = "Like"
+      });
+
+      var response = await client.GetAsync("/api/user-games?pageSize=50");
+      var result = await response.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
+
+      result!.Items.First().Id.Should().Be(ugA.Id);
+  }
+
+  [Fact]
+  public async Task GetUserGames_RealmWithRecentMatch_SortsFirst()
+  {
+      var clientA = await CreateAuthenticatedClientAsync();
+      var clientB = await CreateAuthenticatedClientAsync();
+
+      // Realm A: created first on both accounts
+      var extId = Interlocked.Increment(ref _gameCounter);
+      var ugA = await AddRealmAsync(clientA, extId);
+      var ugB = await AddRealmAsync(clientB, extId);
+
+      // Realm C: created after realm A (would normally sort before A)
+      var idC = Interlocked.Increment(ref _gameCounter);
+      _ = await AddRealmAsync(clientA, idC);
+
+      // Mutual like in realm A → MatchedAt is newer than ugC.CreatedAt
+      var charA = await CreateCharacterAsync(clientA, ugA.Id);
+      var charB = await CreateCharacterAsync(clientB, ugB.Id);
+      await MutualLikeAsync(clientA, charA, clientB, charB);
+
+      var response = await clientA.GetAsync("/api/user-games?pageSize=50");
+      var result = await response.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
+
+      result!.Items.First().Id.Should().Be(ugA.Id);
+  }
+
+  [Fact]
+  public async Task GetUserGames_RealmWithRecentMessage_SortsFirst()
+  {
+      var clientA = await CreateAuthenticatedClientAsync();
+      var clientB = await CreateAuthenticatedClientAsync();
+
+      // Realm A: created first on both accounts
+      var extId = Interlocked.Increment(ref _gameCounter);
+      var ugA = await AddRealmAsync(clientA, extId);
+      var ugB = await AddRealmAsync(clientB, extId);
+
+      // Realm C: created after realm A (would normally sort before A)
+      var idC = Interlocked.Increment(ref _gameCounter);
+      _ = await AddRealmAsync(clientA, idC);
+
+      // Create a match in realm A, then send a sticker — SentAt is newer than ugC.CreatedAt
+      var charA = await CreateCharacterAsync(clientA, ugA.Id);
+      var charB = await CreateCharacterAsync(clientB, ugB.Id);
+      await MutualLikeAsync(clientA, charA, clientB, charB);
+
+      var matchRes = await clientA.GetAsync("/api/character-matches");
+      var matches = await matchRes.Content.ReadFromJsonAsync<PagedResultDto<MatchIdDto>>();
+      var matchId = matches!.Items.First().MatchId;
+
+      await clientA.PostAsJsonAsync($"/api/sticker-messages/{matchId}", new { emoji = "🎮" });
+
+      var response = await clientA.GetAsync("/api/user-games?pageSize=50");
+      var result = await response.Content.ReadFromJsonAsync<PagedResultDto<UserGameDto>>();
+
+      result!.Items.First().Id.Should().Be(ugA.Id);
+  }
+
+  // ── helpers ────────────────────────────────────────────────────────────────
+
+  private async Task<UserGameDto> AddRealmAsync(HttpClient client, int externalId)
+  {
+      var response = await client.PostAsJsonAsync("/api/user-games", new
+      {
+          externalId,
+          name = $"Game {externalId}",
+          imageUrl = (string?)null
+      });
+      response.EnsureSuccessStatusCode();
+      return (await response.Content.ReadFromJsonAsync<AddGameResultDto>())!.UserGame;
+  }
+
+  private async Task<Guid> CreateCharacterAsync(HttpClient client, Guid userGameId)
+  {
+      var response = await client.PostAsJsonAsync("/api/characters", new
+      {
+          name = "TestCharacter",
+          platform = "PC",
+          platformHandle = "TestHandle",
+          userGameId
+      });
+      response.EnsureSuccessStatusCode();
+      return (await response.Content.ReadFromJsonAsync<CharIdDto>())!.Id;
+  }
+
+  private async Task MutualLikeAsync(HttpClient clientA, Guid charA, HttpClient clientB, Guid charB)
+  {
+      await clientA.PostAsJsonAsync("/api/character-interactions", new
+      {
+          fromCharacterId = charA,
+          toCharacterId = charB,
+          type = "Like"
+      });
+      await clientB.PostAsJsonAsync("/api/character-interactions", new
+      {
+          fromCharacterId = charB,
+          toCharacterId = charA,
+          type = "Like"
+      });
+  }
+
   private record PagedResultDto<T>(IEnumerable<T> Items, int TotalCount, int Page, int PageSize);
 
   private record UserGameDto(Guid Id, Guid UserId, Guid GameId, string GameName);
@@ -316,6 +450,7 @@ public class UserGameTests : TestBase, IClassFixture<ApiFactory>
   private record CharIdDto(Guid Id);
 
   private record RealmLimitErrorDto(string Message);
+  private record MatchIdDto(Guid MatchId);
 
   private record UserGameDetailDto(
     Guid Id,

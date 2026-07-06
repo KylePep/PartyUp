@@ -10,18 +10,16 @@ interface LandCardProps {
 export function LandCard({ name, imageUrl, icon, className, onClick, children }: LandCardProps) {
   return (
     <div
-      className={`h-full md:aspect-3/4 rounded-xl overflow-hidden flex flex-col p-2 gap-2 ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
-      style={{ border: '8px solid black', backgroundColor: 'var(--color-surface)' }}
+      className={`h-full md:aspect-3/4 rounded-xl overflow-hidden flex flex-col p-2 gap-2 bg-cyan-100 border-8 border-black ${onClick ? ' cursor-pointer' : ''}${className ? ' ' + className : ''}`}
       onClick={onClick}
     >
       {/* Header */}
       <div
-        className="relative px-3 py-2 flex-shrink-0 rounded-sm"
-        style={{ backgroundColor: 'var(--color-surface-raised)', borderBottom: '1px solid var(--color-border)' }}
+        className="relative px-2 md:px-3 py-1 flex-shrink-0 rounded-sm bg-off-black/20 text-off-black border-1 border-off-black"
       >
-        <span className="font-display font-semibold text-text text-xs md:text-sm truncate block">{name}</span>
+        <span className="font-display font-semibold text-sm truncate inline-block align-text-bottom leading-none">{name}</span>
         {icon && (
-          <div className="absolute top-1 right-1 bg-black p-1 rounded-full">
+          <div className="absolute top-1 right-1 bg-black p-1 rounded-full text-off-white">
             {icon}
           </div>
         )}

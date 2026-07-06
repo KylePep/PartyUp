@@ -45,7 +45,7 @@ export function DiscoveryFilters({
       {/* Platform filter */}
       {gamePlatforms.length > 0 && (
         <div>
-          <p className="text-xs font-mono text-muted uppercase tracking-widest mb-2">Platform</p>
+          <p className="text-xs font-mono text-off-white uppercase tracking-widest mb-2">Platform</p>
           <div className="flex flex-wrap gap-2">
             {gamePlatforms.map(p => {
               const isActive = activePlatforms.includes(p)
@@ -54,11 +54,10 @@ export function DiscoveryFilters({
                   key={p}
                   type="button"
                   onClick={() => togglePlatform(p)}
-                  className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
-                    isActive
-                      ? 'bg-accent text-white border-accent'
-                      : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
-                  }`}
+                  className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${isActive
+                    ? 'bg-accent text-white border-accent'
+                    : 'bg-surface border-border text-off-white hover:border-accent hover:text-text'
+                    }`}
                 >
                   {p}
                 </button>
@@ -79,7 +78,7 @@ export function DiscoveryFilters({
             <button
               type="button"
               onClick={() => setShowAllPlatforms(s => !s)}
-              className="text-xs font-mono text-muted hover:text-accent transition-colors"
+              className="text-xs font-mono text-off-white hover:text-accent transition-colors"
             >
               {showAllPlatforms ? '− Show less' : '+ More platforms'}
             </button>
@@ -94,7 +93,7 @@ export function DiscoveryFilters({
               >
                 {expandedGroups.map(group => (
                   <div key={group.group}>
-                    <p className="text-xs font-mono text-muted uppercase tracking-widest mb-2">
+                    <p className="text-xs font-mono text-off-white uppercase tracking-widest mb-2">
                       {group.group}
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -105,11 +104,10 @@ export function DiscoveryFilters({
                             key={p}
                             type="button"
                             onClick={() => togglePlatform(p)}
-                            className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
-                              isActive
-                                ? 'bg-accent text-white border-accent'
-                                : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
-                            }`}
+                            className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${isActive
+                              ? 'bg-accent text-white border-accent'
+                              : 'bg-surface border-border text-off-white hover:border-accent hover:text-text'
+                              }`}
                           >
                             {p}
                           </button>
@@ -127,7 +125,7 @@ export function DiscoveryFilters({
       {/* AI field filters */}
       {filterableFields.map(field => (
         <div key={field.key}>
-          <p className="text-xs font-mono text-muted uppercase tracking-widest mb-2">
+          <p className="text-xs font-mono text-off-white uppercase tracking-widest mb-2">
             {field.label}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -138,11 +136,10 @@ export function DiscoveryFilters({
                   key={opt}
                   type="button"
                   onClick={() => onChange(field.key, isActive ? '' : opt)}
-                  className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${
-                    isActive
-                      ? 'bg-accent text-white border-accent'
-                      : 'bg-surface border-border text-muted hover:border-accent hover:text-text'
-                  }`}
+                  className={`px-3 py-1.5 rounded text-xs font-mono border transition-colors ${isActive
+                    ? 'bg-accent text-white border-accent'
+                    : 'bg-surface border-border text-off-white hover:border-accent hover:text-text'
+                    }`}
                 >
                   {opt}
                 </button>

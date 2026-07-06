@@ -39,6 +39,10 @@ public class PushNotificationService : IPushNotificationService
 
     public async Task RegisterAsync(Guid userId, string endpoint, string p256dh, string auth)
     {
+        await _db.UserPushSubscriptions
+            .Where(s => s.Endpoint == endpoint && s.UserId != userId)
+            .ExecuteDeleteAsync();
+
         var existing = await _db.UserPushSubscriptions
             .FirstOrDefaultAsync(s => s.UserId == userId && s.Endpoint == endpoint);
 

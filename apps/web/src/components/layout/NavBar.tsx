@@ -28,7 +28,7 @@ export function NavBar({ variant }: NavBarProps) {
         pointer-events-none 
         z-40 
         w-full 
-        md:w-50
+        md:w-70
         h-10
         md:h-16 
         md:h-screen 
@@ -51,19 +51,28 @@ export function NavBar({ variant }: NavBarProps) {
           : ''
         }`}
     >
-      <Link to="/home" className="pointer-events-auto font-display font-bold text-off-black text-lg tracking-wide">
-        <div className='hidden md:flex flex-row gap-3 font-black text-off-black px-3 py-1 rounded-md border-2 border-orange-950 shadow'
+      <Link to="/home" className="pointer-events-auto font-display tracking-wide group">
+
+        <div className='hidden md:block font-black text-xl text-off-black p-1.5 rounded-lg 
+          border-3 border-orange-950
+          shadow'
           style={{
             background: 'linear-gradient(175deg, #e8b830 0%, #f5d060 18%, #c89018 38%, #eabc2c 55%, #b07808 72%, #d4a020 88%, #a06808 100%)',
           }}>
-          <img
-            className='w-7 h-7 border-1 bg-slate-900 border-slate-900 rounded-full'
-            src="/favicon.png" alt="" />
-          PartyUp
+          <div className=' w-full rounded-xs relative text-center
+          border-1 border-orange-950 outline-2 outline-cyan-500 ring-1 ring-offset-2 ring-orange-950 
+          group-hover:outline-cyan-700
+          transition duration-150 py-0.5'>
+            <img
+              className='absolute top-1 left-1 w-6 h-6 rounded-full'
+              src="/apple-touch-icon.png" alt="" />
+            PartyUp
+
+          </div>
         </div>
         <img
           className='w-7 h-7 block md:hidden border-1 bg-slate-900 border-slate-900 rounded-full'
-          src="/favicon.png" alt="" />
+          src="/apple-touch-icon.png" alt="" />
       </Link>
 
       {variant === 'app' && username && (

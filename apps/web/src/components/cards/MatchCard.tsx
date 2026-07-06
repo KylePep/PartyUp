@@ -3,6 +3,7 @@ import { Button } from '../ui'
 import { FlippableCard } from './FlippableCard'
 import { StandardTcgCard } from './StandardTcgCard'
 import type { Character } from '../../api/endpoints/characters'
+import { UserCircleIcon } from '@phosphor-icons/react'
 
 interface MatchCardProps {
   character: Character
@@ -38,6 +39,8 @@ function MatchFront({ character, isNew, lastReceivedSticker, matchId }: MatchCar
       name={character.name}
       platform={character.platform}
       imageUrl={character.imageUrl}
+      imageFocalX={character.imageFocalX}
+      imageFocalY={character.imageFocalY}
       cardBackgroundColor={character.cardBackgroundColor}
       isNew={isNew}
       stickerEmoji={lastReceivedSticker}
@@ -65,10 +68,10 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
   const date = new Date(matchedAt).toLocaleDateString()
   return (
     <div
-      className="w-full h-full rounded-xl flex flex-col overflow-hidden border-black bg-black/80 border-[6px]"
+      className="relative w-full h-full rounded-xl flex flex-col overflow-hidden border-black bg-black/80 border-[6px]"
     >
-      <div className="h-full px-4 py-3 mb-1 md:mb-2 overflow-y-auto overflow-x-hidden">
-        <p className="font-display font-bold text-text text-sm md:text-lg">{character.name}</p>
+      <div className="h-full px-1 md:px-4 py-3 mb-1 md:mb-2 overflow-y-auto overflow-x-hidden">
+        <p className="font-display font-bold text-text text-sm md:text-lg mb-4">{character.name}</p>
         <p className="text-xxs md:text-sm text-muted mb-1">{character.platformHandle}</p>
         <p className="text-xxs md:text-sm text-muted mb-1">{gameName}</p>
         <p className="text-xxs md:text-sm text-muted mb-1">{character.platform}</p>
@@ -88,9 +91,16 @@ function MatchBack({ character, gameName, matchedAt, matchId }: MatchCardProps) 
         )}
         <p className="text-xs text-muted mt-3">Matched {date}</p>
       </div>
-      <div className="px-4 pb-2 flex justify-center" style={{ position: 'relative', zIndex: 20 }}>
+      <div className="pb-2 flex justify-center absolute md:relative top-1 right-2 z-20">
         <Button size="sm" variant="primary" onClick={() => navigate(`/matches?id=${matchId}`)}>
-          View Match →
+          <div className='flex gap-4 leading-6'>
+            <span className=' block'>
+              <UserCircleIcon size={16} />
+            </span>
+            <span className='hidden md:block'>
+              View Match →
+            </span>
+          </div>
         </Button>
       </div>
       <p className="text-xs text-muted text-center py-2" style={{ opacity: 0.5 }}>tap to flip back</p>

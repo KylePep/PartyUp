@@ -46,6 +46,8 @@ public class CharacterService : ICharacterService
       Languages = request.Languages,
       AdditionalNotes = request.AdditionalNotes,
       CardBackgroundColor = request.CardBackgroundColor,
+      ImageFocalX = request.ImageFocalX,
+      ImageFocalY = request.ImageFocalY,
     };
 
     _db.Characters.Add(character);
@@ -189,6 +191,8 @@ public class CharacterService : ICharacterService
         Languages = c.Languages,
         AdditionalNotes = c.AdditionalNotes,
         CardBackgroundColor = c.CardBackgroundColor,
+        ImageFocalX = c.ImageFocalX,
+        ImageFocalY = c.ImageFocalY,
         GameName = c.UserGame.Game.Name,
         GameImageUrl = c.UserGame.Game.ImageUrl,
         GameFields = c.FieldValues.Select(fv => new CharacterFieldValueDto
@@ -239,6 +243,8 @@ public class CharacterService : ICharacterService
     character.Languages = request.Languages;
     character.AdditionalNotes = request.AdditionalNotes;
     character.CardBackgroundColor = request.CardBackgroundColor;
+    character.ImageFocalX = request.ImageFocalX;
+    character.ImageFocalY = request.ImageFocalY;
 
     if (request.GameFields != null)
     {
@@ -298,6 +304,8 @@ public class CharacterService : ICharacterService
       Languages = c.Languages,
       AdditionalNotes = c.AdditionalNotes,
       CardBackgroundColor = c.CardBackgroundColor,
+      ImageFocalX = c.ImageFocalX,
+      ImageFocalY = c.ImageFocalY,
       GameName = c.UserGame.Game.Name,
       GameImageUrl = c.UserGame.Game.ImageUrl,
       CreatedAt = c.CreatedAt,

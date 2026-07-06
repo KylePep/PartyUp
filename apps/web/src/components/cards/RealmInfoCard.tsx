@@ -31,7 +31,7 @@ export function RealmInfoCard({
       className={`relative overflow-hidden border-4 border-black rounded-xl shadow aspect-[2/3] md:aspect-[3/2] ${className ?? ''}`}
     >
 
-      <div className="absolute inset-0 bg-black" />
+      <div className="absolute inset-0 bg-off-black text-off-white" />
 
       {/* Mobile: 2 stats filling the full card face */}
       <div className="absolute inset-0 flex flex-col md:hidden">
@@ -46,21 +46,21 @@ export function RealmInfoCard({
       </div>
 
       {/* Desktop: 4 stats in a 2x2 bottom strip */}
-      <div className="absolute top-0 bottom-0 left-0 right-0 hidden md:grid grid-cols-2 grid-rows-4 bg-black/80 p-2 gap-1">
-        <div className="flex items-center gap-1 min-w-0">
-          <HandshakeIcon size={10} className="text-white shrink-0" />
+      <div className="absolute top-0 bottom-0 left-0 right-0 hidden md:grid grid-cols-1 grid-rows-4 bg-off-black text-off-white p-2">
+        <div className="grid grid-cols-[2fr_1fr] items-center border-b border-white/20 px-2">
+          <HandshakeIcon size={24} className="text-white shrink-0" />
           <span className="font-mono text-white text-xxs truncate">{matchCount} Matches</span>
         </div>
-        <div className="flex items-center gap-1 min-w-0">
-          <ClockCountdownIcon size={10} className="text-white shrink-0" />
+        <div className="grid grid-cols-[2fr_1fr] items-center border-b border-white/20 px-2">
+          <ClockCountdownIcon size={24} className="text-white shrink-0" />
           <span className="font-mono text-white text-xxs truncate">{pendingCount} Pending</span>
         </div>
-        <div className="flex items-center gap-1 min-w-0">
-          <CalendarIcon size={10} className="text-white shrink-0" />
+        <div className="grid grid-cols-[2fr_1fr] items-center border-b border-white/20 px-2">
+          <CalendarIcon size={24} className="text-white shrink-0" />
           <span className="font-mono text-white text-xxs truncate">{daysAgo(characterCreatedAt)} Realm</span>
         </div>
-        <div className="flex items-center gap-1 min-w-0">
-          <TimerIcon size={10} className="text-white shrink-0" />
+        <div className="grid grid-cols-[2fr_1fr] items-center px-2">
+          <TimerIcon size={24} className="text-white shrink-0" />
           <span className="font-mono text-white text-xxs truncate">{daysAgo(lastMatchedAt)} Last</span>
         </div>
       </div>

@@ -43,6 +43,8 @@ export function CollectionCard({ character, onSelect, className, isNew, lastRece
       platform={character.platform}
       isNew={isNew}
       imageUrl={character.imageUrl}
+      imageFocalX={character.imageFocalX}
+      imageFocalY={character.imageFocalY}
       cardBackgroundColor={character.cardBackgroundColor}
       stickerEmoji={lastReceivedSticker}
       stickerSeed={matchId}

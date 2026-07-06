@@ -6,6 +6,8 @@ export type MyCharacterSummary = {
   id: string;
   name: string;
   imageUrl?: string;
+  imageFocalX?: number;
+  imageFocalY?: number;
 };
 
 export type CharacterSummary = {

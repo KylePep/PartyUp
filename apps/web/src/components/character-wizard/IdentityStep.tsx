@@ -3,6 +3,7 @@ import { Input } from '../ui'
 import { ToggleButtonGroup } from '../forms/ToggleButtonGroup'
 import { type CharacterFormData, PLATFORMS, ALL_PLATFORMS } from './types'
 import { compressImageIfNeeded } from '../../utils/imageCompression'
+import { ImageOriginPicker } from './ImageOriginPicker'
 
 const CARD_COLORS = [
   '#2251cc', // deep navy
@@ -140,13 +141,14 @@ export function IdentityStep({ data, onChange, platforms }: IdentityStepProps) {
 
       <div>
         <p className="text-xs font-mono text-muted uppercase tracking-widest mb-3">Character Image</p>
-        {previewUrl && (
-          <img
-            src={previewUrl}
-            alt="Character preview"
-            className="w-24 h-24 object-cover rounded mb-3 border border-border"
+        <div className="mb-3">
+          <ImageOriginPicker
+            imageUrl={previewUrl}
+            focalX={data.imageFocalX}
+            focalY={data.imageFocalY}
+            onChange={(imageFocalX, imageFocalY) => onChange({ imageFocalX, imageFocalY })}
           />
-        )}
+        </div>
         <div className="flex gap-3 items-center flex-wrap">
           <button
             type="button"

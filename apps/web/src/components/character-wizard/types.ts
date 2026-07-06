@@ -29,6 +29,8 @@ export interface CharacterFormData {
   languages: string[]
   gameFields: Record<string, string>
   cardBackgroundColor: string
+  imageFocalX: number
+  imageFocalY: number
 }
 
 export const defaultFormData: CharacterFormData = {
@@ -45,6 +47,8 @@ export const defaultFormData: CharacterFormData = {
   languages: [],
   gameFields: {},
   cardBackgroundColor: '',
+  imageFocalX: 50,
+  imageFocalY: 50,
 }
 
 export function characterToFormData(c: Character): Partial<CharacterFormData> {
@@ -62,5 +66,7 @@ export function characterToFormData(c: Character): Partial<CharacterFormData> {
     languages: c.languages ?? [],
     gameFields: Object.fromEntries((c.gameFields ?? []).map(f => [f.fieldDefinitionId, f.value])),
     cardBackgroundColor: c.cardBackgroundColor ?? '',
+    imageFocalX: c.imageFocalX ?? 50,
+    imageFocalY: c.imageFocalY ?? 50,
   }
 }

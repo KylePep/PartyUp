@@ -2,6 +2,8 @@ interface FullArtTcgCardProps {
   name?: string
   platform?: React.ReactNode
   imageUrl?: string
+  imageFocalX?: number
+  imageFocalY?: number
   className?: string
   style?: React.CSSProperties
   children?: React.ReactNode
@@ -9,7 +11,7 @@ interface FullArtTcgCardProps {
   onClick?: () => void
 }
 
-export function FullArtTcgCard({ name, platform, imageUrl, className, style, location, children, onClick }: FullArtTcgCardProps) {
+export function FullArtTcgCard({ name, platform, imageUrl, imageFocalX = 50, imageFocalY = 50, className, style, location, children, onClick }: FullArtTcgCardProps) {
   return (
     <div
       className={`relative overflow-hidden border-4 border-black rounded-xl shadow ${className} ${onClick ? ' cursor-pointer' : ''}`}
@@ -29,7 +31,12 @@ export function FullArtTcgCard({ name, platform, imageUrl, className, style, loc
 
       {/* Background image */}
       {imageUrl ? (
-        <img src={imageUrl} alt={name} className="absolute inset-0 w-full h-full object-cover" />
+        <img
+          src={imageUrl}
+          alt={name}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: `${imageFocalX}% ${imageFocalY}%` }}
+        />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: 'var(--color-surface-raised)' }}>
           <span className="font-mono text-muted font-bold text-4xl">{name ? name.charAt(0).toUpperCase() : ''}</span>
