@@ -17,6 +17,8 @@ public class CharacterResponse
   public string[]? Languages { get; set; }
   public string? AdditionalNotes { get; set; }
   public string? CardBackgroundColor { get; set; }
+  public int? ImageFocalX { get; set; }
+  public int? ImageFocalY { get; set; }
   public string? GameName { get; set; }
   public string? GameImageUrl { get; set; }
 
