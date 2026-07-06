@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useClickOutside } from '../../hooks/useClickOutside'
-import { Avatar, Button } from '../ui'
+import { Avatar } from '../ui'
 
 type Variant = 'landing' | 'app'
 
