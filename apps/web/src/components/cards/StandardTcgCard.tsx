@@ -5,6 +5,8 @@ interface StandardTcgCardProps {
   platform?: string
   subtitle?: string
   imageUrl?: string
+  imageFocalX?: number
+  imageFocalY?: number
   statsLine?: React.ReactNode
   textBody?: React.ReactNode
   bottomStat?: React.ReactNode
@@ -44,6 +46,8 @@ export function StandardTcgCard({
   platform,
   subtitle,
   imageUrl,
+  imageFocalX = 50,
+  imageFocalY = 50,
   statsLine,
   textBody,
   bottomStat,
@@ -101,7 +105,12 @@ export function StandardTcgCard({
       {/* Image */}
       <div className="relative aspect-4/2 w-full overflow-hidden rounded-sm border-off-black border-2 bg-off-black">
         {imageUrl ? (
-          <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+          <img
+            src={imageUrl}
+            alt={name}
+            className="w-full h-full object-cover"
+            style={{ objectPosition: `${imageFocalX}% ${imageFocalY}%` }}
+          />
         ) : (
           <div
             className="w-full h-full flex items-center justify-center text-muted font-mono text-4xl"
