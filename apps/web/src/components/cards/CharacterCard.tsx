@@ -43,6 +43,8 @@ export function CharacterCard({ character, onSelect, className }: CharacterCardP
         platform={character.platform}
         isNew={character.hasNewMatch}
         imageUrl={character.imageUrl}
+        imageFocalX={character.imageFocalX}
+        imageFocalY={character.imageFocalY}
         statsLine={statsLine}
         textBody={
           <>

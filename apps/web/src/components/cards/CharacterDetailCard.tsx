@@ -18,13 +18,15 @@ function stableCardShine(seed: string): string {
 function StatRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div
-      className="flex flex-col justify-between gap-1 py-2"
+      className="py-2"
       style={{ borderBottom: '1px solid var(--color-border)' }}
     >
-      <span className="text-xxs md:text-xs text-muted uppercase tracking-widest flex-shrink-0">
-        {label}
-      </span>
-      <div className="flex flex-wrap text-wrap gap-1 min-w-0">{children}</div>
+      <div>
+        <span className="text-xxs md:text-xs text-muted uppercase tracking-widest flex-shrink-0 mr-2">
+          {label} -
+        </span>
+        <span className="text-wrap gap-1 min-w-0">{children}</span>
+      </div>
     </div>
   )
 }
@@ -73,7 +75,8 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
             <img
               src={character.imageUrl}
               alt={character.name}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover"
+              style={{ objectPosition: `${character.imageFocalX ?? 50}% ${character.imageFocalY ?? 50}%` }}
             />
           ) : (
             <div
@@ -121,10 +124,17 @@ export function CharacterDetailCard({ character, onDelete, onEdit, deleting }: C
             className="px-2 md:px-4 pt-3 pb-1"
             style={{ borderBottom: '1px solid var(--color-border)' }}
           >
-            <h2 className="text-xxs md:text-xs text-muted uppercase tracking-widest">Bio</h2>
-            <p className="text-xs md:text-xs text-text leading-relaxed">{character.bio}</p>
+            <span className="text-xxs md:text-xs text-muted uppercase tracking-widest">Bio - </span>
+            <span className="text-xs md:text-xs text-text leading-relaxed">{character.bio}</span>
           </div>
         )}
+
+        {/* <div>
+        <span className="text-xxs md:text-xs text-muted uppercase tracking-widest flex-shrink-0 mr-2">
+          {label} -
+        </span>
+        <span className="text-wrap gap-1 min-w-0">{children}</span>
+      </div> */}
 
         {/* Game Fields section */}
         {character.gameFields.length > 0 && (
