@@ -65,14 +65,14 @@ export function NavBar({ variant }: NavBarProps) {
           transition duration-150 py-0.5'>
             <img
               className='absolute top-1 left-1 w-6 h-6 border-1 bg-slate-900 border-slate-900 rounded-full'
-              src="/favicon.png" alt="" />
+              src="/apple-touch-icon.png" alt="" />
             PartyUp
 
           </div>
         </div>
         <img
           className='w-7 h-7 block md:hidden border-1 bg-slate-900 border-slate-900 rounded-full'
-          src="/favicon.png" alt="" />
+          src="/apple-touch-icon.png" alt="" />
       </Link>
 
       {variant === 'app' && username && (
